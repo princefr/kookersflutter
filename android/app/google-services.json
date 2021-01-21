@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "610462980544",
+    "firebase_url": "https://kookers-4e54e.firebaseio.com",
+    "project_id": "kookers-4e54e",
+    "storage_bucket": "kookers-4e54e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610462980544:android:f34a6aaa2971e511459025",
+        "android_client_info": {
+          "package_name": "com.getkookers.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "610462980544-4gqqqs9ae6f3p8icdmhar8ibffntlqfq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.getkookers.android",
+            "certificate_hash": "ad02334a1f346b7a4edf23bc223140f846d02824"
+          }
+        },
+        {
+          "client_id": "610462980544-3vmjcqt10fnbfb6np1bpe4rvu531sl7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2x635Y3xNpNFHeykzrQGOuUJyQAEaHzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "610462980544-3vmjcqt10fnbfb6np1bpe4rvu531sl7j.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "610462980544-587jbih88sr1po64sg4si2n2qmrgot2l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.getkookers.android"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
