@@ -1,72 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:kookers/Pages/Vendor/VendorPageChild.dart';
-import 'package:kookers/Pages/Vendor/VendorPubChild.dart';
+import 'package:kookers/Pages/Vendor/OrderItemSeller.dart';
+import 'package:kookers/Pages/Vendor/PublicationItemVendor.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:toggle_switch/toggle_switch.dart';
-
-class PublicationItemVendor extends StatelessWidget {
-  final PublicationVendor publication;
-  const PublicationItemVendor({Key key, this.publication}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: ListTile(
-      onTap: () => Navigator.push(
-          context,
-          CupertinoPageRoute(
-              builder: (context) =>
-                  VendorPubPage(publication: this.publication))),
-      leading: Image(
-          height: 350,
-          width: 100,
-          fit: BoxFit.cover,
-          image: NetworkImage(this.publication.photoUrls[0])),
-      title: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-        Text(this.publication.title),
-        Text(this.publication.id, style: GoogleFonts.montserrat(fontSize: 13)),
-        Text(this.publication.adress.title)
-        //Text(this.publicati)
-      ]),
-    ));
-  }
-}
-
-class OrderItemSeller extends StatelessWidget {
-  final OrderVendor vendor;
-  const OrderItemSeller({Key key, this.vendor}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-          child: ListTile(
-        onTap: () => Navigator.push(
-            context,
-            CupertinoPageRoute(
-                builder: (context) => VendorPageChild(vendor: this.vendor))),
-        leading: Image(
-            height: 350,
-            width: 100,
-            fit: BoxFit.cover,
-            image: NetworkImage(this.vendor.publication.photoUrls[0])),
-        title: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Text(this.vendor.publication.title),
-          Text(this.vendor.productId,
-              style: GoogleFonts.montserrat(fontSize: 13)),
-        ]),
-      )),
-    );
-  }
-}
 
 
 class VendorPage extends StatefulWidget {
@@ -142,7 +85,14 @@ class _VendorPageState extends State<VendorPage> {
                                 AsyncSnapshot<List<PublicationVendor>> snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting)
-                                return LinearProgressIndicator();
+                                return Shimmer.fromColors(
+                        child: ListView.builder(
+                            itemCount: 10,
+                            itemBuilder: (ctx, index) {
+                              return PublicationItemVendorShimmer();
+                            }),
+                        baseColor: Colors.grey[200],
+                        highlightColor: Colors.grey[300]);
                               if (snapshot.data.isEmpty)
                                 return Text("this is empty");
                               return SmartRefresher(
@@ -176,7 +126,14 @@ class _VendorPageState extends State<VendorPage> {
                           builder:
                               (context, AsyncSnapshot<List<OrderVendor>> snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting)
-                              return LinearProgressIndicator();
+                              return Shimmer.fromColors(
+                        child: ListView.builder(
+                            itemCount: 10,
+                            itemBuilder: (ctx, index) {
+                              return OrderItemSellerShimmer();
+                            }),
+                        baseColor: Colors.grey[200],
+                        highlightColor: Colors.grey[300]);
                             if (snapshot.data.isEmpty) return Text("this is empty");
                             return SmartRefresher(
                               enablePullDown: true,

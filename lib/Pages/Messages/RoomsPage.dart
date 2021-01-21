@@ -5,6 +5,7 @@ import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shimmer/shimmer.dart';
 
 
 class RoomsPage extends StatefulWidget {
@@ -44,7 +45,14 @@ class _RoomsPageState extends State<RoomsPage> {
                 stream: databaseService.rooms.stream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting)
-                    return LinearProgressIndicator();
+                    return Shimmer.fromColors(
+                        child: ListView.builder(
+                            itemCount: 10,
+                            itemBuilder: (ctx, index) {
+                              return RoomItemShimmer();
+                            }),
+                        baseColor: Colors.grey[200],
+                        highlightColor: Colors.grey[300]);
                   if (snapshot.data.isEmpty) return Text("this is empty");
                   return SmartRefresher(
                     enablePullDown: true,

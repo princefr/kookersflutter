@@ -12,6 +12,9 @@ class Receiver {
       {@required this.firstName, @required this.lastName, this.phonenumber, this.photoUrl});
 }
 
+
+
+
 class Room {
   String id;
   String updatedAt;
@@ -75,6 +78,80 @@ class Message {
     return messages;
   }
 }
+
+
+
+class RoomItemShimmer extends StatelessWidget {
+  const RoomItemShimmer({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 10,
+          child: ListTile(
+            title: Container(
+              decoration: BoxDecoration(
+                      color: Colors.grey[200],      
+                    ),
+              child: Text(
+                "ONDONDA PRINCE",
+                style: GoogleFonts.montserrat(fontSize: 15),
+              ),
+            ),
+            subtitle: Container(
+              decoration: BoxDecoration(
+                                color: Colors.grey[200],      
+                    ),
+              child: Text(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 11),
+              ),
+            ),
+            leading: CircleAvatar(
+              radius: 30
+            ),
+            trailing: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                                color: Colors.grey[200],      
+                    ),
+                  child: Text(
+                    "il y'a 5 min",
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ),
+                Container(
+                        margin: const EdgeInsets.only(top: 5.0),
+                        height: 25,
+                        width: 25,
+                        decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(25.0),
+                            )),
+                        child: Center(
+                            child: Text(
+                          "2",
+                          style: TextStyle(fontSize: 11, color: Colors.white),
+                        )),
+                      )
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
 
 class RoomItem extends StatelessWidget {
   final Room room;

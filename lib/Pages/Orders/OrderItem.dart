@@ -108,6 +108,57 @@ class Order{
 
 }
 
+
+class OrderItemShimmer extends StatelessWidget {
+  const OrderItemShimmer({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
+        child: InkWell(
+            child: ListTile(
+            leading: Container(
+              decoration: BoxDecoration(color: Colors.grey[200],    
+              borderRadius: BorderRadius.all(Radius.circular(5.0))  
+                    ),
+              height: 350,
+               width: 100
+              ),
+            title: Align(
+              alignment: Alignment.centerLeft,
+                child: Column(
+                mainAxisAlignment:  MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(decoration: BoxDecoration(
+                        color: Colors.grey[200],      
+                      ),child: Text("this.order.publication.this", style: GoogleFonts.montserrat(),)),
+
+                      SizedBox(height: 5),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200],      
+                      ),child: Text("this.order.productId bitch i'm", style: GoogleFonts.montserrat(fontSize: 13))),
+
+                      SizedBox(height: 5),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[200],      
+                      ),child: Text("this.order.orderState",  style: GoogleFonts.montserrat(fontSize: 13))),
+                  
+                ]
+              ),
+            ),
+            trailing: Text("15€"),
+          ),
+        ),
+      )
+    );
+  }
+}
+
 class OrderItem extends StatelessWidget {
   final Order order;
   final Function(Order) onOrderTap;
