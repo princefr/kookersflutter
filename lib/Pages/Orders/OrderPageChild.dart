@@ -77,7 +77,7 @@ final MutationOptions _options  = MutationOptions(
             mutation CreateChatRoom($user1: String!, $user2: String!){
                   createChatRoom(user1:$user1 , user2: $user2){
                               _id
-                              updateAt
+                              updatedAt
                               notificationCountUser_1
                               
                               receiver {

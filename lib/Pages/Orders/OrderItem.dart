@@ -173,14 +173,18 @@ class OrderItem extends StatelessWidget {
             onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => OrderPageChild(order: this.order))),
             child: ListTile(
             leading: Image(height: 350, width: 100, fit: BoxFit.cover, image: CachedNetworkImageProvider(order.publication.imagesUrls[0])),
-            title: Column(
-              mainAxisAlignment:  MainAxisAlignment.start,
-              children: [
-                Text(this.order.publication.title),
-                Text(this.order.productId, style: GoogleFonts.montserrat(fontSize: 13)),
-                Text(this.order.orderState.toString(),  style: GoogleFonts.montserrat(fontSize: 13)),
-                
-              ]
+            title: Align(
+              alignment: Alignment.centerLeft,
+                          child: Column(
+                mainAxisAlignment:  MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(this.order.publication.title),
+                  Text(this.order.productId, style: GoogleFonts.montserrat(fontSize: 13)),
+                  Text(this.order.orderState.toString(),  style: GoogleFonts.montserrat(fontSize: 13)),
+                  
+                ]
+              ),
             ),
             trailing: Text("15€"),
           ),

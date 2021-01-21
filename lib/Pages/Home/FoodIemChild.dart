@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
@@ -188,12 +189,21 @@ class _FoodItemChildState extends State<FoodItemChild> {
             rightIcon: CupertinoIcons.heart),
         body: Container(
           child: ListView(children: [
-            Image(
-              height: 300,
+
+            CarouselSlider(items: this.widget.publication.photoUrls.map((e) {
+              return Image(
+              
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.cover,
-              image: CachedNetworkImageProvider(this.widget.publication.photoUrls[0]),
-            ),
+              image: CachedNetworkImageProvider(e),
+            );
+            }).toList(),
+             options: CarouselOptions(height: 300.0, aspectRatio: 16/9, enlargeCenterPage: true, initialPage: 0,
+             enableInfiniteScroll: false,)),
+
+            
+
+
             Row(
               children: [
                 Expanded(
@@ -203,6 +213,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                       style: GoogleFonts.montserrat(
                           fontSize: 26, color: Colors.grey)),
                 )),
+                
                 Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Stepper(quantity: orderProvider.quantity)),
@@ -213,16 +224,33 @@ class _FoodItemChildState extends State<FoodItemChild> {
               padding: const EdgeInsets.all(15.0),
               child: Text(this.widget.publication.description),
             ),
-            ChipsChoice<String>.multiple(
-              spinnerColor: Colors.red,
-              value: tagfood,
-              onChanged: (val) => print("d"),
-              choiceItems: C2Choice.listFrom<String, String>(
-                source: foodpreferences,
-                value: (i, v) => v,
-                label: (i, v) => v,
+
+            Container(
+                height: 40,
+                child: Builder(builder: (BuildContext ctx) {
+                  if(this.widget.publication.preferences.any((element) => element.isSelected == true)){
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: this.widget.publication.preferences.where((element) => element.isSelected == true).toList().length,
+                      itemBuilder: (ctx, index){
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 5, right: 5, top: 3),
+                          child: Container(
+                                  decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
+                    ), padding: EdgeInsets.all(10), child: Text(this.widget.publication.preferences.where((element) => element.isSelected == true).elementAt(index).title)),
+                        );
+                    });
+                  }else{
+                    return Container(height: 40, child: Text("Sans préférences"), decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
+                    ),);
+                  }
+                }),
               ),
-            ),
+
             Divider(),
 
             StreamBuilder<DateTime>(

@@ -1,6 +1,9 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
@@ -26,7 +29,7 @@ class _VendorPageChildState extends State<VendorPageChild> {
             mutation CreateChatRoom($user1: String!, $user2: String!){
                   createChatRoom(user1:$user1 , user2: $user2){
                               _id
-                              updateAt
+                              updatedAt
                               notificationCountUser_1
                               
                               receiver {
@@ -123,16 +126,95 @@ final MutationOptions _options  = MutationOptions(
         body: Center(
           child: ListView(
             children: [
+              Divider(),
+
+              CarouselSlider(items: this.widget.vendor.publication.photoUrls.map((e) {
+              return Image(
+              
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover,
+              image: CachedNetworkImageProvider(e),
+            );
+            }).toList(),
+             options: CarouselOptions(height: 300.0, aspectRatio: 16/9, enlargeCenterPage: true, initialPage: 0,
+             enableInfiniteScroll: false,)),
+
+             SizedBox(height:10),
+
+             Row(
+              children: [
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(this.widget.vendor.totalPrice + " " + this.widget.vendor.currency,
+                      style: GoogleFonts.montserrat(
+                          fontSize: 26, color: Colors.grey)),
+                )),
+                
+                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("2"),)
+              ],
+            ),
+
+              Container(
+                height: 40,
+                child: Builder(builder: (BuildContext ctx) {
+                  if(this.widget.vendor.publication.preferences.any((element) => element.isSelected == true)){
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: this.widget.vendor.publication.preferences.where((element) => element.isSelected == true).toList().length,
+                      itemBuilder: (ctx, index){
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 5, right: 5, top: 3),
+                          child: Container(
+                                  decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
+                    ), padding: EdgeInsets.all(10), child: Text(this.widget.vendor.publication.preferences.where((element) => element.isSelected == true).elementAt(index).title)),
+                        );
+                    });
+                  }else{
+                    return Container(height: 40, child: Text("Sans préférences"), decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
+                    ),);
+                  }
+                }),
+              ),
+
+             SizedBox(height:30),
+             
+              ListTile(
+                leading: CircleAvatar(
+                  radius: 25,
+                backgroundImage:
+                    NetworkImage(this.widget.vendor.buyer.photoUrl),
+              ),
+
+              title: Text(this.widget.vendor.buyer.firstName + " " + this.widget.vendor.buyer.lastName),
+
+              ),
+
+
+              ListTile(
+                leading: Icon(CupertinoIcons.calendar),
+                title: Text(this.widget.vendor.deliveryDay)
+              ),
+
+
+              SizedBox(height: 50,),
+
               Builder(builder: (ctx) {
                 switch (this.widget.vendor.orderState) {
                   case "ACCEPTED":
-                      return Text("plat recu par l'acheteur");
+                      return Center(child: Text("plat recu par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17),));
                     break;
                   case "CANCELLED":
-                      return Text("le plat a été annulé par l'acheteur");
+                      return Center(child: Text("le plat a été annulé par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));
                     break;
                   case "DONE":
-                    return Text("plat recu par l'acheteur");
+                    return Center(child: Text("plat recu par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));
                     break;
 
                   case "NOT_ACCEPTED":
@@ -181,11 +263,11 @@ final MutationOptions _options  = MutationOptions(
                     
                     break;
                   case "RATED":
-                    return Text("le plat est livré et noté");
+                    return Center(child: Text("le plat est livré et noté", style: GoogleFonts.montserrat(fontSize: 17)));
                     break;
 
                   case "REFUSED":
-                    return Text("Vous avez refusé la commande.");
+                    return Center(child: Text("Vous avez refusé la commande.", style: GoogleFonts.montserrat(fontSize: 17)));
                     
                     break;
 

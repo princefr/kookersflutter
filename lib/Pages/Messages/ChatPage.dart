@@ -7,7 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql/client.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
+import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/TopBar.dart';
+import 'package:provider/provider.dart';
 
 
 class MessageBuble extends StatelessWidget {
@@ -38,8 +40,8 @@ class _ChatPageState extends State<ChatPage> {
 Future<QueryResult> sendMessage(String message, String roomId, String userId, GraphQLClient client) async{
   final MutationOptions _options  = MutationOptions(
     documentNode: gql(r"""
-      mutation SendMEssage($message: String!, $roomId: ID!, $userId: String!){
-            sendMessage(message: {message: $message, roomId: $roomId, userId: $userId})
+      mutation SendMEssage($message: String!, $roomId: ID!, $userId: String!, $createdAt: String!){
+            sendMessage(message: {message: $message, roomId: $roomId, userId: $userId, createdAt: $createdAt})
         }
     """),
     variables:  <String, String> {
@@ -60,11 +62,34 @@ final TextEditingController textEditingController = TextEditingController();
 final FocusNode focusNode = FocusNode();
 final _controller = ScrollController();
 
+  int _limit = 20;
+  final int _limitIncrement = 20;
+
+  _scrollListener() {
+    if (_controller.offset >=
+            _controller.position.maxScrollExtent &&
+        !_controller.position.outOfRange) {
+      print("reach the bottom");
+      setState(() {
+        print("reach the bottom");
+        this._limit += this._limitIncrement;
+      });
+    }
+    if (_controller.offset <=
+            _controller.position.minScrollExtent &&
+        !_controller.position.outOfRange) {
+      print("reach the top");
+      setState(() {
+        print("reach the top");
+      });
+    }
+  }
 
 @override
   void initState() {
-    super.initState();
     focusNode.addListener(onFocusChange);
+    _controller.addListener(_scrollListener);
+    super.initState();
   }
 
     void onFocusChange() {
@@ -76,7 +101,6 @@ final _controller = ScrollController();
 
 
   void scrollToBottom() {
-      // After 1 second, it takes you to the bottom of the ListView
       _controller.animateTo(
       _controller.position.maxScrollExtent,
       duration: Duration(milliseconds: 300),
@@ -107,20 +131,26 @@ final _controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
+    final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
+    
     return GraphQLConsumer(builder: (GraphQLClient client) {
       return Scaffold(
         appBar: TopBarChat(displayname: this.widget.room.receiver.firstName + " " + this.widget.room.receiver.lastName, rightIcon: CupertinoIcons.exclamationmark_circle_fill,
         height: 54,
-                            isRightIcon: true,
-                            onTapRight: () {}),
+                isRightIcon: true,
+                onTapRight: () {}),
         body: Subscription("getMEssagedAdded",
              subscribeToNewMessage,
              variables: <String, String> {
                "roomID": this.widget.room.id
              },
             builder: ({dynamic error, bool loading, dynamic payload}) {
-              print(payload);
-              print(error);
+              if(payload != null) {
+                print(payload);
+                this.widget.room.messages.add(Message(createdAt:  payload["messageAdded"]["createdAt"], userId: payload["messageAdded"]["userId"], message:  payload["messageAdded"]["message"]));
+                  this.scrollToBottom();
+              }
+              
 
               return Stack(
                       children: [
@@ -128,36 +158,60 @@ final _controller = ScrollController();
                           children: [
                           Flexible(
                             child: Container(
+                              padding: EdgeInsets.only(bottom: 15),
                               child : ListView.builder(
                                 controller: _controller,
                                 itemCount: this.widget.room.messages.length,
                                 itemBuilder: (context, index){
-
-                                  if(this.widget.room.messages[index].userId == "5f560ef2ec675e097f84c990") {
+                                  if(this.widget.room.messages[index].userId == databaseService.user.value.id) {
                                     return ListTile(
-                                      title: ChatBubble(
-                                                  alignment: Alignment.topRight,
-                                                  margin: EdgeInsets.only(top: 20),
-                                                  clipper: ChatBubbleClipper5(type: BubbleType.sendBubble),
-                                                  child: Container(constraints: BoxConstraints(
-                                                  maxWidth: MediaQuery.of(context).size.width * 0.7,
-                                                ), child: Text(this.widget.room.messages[index].message, style: GoogleFonts.montserrat(color: Colors.white),)),
-                                                )
+                                      title: Column(
+                                        children: [
+                                          ChatBubble(
+                                                      elevation: 0,
+                                                      shadowColor: Colors.white,
+                                                      alignment: Alignment.topRight,
+                                                      margin: EdgeInsets.only(top: 20),
+                                                      clipper: ChatBubbleClipper5(type: BubbleType.sendBubble),
+                                                      child: Container(constraints: BoxConstraints(
+                                                      maxWidth: MediaQuery.of(context).size.width * 0.7,
+                                                    ), child: Text(this.widget.room.messages[index].message, style: GoogleFonts.montserrat(color: Colors.white),)),
+                                                    ),
+
+                                                    SizedBox(height: 5),
+
+                                            Align(alignment: Alignment.centerRight, child: Text("date d'envoie", style: GoogleFonts.montserrat(fontSize: 11),))
+                                        ],
+                                      )
                                     );
                                   }else{
-                                    return ListTile(
-                                      leading: CircleAvatar(
-                                        radius: 30,
-                                        backgroundImage: NetworkImage(
-                                            "https://t1.gstatic.com/images?q=tbn:ANd9GcRgexJ5aVLMRh8pTx4ktKg3JtDIFtxPR7DCPXkbqoUSA1vx6RBwb4TUGLKMW5fl"),
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 20),
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          radius: 30,
+                                          backgroundImage: NetworkImage(
+                                              "https://t1.gstatic.com/images?q=tbn:ANd9GcRgexJ5aVLMRh8pTx4ktKg3JtDIFtxPR7DCPXkbqoUSA1vx6RBwb4TUGLKMW5fl"),
+                                        ),
+                                        title: Column(
+                                          children: [
+                                            ChatBubble(
+                                                        elevation: 0,
+                                                        alignment: Alignment.topLeft,
+                                                        backGroundColor: Colors.grey[300],
+                                                        shadowColor: Colors.white,
+                                                        clipper: ChatBubbleClipper5(type: BubbleType.receiverBubble),
+                                                        child: Container(constraints: BoxConstraints(
+                                                        maxWidth: MediaQuery.of(context).size.width * 0.7,
+                                                      ), child: Text(this.widget.room.messages[index].message, style: GoogleFonts.montserrat(color: Colors.black))),
+                                            ),
+
+                                            SizedBox(height: 5),
+
+                                            Align(alignment: Alignment.centerLeft, child: Text("date d'envoie", style: GoogleFonts.montserrat(fontSize: 11),))
+                                          ],
+                                        )
                                       ),
-                                      title: ChatBubble(
-                                                  alignment: Alignment.topLeft,
-                                                  clipper: ChatBubbleClipper5(type: BubbleType.receiverBubble),
-                                                  child: Container(constraints: BoxConstraints(
-                                                  maxWidth: MediaQuery.of(context).size.width * 0.7,
-                                                ), child: Text(this.widget.room.messages[index].message, style: GoogleFonts.montserrat(color: Colors.black))),
-                                                )
                                     );  
                                   }
 
@@ -187,10 +241,9 @@ final _controller = ScrollController();
                                 ),
                                 hintText: 'Type your message...', contentPadding: EdgeInsets.all(20.0), hintStyle: TextStyle(color: Colors.grey)), focusNode: focusNode,),
                               trailing: InkWell(onTap: (){
-                                this.sendMessage(textEditingController.text, this.widget.room.id, "5f560ef2ec675e097f84c990", client).then((value){
+                                this.sendMessage(textEditingController.text, this.widget.room.id, databaseService.user.value.id, client).then((value){
                                   setState(() {
                                     textEditingController.clear();
-                                    this.scrollToBottom();
                                   });
                                 });
                               }, child: Icon(CupertinoIcons.arrow_up_circle_fill, color: Colors.black, size: 30)),

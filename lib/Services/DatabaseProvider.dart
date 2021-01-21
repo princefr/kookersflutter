@@ -349,8 +349,10 @@ class PublicationVendor {
   List<Object> photoUrls;
   Adress adress;
   bool isOpen;
+  List<FoodPreference> preferences;
+  String createdAt;
 
-  PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.isOpen});
+  PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.isOpen, this.preferences, this.createdAt});
   
 
   static PublicationVendor fromJson(Map<String, dynamic> map) => PublicationVendor(
@@ -362,7 +364,9 @@ class PublicationVendor {
     pricePerPie: map["price_per_pie"].toString(),
     photoUrls: map["photoUrls"] as List<Object>,
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["lonngitude"]), title: map["adress"]["title"]),
-    isOpen: map["is_open"]
+    isOpen: map["is_open"],
+    preferences: FoodPreference.fromJSON(map["food_preferences"]),
+    createdAt: map["createdAt"]
   );
 
   static List<PublicationVendor> fromJsonToList(List<Object> map) {
@@ -386,8 +390,9 @@ class PublicationHome {
   List<Object> photoUrls;
   Adress adress;
   SellerDef seller;
+  List<FoodPreference> preferences;
 
-  PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.seller});
+  PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.seller, this.preferences});
   
 
   static PublicationHome fromJson(Map<String, dynamic> map) => PublicationHome(
@@ -399,7 +404,8 @@ class PublicationHome {
     pricePerPie: map["price_per_pie"].toString(),
     photoUrls: map["photoUrls"] as List<Object>,
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["longitude"]), title: ""),
-    seller: SellerDef.fromJson(map["seller"])
+    seller: SellerDef.fromJson(map["seller"]),
+    preferences: FoodPreference.fromJSON(map["food_preferences"])
   );
 
   static List<PublicationHome> fromJsonToList(List<Object> map) {
@@ -856,6 +862,7 @@ Future<List<Order>>  loadbuyerOrders() {
                                 title
                                 description
                                 photoUrls
+                                food_preferences {id, title, is_selected}
                             }
 
                             seller {
@@ -895,6 +902,7 @@ Future<List<Order>>  loadbuyerOrders() {
                                 deliveryDay
                                 buyerID
                                 sellerId
+                                currency
 
                                 buyer {
                                   _id
@@ -909,6 +917,7 @@ Future<List<Order>>  loadbuyerOrders() {
                                     title
                                     description
                                     photoUrls
+                                    food_preferences {id, title, is_selected}
                                     adress {
                                       title
                                       location {
@@ -948,6 +957,8 @@ Future<List<Order>>  loadbuyerOrders() {
                           photoUrls
                           createdAt
                           is_open
+
+                          food_preferences {id, title, is_selected}
                           
                           adress {
                             title
@@ -1055,6 +1066,13 @@ Future<List<Order>>  loadbuyerOrders() {
                   price_per_pie
                   photoUrls
                   createdAt
+
+                  food_preferences {
+                    id
+                    title
+                    is_selected
+                  }
+
                   adress {
                     location {
                       latitude

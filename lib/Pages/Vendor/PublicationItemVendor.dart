@@ -1,4 +1,5 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -49,15 +50,38 @@ class PublicationItemVendor extends StatelessWidget {
           CupertinoPageRoute(
               builder: (context) =>
                   VendorPubPage(publication: this.publication))),
-      leading: Image(
-          height: 350,
-          width: 100,
-          fit: BoxFit.cover,
-          image: NetworkImage(this.publication.photoUrls[0])),
-      title: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+      leading: Container(
+        height: 350,
+        width: 100,
+        padding: EdgeInsets.all(2),
+        decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                  image: DecorationImage(image: CachedNetworkImageProvider(this.publication.photoUrls[0]), fit: BoxFit.cover),
+                                  
+                                
+                    ),
+      ),
+      title: Column(mainAxisAlignment:  MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(this.publication.title),
         Text(this.publication.id, style: GoogleFonts.montserrat(fontSize: 13)),
-        Text(this.publication.adress.title)
+        Builder(builder: (ctx){
+          if(this.publication.isOpen){
+            return Container(padding: EdgeInsets.all(5), child: Text("ouvert", style: GoogleFonts.montserrat(fontSize: 13, color: Colors.white),), decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                  color: Colors.green[400],
+                                  
+                                
+                    ),);
+          }else{
+            return Container(padding: EdgeInsets.all(2), child: Text("fermé", style: GoogleFonts.montserrat(fontSize: 13, color: Colors.white),), decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                                  color: Colors.red[600],
+                                  
+                                
+                    ),);
+          }
+        })
         //Text(this.publicati)
       ]),
     ));

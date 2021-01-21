@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -154,7 +153,7 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
           child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Container(
-          height: 210,
+          height: 260,
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
@@ -223,9 +222,39 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
                 ]
               ),
 
+
+
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Text("15 \$", style: GoogleFonts.montserrat(color: Colors.grey, fontSize: 20))
-              ],)
+              ],),
+
+              SizedBox(height: 10),
+
+              Container(
+                height: 40,
+                child: Builder(builder: (BuildContext ctx) {
+                  if(this.widget.publication.preferences.any((element) => element.isSelected == true)){
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: this.widget.publication.preferences.where((element) => element.isSelected == true).toList().length,
+                      itemBuilder: (ctx, index){
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 5, right: 5, top: 3),
+                          child: Container(
+                                  decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
+                    ), padding: EdgeInsets.all(10), child: Text(this.widget.publication.preferences.where((element) => element.isSelected == true).elementAt(index).title)),
+                        );
+                    });
+                  }else{
+                    return Container(height: 40, child: Text("Sans préférences"), decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
+                    ),);
+                  }
+                }),
+              ),
             ],
           ),
         ),

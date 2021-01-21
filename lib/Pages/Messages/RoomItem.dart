@@ -184,7 +184,7 @@ class RoomItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  this.room.updatedAt,
+                  "this.room.updatedAt",
                   style: TextStyle(fontSize: 12),
                 ),
                 room.notificationCountUser_1 > 0
