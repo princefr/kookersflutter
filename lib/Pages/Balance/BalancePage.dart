@@ -41,7 +41,7 @@ class _BalancePageState extends State<BalancePage> {
   void initState() {
     new Future.delayed(Duration.zero, (){
       final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
-      databaseService.getPayoutList();
+      databaseService.getBalanceTransactions();
     });
     super.initState();
   }

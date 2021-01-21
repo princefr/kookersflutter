@@ -449,6 +449,55 @@ class OrderInput {
 }
 
 
+class  Transaction {
+
+    String id;
+    String object;
+    int amount;
+    int availableOn;
+    int created;
+    String currency;
+    String description;
+    int fee;
+    int net;
+    String reportingCategory;
+    String type;
+    String status;
+
+
+
+    Transaction({this.amount, this.availableOn, this.created, this.currency, this.description, this.fee, this.id, this.net, this.object, this.reportingCategory, this.status, this.type});
+
+  static Transaction fromJson(Map<String, dynamic> map) => Transaction(
+    id: map["id"],
+    object: map["object"],
+    amount: map["amount"],
+    availableOn: map["available_on"],
+    created: map["created"],
+    currency: map["currency"],
+    description: map["descriptionn"],
+    fee: map["fee"],
+    net: map["net"],
+    reportingCategory: map["reporting_category"],
+    type: map["type"],
+    status: map["status"]
+  );
+
+
+      static List<Transaction> fromJsonToList(List<Object> map) {
+    List<Transaction> alltransactions = [];
+    map.forEach((element) {
+      final x = Transaction.fromJson(element);
+      alltransactions.add(x);
+    });
+    return alltransactions;
+  }
+
+
+
+}
+
+
 class BankAccount {
     String id;
     String object;
@@ -683,6 +732,34 @@ class DatabaseProviderService {
         );
 
     return _client().query(_options).then((result) => BankAccount.fromJsonToList(result.data["listExternalAccount"]));
+  }
+
+
+  Future<List<Transaction>> getBalanceTransactions() async {
+    final QueryOptions _options = QueryOptions(documentNode: gql(r"""
+          query GetBalanceTransaction($accountId: String!) {
+            getBalanceTransaction(accountId: $accountId){
+              id
+              object
+              amount
+              available_on
+              created
+              currency
+              description
+              fee
+              net
+              reporting_category
+              type
+              status
+            }
+          }
+        """),
+        variables: <String, dynamic> {
+          'accountId' : this.user.value.stripeaccountId,
+        }
+        );
+
+    return _client().query(_options).then((result) =>Transaction.fromJsonToList(result.data["getBalanceTransaction"]));
   }
 
 
