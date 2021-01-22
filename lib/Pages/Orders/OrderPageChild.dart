@@ -78,7 +78,7 @@ final MutationOptions _options  = MutationOptions(
                   createChatRoom(user1:$user1 , user2: $user2){
                               _id
                               updatedAt
-                              notificationCountUser_1
+                              
                               
                               receiver {
                                   first_name
@@ -91,6 +91,8 @@ final MutationOptions _options  = MutationOptions(
                                   message
                                   createdAt
                                   message_picture
+                                  is_sent
+                                  is_read
                               }
                 }
               }
@@ -101,7 +103,7 @@ final MutationOptions _options  = MutationOptions(
           }
         );
 
-        return client.mutate(_options).then((result) => Room.fromJson(result.data["createChatRoom"]));
+        return client.mutate(_options).then((result) => Room.fromJson(result.data["createChatRoom"], user2));
 }
 
   String subscribeToOrderUpdate = r"""

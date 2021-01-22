@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
@@ -6,22 +8,14 @@ import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql/client.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:kookers/Pages/Messages/MessageInput.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
+import 'package:kookers/Pages/Messages/isRead.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
-
-
-class MessageBuble extends StatelessWidget {
-  const MessageBuble({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-    
-    );
-  }
-}
+import 'package:rxdart/subjects.dart';
 
 
 
@@ -37,7 +31,7 @@ class _ChatPageState extends State<ChatPage> {
 
 
 
-Future<QueryResult> sendMessage(String message, String roomId, String userId, GraphQLClient client) async{
+Future<void> sendMessage(String message, String roomId, String userId, GraphQLClient client) async{
   final MutationOptions _options  = MutationOptions(
     documentNode: gql(r"""
       mutation SendMEssage($message: String!, $roomId: ID!, $userId: String!, $createdAt: String!){
@@ -52,7 +46,7 @@ Future<QueryResult> sendMessage(String message, String roomId, String userId, Gr
     }
   );
 
-  return await client.mutate(_options);
+  return await client.mutate(_options).then((value) => value.data["sendMessage"]);
 }
 
 
@@ -61,6 +55,9 @@ Future<QueryResult> sendMessage(String message, String roomId, String userId, Gr
 final TextEditingController textEditingController = TextEditingController();
 final FocusNode focusNode = FocusNode();
 final _controller = ScrollController();
+
+// ignore: close_sinks
+final BehaviorSubject<String> messageToSend = BehaviorSubject<String>();
 
   int _limit = 20;
   final int _limitIncrement = 20;
@@ -86,7 +83,7 @@ final _controller = ScrollController();
   }
 
 @override
-  void initState() {
+  void initState(){
     focusNode.addListener(onFocusChange);
     _controller.addListener(_scrollListener);
     super.initState();
@@ -102,9 +99,9 @@ final _controller = ScrollController();
 
   void scrollToBottom() {
       _controller.animateTo(
-      _controller.position.maxScrollExtent,
+      0.0,
       duration: Duration(milliseconds: 300),
-      curve: Curves.ease,
+      curve: Curves.bounceIn,
     );
   }
 
@@ -139,120 +136,124 @@ final _controller = ScrollController();
         height: 54,
                 isRightIcon: true,
                 onTapRight: () {}),
-        body: Subscription("getMEssagedAdded",
-             subscribeToNewMessage,
-             variables: <String, String> {
-               "roomID": this.widget.room.id
-             },
-            builder: ({dynamic error, bool loading, dynamic payload}) {
-              if(payload != null) {
-                print(payload);
-                this.widget.room.messages.add(Message(createdAt:  payload["messageAdded"]["createdAt"], userId: payload["messageAdded"]["userId"], message:  payload["messageAdded"]["message"]));
-                  this.scrollToBottom();
-              }
-              
+        body: SafeArea(
+                  child: GestureDetector(
+                    onPanUpdate: (details){
+                      if (details.delta.dy > 0) {
+                        this.focusNode.unfocus();
+                        }
+                    },
+                    child: Subscription("getMEssagedAdded",
+                    subscribeToNewMessage,
+                    variables: <String, String> {
+                      "roomID": this.widget.room.id
+                    },
+                    
+                    builder: ({dynamic error, bool loading, dynamic payload}) {
+                      if(payload != null) {
+                          this.widget.room.messages.insert(0, Message(createdAt:  payload["messageAdded"]["createdAt"], userId: payload["messageAdded"]["userId"], message:  payload["messageAdded"]["message"], isRead: false, isSent: true));
+                          this.scrollToBottom();
+                           
+                      }
+                
+                
 
-              return Stack(
-                      children: [
-                        Column(
+                return Stack(
                           children: [
-                          Flexible(
-                            child: Container(
-                              padding: EdgeInsets.only(bottom: 15),
-                              child : ListView.builder(
-                                controller: _controller,
-                                itemCount: this.widget.room.messages.length,
-                                itemBuilder: (context, index){
-                                  if(this.widget.room.messages[index].userId == databaseService.user.value.id) {
-                                    return ListTile(
-                                      title: Column(
-                                        children: [
-                                          ChatBubble(
-                                                      elevation: 0,
-                                                      shadowColor: Colors.white,
-                                                      alignment: Alignment.topRight,
-                                                      margin: EdgeInsets.only(top: 20),
-                                                      clipper: ChatBubbleClipper5(type: BubbleType.sendBubble),
-                                                      child: Container(constraints: BoxConstraints(
-                                                      maxWidth: MediaQuery.of(context).size.width * 0.7,
-                                                    ), child: Text(this.widget.room.messages[index].message, style: GoogleFonts.montserrat(color: Colors.white),)),
-                                                    ),
-
-                                                    SizedBox(height: 5),
-
-                                            Align(alignment: Alignment.centerRight, child: Text("date d'envoie", style: GoogleFonts.montserrat(fontSize: 11),))
-                                        ],
-                                      )
-                                    );
-                                  }else{
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 20),
-                                      child: ListTile(
-                                        leading: CircleAvatar(
-                                          radius: 30,
-                                          backgroundImage: NetworkImage(
-                                              "https://t1.gstatic.com/images?q=tbn:ANd9GcRgexJ5aVLMRh8pTx4ktKg3JtDIFtxPR7DCPXkbqoUSA1vx6RBwb4TUGLKMW5fl"),
-                                        ),
+                            Column(
+                              children: [
+                              Expanded(
+                                child: ListView.builder(
+                                  reverse: true,
+                                  shrinkWrap: true,
+                                  controller: _controller,
+                                  itemCount: this.widget.room.messages.length,
+                                  itemBuilder: (context, index){
+                                    if(this.widget.room.messages[index].userId == databaseService.user.value.id) {
+                                      return ListTile(
                                         title: Column(
                                           children: [
                                             ChatBubble(
                                                         elevation: 0,
-                                                        alignment: Alignment.topLeft,
-                                                        backGroundColor: Colors.grey[300],
                                                         shadowColor: Colors.white,
-                                                        clipper: ChatBubbleClipper5(type: BubbleType.receiverBubble),
+                                                        alignment: Alignment.topRight,
+                                                        margin: EdgeInsets.only(top: 20),
+                                                        clipper: ChatBubbleClipper5(type: BubbleType.sendBubble),
                                                         child: Container(constraints: BoxConstraints(
                                                         maxWidth: MediaQuery.of(context).size.width * 0.7,
-                                                      ), child: Text(this.widget.room.messages[index].message, style: GoogleFonts.montserrat(color: Colors.black))),
-                                            ),
+                                                      ), child: Text(this.widget.room.messages[index].message, style: GoogleFonts.montserrat(color: Colors.white),)),
+                                                      ),
 
-                                            SizedBox(height: 5),
+                                                      SizedBox(height: 5),
 
-                                            Align(alignment: Alignment.centerLeft, child: Text("date d'envoie", style: GoogleFonts.montserrat(fontSize: 11),))
+                                              Align(
+                                                alignment: Alignment.centerRight,
+                                                  child: Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    Text(this.widget.room.messages[index].createdAt, style: GoogleFonts.montserrat(fontSize: 11),),
+                                                    SizedBox(width:10),
+                                                    IsReadWidget(isRead: this.widget.room.messages[index].isRead, isSent: this.widget.room.messages[index].isSent,)
+                                                  ],
+                                                ),
+                                              )
                                           ],
                                         )
-                                      ),
-                                    );  
+                                      );
+                                    }else{
+                                      return Padding(
+                                        padding: const EdgeInsets.only(top: 20),
+                                        child: ListTile(
+                                          leading: CircleAvatar(
+                                            radius: 30,
+                                            backgroundImage: NetworkImage(
+                                                "https://t1.gstatic.com/images?q=tbn:ANd9GcRgexJ5aVLMRh8pTx4ktKg3JtDIFtxPR7DCPXkbqoUSA1vx6RBwb4TUGLKMW5fl"),
+                                          ),
+                                          title: Column(
+                                            children: [
+                                              ChatBubble(
+                                                          elevation: 0,
+                                                          alignment: Alignment.topLeft,
+                                                          backGroundColor: Colors.grey[300],
+                                                          shadowColor: Colors.white,
+                                                          clipper: ChatBubbleClipper5(type: BubbleType.receiverBubble),
+                                                          child: Container(constraints: BoxConstraints(
+                                                          maxWidth: MediaQuery.of(context).size.width * 0.7,
+                                                        ), child: Text(this.widget.room.messages[index].message, style: GoogleFonts.montserrat(color: Colors.black))),
+                                              ),
+
+                                              SizedBox(height: 5),
+
+                                              Align(alignment: Alignment.centerLeft, child: Text("date d'envoie", style: GoogleFonts.montserrat(fontSize: 11),))
+                                            ],
+                                          )
+                                        ),
+                                      );  
+                                    }
+
+                                    
+
                                   }
+                                )
+                              ),
 
-                                  
-
-                                }
-                              )
-                            )
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 15),
-                            child: ListTile(
-                              leading: InkWell(onTap: (){}, child: Icon(CupertinoIcons.plus, color: Colors.black, size: 30)),
-                              title: TextField(
-                                minLines: 1,
-                                maxLines: 5,
-                                controller: textEditingController, decoration: InputDecoration(
-                                filled: true,
-                                fillColor: Colors.grey[200],
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                    width: 0,
-                                    style: BorderStyle.none,
-                                  ),
-                                ),
-                                hintText: 'Type your message...', contentPadding: EdgeInsets.all(20.0), hintStyle: TextStyle(color: Colors.grey)), focusNode: focusNode,),
-                              trailing: InkWell(onTap: (){
-                                this.sendMessage(textEditingController.text, this.widget.room.id, databaseService.user.value.id, client).then((value){
-                                  setState(() {
-                                    textEditingController.clear();
-                                  });
+                              MessageInput(textEditingController: this.textEditingController, message: messageToSend, focusNode: this.focusNode, animationDuration: Duration(milliseconds: 300), onSubmitted: (String message) {
+                                print("the message has been submitted");
+                              }, onAttachmentCiclked: (){
+                                print("attachment was clicked");
+                              }, onSendingClicked: (){
+                                this.textEditingController.text = "";
+                                this.sendMessage(this.messageToSend.value, this.widget.room.id, databaseService.user.value.id, client).then((value){
+                                  this.messageToSend.add(null);
                                 });
-                              }, child: Icon(CupertinoIcons.arrow_up_circle_fill, color: Colors.black, size: 30)),
-                            ),
-                          )
-                          ]
-                        )
-                    ],);
-            })
+                              },)
+                              ]
+                            )
+                        ],);
+              }),
+                  ),
+        )
       );
 
     });

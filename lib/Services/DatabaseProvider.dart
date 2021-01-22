@@ -627,7 +627,7 @@ class DatabaseProviderService {
                         getUserRooms(userId: $uid){
                               _id
                               updatedAt
-                              notificationCountUser_1
+                              
                               
                               receiver {
                                   first_name
@@ -641,6 +641,8 @@ class DatabaseProviderService {
                                   message
                                   createdAt
                                   message_picture
+                                  is_sent
+                                  is_read
                               }
                         }
                     }
@@ -649,7 +651,7 @@ class DatabaseProviderService {
         });
 
         return _client().query(_options).then((result) {
-            List<Room> list = Room.fromJsonToList(result.data["getUserRooms"]);
+            List<Room> list = Room.fromJsonToList(result.data["getUserRooms"], this.user.value.id);
             rooms.add(list);
             return list;
             

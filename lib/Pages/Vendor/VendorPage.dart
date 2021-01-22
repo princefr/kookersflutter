@@ -106,12 +106,10 @@ class _VendorPageState extends State<VendorPage> {
                                     });
                                   });
                                 },
-                                child: ListView.builder(
-                                    itemCount: snapshot.data.length,
-                                    itemBuilder: (ctx, index) {
-                                      return PublicationItemVendor(
-                                          publication: snapshot.data[index]);
-                                    }),
+                                child: ListView(
+                                  shrinkWrap: true,
+                                  children: snapshot.data.map((e) => PublicationItemVendor(publication: e)).toList(),
+                                )
                               );
                             })),
                   ),
@@ -146,12 +144,10 @@ class _VendorPageState extends State<VendorPage> {
                                 });
                               },
                               controller: this._refreshController2,
-                              child: ListView.builder(
-                                  itemCount: snapshot.data.length,
-                                  itemBuilder: (ctx, index) {
-                                    return OrderItemSeller(
-                                        vendor: snapshot.data[index]);
-                                  }),
+                              child: ListView(
+                                shrinkWrap: true,
+                                children: snapshot.data.map((e) => OrderItemSeller(vendor: e)).toList(),
+                              ),
                             );
                           }),
                     ),

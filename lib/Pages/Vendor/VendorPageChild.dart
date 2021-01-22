@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
-import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
@@ -30,7 +29,7 @@ class _VendorPageChildState extends State<VendorPageChild> {
                   createChatRoom(user1:$user1 , user2: $user2){
                               _id
                               updatedAt
-                              notificationCountUser_1
+                              
                               
                               receiver {
                                   first_name
@@ -43,6 +42,8 @@ class _VendorPageChildState extends State<VendorPageChild> {
                                   message
                                   createdAt
                                   message_picture
+                                  is_sent
+                                  is_read
                               }
                 }
               }
@@ -53,7 +54,7 @@ class _VendorPageChildState extends State<VendorPageChild> {
           }
         );
 
-        return client.mutate(_options).then((result) => Room.fromJson(result.data["createChatRoom"]));
+        return client.mutate(_options).then((result) => Room.fromJson(result.data["createChatRoom"], user2));
 }
 
 
