@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
 import 'package:kookers/GraphQlHelpers/ClientProvider.dart';
@@ -21,11 +20,10 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 final host = '921f6bd6742b.ngrok.io/graphql';
 final graphqlEndpoint = 'https://$host';
-final subscriptionEndpoint = 'ws://$host';
+final subscriptionEndpoint = 'wss://$host';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  //FlutterRingtonePlayer.playNotification();
   print("Handling a background message: ${message.messageId}");
 }
 
@@ -71,11 +69,14 @@ class MyApp extends StatelessWidget {
 }
 
 
-class AuthentificationnWrapper extends StatelessWidget {
+class AuthentificationnWrapper extends StatefulWidget {
   AuthentificationnWrapper({Key key}): super(key: key);
 
-  
+  @override
+  _AuthentificationnWrapperState createState() => _AuthentificationnWrapperState();
+}
 
+class _AuthentificationnWrapperState extends State<AuthentificationnWrapper> {
   @override
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();

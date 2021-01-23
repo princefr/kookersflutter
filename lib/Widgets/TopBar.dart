@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,8 +37,9 @@ class TopBarChat extends PreferredSize {
   final bool isRightIcon;
   final IconData rightIcon;
   final Function onTapRight;
+  final imageUrl;
   final double height;
-  const TopBarChat({Key key, @required this.displayname, this.isRightIcon, this.rightIcon, this.onTapRight, this.height});
+  const TopBarChat({Key key, @required this.displayname, this.isRightIcon, this.rightIcon, this.onTapRight, this.height, this.imageUrl});
 
   @override
   Size get preferredSize => Size.fromHeight(height);
@@ -52,7 +54,7 @@ class TopBarChat extends PreferredSize {
           title: Row(children: [
             CircleAvatar(
                 radius: 20,
-                backgroundImage: NetworkImage("https://t1.gstatic.com/images?q=tbn:ANd9GcRgexJ5aVLMRh8pTx4ktKg3JtDIFtxPR7DCPXkbqoUSA1vx6RBwb4TUGLKMW5fl"),
+                backgroundImage: CachedNetworkImageProvider(this.imageUrl),
             ),
             SizedBox(width: 10),
             Text(this.displayname, style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w400, color: Colors.black))

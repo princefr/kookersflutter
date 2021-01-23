@@ -1,5 +1,6 @@
 
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
@@ -8,7 +9,6 @@ import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql/client.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/MessageInput.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Messages/isRead.dart';
@@ -31,17 +31,18 @@ class _ChatPageState extends State<ChatPage> {
 
 
 
-Future<void> sendMessage(String message, String roomId, String userId, GraphQLClient client) async{
+Future<void> sendMessage(String message, String roomId, String userId, GraphQLClient client, String usertoken) async{
   final MutationOptions _options  = MutationOptions(
     documentNode: gql(r"""
-      mutation SendMEssage($message: String!, $roomId: ID!, $userId: String!, $createdAt: String!){
-            sendMessage(message: {message: $message, roomId: $roomId, userId: $userId, createdAt: $createdAt})
+      mutation SendMEssage($message: String!, $roomId: ID!, $userId: String!, $createdAt: String!, $receiver_push_token: String!){
+            sendMessage(message: {message: $message, roomId: $roomId, userId: $userId, createdAt: $createdAt, receiver_push_token: $receiver_push_token})
         }
     """),
     variables:  <String, String> {
       "message": message,
       "roomId": roomId,
       "userId": userId,
+      'receiver_push_token' : usertoken,
       "createdAt": DateTime.now().toIso8601String()
     }
   );
@@ -62,30 +63,9 @@ final BehaviorSubject<String> messageToSend = BehaviorSubject<String>();
   int _limit = 20;
   final int _limitIncrement = 20;
 
-  _scrollListener() {
-    if (_controller.offset >=
-            _controller.position.maxScrollExtent &&
-        !_controller.position.outOfRange) {
-      print("reach the bottom");
-      setState(() {
-        print("reach the bottom");
-        this._limit += this._limitIncrement;
-      });
-    }
-    if (_controller.offset <=
-            _controller.position.minScrollExtent &&
-        !_controller.position.outOfRange) {
-      print("reach the top");
-      setState(() {
-        print("reach the top");
-      });
-    }
-  }
-
 @override
   void initState(){
     focusNode.addListener(onFocusChange);
-    _controller.addListener(_scrollListener);
     super.initState();
   }
 
@@ -128,11 +108,13 @@ final BehaviorSubject<String> messageToSend = BehaviorSubject<String>();
 
   @override
   Widget build(BuildContext context) {
+   
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
     
     return GraphQLConsumer(builder: (GraphQLClient client) {
       return Scaffold(
         appBar: TopBarChat(displayname: this.widget.room.receiver.firstName + " " + this.widget.room.receiver.lastName, rightIcon: CupertinoIcons.exclamationmark_circle_fill,
+        imageUrl: this.widget.room.receiver.photoUrl,
         height: 54,
                 isRightIcon: true,
                 onTapRight: () {}),
@@ -143,7 +125,8 @@ final BehaviorSubject<String> messageToSend = BehaviorSubject<String>();
                         this.focusNode.unfocus();
                         }
                     },
-                    child: Subscription("getMEssagedAdded",
+                    child: Subscription(
+                      "getMEssagedAdded",
                     subscribeToNewMessage,
                     variables: <String, String> {
                       "roomID": this.widget.room.id
@@ -207,8 +190,7 @@ final BehaviorSubject<String> messageToSend = BehaviorSubject<String>();
                                         child: ListTile(
                                           leading: CircleAvatar(
                                             radius: 30,
-                                            backgroundImage: NetworkImage(
-                                                "https://t1.gstatic.com/images?q=tbn:ANd9GcRgexJ5aVLMRh8pTx4ktKg3JtDIFtxPR7DCPXkbqoUSA1vx6RBwb4TUGLKMW5fl"),
+                                            backgroundImage: CachedNetworkImageProvider(this.widget.room.receiver.photoUrl),
                                           ),
                                           title: Column(
                                             children: [
@@ -244,7 +226,7 @@ final BehaviorSubject<String> messageToSend = BehaviorSubject<String>();
                                 print("attachment was clicked");
                               }, onSendingClicked: (){
                                 this.textEditingController.text = "";
-                                this.sendMessage(this.messageToSend.value, this.widget.room.id, databaseService.user.value.id, client).then((value){
+                                this.sendMessage(this.messageToSend.value, this.widget.room.id, databaseService.user.value.id, client, this.widget.room.receiver.notificationToken).then((value){
                                   this.messageToSend.add(null);
                                 });
                               },)

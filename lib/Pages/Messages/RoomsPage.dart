@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 
-
 class RoomsPage extends StatefulWidget {
   RoomsPage({Key key}) : super(key: key);
 
@@ -15,22 +14,24 @@ class RoomsPage extends StatefulWidget {
   _RoomsPageState createState() => _RoomsPageState();
 }
 
-class _RoomsPageState extends State<RoomsPage> {
+class _RoomsPageState extends State<RoomsPage> with AutomaticKeepAliveClientMixin<RoomsPage> {
+
+
+
 
   @override
   void initState() {
-    new Future.delayed(Duration.zero, (){
-      final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
-      databaseService.loadrooms();
-    });
+    print("called");
     super.initState();
   }
 
-  final   RefreshController _refreshController =
+  final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   @override
   Widget build(BuildContext context) {
+     print("chat is called again");
+    super.build(context);
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
 
@@ -39,9 +40,9 @@ class _RoomsPageState extends State<RoomsPage> {
           child: Column(
         children: [
           PageTitle(title: "Messages"),
-          
           Expanded(
             child: StreamBuilder<List<Room>>(
+                initialData: databaseService.rooms.value,
                 stream: databaseService.rooms.stream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting)
@@ -57,11 +58,11 @@ class _RoomsPageState extends State<RoomsPage> {
                   return SmartRefresher(
                     enablePullDown: true,
                     controller: this._refreshController,
-                    onRefresh: (){
+                    onRefresh: () {
                       databaseService.loadrooms().then((value) {
                         Future.delayed(Duration(milliseconds: 500))
-                                    .then((value) {
-                                  _refreshController.refreshCompleted();
+                            .then((value) {
+                          _refreshController.refreshCompleted();
                         });
                       });
                     },
@@ -77,4 +78,7 @@ class _RoomsPageState extends State<RoomsPage> {
       ));
     });
   }
+
+  @override
+bool get wantKeepAlive => true;
 }

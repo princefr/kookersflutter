@@ -1,6 +1,7 @@
 import 'package:dart_geohash/dart_geohash.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:kookers/Pages/Balance/BalancePage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
@@ -456,7 +457,6 @@ class OrderInput {
 
 
 class  Transaction {
-
     String id;
     String object;
     int amount;
@@ -469,10 +469,11 @@ class  Transaction {
     String reportingCategory;
     String type;
     String status;
+    String currencySymbol;
 
 
 
-    Transaction({this.amount, this.availableOn, this.created, this.currency, this.description, this.fee, this.id, this.net, this.object, this.reportingCategory, this.status, this.type});
+    Transaction({this.amount, this.availableOn, this.created, this.currency, this.description, this.fee, this.id, this.net, this.object, this.reportingCategory, this.status, this.type, this.currencySymbol});
 
   static Transaction fromJson(Map<String, dynamic> map) => Transaction(
     id: map["id"],
@@ -486,7 +487,8 @@ class  Transaction {
     net: map["net"],
     reportingCategory: map["reporting_category"],
     type: map["type"],
-    status: map["status"]
+    status: map["status"],
+    currencySymbol: NumberFormat.simpleCurrency(locale: "fr").currencySymbol
   );
 
 
@@ -634,6 +636,7 @@ class DatabaseProviderService {
                                   last_name
                                   phonenumber
                                   photoUrl
+                                  fcmToken
                               }
                               
                               messages {
@@ -744,7 +747,9 @@ class DatabaseProviderService {
 
 
   Future<List<Transaction>> getBalanceTransactions() async {
-    final QueryOptions _options = QueryOptions(documentNode: gql(r"""
+    final QueryOptions _options = QueryOptions(
+      fetchPolicy: FetchPolicy.cacheAndNetwork,
+      documentNode: gql(r"""
           query GetBalanceTransaction($accountId: String!) {
             getBalanceTransaction(accountId: $accountId){
               id
@@ -946,7 +951,7 @@ Future<List<Order>>  loadbuyerOrders() {
 
   Future<List<PublicationVendor>>  loadSellerPublications() {
   final QueryOptions _options = QueryOptions(
-      fetchPolicy: FetchPolicy.cacheFirst,
+      fetchPolicy: FetchPolicy.cacheAndNetwork,
       documentNode: gql(r'''
                 query Order($uid: String!) {
                       getpublicationOwned(userId: $uid){
@@ -985,7 +990,7 @@ Future<List<Order>>  loadbuyerOrders() {
 
   Future<UserDef> loadUserData(String uid) {
   final QueryOptions _options = QueryOptions(
-    fetchPolicy: FetchPolicy.cacheFirst,
+    fetchPolicy: FetchPolicy.cacheAndNetwork,
     documentNode: gql(r"""
             query GetIfUSerExist($uid: String!) {
                 usersExist(firebase_uid: $uid){

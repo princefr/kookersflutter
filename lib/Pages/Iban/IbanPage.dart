@@ -34,48 +34,68 @@ class _AddIbanPageState extends State<AddIbanPage> {
       final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
       
     
-    return Material(
-          child: SafeArea(
-              child: Container(
-              height: 300,
-              child: Column(children: [
-                
-                SizedBox(height: 20),
-                Text("Ajouter un iban", style: GoogleFonts.montserrat(fontSize: 20),),
+    return Scaffold(
+          body: SafeArea(
+                      child: Container(
+            child: Column(children: [
 
-                SizedBox(height: 30),
               Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: IbanFormField(
-                    onSaved: (Iban iban){
-                    this.iban = iban.basicBankAccountNumber;
-                    },
-                    initialValue: Iban('FR'),
-
-                ),
+                padding: const EdgeInsets.only(top: 10),
+                child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    height: 7,
+                    width: 80),
               ),
               
+            SizedBox(height: 30),
+            Text("Ajouter un iban", style: GoogleFonts.montserrat(fontSize: 20),),
 
-              Expanded(child: SizedBox()),
+              SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: IbanFormField(
+                  onSaved: (Iban iban){
+                  this.iban = iban.basicBankAccountNumber;
+                  },
+                  initialValue: Iban('FR'),
 
-              StreamButton(buttonColor: Color(0xFFF95F5F),
-                                   buttonText: "Ajouter l'iban",
-                                   errorText: "Une erreur s'est produite",
-                                   loadingText: "Ajout en cours",
-                                   successText: "Iban ajouté",
-                                    controller: _streamButtonController, onClick: () async {
+              ),
+            ),
 
-                                      _streamButtonController.isLoading();
-                                      databaseService.createBankAccount("FR1420041010050500013M02606").then((value) {
-                                          _streamButtonController.isSuccess();
-                                      }).catchError((onError) {
-                                         _streamButtonController.isError();
-                                      });
-                                      
-                                    })
+                                
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(child: Text(
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
+                        style: GoogleFonts.montserrat(
+                            decoration: TextDecoration.none,
+                            color: Colors.black,
+                            fontSize: 10))),
+                                ),
+            
+
+            Expanded(child: SizedBox()),
+
+            StreamButton(buttonColor: Color(0xFFF95F5F),
+                                 buttonText: "Ajouter l'iban",
+                                 errorText: "Une erreur s'est produite",
+                                 loadingText: "Ajout en cours",
+                                 successText: "Iban ajouté",
+                                  controller: _streamButtonController, onClick: () async {
+
+                                    _streamButtonController.isLoading();
+                                    databaseService.createBankAccount("FR1420041010050500013M02606").then((value) {
+                                        _streamButtonController.isSuccess();
+                                    }).catchError((onError) {
+                                       _streamButtonController.isError();
+                                    });
+                                    
+                                  })
 
 
-            ],)
+              ],)
         ),
           ),
     );
@@ -114,6 +134,7 @@ class _IbanPageState extends State<IbanPage> {
             isRightIcon: true,
             height: 54,
             onTapRight: () {
+
         showCupertinoModalBottomSheet(
               expand: false,
               context: context,
@@ -121,22 +142,24 @@ class _IbanPageState extends State<IbanPage> {
                                   );
             }),
             
-            body: StreamBuilder<List<BankAccount>>(
-                stream: databaseService.userBankAccounts.stream,
-                builder: (context, snapshot) {
-                  if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
-                  if(snapshot.hasError) return Text("i've a bad felling");
-                  if(snapshot.data.isEmpty) return Text("its empty out there");
-                  return ListView.builder(
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (ctx, index){
-                      return ListTile(
-                        title: Text("*************" + " " + snapshot.data[index].last4),
-                        trailing: Icon(CupertinoIcons.check_mark_circled, color: Colors.green,),
-                      );
-                  });
-                }
-              ),
+            body: SafeArea(
+              child: StreamBuilder<List<BankAccount>>(
+                  stream: databaseService.userBankAccounts.stream,
+                  builder: (context, snapshot) {
+                    if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
+                    if(snapshot.hasError) return Text("i've a bad felling");
+                    if(snapshot.data.isEmpty) return Text("its empty out there");
+                    return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (ctx, index){
+                        return ListTile(
+                          title: Text("*************" + " " + snapshot.data[index].last4),
+                          trailing: Icon(CupertinoIcons.check_mark_circled, color: Colors.green,),
+                        );
+                    });
+                  }
+                ),
+            ),
     );
   }
 }

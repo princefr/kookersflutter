@@ -1,16 +1,113 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:shimmer/shimmer.dart';
 
+class TransationItemShimmer extends StatelessWidget {
+  const TransationItemShimmer({Key key}) : super(key: key);
 
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+          ),
+          child: Icon(
+            CupertinoIcons.arrow_down_circle_fill,
+            color: Colors.green[200],
+            size: 30,
+          )),
+      title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                ),
+                child: Text("transaction.type",
+                    style: GoogleFonts.montserrat(fontSize: 15))),
 
+                    SizedBox(height: 10),
+            Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                ),
+                child: Text("transaction.id",
+                    style: GoogleFonts.montserrat(fontSize: 12))),
+          ]),
+      trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                ),
+                child:
+                    Text("17 €", style: GoogleFonts.montserrat(fontSize: 17))),
+                    SizedBox(height: 10),
+            Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                ),
+                child: Text("11/06/2021",
+                    style: GoogleFonts.montserrat(fontSize: 12)))
+          ]),
+    );
+  }
+}
+
+class TransationItem extends StatelessWidget {
+  final Transaction transaction;
+  const TransationItem({Key key, this.transaction}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: this.transaction.type == "payment"
+          ? Icon(
+              CupertinoIcons.arrow_down_circle_fill,
+              color: Colors.green[200],
+              size: 30,
+            )
+          : Icon(
+              CupertinoIcons.arrow_up_right_circle_fill,
+              color: Colors.red[200],
+              size: 30,
+            ),
+      title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(transaction.type, style: GoogleFonts.montserrat(fontSize: 15)),
+            Text(transaction.id, style: GoogleFonts.montserrat(fontSize: 12)),
+          ]),
+      trailing: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              (this.transaction.net / 100).toString() +
+                  " " +
+                  this.transaction.currencySymbol,
+              style: GoogleFonts.montserrat(fontSize: 17),
+            ),
+            Text(Jiffy.unix(this.transaction.created).yMd,
+                style: GoogleFonts.montserrat(fontSize: 12))
+          ]),
+    );
+  }
+}
 
 class Balance {
   int currentBalance;
@@ -18,19 +115,19 @@ class Balance {
   double totalBalance;
   String currency;
 
-
-  Balance({this.currency, this.currentBalance, this.pendingBalance, this.totalBalance});
-
+  Balance(
+      {this.currency,
+      this.currentBalance,
+      this.pendingBalance,
+      this.totalBalance});
 
   static Balance fromJson(Map<String, dynamic> map) => Balance(
-    currency: map["currency"],
-    pendingBalance: int.parse(map["pending_balance"]),
-    currentBalance: int.parse(map["current_balance"]),
-    totalBalance: (int.parse(map["pending_balance"]) + int.parse(map["current_balance"])) / 100
-
-  );
-
-
+      currency: map["currency"],
+      pendingBalance: int.parse(map["pending_balance"]),
+      currentBalance: int.parse(map["current_balance"]),
+      totalBalance: (int.parse(map["pending_balance"]) +
+              int.parse(map["current_balance"])) /
+          100);
 }
 
 class BalancePage extends StatefulWidget {
@@ -41,116 +138,172 @@ class BalancePage extends StatefulWidget {
 }
 
 class _BalancePageState extends State<BalancePage> {
-
   // ignore: close_sinks
-  BehaviorSubject<List<Transaction>> transactions = BehaviorSubject<List<Transaction>>();
+  BehaviorSubject<List<Transaction>> transactions =
+      BehaviorSubject<List<Transaction>>();
 
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
-@override
+  void refreshData(context) async {
+    final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: false);
+    List<Transaction> transactions =
+        await databaseService.getBalanceTransactions();
+    this.transactions.add(transactions);
+    Future.delayed(Duration(microseconds: 300)).then((value) {
+      _refreshController.refreshCompleted();
+    });
+  }
+
+  @override
   void initState() {
     new Future.delayed(Duration.zero, () async {
-      final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
-      List<Transaction> transactions =  await databaseService.getBalanceTransactions();
+      final databaseService =
+          Provider.of<DatabaseProviderService>(context, listen: false);
+      List<Transaction> transactions =
+          await databaseService.getBalanceTransactions();
       this.transactions.add(transactions);
     });
     super.initState();
   }
-  
 
   @override
   Widget build(BuildContext context) {
-    final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
+    final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: false);
     return GraphQLConsumer(builder: (GraphQLClient client) {
       return Scaffold(
           appBar: TopBarWitBackNav(
-            title: "Portefeuille",
-            rightIcon: CupertinoIcons.exclamationmark_circle_fill,
-            isRightIcon: false,
-            height: 54,
-            onTapRight: () {}),
-
+              title: "Portefeuille",
+              rightIcon: CupertinoIcons.exclamationmark_circle_fill,
+              isRightIcon: false,
+              height: 54,
+              onTapRight: () {}),
           body: SafeArea(
-              child: Container(
-            child: Column(children: [
-              Divider(),
+            child: Column(
+              children: [
+                Expanded(
+                  child: SmartRefresher(
+                    controller: this._refreshController,
+                    onRefresh: () {
+                      refreshData(context);
+                    },
+                    child: ListView(children: [
+                      Divider(),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
+                            child: Text(
+                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
+                                style: GoogleFonts.montserrat(
+                                    decoration: TextDecoration.none,
+                                    color: Colors.black,
+                                    fontSize: 10))),
+                      ),
+                      SizedBox(height: 50),
+                      Query(
+                        options: QueryOptions(documentNode: gql(r'''
+                            query GetAcountBalance($account_id: String!) {
+                                  accountbalance(account_id: $account_id) {
+                                    current_balance
+                                    pending_balance
+                                    currency
+                                  }
+                              }
+                            '''), variables: <String, String>{
+                          "account_id":
+                              databaseService.user.value.stripeaccountId,
+                        }),
+                        builder: (result, {fetchMore, refetch}) {
+                          if (result.hasException) {
+                            return Text(result.exception.toString());
+                          }
 
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(child: Text(
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
-                  style: GoogleFonts.montserrat(
-                      decoration: TextDecoration.none,
-                      color: Colors.black,
-                      fontSize: 10))),
+                          if (result.loading) {
+                            return Shimmer.fromColors(
+                                  child: Center(
+                            child: Container(
+                              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                ),
+                                padding: EdgeInsets.symmetric(horizontal: 40),
+                                child: Text(
+                                  "100 €",
+                                  style: GoogleFonts.montserrat(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w500),
+                                )),
                           ),
+                                  baseColor: Colors.grey[200],
+                                  highlightColor: Colors.grey[300]);
+                          }
 
-            SizedBox(height: 50),
-            Query(
-              options: QueryOptions(documentNode: gql(r'''
-                      query GetAcountBalance($account_id: String!) {
-                            accountbalance(account_id: $account_id) {
-                              current_balance
-                              pending_balance
-                              currency
-                            }
-                        }
-                      '''), variables: <String, String>{
-                "account_id": databaseService.user.value.stripeaccountId,
-              }),
+                          if (result.data == null) {
+                            return Text("no data");
+                          }
 
-              builder: (result, {fetchMore, refetch}) {
-                if (result.hasException) {
-                  return Text(result.exception.toString());
-                }
+                          Balance balance =
+                              Balance.fromJson(result.data["accountbalance"]);
 
-                if (result.loading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if(result.data == null){
-                  return Text("no data");
-                }
-
-                
-
-                Balance balance = Balance.fromJson(result.data["accountbalance"]);
-                //String symbol = NumberFormat.currency(name: databaseService.user.value.currency).currencySymbol;
-
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 40),
-                  child: Text(balance.totalBalance.toString(), style: GoogleFonts.montserrat(fontSize: 40, fontWeight: FontWeight.w600),));
-              },
+                          return Center(
+                            child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 40),
+                                child: Text(
+                                  balance.totalBalance.toString(),
+                                  style: GoogleFonts.montserrat(
+                                      fontSize: 40,
+                                      fontWeight: FontWeight.w500),
+                                )),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 40),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text("Transactions",
+                            style: GoogleFonts.montserrat(fontSize: 18)),
+                      ),
+                      SizedBox(height: 5),
+                      Divider(),
+                      StreamBuilder<List<Transaction>>(
+                          stream: this.transactions,
+                          builder: (context,
+                              AsyncSnapshot<List<Transaction>> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting)
+                              return Shimmer.fromColors(
+                                  child: ListView.builder(
+                                    physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                      itemCount: 10,
+                                      itemBuilder: (ctx, index) {
+                                        return TransationItemShimmer();
+                                      }),
+                                  baseColor: Colors.grey[200],
+                                  highlightColor: Colors.grey[300]);
+                            return ListView(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                children: snapshot.data
+                                    .map((e) => TransationItem(transaction: e))
+                                    .toList());
+                          }),
+                    ]),
+                  ),
+                ),
+                InkWell(
+                  onTap: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: KookersButton(
+                        text: "Retirer",
+                        color: Colors.black,
+                        textcolor: Colors.white),
+                  ),
+                )
+              ],
             ),
-
-            Expanded(child: 
-            StreamBuilder<List<Transaction>>(
-              stream: this.transactions,
-              builder: (context, AsyncSnapshot<List<Transaction>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator(),);
-                return ListView(
-                  children: snapshot.data.map((e) => ListTile(title: Text(e.net.toString()))).toList()
-                );
-              }
-            )
-            
-            ),
-
-            
-
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: KookersButton(
-                    text: "Retirer",
-                    color: Colors.black,
-                    textcolor: Colors.white),
-              ),
-            )
-        ]),
-      ),
           ));
     });
   }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,8 +10,9 @@ class Receiver {
   String lastName;
   String phonenumber;
   String photoUrl;
+  String notificationToken;
   Receiver(
-      {@required this.firstName, @required this.lastName, this.phonenumber, this.photoUrl});
+      {@required this.firstName, @required this.lastName, this.phonenumber, this.photoUrl, this.notificationToken});
 }
 
 
@@ -49,7 +51,7 @@ class Room {
 
         receiver: Receiver(
             firstName: map['receiver']["first_name"],
-            lastName: map['receiver']["last_name"], photoUrl: map['receiver']["photoUrl"])
+            lastName: map['receiver']["last_name"], photoUrl: map['receiver']["photoUrl"], notificationToken: map["receiver"]["fcmToken"])
         );
 
         return room;
@@ -192,15 +194,14 @@ class RoomItem extends StatelessWidget {
               style: GoogleFonts.montserrat(fontSize: 16),
             ),
             subtitle: Text(
-              "ondonda",
+              this.room.lastMessage,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 12),
+              style: TextStyle(fontSize: 14),
             ),
             leading: CircleAvatar(
               radius: 30,
-              backgroundImage: NetworkImage(
-                  this.room.receiver.photoUrl),
+              backgroundImage: CachedNetworkImageProvider(this.room.receiver.photoUrl),
             ),
             trailing: Column(
               crossAxisAlignment: CrossAxisAlignment.center,

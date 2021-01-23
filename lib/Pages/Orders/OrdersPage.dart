@@ -17,7 +17,7 @@ class OrdersPage extends StatefulWidget {
   _OrdersPageState createState() => _OrdersPageState();
 }
 
-class _OrdersPageState extends State<OrdersPage> {
+class _OrdersPageState extends State<OrdersPage> with AutomaticKeepAliveClientMixin<OrdersPage> {
 
     @override
   void initState() {
@@ -33,6 +33,7 @@ class _OrdersPageState extends State<OrdersPage> {
 
  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
     return GraphQLConsumer(builder: (GraphQLClient client) {
    return Container(
@@ -82,6 +83,9 @@ class _OrdersPageState extends State<OrdersPage> {
 
     });
   }
+
+    @override
+    bool get wantKeepAlive => true;
 }
 
 

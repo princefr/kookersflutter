@@ -144,29 +144,24 @@ class _SettingsState extends State<Settings> {
 
         Container(
           height: 130,
-          width: 130,
           margin: EdgeInsets.symmetric(vertical: 10.0),
           child: Stack(children: [
             Center(
-              child: Container(
-                  height: 120,
-                  width: 120,
-                  child: ClipOval(
-                    child: StreamBuilder(
-                      stream: databaseService.user.stream,
-                      builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                        if(snapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
-                        return CachedNetworkImage(imageUrl: snapshot.data.photoUrl,
-                                                  placeholder: (context, url) => CircularProgressIndicator(),
-                                                  errorWidget: (context, url, error) => Icon(Icons.error), height: 100, width:100);
-                      }
-                    ),
-                  ),
-                ),
+              child: StreamBuilder(
+                stream: databaseService.user.stream,
+                builder: (context, AsyncSnapshot<UserDef> snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
+                  return CircleAvatar(
+                  radius: 65,
+                backgroundImage: CachedNetworkImageProvider(snapshot.data.photoUrl,),
+              );
+                }
+              ),
             ),
+
             Positioned(
               bottom: 0,
-              left: 75,
+              left: 205,
               child: InkWell(
                 onTap: () {
                   this.getImage().then((file) => {

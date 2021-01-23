@@ -9,15 +9,6 @@ class NotificationService {
 
   Stream<String> get authStateChanges => messaging.onTokenRefresh;
 
-
-
-
-
-
-
-  
-
-
   // Any time the token refreshes, store this in the database too.
   //  FirebaseMessaging.instance.onTokenRefresh.listen(saveTokenToDatabase);
 

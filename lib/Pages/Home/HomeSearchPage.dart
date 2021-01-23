@@ -94,8 +94,8 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
 
     return GraphQLConsumer(builder: (GraphQLClient client) {
       final firebaseUser = context.read<User>();
-      return Material(
-        child: Container(
+      return Scaffold(
+        body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

@@ -25,6 +25,7 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+            
             backgroundColor: Colors.white,
             showUnselectedLabels: false,
             showSelectedLabels: true,
@@ -35,7 +36,7 @@ class BottomBar extends StatelessWidget {
             items: [
               _icons(CupertinoIcons.house_alt, "Accueuil"),
               _icons(CupertinoIcons.cart, "Achats"),
-              _icons(CupertinoIcons.arrow_down_circle_fill, "Mon magasin"),
+              _icons(CupertinoIcons.arrow_down_circle_fill, "Ventes"),
               _icons(CupertinoIcons.chat_bubble, "Messages"),
               _icons(CupertinoIcons.gear_alt, "Réglages"),
             ],

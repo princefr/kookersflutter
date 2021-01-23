@@ -40,27 +40,18 @@ class _HomeTopBarState extends State<HomeTopBar> {
                         fontWeight: FontWeight.w900,
                         fontSize: 30,
                         color: Colors.black)),
-                Container(
-                  height: 45,
-                  width: 45,
-                  child: ClipOval(
-                    child: StreamBuilder(
-                        stream: databaseService.user,
-                        builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting)
-                            return CircularProgressIndicator();
-                          return CachedNetworkImage(
-                              imageUrl: snapshot.data.photoUrl,
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                              height: 40,
-                              width: 40);
-                        }),
-                  ),
-                )
+                StreamBuilder(
+                    stream: databaseService.user,
+                    builder: (context, AsyncSnapshot<UserDef> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        return CircularProgressIndicator();
+                      return CircleAvatar(
+                        radius: 25,
+                        backgroundImage: CachedNetworkImageProvider(
+                          snapshot.data.photoUrl,
+                        ),
+                      );
+                    })
               ],
             ),
             Row(
@@ -91,8 +82,10 @@ class _HomeTopBarState extends State<HomeTopBar> {
                       );
                     },
                     title: StreamBuilder(
+                        initialData: null,
                         stream: databaseService.user,
                         builder: (context, AsyncSnapshot<UserDef> snapshot) {
+                          print(snapshot.connectionState);
                           if (snapshot.connectionState ==
                               ConnectionState.waiting)
                             return SizedBox(
@@ -124,19 +117,16 @@ class _HomeTopBarState extends State<HomeTopBar> {
   }
 }
 
-class HomePage extends StatefulWidget  {
+class HomePage extends StatefulWidget {
   HomePage({Key key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>   {
-
-  
-
+class _HomePageState extends State<HomePage> {
   @override
-  void initState() { 
+  void initState() {
     super.initState();
   }
 
@@ -145,90 +135,79 @@ class _HomePageState extends State<HomePage>   {
 
   @override
   Widget build(BuildContext context) {
-
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
 
-      return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Color(0xFFF95F5F),
-          onPressed: () {
-            showCupertinoModalBottomSheet(
-              expand: true,
-              context: context,
-              builder: (context) => HomePublish(),
-            );
-          },
-          child: Icon(CupertinoIcons.pencil, size: 34.0, color: Colors.white),
-        ),
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Container(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  HomeTopBar(),
-                  Divider(),
-                  StreamBuilder<List<PublicationHome>>(
-                      stream: databaseService.publications$,
-                      builder: (context, snapshot) {
-                        print("streambuilder is rebuilded");
-                        if (snapshot.connectionState == ConnectionState.waiting)
-                          return Expanded(
-                            child: Shimmer.fromColors(
-                                child: ListView.builder(
-                                    itemCount: 10,
-                                    itemBuilder: (ctx, index) {
-                                      return FoodItemShimmer();
-                                    }),
-                                baseColor: Colors.grey[200],
-                                highlightColor: Colors.grey[300]),
-                          );
-                        if (snapshot.hasError)
-                          return Text("i've a bad felling");
-                        if (snapshot.data.isEmpty)
-                          return Text("its empty out there");
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Color(0xFFF95F5F),
+        onPressed: () {
+          showCupertinoModalBottomSheet(
+            expand: true,
+            context: context,
+            builder: (context) => HomePublish(),
+          );
+        },
+        child: Icon(CupertinoIcons.pencil, size: 34.0, color: Colors.white),
+      ),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Container(
+            color: Colors.white,
+            child: Column(
+              children: [
+                HomeTopBar(),
+                Divider(),
+                StreamBuilder<List<PublicationHome>>(
+                    stream: databaseService.publications$,
+                    initialData: databaseService.publications.value,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting)
                         return Expanded(
-                          child: SmartRefresher(
-                            onRefresh: () {
-                              databaseService.loadPublication().then((value) {
-                                Future.delayed(Duration(milliseconds: 500))
-                                    .then((value) {
-                                  _refreshController.refreshCompleted();
-                                });
-                              });
-                            },
-                            enablePullDown: true,
-                            controller: this._refreshController,
-                            child: ListView.builder(
-                              key: PageStorageKey<String>('controllerA'),
-                                addAutomaticKeepAlives: true,
-                                addRepaintBoundaries: false,
-                                itemCount: snapshot.data.length,
-                                itemBuilder: (ctx, index) {
-
-                                  
-
-                                  return FoodItem(
-                                      
-                                      publication: snapshot.data[index],
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            CupertinoPageRoute(
-                                                builder: (context) =>
-                                                    FoodItemChild(
-                                                        publication: snapshot
-                                                            .data[index])));
-                                      });
-                                }),
-                          ),
+                          child: Shimmer.fromColors(
+                              child: ListView.builder(
+                                  itemCount: 10,
+                                  itemBuilder: (ctx, index) {
+                                    return FoodItemShimmer();
+                                  }),
+                              baseColor: Colors.grey[200],
+                              highlightColor: Colors.grey[300]),
                         );
-                      }),
-                ],
-              )),
-        ),
-      );
- 
+                      if (snapshot.hasError) return Text("i've a bad felling");
+                      if (snapshot.data.isEmpty)
+                        return Text("its empty out there");
+                      return Expanded(
+                        child: SmartRefresher(
+                          onRefresh: () {
+                            databaseService.loadPublication().then((value) {
+                              Future.delayed(Duration(milliseconds: 500))
+                                  .then((value) {
+                                _refreshController.refreshCompleted();
+                              });
+                            });
+                          },
+                          enablePullDown: true,
+                          controller: this._refreshController,
+                          child: ListView(
+                            children: snapshot.data
+                                .map((e) => FoodItem(
+                                    publication: e,
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                              builder: (context) =>
+                                                  FoodItemChild(
+                                                      publication: e)));
+                                    }))
+                                .toList(),
+                          ),
+                        ),
+                      );
+                    }),
+              ],
+            )),
+      ),
+    );
   }
 }
