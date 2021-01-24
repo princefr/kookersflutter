@@ -7,6 +7,7 @@ import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/subjects.dart';
 
 
 
@@ -26,7 +27,8 @@ class _AddIbanPageState extends State<AddIbanPage> {
     super.initState();
   }
 
-  String iban = "";
+  // ignore: close_sinks
+  BehaviorSubject<Iban> iban = BehaviorSubject<Iban>();
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +57,23 @@ class _AddIbanPageState extends State<AddIbanPage> {
               SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: IbanFormField(
-                  onSaved: (Iban iban){
-                  this.iban = iban.basicBankAccountNumber;
-                  },
-                  initialValue: Iban('FR'),
+              child: StreamBuilder<Iban>(
+                stream: this.iban.stream,
+                builder: (context, snapshot) {
+                  return IbanFormField(
+                      onSaved: this.iban.add,
+                      initialValue: Iban('FR'),
+                      validator: (Iban iban) {
+                      if (!iban.isValid) {
+                        print("not valid");
+                      return 'This IBAN is not valid';
+                    }
+                    print("iban is valid");
+                    return null;
+                      },
 
+                  );
+                }
               ),
             ),
 
@@ -85,12 +98,14 @@ class _AddIbanPageState extends State<AddIbanPage> {
                                  successText: "Iban ajouté",
                                   controller: _streamButtonController, onClick: () async {
 
-                                    _streamButtonController.isLoading();
-                                    databaseService.createBankAccount("FR1420041010050500013M02606").then((value) {
-                                        _streamButtonController.isSuccess();
-                                    }).catchError((onError) {
-                                       _streamButtonController.isError();
-                                    });
+                                    print(this.iban.value);
+
+                                    // _streamButtonController.isLoading();
+                                    // databaseService.createBankAccount("FR1420041010050500013M02606").then((value) {
+                                    //     _streamButtonController.isSuccess();
+                                    // }).catchError((onError) {
+                                    //    _streamButtonController.isError();
+                                    // });
                                     
                                   })
 

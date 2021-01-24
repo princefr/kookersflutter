@@ -16,8 +16,10 @@ class IsReadWidget extends StatelessWidget {
     return Builder(builder: (BuildContext cxt){
       if(this.isSent == true && this.isRead == false){
         return Icon(Icons.check, size: 17);
-      }else {
+      }else if(this.isSent == true && this.isRead == true) {
         return Icon(Icons.done_all, size: 17);
+      }else{
+        return SizedBox();
       }
     });
   }

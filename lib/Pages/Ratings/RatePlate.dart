@@ -39,7 +39,9 @@ Future<void> rateFood(GraphQLClient client, RatingInput rating) async {
 }
 
 
+// ignore: close_sinks
 BehaviorSubject<double> initialRate = BehaviorSubject<double>.seeded(3.0);
+// ignore: close_sinks
 BehaviorSubject<String> comment = BehaviorSubject<String>();
   StreamButtonController _streamButtonController = StreamButtonController();
 

@@ -22,6 +22,8 @@ final host = '921f6bd6742b.ngrok.io/graphql';
 final graphqlEndpoint = 'https://$host';
 final subscriptionEndpoint = 'wss://$host';
 
+RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print("Handling a background message: ${message.messageId}");
@@ -40,28 +42,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider<AuthentificationService>(create: (_) => AuthentificationService(firebaseAuth: FirebaseAuth.instance)),
-        StreamProvider(create: (context) => context.read<AuthentificationService>().authStateChanges),
-        Provider<NotificationService>(create: (_) => NotificationService(messaging: FirebaseMessaging.instance)),
-        Provider<StorageService>(create: (_) => StorageService(storage: firebase_storage.FirebaseStorage.instance)),
-        Provider< DatabaseProviderService>(create: (_) =>  DatabaseProviderService()),
-        Provider< PublicationProvider>(create: (_) =>  PublicationProvider()),
-        Provider<OrderProvider>(create: (_) =>  OrderProvider()),
-        Provider<PhoneAuthBloc>(create: (_) =>  PhoneAuthBloc()),
-        Provider<SignupBloc>(create: (_) =>  SignupBloc()),
-        Provider<ErrorBar>(create: (_) =>  ErrorBar()),
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+          child: MultiProvider(
+        providers: [
+          Provider<AuthentificationService>(create: (_) => AuthentificationService(firebaseAuth: FirebaseAuth.instance)),
+          StreamProvider(create: (context) => context.read<AuthentificationService>().authStateChanges),
+          Provider<NotificationService>(create: (_) => NotificationService(messaging: FirebaseMessaging.instance)),
+          Provider<StorageService>(create: (_) => StorageService(storage: firebase_storage.FirebaseStorage.instance)),
+          Provider< DatabaseProviderService>(create: (_) =>  DatabaseProviderService()),
+          Provider< PublicationProvider>(create: (_) =>  PublicationProvider()),
+          Provider<OrderProvider>(create: (_) =>  OrderProvider()),
+          Provider<PhoneAuthBloc>(create: (_) =>  PhoneAuthBloc()),
+          Provider<SignupBloc>(create: (_) =>  SignupBloc()),
+          Provider<ErrorBar>(create: (_) =>  ErrorBar()),
 
-        
-      ],
-      child: ClientProvider(
-        uri: graphqlEndpoint,
-        subscriptionUri: subscriptionEndpoint,
-        child: MaterialApp(
-        color: Colors.white,
-        title: 'Kookers',
-        home: AuthentificationnWrapper(),
+          
+        ],
+        child: ClientProvider(
+          uri: graphqlEndpoint,
+          subscriptionUri: subscriptionEndpoint,
+          child: MaterialApp(
+          color: Colors.white,
+          title: 'Kookers',
+          home: AuthentificationnWrapper(),
+          ),
         ),
       ),
     );
@@ -81,10 +88,48 @@ class _AuthentificationnWrapperState extends State<AuthentificationnWrapper> {
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();
     if(firebaseUser != null) {
-      return Provider<User>.value(value: firebaseUser, child: GestureDetector(onTap: (){FocusScope.of(context).requestFocus(new FocusNode());}, child: TabHome()));
+      return Provider<User>.value(value: firebaseUser, child: TabHome());
     }
     
     return GestureDetector(onTap: (){FocusScope.of(context).requestFocus(new FocusNode());}, child: OnBoardingPager());
     
+  }
+}
+
+
+
+abstract class RouteAwareState<T extends StatefulWidget> extends State<T>
+    with RouteAware {
+  @override
+  void didChangeDependencies() {
+    routeObserver.subscribe(this, ModalRoute.of(context)); //Subscribe it here
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didPush() {
+    print('didPush $widget');
+  }
+
+  @override
+  void didPopNext() {
+    print("did pop from $widget");
+    //print('didPopNext $widget');
+  }
+
+  @override
+  void didPop() {
+    print('didPop $widget');
+  }
+
+  @override
+  void didPushNext() {
+    print('didPushNext $widget');
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
   }
 }

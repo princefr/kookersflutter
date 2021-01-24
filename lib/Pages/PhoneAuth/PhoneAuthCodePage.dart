@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Signup/SignupPage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
-import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:kookers/TabHome/TabHome.dart';
 import 'package:kookers/Widgets/TopBar.dart';

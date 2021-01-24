@@ -579,10 +579,31 @@ class DatabaseProviderService {
   BehaviorSubject<List<Order>> buyerOrders = new BehaviorSubject<List<Order>>();
   
 
+  // ignore: close_sinks
   BehaviorSubject<List<BankAccount>> userBankAccounts = new BehaviorSubject<List<BankAccount>>();
+  
 
 
+  // ignore: close_sinks
   BehaviorSubject<List<Room>> rooms = new BehaviorSubject<List<Room>>();
+
+  // ignore: close_sinks
+  BehaviorSubject<List<Message>> messagesInRoom = BehaviorSubject<List<Message>>();
+
+  void getRoom(String roomId) => this.rooms.stream.map((event) => event.firstWhere((Room element) => element.id == roomId)).listen((event) => messagesInRoom.sink.add(event.messages));
+
+
+  //Stream<Message> getLastMessage(String roomId) => this.rooms.stream.map((event) => event.firstWhere((element) => element.id == roomId).messages.first);
+
+  Stream<Message> get getLastMessage => this.messagesInRoom.last.asStream().map((event) => event.last);
+
+
+  void updateSingleRoom(String roomId, Message message) {
+    this.rooms.value.singleWhere((element) => element.id == roomId).messages.insert(0, message);
+    this.rooms.sink.add(this.rooms.value);
+  }
+
+
 
     final OptimisticCache cache = OptimisticCache(
       dataIdFromObject: typenameDataIdFromObject,
@@ -621,9 +642,12 @@ class DatabaseProviderService {
   }
 
 
+
+
+
   Future<List<Room>>  loadrooms() {
   final QueryOptions _options = QueryOptions(
-      fetchPolicy: FetchPolicy.cacheAndNetwork,
+      fetchPolicy: FetchPolicy.networkOnly,
       documentNode: gql( r'''
                   query GetUserRoom($uid: String!) {
                         getUserRooms(userId: $uid){
@@ -655,10 +679,26 @@ class DatabaseProviderService {
 
         return _client().query(_options).then((result) {
             List<Room> list = Room.fromJsonToList(result.data["getUserRooms"], this.user.value.id);
-            rooms.add(list);
+            rooms.sink.add(list);
             return list;
             
         });
+  }
+
+    Future<void> setIschatAreRead(String roomId) async {
+        final MutationOptions _options  = MutationOptions(
+      documentNode: gql(r"""
+        mutation UpdateAllMessageForUser($userID: String!, $roomId: String!){
+              updateAllMessageForUser(userID: $userID, roomId: $roomId)
+          }
+      """),
+      variables:  <String, String> {
+        "userID": this.user.value.id,
+        "roomId": roomId,
+      }
+    );
+
+    return await _client().mutate(_options).then((result) =>  result.data["updateAllMessageForUser"]);
   }
 
 

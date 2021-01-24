@@ -21,7 +21,6 @@ class _RoomsPageState extends State<RoomsPage> with AutomaticKeepAliveClientMixi
 
   @override
   void initState() {
-    print("called");
     super.initState();
   }
 
@@ -30,7 +29,6 @@ class _RoomsPageState extends State<RoomsPage> with AutomaticKeepAliveClientMixi
 
   @override
   Widget build(BuildContext context) {
-     print("chat is called again");
     super.build(context);
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
@@ -54,7 +52,8 @@ class _RoomsPageState extends State<RoomsPage> with AutomaticKeepAliveClientMixi
                             }),
                         baseColor: Colors.grey[200],
                         highlightColor: Colors.grey[300]);
-                  if (snapshot.data.isEmpty) return Text("this is empty");
+                  if(snapshot.hasError) return Text("i've a bad felling");
+                  if(snapshot.data.isEmpty) return Text("its empty out there");
                   return SmartRefresher(
                     enablePullDown: true,
                     controller: this._refreshController,
@@ -69,7 +68,7 @@ class _RoomsPageState extends State<RoomsPage> with AutomaticKeepAliveClientMixi
                     child: ListView.builder(
                         itemCount: snapshot.data.length,
                         itemBuilder: (context, index) {
-                          return RoomItem(room: snapshot.data[index]);
+                          return RoomItem(room: snapshot.data[index], index: index,);
                         }),
                   );
                 }),

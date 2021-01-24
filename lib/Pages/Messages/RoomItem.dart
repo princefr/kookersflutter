@@ -72,16 +72,18 @@ class Room {
 class Message {
   String userId;
   String message;
+  String roomId;
   String createdAt;
   String messagePicture;
   bool isSent;
   bool isRead;
+  String receiverPushToken;
 
   Message(
       {@required this.userId,
       @required this.message,
       @required this.createdAt,
-      this.messagePicture, this.isRead, this.isSent});
+      this.messagePicture, this.isRead, this.isSent, this.receiverPushToken, this.roomId});
 
   static List<Message> fromJSON(List<Object> map) {
     List<Message> messages = [];
@@ -99,8 +101,19 @@ class Message {
         ));
       });
     }
-
     return messages;
+  }
+
+
+  Map<String, dynamic> toJSON(){
+    Map<String, dynamic> data = Map<String, dynamic>();
+    data["userId"] = this.userId;
+    data["message"] = this.message;
+    data["message_picture"] = this.messagePicture;
+    data["createdAt"] = this.createdAt;
+    data["receiver_push_token"] = this.receiverPushToken;
+    data["roomId"] = this.roomId;
+    return data;
   }
 }
 
@@ -180,7 +193,8 @@ class RoomItemShimmer extends StatelessWidget {
 
 class RoomItem extends StatelessWidget {
   final Room room;
-  const RoomItem({Key key, @required this.room}) : super(key: key);
+  final int index;
+  const RoomItem({Key key, @required this.room, this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

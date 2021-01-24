@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Ratings/RatePlate.dart';
@@ -188,12 +189,11 @@ final MutationOptions _options  = MutationOptions(
                   Divider(),
 
                   ListTile(
-                    // onTap: (){
-                    //   this.createRoom(client, this.widget.order.buyerID, databaseService.user.value.id).then((result) => Navigator.push(context,
-                    //         CupertinoPageRoute(
-                    //           builder: (context) => ChatPage(room: result))));
-                    //       }),
-                    // }
+                    onTap: (){
+                      this.createRoom(client, this.widget.order.sellerId, databaseService.user.value.id).then((result) => Navigator.push(context,
+                            CupertinoPageRoute(
+                              builder: (context) => ChatPage(room: result))));
+                    },
                     leading: CircleAvatar(radius: 15, backgroundImage: NetworkImage(this.widget.order.seller.photoUrl),),
                     trailing: Icon(CupertinoIcons.chat_bubble),
                     title: Text(this.widget.order.seller.firstName + " " + this.widget.order.seller.lastName)

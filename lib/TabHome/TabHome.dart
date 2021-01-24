@@ -65,8 +65,11 @@ class _TabHomeState extends State<TabHome>  with AutomaticKeepAliveClientMixin<T
       //   color: Colors.blue[300],
       //   ),
       //   flushbarStyle: FlushbarStyle.FLOATING, duration: Duration(seconds: 3),).show(context);
-      databaseService.loadrooms();
-      print("get new remote message");
+      // databaseService.loadrooms();
+      if(event.data["type"] == "new_message") {
+        print("i'm loading the rooms");
+        databaseService.loadrooms();
+      }
     });
 
     this._controller = PageController(initialPage: 0);
