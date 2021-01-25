@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:dart_geohash/dart_geohash.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:kookers/GraphQlHelpers/ClientProvider.dart';
 import 'package:kookers/Pages/Balance/BalancePage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
@@ -572,11 +575,35 @@ class DatabaseProviderService {
   // ignore: close_sinks
   BehaviorSubject<List<PublicationVendor>> sellerPublications = new BehaviorSubject<List<PublicationVendor>>();
 
+  // ignore: close_sinks
+  BehaviorSubject<PublicationVendor> insellerPublication;
+  StreamSubscription<PublicationVendor> getinPublicationSeller(String orderId, BehaviorSubject<PublicationVendor> pub){
+    this.insellerPublication = pub;
+    return this.sellerPublications.map((event) => event.firstWhere((order) => order.id == orderId)).listen((event) => insellerPublication.sink.add(event));
+  }
+
+
+
     // ignore: close_sinks
   BehaviorSubject<List<OrderVendor>> sellerOrders = new BehaviorSubject<List<OrderVendor>>();
+  // ignore: close_sinks
+  BehaviorSubject<OrderVendor> inOrderSeller;
+  StreamSubscription<OrderVendor> getOrderSeller(String orderId, BehaviorSubject<OrderVendor> sellorders){
+    this.inOrderSeller = sellorders;
+    return this.sellerOrders.map((event) => event.firstWhere((order) => order.id == orderId)).listen((event) => inOrderSeller.sink.add(event));
+  }
+
+
 
       // ignore: close_sinks
   BehaviorSubject<List<Order>> buyerOrders = new BehaviorSubject<List<Order>>();
+        // ignore: close_sinks
+  BehaviorSubject<Order> inOrderBuyer;
+  StreamSubscription<Order> getOrderBuyer(String orderId, BehaviorSubject<Order> order){
+    this.inOrderBuyer = order;
+    return this.buyerOrders.map((event) => event.firstWhere((order) => order.id == orderId)).listen((event) => inOrderBuyer.sink.add(event));
+  }
+
   
 
   // ignore: close_sinks
@@ -588,14 +615,14 @@ class DatabaseProviderService {
   BehaviorSubject<List<Room>> rooms = new BehaviorSubject<List<Room>>();
 
   // ignore: close_sinks
-  BehaviorSubject<List<Message>> messagesInRoom = BehaviorSubject<List<Message>>();
+  BehaviorSubject<List<Message>> messagesInRoom;
 
-  void getRoom(String roomId) => this.rooms.stream.map((event) => event.firstWhere((Room element) => element.id == roomId)).listen((event) => messagesInRoom.sink.add(event.messages));
-
-
+  StreamSubscription<Room> getRoom(String roomId, BehaviorSubject<List<Message>> messages) {
+    this.messagesInRoom = messages;
+    return this.rooms.stream.map((event) => event.firstWhere((Room element) => element.id == roomId)).listen((event) => messagesInRoom.sink.add(event.messages));
+  }
   //Stream<Message> getLastMessage(String roomId) => this.rooms.stream.map((event) => event.firstWhere((element) => element.id == roomId).messages.first);
-
-  Stream<Message> get getLastMessage => this.messagesInRoom.last.asStream().map((event) => event.last);
+  Stream<Message> get unreadMessage => this.messagesInRoom.map((event) => event.firstWhere((message) => message.userId != this.user.value.id && message.isRead == false, orElse: () => null));
 
 
   void updateSingleRoom(String roomId, Message message) {
@@ -609,36 +636,87 @@ class DatabaseProviderService {
       dataIdFromObject: typenameDataIdFromObject,
     );
 
-    GraphQLClient _client() {
-      final host = '921f6bd6742b.ngrok.io/graphql';
-      final graphqlEndpoint = 'https://$host';
-      final HttpLink _httpLink = HttpLink(
-        uri: graphqlEndpoint,
+
+
+     GraphQLClient _client = clientFor(uri: "https://921f6bd6742b.ngrok.io/graphql", subscriptionUri: 'wss://921f6bd6742b.ngrok.io/graphql').value;
+
+     
+
+    Future<String> updatedDefaultSource(source) async {
+          final MutationOptions _options  = MutationOptions(
+        documentNode: gql(r"""
+          mutation UpdateDefaultSource($userId: String!, $source: String!){
+                updateDefaultSource(userId: $userId, source: $source)
+            }
+        """),
+        variables:  <String, String> {
+          "userId": this.user.value.id,
+          "source": source,
+        }
       );
 
+      return await _client.mutate(_options).then((result) =>  result.data["updateDefaultSource"]);
+    }
 
-    return GraphQLClient(
-      cache: cache,
-      link: _httpLink,
-    );
+
+    String subscribeToNewMessage = r"""
+      subscription getMEssagedAdded($roomID: ID!)  {
+        messageAdded(roomID: $roomID) {
+          userId
+          message
+          createdAt
+          message_picture
+        }
+      }
+""";
+
+
+  String subscribeToMessageRead = r"""
+      subscription getMessageRead($roomID: ID!)  {
+        messageRead(roomID: $roomID)
+      }
+""";
+
+  String subscribeToUserWriting = r"""
+      subscription getUserIsWriting($roomID: ID!)  {
+        userIsWriting(roomID: $roomID)
+      }
+""";
+
+
+
+
+
+  StreamSubscription<void> newMessageStream(String roomID) {
+      final Operation _options = Operation(
+        operationName: "getMEssagedAdded",
+        documentNode: gql(subscribeToNewMessage),
+        variables: <String, String>{"roomID": roomID},
+      );
+
+    return this._client.subscribe(_options).listen((event) => event.data);
   }
 
 
+  StreamSubscription<void> messageReadStream(String roomID) {
+      final Operation _options = Operation(
+        operationName: "getMessageRead",
+        documentNode: gql(subscribeToMessageRead),
+        variables: <String, String>{"roomID": roomID},
+      );
 
-  Future<String> updatedDefaultSource(source) async {
-        final MutationOptions _options  = MutationOptions(
-      documentNode: gql(r"""
-        mutation UpdateDefaultSource($userId: String!, $source: String!){
-              updateDefaultSource(userId: $userId, source: $source)
-          }
-      """),
-      variables:  <String, String> {
-        "userId": this.user.value.id,
-        "source": source,
-      }
-    );
+    return this._client.subscribe(_options).listen((event) => event.data);
+  }
 
-    return await _client().mutate(_options).then((result) =>  result.data["updateDefaultSource"]);
+
+  StreamSubscription<void> userIsWritingStream(String roomID){
+      final Operation _options = Operation(
+        operationName: "getUserIsWriting",
+        documentNode: gql(subscribeToUserWriting),
+        variables: <String, String>{"roomID": roomID},
+      );
+
+    return this._client.subscribe(_options).listen((event) => event.data);
   }
 
 
@@ -677,7 +755,7 @@ class DatabaseProviderService {
           'uid': this.user.value.id
         });
 
-        return _client().query(_options).then((result) {
+        return this._client.query(_options).then((result) {
             List<Room> list = Room.fromJsonToList(result.data["getUserRooms"], this.user.value.id);
             rooms.sink.add(list);
             return list;
@@ -698,7 +776,7 @@ class DatabaseProviderService {
       }
     );
 
-    return await _client().mutate(_options).then((result) =>  result.data["updateAllMessageForUser"]);
+    return await this._client.mutate(_options).then((result) =>  result.data["updateAllMessageForUser"]);
   }
 
 
@@ -714,7 +792,7 @@ class DatabaseProviderService {
             }
             );
 
-    return _client().mutate(_options).then((value) => value.data["createOrder"]);
+    return _client.mutate(_options).then((value) => value.data["createOrder"]);
   }
 
 
@@ -738,7 +816,7 @@ class DatabaseProviderService {
         }
         );
 
-    return _client().mutate(_options).then((result) => result.data["createBankAccountOnConnect"]);
+    return _client.mutate(_options).then((result) => result.data["createBankAccountOnConnect"]);
   }
 
 
@@ -761,7 +839,7 @@ class DatabaseProviderService {
         }
         );
 
-    return _client().query(_options).then((result) => result.data["getPayoutList"]);
+    return _client.query(_options).then((result) => result.data["getPayoutList"]);
   }
 
   Future<List<BankAccount>> listExternalAccount() async {
@@ -782,7 +860,7 @@ class DatabaseProviderService {
         }
         );
 
-    return _client().query(_options).then((result) => BankAccount.fromJsonToList(result.data["listExternalAccount"]));
+    return _client.query(_options).then((result) => BankAccount.fromJsonToList(result.data["listExternalAccount"]));
   }
 
 
@@ -812,7 +890,7 @@ class DatabaseProviderService {
         }
         );
 
-    return _client().query(_options).then((result) =>Transaction.fromJsonToList(result.data["getBalanceTransaction"]));
+    return _client.query(_options).then((result) =>Transaction.fromJsonToList(result.data["getBalanceTransaction"]));
   }
 
 
@@ -837,7 +915,7 @@ class DatabaseProviderService {
         }
         );
 
-    return _client().mutate(_options).then((result) => result.data["createReport"]);
+    return _client.mutate(_options).then((result) => result.data["createReport"]);
   }
 
 
@@ -863,7 +941,7 @@ class DatabaseProviderService {
       }
     );
 
-    return await _client().mutate(_options);
+    return await _client.mutate(_options);
 }
 
 
@@ -889,7 +967,7 @@ class DatabaseProviderService {
       }
     );
 
-    return await _client().mutate(_options).then((value) => value.data["createBankAccountOnConnect"]);
+    return await _client.mutate(_options).then((value) => value.data["createBankAccountOnConnect"]);
 }
 
 Future<List<Order>>  loadbuyerOrders() {
@@ -925,7 +1003,7 @@ Future<List<Order>>  loadbuyerOrders() {
           'uid': this.user.value.id
         });
 
-        return _client().query(_options).then((result) {
+        return _client.query(_options).then((result) {
             List<Order> list = Order.fromJsonToList(result.data["getOrderOwnedBuyer"]);
             buyerOrders.add(list);
             return list;
@@ -979,7 +1057,7 @@ Future<List<Order>>  loadbuyerOrders() {
           'uid': this.user.value.id
         });
 
-        return _client().query(_options).then((result) {
+        return _client.query(_options).then((result) {
             List<OrderVendor> list = OrderVendor.fromJsonToList(result.data["getOrderOwnedSeller"]);
             sellerOrders.add(list);
             return list;
@@ -1020,7 +1098,7 @@ Future<List<Order>>  loadbuyerOrders() {
           'uid': this.user.value.id
         });
 
-        return _client().query(_options).then((result) {
+        return _client.query(_options).then((result) {
             List<PublicationVendor> list = PublicationVendor.fromJsonToList(result.data["getpublicationOwned"]);
             sellerPublications.add(list);
             return list;
@@ -1066,7 +1144,7 @@ Future<List<Order>>  loadbuyerOrders() {
       
 
 
-      return _client().query(_options).then((kooker) {
+      return _client.query(_options).then((kooker) {
                   final kookersUser = UserDef.fromJson(kooker.data["usersExist"]);
                   this.user.add(kookersUser);
                 return kookersUser;
@@ -1144,7 +1222,7 @@ Future<List<Order>>  loadbuyerOrders() {
         "userId": this.user.value.id
       });
 
-      return _client().query(_options).then((publicationsObject) {
+      return _client.query(_options).then((publicationsObject) {
         final publicationsall = PublicationHome.fromJsonToList(publicationsObject.data["getPublicationViaGeo"]);
         this.publications.add(publicationsall);
         return publicationsall;
@@ -1169,7 +1247,7 @@ Future<List<Order>>  loadbuyerOrders() {
         'customer_id': this.user.value.customerId,
       });
 
-      return _client().query(_options).then((sourceList) {
+      return _client.query(_options).then((sourceList) {
         final sourceAll = CardModel.fromJsonTolist(sourceList.data["getAllCardsForCustomer"]);
         this.sources.add(sourceAll);
         return sourceAll;

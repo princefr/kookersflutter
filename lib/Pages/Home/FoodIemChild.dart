@@ -1,11 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
 import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
@@ -31,31 +31,26 @@ class ChooseDatePage extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.all(Radius.circular(10))),
-                    height: 7,
-                    width: 80),
-              ),
-              SizedBox(height: 30),
-
-            Expanded(
-                    child: CupertinoDatePicker(
-                    use24hFormat: true,
-                    mode: CupertinoDatePickerMode.dateAndTime,
-                    minimumDate: DateTime.now().add(Duration(hours: 3)),
-                    initialDateTime: DateTime.now().add(Duration(hours: 3)),
-                    onDateTimeChanged: (DateTime newDateTime){
-                      this.date = newDateTime;
-                    }),
+              padding: const EdgeInsets.only(top: 10),
+              child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  height: 7,
+                  width: 80),
             ),
-
+            SizedBox(height: 30),
+            Expanded(
+              child: CupertinoDatePicker(
+                  use24hFormat: true,
+                  mode: CupertinoDatePickerMode.dateAndTime,
+                  minimumDate: DateTime.now().add(Duration(hours: 3)),
+                  initialDateTime: DateTime.now().add(Duration(hours: 3)),
+                  onDateTimeChanged: (DateTime newDateTime) {
+                    this.date = newDateTime;
+                  }),
+            ),
             SizedBox(height: 20),
-
-            
-
             FlatButton(
                 onPressed: () {
                   Navigator.pop(context, this.date);
@@ -64,8 +59,7 @@ class ChooseDatePage extends StatelessWidget {
                     text: "Commander",
                     color: Colors.black,
                     textcolor: Colors.white)),
-
-                    SizedBox(height: 20),
+            SizedBox(height: 20),
           ],
         ));
   }
@@ -166,11 +160,9 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
   final stripeService = StripeServices();
 
- 
-
   double percentage(percent, total) {
-  return (percent / 100) * total;
-}
+    return (percent / 100) * total;
+  }
 
   StreamButtonController _streamButtonController = StreamButtonController();
 
@@ -189,21 +181,32 @@ class _FoodItemChildState extends State<FoodItemChild> {
             rightIcon: CupertinoIcons.heart),
         body: Container(
           child: ListView(children: [
-
-            CarouselSlider(items: this.widget.publication.photoUrls.map((e) {
-              return Image(
-              
-              width: MediaQuery.of(context).size.width,
-              fit: BoxFit.cover,
-              image: CachedNetworkImageProvider(e),
-            );
-            }).toList(),
-             options: CarouselOptions(height: 300.0, aspectRatio: 16/9, enlargeCenterPage: true, initialPage: 0,
-             enableInfiniteScroll: false,)),
-
-            
-
-
+            CarouselSlider(
+                items: this.widget.publication.photoUrls.map((e) {
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => FullScreenImage(url: e)));
+                    },
+                    child: Hero(
+                      tag: e,
+                      child: Image(
+                        width: MediaQuery.of(context).size.width,
+                        fit: BoxFit.cover,
+                        image: CachedNetworkImageProvider(e),
+                      ),
+                    ),
+                  );
+                }).toList(),
+                options: CarouselOptions(
+                  height: 300.0,
+                  aspectRatio: 16 / 9,
+                  enlargeCenterPage: true,
+                  initialPage: 0,
+                  enableInfiniteScroll: false,
+                )),
             Row(
               children: [
                 Expanded(
@@ -213,68 +216,82 @@ class _FoodItemChildState extends State<FoodItemChild> {
                       style: GoogleFonts.montserrat(
                           fontSize: 26, color: Colors.grey)),
                 )),
-                
                 Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Stepper(quantity: orderProvider.quantity)),
               ],
             ),
-
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Text(this.widget.publication.description),
             ),
-
             Container(
-                height: 40,
-                child: Builder(builder: (BuildContext ctx) {
-                  if(this.widget.publication.preferences.any((element) => element.isSelected == true)){
-                    return ListView.builder(
+              height: 40,
+              child: Builder(builder: (BuildContext ctx) {
+                if (this
+                    .widget
+                    .publication
+                    .preferences
+                    .any((element) => element.isSelected == true)) {
+                  return ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: this.widget.publication.preferences.where((element) => element.isSelected == true).toList().length,
-                      itemBuilder: (ctx, index){
+                      itemCount: this
+                          .widget
+                          .publication
+                          .preferences
+                          .where((element) => element.isSelected == true)
+                          .toList()
+                          .length,
+                      itemBuilder: (ctx, index) {
                         return Padding(
-                          padding: const EdgeInsets.only(left: 5, right: 5, top: 3),
+                          padding:
+                              const EdgeInsets.only(left: 5, right: 5, top: 3),
                           child: Container(
-                                  decoration: BoxDecoration(
+                              decoration: BoxDecoration(
                                   color: Colors.green[100],
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
-                    ), padding: EdgeInsets.all(10), child: Text(this.widget.publication.preferences.where((element) => element.isSelected == true).elementAt(index).title)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0))),
+                              padding: EdgeInsets.all(10),
+                              child: Text(this
+                                  .widget
+                                  .publication
+                                  .preferences
+                                  .where(
+                                      (element) => element.isSelected == true)
+                                  .elementAt(index)
+                                  .title)),
                         );
-                    });
-                  }else{
-                    return Container(height: 40, child: Text("Sans préférences"), decoration: BoxDecoration(
-                                  color: Colors.green[100],
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
-                    ),);
-                  }
-                }),
-              ),
-
+                      });
+                } else {
+                  return Container(
+                    height: 40,
+                    child: Text("Sans préférences"),
+                    decoration: BoxDecoration(
+                        color: Colors.green[100],
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  );
+                }
+              }),
+            ),
             Divider(),
-
             StreamBuilder<DateTime>(
-              stream: orderProvider.deliveryDate.stream,
-              builder: (context, AsyncSnapshot<DateTime> snapshot) {
-                return ListTile(
+                stream: orderProvider.deliveryDate.stream,
+                builder: (context, AsyncSnapshot<DateTime> snapshot) {
+                  return ListTile(
                     onTap: () async {
-                     DateTime date =  await showCupertinoModalBottomSheet(
-                            expand: false,
-                            context: context,
-                            builder: (context) => ChooseDatePage(),
-                          );
-                          
-                    orderProvider.deliveryDate.add(date);
+                      DateTime date = await showCupertinoModalBottomSheet(
+                        expand: false,
+                        context: context,
+                        builder: (context) => ChooseDatePage(),
+                      );
+
+                      orderProvider.deliveryDate.add(date);
                     },
                     leading: Icon(CupertinoIcons.calendar),
                     title: Text("Retrait"),
                     trailing: Text(snapshot.data.toString()),
-                    );
-              }
-            ),
-
-            
-
+                  );
+                }),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Align(
@@ -286,59 +303,73 @@ class _FoodItemChildState extends State<FoodItemChild> {
                           color: Colors.black,
                           fontSize: 10))),
             ),
-
-            SizedBox(height: 30,),
-
+            SizedBox(
+              height: 30,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 17),
               child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text("Méthodes de paiements",
-                                      style: GoogleFonts.montserrat(
-                                          decoration: TextDecoration.none,
-                                          color: Colors.black,
-                                          fontSize: 15))),
+                  alignment: Alignment.centerLeft,
+                  child: Text("Méthodes de paiements",
+                      style: GoogleFonts.montserrat(
+                          decoration: TextDecoration.none,
+                          color: Colors.black,
+                          fontSize: 15))),
             ),
             Divider(),
-
-            SizedBox(height: 10,),
-
-
+            SizedBox(
+              height: 10,
+            ),
             Container(
               child: StreamBuilder(
-                stream: databaseService.sources.stream,
-                builder: (context, AsyncSnapshot<List<CardModel>> snapshot) {
-                  if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
-                  if(snapshot.data.isEmpty) return ListTile(leading: Icon(CupertinoIcons.creditcard), trailing: Icon(CupertinoIcons.plus), title: Text("Ajouter un moyen de paiement"), onTap: (){
-                    stripeService.registrarCardWithForm().then((paymentMethod) {
-                    databaseService.addattachPaymentToCustomer(paymentMethod.id).then((value) {
-                      databaseService.loadSourceList();
-                    });
-                  });
-                  },);
+                  stream: databaseService.sources.stream,
+                  builder: (context, AsyncSnapshot<List<CardModel>> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting)
+                      return LinearProgressIndicator();
+                    if (snapshot.data.isEmpty)
+                      return ListTile(
+                        leading: Icon(CupertinoIcons.creditcard),
+                        trailing: Icon(CupertinoIcons.plus),
+                        title: Text("Ajouter un moyen de paiement"),
+                        onTap: () {
+                          stripeService
+                              .registrarCardWithForm()
+                              .then((paymentMethod) {
+                            databaseService
+                                .addattachPaymentToCustomer(paymentMethod.id)
+                                .then((value) {
+                              databaseService.loadSourceList();
+                            });
+                          });
+                        },
+                      );
 
-                  CardModel cardChosed = snapshot.data.firstWhere((element) => element.id == databaseService.user.value.defaultSource);
+                    CardModel cardChosed = snapshot.data.firstWhere((element) =>
+                        element.id == databaseService.user.value.defaultSource);
 
-                  return ListTile(
-                    trailing: Icon(CupertinoIcons.check_mark_circled, color: Colors.green,),
-                    onTap: (){
-                      Navigator.push(context,
-                                            CupertinoPageRoute(
-                                                builder: (context) =>
-                                                    PaymentMethodPage()));
-                    },
-                    leading: Image.asset('assets/payments_logo/${cardChosed.brand}.png'),
-                    title: Text(cardChosed.last4));
-                }
-              ),
+                    return ListTile(
+                        trailing: Icon(
+                          CupertinoIcons.check_mark_circled,
+                          color: Colors.green,
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) => PaymentMethodPage()));
+                        },
+                        leading: Image.asset(
+                            'assets/payments_logo/${cardChosed.brand}.png'),
+                        title: Text(cardChosed.last4));
+                  }),
             ),
-
-            SizedBox(height: 30,),
-
+            SizedBox(
+              height: 30,
+            ),
             ListTile(
               leading: CircleAvatar(
                 backgroundImage:
-                    NetworkImage(this.widget.publication.seller.photoUrl),
+                    CachedNetworkImageProvider(this.widget.publication.seller.photoUrl),
               ),
               title: Align(
                 alignment: Alignment.centerLeft,
@@ -381,31 +412,37 @@ class _FoodItemChildState extends State<FoodItemChild> {
             ),
             Divider(),
             SizedBox(height: 10),
-
             StreamBuilder(
                 stream: orderProvider.isAllFilled$,
                 builder: (context, AsyncSnapshot<bool> snapshot) {
-                  return
-
-                  StreamButton(buttonColor: snapshot.data != null ? Color(0xFFF95F5F) : Colors.grey,
-                                 buttonText: "Acheter",
-                                 errorText: "Une erreur s'est produite",
-                                 loadingText: "Achat en cours",
-                                 successText: "Plat acheté",
-                                  controller: _streamButtonController, onClick: () async {
-                                    
-                                    if(snapshot.data != null) {
-                                      _streamButtonController.isLoading();
-                                      final total = orderProvider.quantity.value * 15;
-                                      final totalPlusFees = total + this.percentage(20, total).toInt();
-                                      final order = await orderProvider.validate(databaseService, this.widget.publication, totalPlusFees);
-                                      databaseService.createOrder(order).then((value) => {
-                                           _streamButtonController.isSuccess()     
-                                      }).catchError((onError){
-                                        _streamButtonController.isError();
-                                      });
-                                  }
-                                  });
+                  return StreamButton(
+                      buttonColor: snapshot.data != null
+                          ? Color(0xFFF95F5F)
+                          : Colors.grey,
+                      buttonText: "Acheter",
+                      errorText: "Une erreur s'est produite",
+                      loadingText: "Achat en cours",
+                      successText: "Plat acheté",
+                      controller: _streamButtonController,
+                      onClick: () async {
+                        if (snapshot.data != null) {
+                          _streamButtonController.isLoading();
+                          final total = orderProvider.quantity.value * 15;
+                          final totalPlusFees =
+                              total + this.percentage(20, total).toInt();
+                          final order = await orderProvider.validate(
+                              databaseService,
+                              this.widget.publication,
+                              totalPlusFees);
+                          databaseService
+                              .createOrder(order)
+                              .then((value) =>
+                                  {_streamButtonController.isSuccess()})
+                              .catchError((onError) {
+                            _streamButtonController.isError();
+                          });
+                        }
+                      });
                 }),
           ]),
         ),

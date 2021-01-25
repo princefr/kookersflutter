@@ -97,7 +97,9 @@ class _StreamButtonState extends State<StreamButton> {
     return ValueListenableBuilder(
       valueListenable: this.widget.controller.status,
       builder: (BuildContext context, StreamButtonState state, Widget child){
-        return Container(
+        return AnimatedContainer(
+          curve: Curves.easeIn,
+          duration: Duration(milliseconds: 600),
           child: Builder(builder: (ctx) {
                 switch (state) {
                   case StreamButtonState.Normal:

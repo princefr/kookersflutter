@@ -45,6 +45,7 @@ class _TabHomeState extends State<TabHome>  with AutomaticKeepAliveClientMixin<T
           databaseService.loadSellerPublications();
           databaseService.loadSellerOrders();
           databaseService.loadrooms();
+          databaseService.loadSourceList();
           notificationService.messaging.subscribeToTopic("new_message");
           notificationService.messaging.subscribeToTopic("new_order");
           notificationService.messaging.subscribeToTopic("order_update");
@@ -100,14 +101,22 @@ class _TabHomeState extends State<TabHome>  with AutomaticKeepAliveClientMixin<T
             ],
           ),
         ),
-        bottomNavigationBar:
-            StreamBuilder<int>(
+        bottomNavigationBar: new Theme(data:Theme.of(context).copyWith(
+        // sets the background color of the `BottomNavigationBar`
+        canvasColor: Colors.white,
+        // sets the active color of the `BottomNavigationBar` if `Brightness` is light
+        primaryColor: Colors.white,
+        textTheme: Theme
+            .of(context)
+            .textTheme
+            .copyWith(caption: new TextStyle(color: Colors.white))),
+        child: StreamBuilder<int>(
               stream: _selectedIndex.stream,
               builder: (context, snapshot) {
                 if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                 return BottomBar(onTap: _onItemTapped, selectedIndex: snapshot.data);
               }
-            ),
+            )),
       );
 
   }

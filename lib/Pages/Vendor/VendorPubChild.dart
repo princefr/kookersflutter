@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
-import 'package:kookers/Widgets/KookersButton.dart';
+import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
+import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 
 
 class VendorPubPage extends StatefulWidget {
@@ -35,9 +40,39 @@ class _VendorPubPageState extends State<VendorPubPage> {
 
     return client.mutate(_options).then((value) => value.data["closePublication"]["is_open"]);
   }
+
+  @override
+  void initState() { 
+
+    Future.delayed(Duration.zero, (){
+      final databaseService =
+          Provider.of<DatabaseProviderService>(context, listen: false);
+          this.publicationSubscription = databaseService.getinPublicationSeller(this.widget.publication.id, this.publication);
+    });
+    super.initState();
+  }
+
+  StreamSubscription<PublicationVendor> publicationSubscription;
+  // ignore: close_sinks
+  BehaviorSubject<PublicationVendor>  publication = new BehaviorSubject<PublicationVendor>();
+
+  String successText = "";
+
+
+  @override
+  void dispose() { 
+    this.publication.close();
+    this.publicationSubscription.cancel();
+    super.dispose();
+  }
+
+  StreamButtonController _streamButtonController = StreamButtonController();
   
   @override
   Widget build(BuildContext context) {
+    final databaseService =
+          Provider.of<DatabaseProviderService>(context, listen: false);
+
     return GraphQLConsumer(builder: (GraphQLClient client) {
         return Scaffold(
           appBar: TopBarWitBackNav(
@@ -53,12 +88,23 @@ class _VendorPubPageState extends State<VendorPubPage> {
               children: [
                 
                 CarouselSlider(items: this.widget.publication.photoUrls.map((e) {
-                  return Image(
-                  
-                  width: MediaQuery.of(context).size.width,
-                  fit: BoxFit.cover,
-                  image: CachedNetworkImageProvider(e),
-                );
+                  return InkWell(
+                    onTap: (){
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => FullScreenImage(url: e)));
+                    },
+                                      child: Hero(
+                                        tag: e,
+                                                                              child: Image(
+                    
+                    width: MediaQuery.of(context).size.width,
+                    fit: BoxFit.cover,
+                    image: CachedNetworkImageProvider(e),
+                ),
+                                      ),
+                  );
                 }).toList(),
                 options: CarouselOptions(height: 300.0, aspectRatio: 16/9, enlargeCenterPage: true, initialPage: 0,
                 enableInfiniteScroll: false,)),
@@ -149,13 +195,41 @@ class _VendorPubPageState extends State<VendorPubPage> {
 
 
               SizedBox(height: 40),
+
+
+
+              StreamBuilder<PublicationVendor>(
+                stream: this.publication.stream,
+                builder: (context, snapshot) {
+                             if (snapshot.connectionState ==
+                                    ConnectionState.waiting)
+                                  return LinearProgressIndicator();
+                                if (snapshot.hasError)
+                                  return Text("i've a bad felling");
+                                if (snapshot.data == null)
+                                  return Text("its empty out there");
+                  return StreamButton(buttonColor: snapshot.data.isOpen ? Colors.red : Colors.green,
+                                     buttonText: snapshot.data.isOpen ? "Fermer la vente" : "Ouvrir la vente",
+                                     errorText: "Une erreur s'est produite, reesayer",
+                                     loadingText: snapshot.data.isOpen ? "Fermeture en cours" : "Ouverture en cours",
+                                     successText: "effectuée",
+                                      controller: _streamButtonController, onClick: () async {
+                                        _streamButtonController.isLoading();
+                                       this.cLosePublication(client, this.widget.publication.id, !this.widget.publication.isOpen).then((value){
+                                        //this.widget.publication.isOpen = value;
+                                        databaseService.loadSellerPublications();
+                                        _streamButtonController.isSuccess();
+                                        
+                                      }).catchError((err){
+                                        _streamButtonController.isError();
+                                      });
+                  });
+                }
+              ),
+              
                 
 
-                FlatButton(onPressed: (){
-                      this.cLosePublication(client, this.widget.publication.id, !this.widget.publication.isOpen).then((value) => {
-                        this.widget.publication.isOpen = value
-                      });
-                }, child: KookersButton(text: this.widget.publication.isOpen == true? "Fermer la vente" : "Ouvrir la vente", color: Colors.black, textcolor: Colors.white))
+
 
 
                 

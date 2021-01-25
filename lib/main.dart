@@ -65,6 +65,7 @@ class MyApp extends StatelessWidget {
           uri: graphqlEndpoint,
           subscriptionUri: subscriptionEndpoint,
           child: MaterialApp(
+          
           color: Colors.white,
           title: 'Kookers',
           home: AuthentificationnWrapper(),
@@ -79,11 +80,15 @@ class MyApp extends StatelessWidget {
 class AuthentificationnWrapper extends StatefulWidget {
   AuthentificationnWrapper({Key key}): super(key: key);
 
+
+
   @override
   _AuthentificationnWrapperState createState() => _AuthentificationnWrapperState();
 }
 
 class _AuthentificationnWrapperState extends State<AuthentificationnWrapper> {
+
+  
   @override
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();
@@ -105,6 +110,9 @@ abstract class RouteAwareState<T extends StatefulWidget> extends State<T>
     routeObserver.subscribe(this, ModalRoute.of(context)); //Subscribe it here
     super.didChangeDependencies();
   }
+
+
+  
 
   @override
   void didPush() {

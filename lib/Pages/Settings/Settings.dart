@@ -15,6 +15,7 @@ import 'package:kookers/Widgets/PageTitle.dart';
 import 'dart:io';
 
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsItemWithLeftIcon extends StatelessWidget {
   final Function onTap;
@@ -210,9 +211,21 @@ class _SettingsState extends State<Settings> {
                 CupertinoPageRoute(builder: (context) => IbanPage()))),
 
         SettingsItem(
-            onTap: () {}, buttonText: "Conditions générale d'utilisation"),
-        SettingsItem(onTap: () {}, buttonText: "Politique de confidentialité"),
-        SettingsItem(onTap: () {}, buttonText: "Gestion des cookies"),
+            onTap: () {
+              launch("https://kookers-4e54e.firebaseapp.com/#/terms");
+              
+            }, buttonText: "Conditions générale d'utilisation"),
+        SettingsItem(onTap: () {
+
+        }, buttonText: "Politique de confidentialité"),
+        SettingsItem(onTap: () {
+          launch("http://google.com");
+        }, buttonText: "Gestion des cookies"),
+
+                SettingsItem(onTap: () {
+          launch("https://kookers-4e54e.firebaseapp.com/#/guidelines");
+        }, buttonText: "Règles de la communauté"),
+
         SettingsItem(onTap: () {
             print("i'm signign out");
             authentificationService.signOut();

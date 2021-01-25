@@ -152,6 +152,10 @@ class _VendorPageState extends State<VendorPage>
           initialData: this.initialLabel.value,
           stream: this.initialLabel.stream,
           builder: (context, AsyncSnapshot<int> snapshot) {
+            if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
+            if (snapshot.hasError) return Text("i've a bad felling");
+            if (!snapshot.hasData)
+                        return Text("its empty out there");
             return ToggleSwitch(
               inactiveBgColor: Colors.grey[300],
               activeBgColor: Color(0xFFF95F5F),

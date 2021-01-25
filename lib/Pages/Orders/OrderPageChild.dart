@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chips_choice/chips_choice.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +18,7 @@ import 'package:kookers/Widgets/TopBar.dart';
 import 'package:kookers/Pages/Reports/ReportPage.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 
 class OrderPageChild extends StatefulWidget {
   final Order order;
@@ -25,6 +29,32 @@ class OrderPageChild extends StatefulWidget {
 }
 
 class _OrderPageChildState extends State<OrderPageChild> {
+
+
+  StreamSubscription<Order> orderSubscription;
+  // ignore: close_sinks
+  BehaviorSubject<Order>  order = new BehaviorSubject<Order>();
+
+
+  @override
+  void initState() { 
+        Future.delayed(Duration.zero, (){
+      final databaseService =
+          Provider.of<DatabaseProviderService>(context, listen: false);
+          this.orderSubscription = databaseService.getOrderBuyer(this.widget.order.id, this.order);
+    });
+    super.initState();
+    
+  }
+
+
+
+  @override
+  void dispose() { 
+    this.orderSubscription.cancel();
+    this.order.close();
+    super.dispose();
+  }
 
     List<String> tagfood = ['Végétarien', 'Vegan'];
     List<String> foodpreferences = [
@@ -150,7 +180,7 @@ final MutationOptions _options  = MutationOptions(
               height: 300,
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.cover,
-              image: NetworkImage(
+              image: CachedNetworkImageProvider(
               'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
             ),
 
@@ -217,97 +247,109 @@ final MutationOptions _options  = MutationOptions(
 
                   SizedBox(height:30),
 
-                  Builder(
-                    // ignore: missing_return
-                    builder: (context) {
-                      switch (this.widget.order.orderState) {
-                        case OrderState.ACCEPTED:
-                          return Container(child: Column(
-                            children: [
-                              StreamButton(buttonColor: Color(0xFFF95F5F),
-                                 buttonText: "Valider la reception",
-                                 errorText: "Une erreur s'est produite",
-                                 loadingText: "Validation en cours",
-                                 successText: "Commande validée",
-                                  controller: _streamButtonController, onClick: () async {
-                                    _streamButtonController.isLoading();
-                                    this.doneOrder(client, this.widget.order).then((result) {
-                                      _streamButtonController.isSuccess();
-                                      setState(() {
-                                        this.widget.order.orderState = EnumToString.fromString(OrderState.values, result["orderState"]);
-                                      });
-                                    }).catchError((err) {
-                                      _streamButtonController.isError();
-                                    });
-                                    
-                                    
-                              }),
+                  StreamBuilder<Order>(
+                    stream: this.order,
+                    builder: (context, snapshot) {
+                      return Builder(
+                        // ignore: missing_return
+                        builder: (context) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting)
+                                  return LinearProgressIndicator();
+                                if (snapshot.hasError)
+                                  return Text("i've a bad felling");
+                                if (snapshot.data == null)
+                                  return Text("its empty out there"); 
+                          switch (snapshot.data.orderState) {
+                            case OrderState.ACCEPTED:
+                              return Container(child: Column(
+                                children: [
+                                  StreamButton(buttonColor: Color(0xFFF95F5F),
+                                     buttonText: "Valider la reception",
+                                     errorText: "Une erreur s'est produite",
+                                     loadingText: "Validation en cours",
+                                     successText: "Commande validée",
+                                      controller: _streamButtonController, onClick: () async {
+                                        _streamButtonController.isLoading();
+                                        this.doneOrder(client, this.widget.order).then((result) {
+                                          _streamButtonController.isSuccess();
+                                          setState(() {
+                                            this.widget.order.orderState = EnumToString.fromString(OrderState.values, result["orderState"]);
+                                          });
+                                        }).catchError((err) {
+                                          _streamButtonController.isError();
+                                        });
+                                        
+                                        
+                                  }),
 
-                              SizedBox(height: 30),
+                                  SizedBox(height: 30),
 
-                              StreamButton(buttonColor: Colors.red,
-                                 buttonText: "Annuler la commande",
-                                 errorText: "Une erreur s'est produite",
-                                 loadingText: "Annulation en cours",
-                                 successText: "Commande annulée",
-                                  controller: _streamButtonController2, onClick: () async {
-                                    _streamButtonController2.isLoading();
-                                      this.cancelOrder(client, this.widget.order).then((result) {
-                                        _streamButtonController2.isSuccess();
-                                        setState(() {
-                                        this.widget.order.orderState = result["orderState"];
-                                      });
-                                        }).catchError((onError) {
-                                          _streamButtonController2.isError();
-                                      });
-                                    
-                              }),
-                            ]
-                          ));
-                          break;
-                        case OrderState.CANCELLED:
-                            return Text("La commande a été annulé");
-                          break;
-                        case OrderState.DONE:
-                          return FlatButton(onPressed: (){
-                            showCupertinoModalBottomSheet(
-                              expand: true,
-                              context: context,
-                              builder: (context) => RatePlate(order: this.widget.order),
-                            );
-                          }, child: KookersButton(text: "Noter le plat", color: Colors.black, textcolor: Colors.white));
-
-                          break;
-                        case OrderState.NOT_ACCEPTED:
-                          return Column(
-                            children: [
-                              Text("Commande en attente d'acceptation", style: GoogleFonts.montserrat(color: Colors.green,),),
-                              SizedBox(height: 10),
-                              StreamButton(buttonColor: Colors.red,
+                                  StreamButton(buttonColor: Colors.red,
                                      buttonText: "Annuler la commande",
                                      errorText: "Une erreur s'est produite",
                                      loadingText: "Annulation en cours",
                                      successText: "Commande annulée",
-                                      controller: _streamButtonController3, onClick: () async {
-                                        _streamButtonController3.isLoading();
-                                        this.cancelOrder(client, this.widget.order).then((value) {
-                                          _streamButtonController3.isSuccess();
-                                        }).catchError((onError) {
-                                          _streamButtonController3.isError();
-                                        });
+                                      controller: _streamButtonController2, onClick: () async {
+                                        _streamButtonController2.isLoading();
+                                          this.cancelOrder(client, this.widget.order).then((result) {
+                                            _streamButtonController2.isSuccess();
+                                            setState(() {
+                                            this.widget.order.orderState = result["orderState"];
+                                          });
+                                            }).catchError((onError) {
+                                              _streamButtonController2.isError();
+                                          });
                                         
                                   }),
-                            ],
-                          );
-                          break;
-                        case OrderState.RATED:
-                            return Text("La commande est livrée et livrée");
-                          break;
-                        case OrderState.REFUSED:
-                            return Text("La commande a été annulé");
-                          break;
-                      }
-                    },
+                                ]
+                              ));
+                              break;
+                            case OrderState.CANCELLED:
+                                return Text("La commande a été annulé");
+                              break;
+                            case OrderState.DONE:
+                              return FlatButton(onPressed: (){
+                                showCupertinoModalBottomSheet(
+                                  expand: true,
+                                  context: context,
+                                  builder: (context) => RatePlate(order: this.widget.order),
+                                );
+                              }, child: KookersButton(text: "Noter le plat", color: Colors.black, textcolor: Colors.white));
+
+                              break;
+                            case OrderState.NOT_ACCEPTED:
+                              return Column(
+                                children: [
+                                  Text("Commande en attente d'acceptation", style: GoogleFonts.montserrat(color: Colors.green,),),
+                                  SizedBox(height: 10),
+                                  StreamButton(buttonColor: Colors.red,
+                                         buttonText: "Annuler la commande",
+                                         errorText: "Une erreur s'est produite",
+                                         loadingText: "Annulation en cours",
+                                         successText: "Commande annulée",
+                                          controller: _streamButtonController3, onClick: () async {
+                                            _streamButtonController3.isLoading();
+                                            this.cancelOrder(client, this.widget.order).then((value) {
+                                              _streamButtonController3.isSuccess();
+                                            }).catchError((onError) {
+                                              _streamButtonController3.isError();
+                                            });
+                                            
+                                      }),
+                                ],
+                              );
+                              break;
+                            case OrderState.RATED:
+                                return Text("La commande est livrée et livrée");
+                              break;
+                            case OrderState.REFUSED:
+                                return Text("La commande a été annulé");
+                              break;
+                          }
+                        },
+                      );
+                    }
                   )
           ]))
         ]),

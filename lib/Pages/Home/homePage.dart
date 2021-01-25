@@ -28,7 +28,7 @@ class _HomeTopBarState extends State<HomeTopBar> {
 
     return Container(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -45,6 +45,9 @@ class _HomeTopBarState extends State<HomeTopBar> {
                     builder: (context, AsyncSnapshot<UserDef> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting)
                         return CircularProgressIndicator();
+                      if (snapshot.hasError) return Text("i've a bad felling");
+                      if (!snapshot.hasData)
+                        return Text("its empty out there");
                       return CircleAvatar(
                         radius: 25,
                         backgroundImage: CachedNetworkImageProvider(
@@ -195,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                                     onTap: () {
                                       Navigator.push(
                                           context,
-                                          CupertinoPageRoute(
+                                          MaterialPageRoute(
                                               builder: (context) =>
                                                   FoodItemChild(
                                                       publication: e)));

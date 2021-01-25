@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,11 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
+import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 
 class VendorPageChild extends StatefulWidget {
   final OrderVendor vendor;
@@ -21,6 +25,32 @@ class VendorPageChild extends StatefulWidget {
 }
 
 class _VendorPageChildState extends State<VendorPageChild> {
+
+
+  StreamSubscription<OrderVendor> orderSubscription;
+  // ignore: close_sinks
+  BehaviorSubject<OrderVendor>  order = new BehaviorSubject<OrderVendor>();
+
+
+
+  @override
+  void initState() { 
+        Future.delayed(Duration.zero, (){
+        final databaseService =
+          Provider.of<DatabaseProviderService>(context, listen: false);
+          this.orderSubscription = databaseService.getOrderSeller(this.widget.vendor.id, this.order);
+    });
+    super.initState();
+    
+  }
+
+
+  @override
+  void dispose() { 
+    this.orderSubscription.cancel();
+    this.order.close();
+    super.dispose();
+  }
 
   Future<Room> createRoom(GraphQLClient client, String user1, String user2) async {
     final MutationOptions _options  = MutationOptions(
@@ -130,12 +160,23 @@ final MutationOptions _options  = MutationOptions(
               Divider(),
 
               CarouselSlider(items: this.widget.vendor.publication.photoUrls.map((e) {
-              return Image(
-              
-              width: MediaQuery.of(context).size.width,
-              fit: BoxFit.cover,
-              image: CachedNetworkImageProvider(e),
-            );
+              return InkWell(
+                onTap: (){
+                  Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => FullScreenImage(url: e)));
+                },
+                              child: Hero(
+                                tag: e,
+                                                              child: Image(
+                
+                width: MediaQuery.of(context).size.width,
+                fit: BoxFit.cover,
+                image: CachedNetworkImageProvider(e),
+            ),
+                              ),
+              );
             }).toList(),
              options: CarouselOptions(height: 300.0, aspectRatio: 16/9, enlargeCenterPage: true, initialPage: 0,
              enableInfiniteScroll: false,)),
@@ -190,7 +231,7 @@ final MutationOptions _options  = MutationOptions(
                 leading: CircleAvatar(
                   radius: 25,
                 backgroundImage:
-                    NetworkImage(this.widget.vendor.buyer.photoUrl),
+                    CachedNetworkImageProvider(this.widget.vendor.buyer.photoUrl),
               ),
 
               title: Text(this.widget.vendor.buyer.firstName + " " + this.widget.vendor.buyer.lastName),
@@ -206,78 +247,89 @@ final MutationOptions _options  = MutationOptions(
 
               SizedBox(height: 50,),
 
-              Builder(builder: (ctx) {
-                switch (this.widget.vendor.orderState) {
-                  case "ACCEPTED":
-                      return Center(child: Text("plat recu par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17),));
-                    break;
-                  case "CANCELLED":
-                      return Center(child: Text("le plat a été annulé par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));
-                    break;
-                  case "DONE":
-                    return Center(child: Text("plat recu par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));
-                    break;
+              StreamBuilder<OrderVendor>(
+                stream: this.order.stream,
+                builder: (context, snapshot) {
+                  return Builder(builder: (ctx) {
+                    if (snapshot.connectionState ==
+                                    ConnectionState.waiting)
+                                  return LinearProgressIndicator();
+                                if (snapshot.hasError)
+                                  return Text("i've a bad felling");
+                                if (snapshot.data == null)
+                                  return Text("its empty out there");
 
-                  case "NOT_ACCEPTED":
-                    return Container(child: Column(children: [
-                      StreamButton(buttonColor: Colors.green,
-                                 buttonText: "Accepter la commande",
-                                 errorText: "Une erreur s'est produite",
-                                 loadingText: "Acceptation en cours",
-                                 successText: "Commande acceptée",
-                                  controller: _streamButtonController, onClick: () async {
-                                    _streamButtonController.isLoading();
-                                    this.acceptOrder(client, this.widget.vendor).then((result) {
-                                      _streamButtonController.isSuccess();
-                                      setState(() {
-                                        this.widget.vendor.orderState = result["orderState"];
-                                      });
-                                    }).catchError((err) {
-                                      _streamButtonController.isError();
+                    switch (snapshot.data.orderState) {
+                      case "ACCEPTED":
+                          return Center(child: Text("plat recu par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17),));
+                        break;
+                      case "CANCELLED":
+                          return Center(child: Text("le plat a été annulé par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));
+                        break;
+                      case "DONE":
+                        return Center(child: Text("plat recu par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));
+                        break;
 
-                                    });
-                                    
-                              }),
+                      case "NOT_ACCEPTED":
+                        return Container(child: Column(children: [
+                          StreamButton(buttonColor: Colors.green,
+                                     buttonText: "Accepter la commande",
+                                     errorText: "Une erreur s'est produite",
+                                     loadingText: "Acceptation en cours",
+                                     successText: "Commande acceptée",
+                                      controller: _streamButtonController, onClick: () async {
+                                        _streamButtonController.isLoading();
+                                        this.acceptOrder(client, this.widget.vendor).then((result) {
+                                          _streamButtonController.isSuccess();
+                                          databaseService.loadSellerOrders();
+                                        }).catchError((err) {
+                                          _streamButtonController.isError();
 
-                          SizedBox(height: 10),
-                          Divider(),
-                          SizedBox(height: 10),
+                                        });
+                                        
+                                  }),
+
+                              SizedBox(height: 10),
+                              Divider(),
+                              SizedBox(height: 10),
 
 
-                      StreamButton(buttonColor: Colors.red,
-                                 buttonText: "Refuser la commande",
-                                 errorText: "Une erreur s'est produite",
-                                 loadingText: "Refus en cours",
-                                 successText: "Commande refusée",
-                                  controller: _streamButtonController2, onClick: () async {
-                                    _streamButtonController2.isLoading();
-                                    this.refuseOrder(client, this.widget.vendor).then((result) {
-                                      _streamButtonController2.isSuccess();
-                                      this.widget.vendor.orderState = result["orderState"];
-                                    }).catchError((onError) {
-                                      _streamButtonController2.isError();
-                                    });
-                                    
-                      }),
+                          StreamButton(buttonColor: Colors.red,
+                                     buttonText: "Refuser la commande",
+                                     errorText: "Une erreur s'est produite",
+                                     loadingText: "Refus en cours",
+                                     successText: "Commande refusée",
+                                      controller: _streamButtonController2, onClick: () async {
+                                        _streamButtonController2.isLoading();
+                                        this.refuseOrder(client, this.widget.vendor).then((result) {
+                                          _streamButtonController2.isSuccess();
+                                          databaseService.loadSellerOrders();
+                                        }).catchError((onError) {
+                                          _streamButtonController2.isError();
+                                        });
+                                        
+                          }),
 
-                    ]));
-                    
-                    break;
-                  case "RATED":
-                    return Center(child: Text("le plat est livré et noté", style: GoogleFonts.montserrat(fontSize: 17)));
-                    break;
+                        ]));
+                        
+                        break;
+                      case "RATED":
+                        return Center(child: Text("le plat est livré et noté", style: GoogleFonts.montserrat(fontSize: 17)));
+                        break;
 
-                  case "REFUSED":
-                    return Center(child: Text("Vous avez refusé la commande.", style: GoogleFonts.montserrat(fontSize: 17)));
-                    
-                    break;
+                      case "REFUSED":
+                        return Center(child: Text("Vous avez refusé la commande.", style: GoogleFonts.montserrat(fontSize: 17)));
+                        
+                        break;
 
-                    
-                    
-                  default:
-                  return Text("");
+                        
+                        
+                      default:
+                      return Text("");
+                    }
+                  });
                 }
-              })
+              )
             ],
           )
         ),

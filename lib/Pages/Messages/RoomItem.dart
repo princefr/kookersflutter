@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
+import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:provider/provider.dart';
 
 class Receiver {
   String firstName;
@@ -198,6 +200,9 @@ class RoomItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: false);
+        
     return Row(
       children: <Widget>[
         Expanded(
@@ -248,7 +253,7 @@ class RoomItem extends StatelessWidget {
               Navigator.push(
                   context,
                   CupertinoPageRoute(
-                      builder: (context) => ChatPage(room: this.room)));
+                      builder: (context) => ChatPage(room: this.room, uid: databaseService.user.value.id)));
             },
           ),
         ),

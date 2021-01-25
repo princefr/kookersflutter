@@ -30,7 +30,13 @@ ValueNotifier<GraphQLClient> clientFor({
       ),
     );
 
+    
+
     link = link.concat(websocketLink);
+
+    
+
+    
   }
 
   return ValueNotifier<GraphQLClient>(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -25,14 +26,19 @@ import 'package:uuid/uuid.dart';
 class ChatPage extends StatefulWidget {
   final Room room;
   final int index;
-  ChatPage({Key key, @required this.room, this.index}) : super(key: key);
+  final uid;
+  ChatPage({Key key, @required this.room, this.index, this.uid}) : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
 }
 
 class _ChatPageState extends RouteAwareState<ChatPage>
-    with AutomaticKeepAliveClientMixin<ChatPage> {
+    {
+
+
+    
+
   Future<void> sendMessage(GraphQLClient client, Message message) async {
     final MutationOptions _options = MutationOptions(documentNode: gql(r"""
       mutation SendMEssage($message: MessageInput){
@@ -47,23 +53,43 @@ class _ChatPageState extends RouteAwareState<ChatPage>
         .then((value) => value.data["sendMessage"]);
   }
 
+  StreamSubscription<void> streamNewMessage;
+  StreamSubscription<void> streamHasRead;
+  StreamSubscription<void> streamIsWriting;
+
+
   final TextEditingController textEditingController = TextEditingController();
   final FocusNode focusNode = FocusNode();
   final _controller = ScrollController();
 
 // ignore: close_sinks
   final BehaviorSubject<String> messageToSend = BehaviorSubject<String>();
+  // ignore: close_sinks
+  final BehaviorSubject<List<Message>> messages = BehaviorSubject<List<Message>>();
+  StreamSubscription<Room> roomSubscription;
+
+  StreamSubscription<Message> get unreadMessage => messages.map((event) => event.lastWhere((message) => (message.userId != this.widget.uid && message.isRead == false), orElse: () => null)).listen((event) => event);
+  
+  // ignore: unused_field
+  bool _active = false;
 
   @override
   void initState() {
+    this._active = true;
     Future.delayed(Duration.zero, () async {
       final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
-      databaseService.getRoom(this.widget.room.id);
+      this.roomSubscription = databaseService.getRoom(this.widget.room.id, this.messages);
+      this.streamNewMessage = databaseService.newMessageStream(this.widget.room.id);
+      this.streamHasRead = databaseService.messageReadStream(this.widget.room.id);
+      this.streamIsWriting = databaseService.userIsWritingStream(this.widget.room.id);
       await databaseService.setIschatAreRead(this.widget.room.id);
       await databaseService.loadrooms();
-      databaseService.getLastMessage.listen((event) {
-        print(" " + "message intente");
+      this.unreadMessage.onData((data) { 
+         if(data != null) databaseService.setIschatAreRead(this.widget.room.id);
+       });
+      this.streamNewMessage.onData((data) {
+        print("got new data");
       });
     });
     focusNode.addListener(onFocusChange);
@@ -71,7 +97,16 @@ class _ChatPageState extends RouteAwareState<ChatPage>
   }
 
   @override
-  void dispose() {
+  void dispose(){
+    this.streamNewMessage.cancel();
+    this.streamHasRead.cancel();
+    this.streamIsWriting.cancel();
+    this.messages.close();
+    this.unreadMessage.cancel();
+    this._active = false;
+    this._controller.dispose();
+    this.messageToSend.close();
+    this.roomSubscription.cancel();
     super.dispose();
   }
 
@@ -90,16 +125,7 @@ class _ChatPageState extends RouteAwareState<ChatPage>
     );
   }
 
-  String subscribeToNewMessage = r"""
-      subscription getMEssagedAdded($roomID: ID!)  {
-        messageAdded(roomID: $roomID) {
-          userId
-          message
-          createdAt
-          message_picture
-        }
-      }
-""";
+
 
   final picker = ImagePicker();
 
@@ -115,7 +141,6 @@ class _ChatPageState extends RouteAwareState<ChatPage>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: true);
     final storage = Provider.of<StorageService>(context, listen: true);
@@ -138,27 +163,12 @@ class _ChatPageState extends RouteAwareState<ChatPage>
                   this.focusNode.unfocus();
                 }
               },
-              child: Subscription("getMEssagedAdded", subscribeToNewMessage,
-                  variables: <String, String>{"roomID": this.widget.room.id},
-                  builder: ({dynamic error, bool loading, dynamic payload}) {
-                if (payload != null) {
-                  // this.widget.room.messages.insert(
-                  //     0,
-                  //     Message(
-                  //         createdAt: payload["messageAdded"]["createdAt"],
-                  //         userId: payload["messageAdded"]["userId"],
-                  //         message: payload["messageAdded"]["message"],
-                  //         isRead: false,
-                  //         isSent: true));
-                  // this.scrollToBottom();
-                }
-
-                return Stack(
+              child: Stack(
                   children: [
                     Column(children: [
                       Expanded(
                           child: StreamBuilder<List<Message>>(
-                              stream: databaseService.messagesInRoom.stream,
+                              stream: this.messages.stream,
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting)
@@ -325,6 +335,7 @@ class _ChatPageState extends RouteAwareState<ChatPage>
                                                                         color: Colors
                                                                             .black))),
                                                         SizedBox(height: 10),
+
                                                         Builder(builder: (ctx) {
                                                           if (snapshot
                                                                       .data[
@@ -389,6 +400,7 @@ class _ChatPageState extends RouteAwareState<ChatPage>
                                       }
                                     });
                               })),
+
                       MessageInput(
                         image: this.pictureToPreview,
                         textEditingController: this.textEditingController,
@@ -430,13 +442,9 @@ class _ChatPageState extends RouteAwareState<ChatPage>
                       )
                     ])
                   ],
-                );
-              }),
+                )
             ),
           ));
     });
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

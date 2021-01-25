@@ -159,12 +159,15 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
             children: [
               Stack(
                 children: [
-                    Image(
-                        height: 135,
-                        width: MediaQuery.of(context).size.width,
-                        fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(this.widget.publication.photoUrls[0]),
+                    Hero(
+                          tag: this.widget.publication.photoUrls[0],
+                          child: Image(
+                          height: 135,
+                          width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.cover,
+                          image: CachedNetworkImageProvider(this.widget.publication.photoUrls[0]),
                   ),
+                    ),
                   
                   Padding(
                     padding: const EdgeInsets.all(5.0),

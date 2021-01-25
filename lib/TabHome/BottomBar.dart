@@ -25,12 +25,13 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-            
             backgroundColor: Colors.white,
             showUnselectedLabels: false,
             showSelectedLabels: true,
             selectedItemColor: Color(0xFFF95F5F),
-            unselectedItemColor: Colors.grey,
+            unselectedItemColor: Colors.black,
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
             currentIndex: selectedIndex,
             onTap: onTap,
             items: [

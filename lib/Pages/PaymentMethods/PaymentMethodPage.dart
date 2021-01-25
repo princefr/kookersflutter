@@ -25,8 +25,6 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
   void initState() {
     new Future.delayed(Duration.zero, (){
       stripeService.initiateStripe();
-      final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
-      databaseService.loadSourceList();
     });
     
     
@@ -72,6 +70,8 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                                   _refreshController.refreshCompleted();
                                 });
                                 
+                                }).catchError((onError) {
+                                  print("an error hapenned");
                                 });
                                 
                           },

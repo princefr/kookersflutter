@@ -49,56 +49,70 @@ class MessageInput extends StatefulWidget {
 }
 
 class _MessageInputState extends State<MessageInput> {
+
+
+@override
+  void dispose() {
+    this.widget.focusNode.dispose();
+    this.widget.textEditingController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
 
-        StreamBuilder<Object>(
-          stream: this.widget.image.stream,
-          builder: (context, snapshot) {
-            if(snapshot.hasData) {
-              return Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Container(
-                        decoration: BoxDecoration(color: Colors.grey[200],    
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)) ,
-                        image: DecorationImage(image: Image.file(snapshot.data).image, fit: BoxFit.cover, alignment: Alignment.center)
-                          ),
-                      height: 150,
+        AnimatedContainer(
+          curve: Curves.easeIn,
+          duration: Duration(milliseconds: 600),
+          child: StreamBuilder<Object>(
+            stream: this.widget.image.stream,
+            builder: (context, snapshot) {
+              if(snapshot.hasData) {
+                return Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                          decoration: BoxDecoration(color: Colors.grey[200],    
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)) ,
+                          image: DecorationImage(image: Image.file(snapshot.data).image, fit: BoxFit.cover, alignment: Alignment.center)
+                            ),
+                        height: 150,
+                      ),
                     ),
-                  ),
 
-                             Positioned(
-              top: 10,
-              right: 30,
-              child: InkWell(
-                onTap: () {
-                  print("tapped");
-                  this.widget.image.sink.add(null);
-                },
-                child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
-                    decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 255, 43, 84),
-                        borderRadius: BorderRadius.circular(15.0)),
-                    child: Icon(
-                      CupertinoIcons.multiply,
-                      color: Colors.white,
-                      size: 20.0,
-                    )),
-              ),
-            )
-                ],
-              );
+                               Positioned(
+                top: 10,
+                right: 30,
+                child: InkWell(
+                  onTap: () {
+                    print("tapped");
+                    this.widget.image.sink.add(null);
+                  },
+                  child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
+                      decoration: BoxDecoration(
+                          color: Color.fromARGB(255, 255, 43, 84),
+                          borderRadius: BorderRadius.circular(15.0)),
+                      child: Icon(
+                        CupertinoIcons.multiply,
+                        color: Colors.white,
+                        size: 20.0,
+                      )),
+                ),
+              )
+                  ],
+                );
+              }
+              return SizedBox();
             }
-            return SizedBox();
-          }
+          ),
         ),
+
         ListTile(
-          minVerticalPadding: 5,
+          contentPadding: EdgeInsets.symmetric(horizontal: 15),
           leading: InkWell(onTap: this.widget.onAttachmentCiclked, child: Icon(CupertinoIcons.plus, color: Colors.black, size: 30)),
           trailing: StreamBuilder<String>(
             stream: this.widget.message.stream,
@@ -113,7 +127,7 @@ class _MessageInputState extends State<MessageInput> {
               builder: (context, AsyncSnapshot<String> snapshot) {
                 return TextField(
                   key: Key('messageInputText'),
-                  minLines: 1,
+                  minLines: null,
                   maxLines: null,
                   controller: this.widget.textEditingController,
                   onSubmitted: (snapshot.data != null && snapshot.data.isNotEmpty) ? this.widget.onSubmitted : null,
@@ -131,7 +145,7 @@ class _MessageInputState extends State<MessageInput> {
                                       style: BorderStyle.none,
                                     ),
                                   ),
-                                  hintText: 'Type your message...', contentPadding: EdgeInsets.all(20.0), hintStyle: TextStyle(color: Colors.grey))
+                                  hintText: 'Type your message...', contentPadding: EdgeInsets.symmetric(horizontal: 10), hintStyle: TextStyle(color: Colors.grey))
                 );
               }
             ),
