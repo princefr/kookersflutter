@@ -65,6 +65,8 @@ class _VendorPageChildState extends State<VendorPageChild> {
                                   first_name
                                   last_name
                                   phonenumber
+                                  photoUrl
+                                  fcmToken
                               }
                               
                               messages {

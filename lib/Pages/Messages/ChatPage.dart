@@ -54,7 +54,7 @@ class _ChatPageState extends RouteAwareState<ChatPage>
   }
 
   StreamSubscription<void> streamNewMessage;
-  StreamSubscription<void> streamHasRead;
+  StreamSubscription<dynamic> streamHasRead;
   StreamSubscription<void> streamIsWriting;
 
 
@@ -83,13 +83,14 @@ class _ChatPageState extends RouteAwareState<ChatPage>
       this.streamNewMessage = databaseService.newMessageStream(this.widget.room.id);
       this.streamHasRead = databaseService.messageReadStream(this.widget.room.id);
       this.streamIsWriting = databaseService.userIsWritingStream(this.widget.room.id);
-      await databaseService.setIschatAreRead(this.widget.room.id);
-      await databaseService.loadrooms();
       this.unreadMessage.onData((data) { 
-         if(data != null) databaseService.setIschatAreRead(this.widget.room.id);
+         if(data != null) {
+           databaseService.setIschatAreRead(this.widget.room.id);
+           databaseService.loadrooms();
+         }
        });
-      this.streamNewMessage.onData((data) {
-        print("got new data");
+      this.streamHasRead.onData((data) {
+        databaseService.loadrooms();
       });
     });
     focusNode.addListener(onFocusChange);

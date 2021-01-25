@@ -35,7 +35,6 @@ class _OrdersPageState extends State<OrdersPage> with AutomaticKeepAliveClientMi
   Widget build(BuildContext context) {
     super.build(context);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
-    return GraphQLConsumer(builder: (GraphQLClient client) {
    return Container(
       color: Colors.white,
       child: Column(
@@ -81,7 +80,7 @@ class _OrdersPageState extends State<OrdersPage> with AutomaticKeepAliveClientMi
       ),
     );
 
-    });
+
   }
 
     @override

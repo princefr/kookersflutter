@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 
 
@@ -47,7 +48,10 @@ class CardItem extends StatelessWidget {
       height: 54,
       child: ListTile(
         onTap: onCheckBoxClicked,
-        leading: Image.asset('assets/payments_logo/${card.brand}.png'),
+        leading: SvgPicture.asset(
+            'assets/payments_logo/${card.brand}.svg',
+            height: 30,
+          ),
         title: Text("****" + " " +card.last4),
         trailing: Visibility(visible: this.isDefault, child: Icon(CupertinoIcons.checkmark_circle, color: Colors.green)),
        

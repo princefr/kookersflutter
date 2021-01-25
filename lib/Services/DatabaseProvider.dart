@@ -672,8 +672,8 @@ class DatabaseProviderService {
 
 
   String subscribeToMessageRead = r"""
-      subscription getMessageRead($roomID: ID!)  {
-        messageRead(roomID: $roomID)
+      subscription getMessageRead($roomID: ID!, $listener: String!)  {
+        messageRead(roomID: $roomID, listener: $listener)
       }
 """;
 
@@ -698,11 +698,11 @@ class DatabaseProviderService {
   }
 
 
-  StreamSubscription<void> messageReadStream(String roomID) {
+  StreamSubscription<dynamic> messageReadStream(String roomID) {
       final Operation _options = Operation(
         operationName: "getMessageRead",
         documentNode: gql(subscribeToMessageRead),
-        variables: <String, String>{"roomID": roomID},
+        variables: <String, String>{"roomID": roomID, "listener": this.user.value.id},
       );
 
     return this._client.subscribe(_options).listen((event) => event.data);
@@ -1232,7 +1232,7 @@ Future<List<Order>>  loadbuyerOrders() {
 
     Future<List<CardModel>> loadSourceList(){
       final QueryOptions _options = QueryOptions(
-        fetchPolicy: FetchPolicy.cacheFirst,
+        fetchPolicy: FetchPolicy.cacheAndNetwork,
         documentNode: gql( r'''
                       query GetAllCards($customer_id: String!) {
                             getAllCardsForCustomer(customer_id: $customer_id){
@@ -1249,7 +1249,7 @@ Future<List<Order>>  loadbuyerOrders() {
 
       return _client.query(_options).then((sourceList) {
         final sourceAll = CardModel.fromJsonTolist(sourceList.data["getAllCardsForCustomer"]);
-        this.sources.add(sourceAll);
+        this.sources.sink.add(sourceAll);
         return sourceAll;
       });
     }

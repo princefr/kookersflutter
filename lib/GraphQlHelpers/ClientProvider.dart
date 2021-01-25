@@ -26,7 +26,7 @@ ValueNotifier<GraphQLClient> clientFor({
       url: subscriptionUri,
       config: SocketClientConfig(
         autoReconnect: true,
-        inactivityTimeout: Duration(seconds: 30),
+        inactivityTimeout: Duration(seconds: 300),
       ),
     );
 

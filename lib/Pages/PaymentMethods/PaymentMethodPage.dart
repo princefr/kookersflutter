@@ -78,15 +78,14 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                         controller: this._refreshController,
                         enablePullDown: true,
                         enablePullUp: false,
-                        child: ListView.builder(
-                        
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) => CardItem(card: snapshot.data[index], isDefault: databaseService.user.value.defaultSource == snapshot.data[index].id ? true : false, onCheckBoxClicked: () {
+                        child: ListView(
+                          children: snapshot.data.map((e) => CardItem(card: e, isDefault: databaseService.user.value.defaultSource == e.id ? true : false, onCheckBoxClicked: () {
                           setState(() {
-                              databaseService.user.value.defaultSource = snapshot.data[index].id;
+                              databaseService.user.value.defaultSource = e.id;
                             });
-                          databaseService.updatedDefaultSource(snapshot.data[index].id);
-                      },)
+                          databaseService.updatedDefaultSource(e.id);
+                          databaseService.loadSourceList();
+                      },)).toList(),
                     ),
                 );
               }

@@ -115,6 +115,8 @@ final MutationOptions _options  = MutationOptions(
                                   first_name
                                   last_name
                                   phonenumber
+                                  photoUrl
+                                  fcmToken
                               }
                               
                               messages {
@@ -224,7 +226,7 @@ final MutationOptions _options  = MutationOptions(
                             CupertinoPageRoute(
                               builder: (context) => ChatPage(room: result))));
                     },
-                    leading: CircleAvatar(radius: 15, backgroundImage: NetworkImage(this.widget.order.seller.photoUrl),),
+                    leading: CircleAvatar(radius: 15, backgroundImage: CachedNetworkImageProvider(this.widget.order.seller.photoUrl),),
                     trailing: Icon(CupertinoIcons.chat_bubble),
                     title: Text(this.widget.order.seller.firstName + " " + this.widget.order.seller.lastName)
                   ),
