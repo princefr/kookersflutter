@@ -178,228 +178,239 @@ class _ChatPageState extends RouteAwareState<ChatPage>
                                   return Text("i've a bad felling");
                                 if (snapshot.data.isEmpty)
                                   return Text("its empty out there");
-                                return ListView.builder(
-                                    reverse: true,
-                                    shrinkWrap: true,
-                                    controller: _controller,
-                                    itemCount: snapshot.data.length,
-                                    itemBuilder: (context, index) {
-                                      if (snapshot.data[index].userId ==
-                                          databaseService.user.value.id) {
-                                        return ListTile(
-                                            title: Column(
-                                          children: [
-                                            ChatBubble(
-                                              elevation: 0,
-                                              shadowColor: Colors.white,
-                                              alignment: Alignment.topRight,
-                                              margin: EdgeInsets.only(top: 20),
-                                              clipper: ChatBubbleClipper5(
-                                                  type: BubbleType.sendBubble),
-                                              child: Column(
-                                                children: [
-                                                  Container(
-                                                      constraints:
-                                                          BoxConstraints(
-                                                        maxWidth: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.7,
-                                                      ),
-                                                      child: Text(
-                                                        snapshot.data[index]
-                                                            .message,
-                                                        style: GoogleFonts
-                                                            .montserrat(
-                                                                color: Colors
-                                                                    .white),
-                                                      )),
-                                                  SizedBox(height: 10),
-                                                  Builder(builder: (ctx) {
-                                                    if (snapshot.data[index]
-                                                                .messagePicture ==
-                                                            "" ||
-                                                        snapshot.data[index]
-                                                                .messagePicture ==
-                                                            null)
-                                                      return SizedBox();
-                                                    return InkWell(
-                                                      onTap: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            CupertinoPageRoute(
-                                                                builder: (context) => FullScreenImage(
-                                                                    url: snapshot
-                                                                        .data[
-                                                                            index]
-                                                                        .messagePicture)));
-                                                      },
-                                                      child: Container(
-                                                        decoration: BoxDecoration(
-                                                            color: Colors.grey[
-                                                                200],
-                                                            borderRadius:
-                                                                BorderRadius.all(
-                                                                    Radius.circular(
-                                                                        10.0)),
-                                                            image: DecorationImage(
-                                                                image: CachedNetworkImageProvider(
-                                                                    snapshot
-                                                                        .data[
-                                                                            index]
-                                                                        .messagePicture),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center)),
-                                                        height: 150,
-                                                      ),
-                                                    );
-                                                  })
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(height: 5),
-                                            Align(
-                                              alignment: Alignment.centerRight,
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    snapshot
-                                                        .data[index].createdAt,
-                                                    style:
-                                                        GoogleFonts.montserrat(
-                                                            fontSize: 11),
-                                                  ),
-                                                  SizedBox(width: 10),
-                                                  IsReadWidget(
-                                                    isRead: snapshot
-                                                        .data[index].isRead,
-                                                    isSent: snapshot
-                                                        .data[index].isSent,
-                                                  )
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ));
-                                      } else {
-                                        return Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 20),
-                                          child: ListTile(
-                                              leading: CircleAvatar(
-                                                radius: 20,
-                                                backgroundImage:
-                                                    CachedNetworkImageProvider(
-                                                        this
-                                                            .widget
-                                                            .room
-                                                            .receiver
-                                                            .photoUrl),
-                                              ),
+                                return Scrollbar(
+                                                                  child: ListView.builder(
+                                      reverse: true,
+                                      shrinkWrap: true,
+                                      controller: _controller,
+                                      itemCount: snapshot.data.length,
+                                      itemBuilder: (context, index) {
+                                        if (snapshot.data[index].userId ==
+                                            databaseService.user.value.id) {
+                                          return ListTile(
                                               title: Column(
-                                                children: [
-                                                  ChatBubble(
-                                                    elevation: 0,
-                                                    alignment:
-                                                        Alignment.topLeft,
-                                                    backGroundColor:
-                                                        Colors.grey[300],
-                                                    shadowColor: Colors.white,
-                                                    clipper: ChatBubbleClipper5(
-                                                        type: BubbleType
-                                                            .receiverBubble),
-                                                    child: Column(
-                                                      children: [
-                                                        Container(
-                                                            constraints:
-                                                                BoxConstraints(
-                                                              maxWidth: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.7,
-                                                            ),
-                                                            child: Text(
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .message,
-                                                                style: GoogleFonts
-                                                                    .montserrat(
-                                                                        color: Colors
-                                                                            .black))),
-                                                        SizedBox(height: 10),
+                                            children: [
 
-                                                        Builder(builder: (ctx) {
-                                                          if (snapshot
-                                                                      .data[
-                                                                          index]
-                                                                      .messagePicture ==
-                                                                  "" ||
-                                                              snapshot
-                                                                      .data[
-                                                                          index]
-                                                                      .messagePicture ==
-                                                                  null)
-                                                            return SizedBox();
-                                                          return InkWell(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                  context,
-                                                                  CupertinoPageRoute(
-                                                                      builder: (context) => FullScreenImage(
-                                                                          url: snapshot
-                                                                              .data[index]
-                                                                              .messagePicture)));
-                                                            },
-                                                            child: Container(
-                                                              decoration: BoxDecoration(
-                                                                  color: Colors
-                                                                          .grey[
-                                                                      200],
-                                                                  borderRadius:
-                                                                      BorderRadius.all(
-                                                                          Radius.circular(
-                                                                              10.0)),
-                                                                  image: DecorationImage(
-                                                                      image: CachedNetworkImageProvider(snapshot
+                                              SizedBox(height: 20),
+                                              Builder(builder: (ctx) {
+                                                      if (snapshot.data[index]
+                                                                  .messagePicture ==
+                                                              "" ||
+                                                          snapshot.data[index]
+                                                                  .messagePicture ==
+                                                              null)
+                                                        return SizedBox();
+                                                      return InkWell(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              CupertinoPageRoute(
+                                                                  builder: (context) => FullScreenImage(
+                                                                      url: snapshot
+                                                                          .data[
+                                                                              index]
+                                                                          .messagePicture)));
+                                                        },
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                              color: Colors.grey[
+                                                                  200],
+                                                              borderRadius:
+                                                                  BorderRadius.all(
+                                                                      Radius.circular(
+                                                                          10.0)),
+                                                              image: DecorationImage(
+                                                                  image: CachedNetworkImageProvider(
+                                                                      snapshot
                                                                           .data[
                                                                               index]
                                                                           .messagePicture),
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .center)),
-                                                              height: 150,
-                                                            ),
-                                                          );
-                                                        })
-                                                      ],
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .center)),
+                                                          height: 150,
+                                                        ),
+                                                      );
+                                                    }),
+
+                                              
+                                              ChatBubble(
+                                                elevation: 0,
+                                                shadowColor: Colors.white,
+                                                alignment: Alignment.topRight,
+                                                margin: EdgeInsets.only(top: 5),
+                                                clipper: ChatBubbleClipper5(
+                                                    type: BubbleType.sendBubble),
+                                                child: Column(
+                                                  children: [
+                                                    Container(
+                                                        constraints:
+                                                            BoxConstraints(
+                                                          maxWidth: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.7,
+                                                        ),
+                                                        child: Text(
+                                                          snapshot.data[index]
+                                                              .message,
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                                  color: Colors
+                                                                      .white),
+                                                        )),
+                                                    SizedBox(height: 10),
+
+                                                    
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(height: 5),
+                                              Align(
+                                                alignment: Alignment.centerRight,
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Text(
+                                                      snapshot
+                                                          .data[index].createdAt,
+                                                      style:
+                                                          GoogleFonts.montserrat(
+                                                              fontSize: 11),
                                                     ),
-                                                  ),
-                                                  SizedBox(height: 5),
-                                                  Align(
+                                                    SizedBox(width: 10),
+                                                    IsReadWidget(
+                                                      isRead: snapshot
+                                                          .data[index].isRead,
+                                                      isSent: snapshot
+                                                          .data[index].isSent,
+                                                    )
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ));
+                                        } else {
+                                          return Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 20),
+                                            child: ListTile(
+                                                leading: CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundImage:
+                                                      CachedNetworkImageProvider(
+                                                          this
+                                                              .widget
+                                                              .room
+                                                              .receiver
+                                                              .photoUrl),
+                                                ),
+                                                title: Column(
+                                                  children: [
+                                                    Builder(builder: (ctx) {
+                                                            if (snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .messagePicture ==
+                                                                    "" ||
+                                                                snapshot
+                                                                        .data[
+                                                                            index]
+                                                                        .messagePicture ==
+                                                                    null)
+                                                              return SizedBox();
+                                                            return InkWell(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    CupertinoPageRoute(
+                                                                        builder: (context) => FullScreenImage(
+                                                                            url: snapshot
+                                                                                .data[index]
+                                                                                .messagePicture)));
+                                                              },
+                                                              child: Container(
+                                                                decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                            .grey[
+                                                                        200],
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(
+                                                                                10.0)),
+                                                                    image: DecorationImage(
+                                                                        image: CachedNetworkImageProvider(snapshot
+                                                                            .data[
+                                                                                index]
+                                                                            .messagePicture),
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        alignment:
+                                                                            Alignment
+                                                                                .center)),
+                                                                height: 150,
+                                                              ),
+                                                            );
+                                                          }),
+
+                                                          SizedBox(height: 5),
+                                                    ChatBubble(
+                                                      elevation: 0,
                                                       alignment:
-                                                          Alignment.centerLeft,
-                                                      child: Text(
-                                                        "date d'envoie",
-                                                        style: GoogleFonts
-                                                            .montserrat(
-                                                                fontSize: 11),
-                                                      ))
-                                                ],
-                                              )),
-                                        );
-                                      }
-                                    });
+                                                          Alignment.topLeft,
+                                                      backGroundColor:
+                                                          Colors.grey[300],
+                                                      shadowColor: Colors.white,
+                                                      clipper: ChatBubbleClipper5(
+                                                          type: BubbleType
+                                                              .receiverBubble),
+                                                      child: Column(
+                                                        children: [
+                                                          Container(
+                                                              constraints:
+                                                                  BoxConstraints(
+                                                                maxWidth: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.7,
+                                                              ),
+                                                              child: Text(
+                                                                  snapshot
+                                                                      .data[index]
+                                                                      .message,
+                                                                  style: GoogleFonts
+                                                                      .montserrat(
+                                                                          color: Colors
+                                                                              .black))),
+                                                          SizedBox(height: 10),
+
+                                                          
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    Align(
+                                                        alignment:
+                                                            Alignment.centerLeft,
+                                                        child: Text(
+                                                          "date d'envoie",
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                                  fontSize: 11),
+                                                        ))
+                                                  ],
+                                                )),
+                                          );
+                                        }
+                                      }),
+                                );
                               })),
 
                       MessageInput(

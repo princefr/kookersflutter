@@ -1,0 +1,31 @@
+flutter_native_splash:
+  # color is the only required parameter.  It sets the background color of your splash screen.
+  color: "#ffffff"
+  image: assets/logo/logo_flutter.png
+
+
+  # The android and ios parameters can be used to disable generating a splash screen on a given 
+  # platform.
+  android: true
+  ios: true
+
+
+
+   # The position of the splash image can be set with android_gravity and ios_content_mode 
+  # parameters.  Both default to center.
+  #
+  # android_gravity can be one of the following Android Gravity (see 
+  # https://developer.android.com/reference/android/view/Gravity): bottom, center, 
+  # center_horizontal, center_vertical, clip_horizontal, clip_vertical, end, fill, fill_horizontal,
+  # fill_vertical, left, right, start, or top.
+  android_gravity: center
+  #
+  # ios_content_mode can be one of the following iOS UIView.ContentMode (see 
+  # https://developer.apple.com/documentation/uikit/uiview/contentmode): scaleToFill, 
+  # scaleAspectFit, scaleAspectFill, center, top, bottom, left, right, topLeft, topRight, 
+  # bottomLeft, or bottomRight.
+  ios_content_mode: center
+
+
+   # To display the notification bar on Android, use the android_disable_fullscreen parameter.
+  android_disable_fullscreen: false

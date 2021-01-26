@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Pages/Vendor/VendorPageChild.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Widgets/StatusChip.dart';
 
 class OrderItemSellerShimmer extends StatelessWidget {
   const OrderItemSellerShimmer({Key key}) : super(key: key);
@@ -66,6 +69,8 @@ class OrderItemSeller extends StatelessWidget {
                 Text(this.vendor.publication.title),
                 Text(this.vendor.productId,
               style: GoogleFonts.montserrat(fontSize: 13)),
+
+              StatusChip(state: EnumToString.fromString(OrderState.values, vendor.orderState))
         ]),
       )),
     );

@@ -13,10 +13,10 @@ import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/PublicationProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
+import 'package:kookers/Widgets/Toogle.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 
 enum SettingType { Plates, Desserts }
 
@@ -31,53 +31,73 @@ class Photo extends StatefulWidget {
 class _PhotoState extends State<Photo> {
   final picker = ImagePicker();
 
+
+  
+
   Future<File> getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
     return File(pickedFile.path);
   }
 
   @override
+  void dispose() { 
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-        return Container(
-            width: 120,
-            height: 110,
-            child: Stack(children: [
-              Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      shape: BoxShape.rectangle,
-                      image: this.widget.file.value == null ? null : DecorationImage(image: Image.file(this.widget.file.value).image, fit: BoxFit.cover),
-                      borderRadius: BorderRadius.circular(15.0))),
-              Positioned(
-                bottom: 0,
-                left: 75,
-                child: InkWell(
-                  onTap: () {
-                    this.getImage().then((file) {
-                      setState(() {
-                        this.widget.file.add(file);
-                      });
-                    });
-                  },
-                  child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
+        return StreamBuilder<File>(
+          stream: this.widget.file,
+          builder: (context, snapshot) {
+            return Container(
+                width: 120,
+                height: 110,
+                child: Stack(children: [
+                  Container(
+                      height: 100,
+                      width: 100,
                       decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 255, 43, 84),
-                          borderRadius: BorderRadius.circular(13.0)),
-                      child: Icon(
-                        this.widget.file.value == null
-                            ? Icons.add
-                            : CupertinoIcons.multiply,
-                        color: Colors.white,
-                        size: 20.0,
-                      )),
-                ),
-              )
-            ]),
-          );
+                          color: Colors.grey[300],
+                          shape: BoxShape.rectangle,
+                          image: snapshot.data == null ? null : DecorationImage(image: Image.file(this.widget.file.value).image, fit: BoxFit.cover),
+                          borderRadius: BorderRadius.circular(15.0))),
+                          
+                  Positioned(
+                    bottom: 0,
+                    left: 75,
+                    child: InkWell(
+                      onTap: () {
+                        if(snapshot.data == null){
+                            this.getImage().then((file) {
+                              if(file != null){
+                                  this.widget.file.add(file);
+                              }
+                             
+                                                });
+                        }else{
+                          this.widget.file.sink.add(null);
+                        }
+                      },
+                      child: Container(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
+                          decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 255, 43, 84),
+                              borderRadius: BorderRadius.circular(13.0)),
+                          child: Icon(
+                            snapshot.data == null
+                                ? Icons.add
+                                : CupertinoIcons.multiply,
+                            color: Colors.white,
+                            size: 20.0,
+                          )),
+                    ),
+                  )
+                ]),
+              );
+          }
+        );
        
   }
 }
@@ -90,31 +110,34 @@ class HomePublish extends StatefulWidget {
 }
 
 class _HomePublishState extends State<HomePublish> {
-  bool isPricePerPie = false;
+  PublicationProvider pubprovider = PublicationProvider();
 
-  int initialLabel = 0;
+  BehaviorSubject<bool> isPricePerPie = BehaviorSubject<bool>.seeded(false);
+
+  BehaviorSubject<int> initialLabel = BehaviorSubject<int>.seeded(0);
+
   SettingType type;
-
-  Future changeType(index) async {
-    Future.delayed(Duration(milliseconds: 200)).then((value) {
-      setState(() {
-        if (index == 0) {
-          this.isPricePerPie = false;
-          this.initialLabel = 0;
-          this.type = SettingType.Plates;
-        } else {
-          this.isPricePerPie = true;
-          this.initialLabel = 1;
-          this.type = SettingType.Desserts;
-        }
-      });
-    });
-  }
 
   @override
   void initState() { 
     this.type = SettingType.Plates;
+    this.initialLabel.listen((value) {
+      if(value == 0){
+        this.type = SettingType.Plates;
+      }else{
+        this.type = SettingType.Desserts;
+      }
+    });
     super.initState();
+  }
+
+
+  @override
+  void dispose() { 
+    this.isPricePerPie.close();
+    this.initialLabel.close();
+    this.pubprovider.dispose();
+    super.dispose();
   }
 
     Future<void> uploadPublication(GraphQLClient client, DatabaseProviderService database, Publication pub) {
@@ -145,8 +168,6 @@ class _HomePublishState extends State<HomePublish> {
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
-    final publicatiionProvider = Provider.of<PublicationProvider>(context, listen: true);
-    
     return GraphQLConsumer(builder: (GraphQLClient client) {
       final firebaseUser = context.read<User>();
       final storageService = Provider.of<StorageService>(context, listen: false);
@@ -156,9 +177,10 @@ class _HomePublishState extends State<HomePublish> {
           top: false, 
           bottom: true,
               child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 7),
               child: Column(
                 children: [
+
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: Container(
@@ -178,7 +200,7 @@ class _HomePublishState extends State<HomePublish> {
                                 child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
-                                children: [Photo(file: publicatiionProvider.file0), Photo(file: publicatiionProvider.file1), Photo(file: publicatiionProvider.file2)],
+                                children: [Photo(file: pubprovider.file0), Photo(file: pubprovider.file1), Photo(file: pubprovider.file2)],
                               ),
                             )),
                             
@@ -192,17 +214,21 @@ class _HomePublishState extends State<HomePublish> {
                                         color: Colors.black,
                                         fontSize: 15))),
                             SizedBox(height: 15),
-                            ToggleSwitch(
-                              inactiveBgColor: Colors.grey[300],
-                              activeBgColor: Color(0xFFF95F5F),
-                              initialLabelIndex: initialLabel,
-                              minWidth: 400,
-                              labels: ['Plats', 'Desserts'],
-                              onToggle: (index) {
-                                this.changeType(index);
-                                print('switched to: $index');
-                              },
+
+                            StreamBuilder<int>(
+                              stream: initialLabel.stream,
+                              builder: (context, snapshot) {
+                                return ToggleSwitch(
+                                  inactiveBgColor: Colors.grey[300],
+                                  activeBgColor: Color(0xFFF95F5F),
+                                  initialLabelIndex: initialLabel.value,
+                                  minWidth: MediaQuery.of(context).size.width,
+                                  labels: ['Plats', 'Desserts'],
+                                  onToggle: this.initialLabel.add,
+                                );
+                              }
                             ),
+
                             SizedBox(height: 30),
                             Align(
                                 alignment: Alignment.centerLeft,
@@ -212,10 +238,11 @@ class _HomePublishState extends State<HomePublish> {
                                         color: Colors.black,
                                         fontSize: 15))),
                             SizedBox(height: 10),
+
                             Container(
                               height: 70,
                               child: StreamBuilder(
-                                  stream: publicatiionProvider.pricePrefs.stream,
+                                  stream: pubprovider.pricePrefs.stream,
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting)
@@ -270,10 +297,10 @@ class _HomePublishState extends State<HomePublish> {
                             SizedBox(height: 10),
 
                             StreamBuilder<String>(
-                              stream: publicatiionProvider.name$,
+                              stream: pubprovider.name$,
                               builder: (context, snapshot) {
                                 return TextField(
-                                  onChanged: publicatiionProvider.name.add,
+                                  onChanged: pubprovider.name.add,
                                   decoration: InputDecoration(
                                     hintText: "Renseigner le nom du plat",
                                     fillColor: Colors.grey[200],
@@ -302,10 +329,10 @@ class _HomePublishState extends State<HomePublish> {
                             SizedBox(height: 10),
 
                             StreamBuilder<String>(
-                              stream: publicatiionProvider.description$,
+                              stream: pubprovider.description$,
                               builder: (context, snapshot) {
                                 return TextField(
-                                  onChanged: publicatiionProvider.description.add,
+                                  onChanged: pubprovider.description.add,
                                     decoration: InputDecoration(
                                   hintText: "Renseigner la description",
                                   fillColor: Colors.grey[200],
@@ -335,11 +362,11 @@ class _HomePublishState extends State<HomePublish> {
                                     padding:
                                         const EdgeInsets.symmetric(horizontal: 5),
                                     child: StreamBuilder<Object>(
-                                      stream: publicatiionProvider.priceall$,
+                                      stream: pubprovider.priceall$,
                                       builder: (context, snapshot) {
                                         return TextField(
                                           keyboardType: TextInputType.number,
-                                          onChanged: publicatiionProvider.priceall.add,
+                                          onChanged: pubprovider.priceall.add,
                                           decoration: InputDecoration(
                                           hintText: "Prix du plat",
                                           fillColor: Colors.grey[200],
@@ -360,34 +387,37 @@ class _HomePublishState extends State<HomePublish> {
                             SizedBox(height: 10),
 
 
-                               Visibility(
-                                    visible: this.isPricePerPie,
-                                    child: Flexible(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 5),
-                                        child: StreamBuilder<Object>(
-                                          stream: publicatiionProvider.priceaPerPortion$,
-                                          builder: (context, snapshot) {
-                                            return TextField(
-                                              onChanged: publicatiionProvider.priceaPerPortion.add,
-                                              decoration: InputDecoration(
-                                              errorText: snapshot.error,
-                                              hintText: "Prix par portion",
-                                              fillColor: Colors.grey[200],
-                                              filled: true,
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(10),
-                                                borderSide: BorderSide(
-                                                  width: 0,
-                                                  style: BorderStyle.none,
+                               StreamBuilder<int>(
+                                 stream: this.initialLabel.stream,
+                                 builder: (context, snapshot) {
+                                   return Visibility(
+                                        visible: snapshot.data == 1,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 5),
+                                          child: StreamBuilder<Object>(
+                                            stream: pubprovider.priceaPerPortion$,
+                                            builder: (context, snapshot) {
+                                              return TextField(
+                                                onChanged: pubprovider.priceaPerPortion.add,
+                                                decoration: InputDecoration(
+                                                errorText: snapshot.error,
+                                                hintText: "Prix par portion",
+                                                fillColor: Colors.grey[200],
+                                                filled: true,
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  borderSide: BorderSide(
+                                                    width: 0,
+                                                    style: BorderStyle.none,
+                                                  ),
                                                 ),
-                                              ),
-                                            ));
-                                          }
-                                        ),
-                                      ),
-                                    )),
+                                              ));
+                                            }
+                                          ),
+                                        ));
+                                 }
+                               ),
 
                             SizedBox(height: 20),
                             Align(
@@ -423,21 +453,37 @@ class _HomePublishState extends State<HomePublish> {
                                         decoration: TextDecoration.none,
                                         color: Colors.black,
                                         fontSize: 10))),
+
+                            SizedBox(height: 20),
+
+
+                            ListTile(
+                              leading: Icon(CupertinoIcons.info_circle),
+                              title : Text("Frais de la platforme"),
+                              trailing: Text("3%")
+                            ),
+
+                            ListTile(
+                              leading: Icon(CupertinoIcons.info_circle),
+                              title : Text("Ce que vous recevrez"),
+                              trailing: Text("3%")
+                            ),
+
                             SizedBox(height: 40),
 
 
                             StreamBuilder(
-                              stream: publicatiionProvider.isFormValidOne$,
+                              stream: pubprovider.isFormValidOne$,
                               builder: (ctx, AsyncSnapshot<bool> snapshot) {
                                 return StreamButton(buttonColor: snapshot.data != null ? Color(0xFFF95F5F) : Colors.grey,
-                                 buttonText: "Publier le plat",
+                                 buttonText: "Vendre mon plat",
                                  errorText: "Une erreur s'est produite",
                                  loadingText: "Publication en cours",
                                  successText: "Plat publié",
                                   controller: _streamButtonController, onClick: () async {
                                     _streamButtonController.isLoading();
                                     if(snapshot.data != null) {
-                                    publicatiionProvider.validate(firebaseUser, storageService, databaseService, this.type).then((publication){
+                                    pubprovider.validate(firebaseUser, storageService, databaseService, this.type).then((publication){
                                       this.uploadPublication(client, databaseService, publication).then((value){
                                         _streamButtonController.isSuccess().then((value) {
                                           Navigator.pop(context);

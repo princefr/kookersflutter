@@ -20,8 +20,9 @@ import 'package:url_launcher/url_launcher.dart';
 class SettingsItemWithLeftIcon extends StatelessWidget {
   final Function onTap;
   final String buttonText;
+  final IconData icon;
   const SettingsItemWithLeftIcon(
-      {Key key, @required this.onTap, @required this.buttonText})
+      {Key key, @required this.onTap, @required this.buttonText, @required this.icon})
       : super(key: key);
 
   @override
@@ -37,7 +38,7 @@ class SettingsItemWithLeftIcon extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: ListTile(
-            leading: Icon(CupertinoIcons.creditcard),
+            leading: Icon(this.icon),
             title: Text(this.buttonText,
                 style: GoogleFonts.montserrat(fontSize: 16)),
             trailing: Icon(CupertinoIcons.chevron_right),
@@ -83,6 +84,14 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+
+ 
+
+
+String capitalizeFirstOnly(String string){
+  return string.characters.first.toUpperCase() + string.substring(1);
+}
+
   final picker = ImagePicker();
 
   Future<File> getImage() async {
@@ -187,7 +196,7 @@ class _SettingsState extends State<Settings> {
         
         SizedBox(height: 20),
         Center(
-            child: Text("ONDONDA Prince",
+            child: Text(databaseService.user.value.lastName.toUpperCase() + " " + capitalizeFirstOnly(databaseService.user.value.firstName),
                 style: GoogleFonts.montserrat(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -195,18 +204,21 @@ class _SettingsState extends State<Settings> {
         SizedBox(height: 15),
         Divider(),
         SettingsItemWithLeftIcon(
+          icon: Icons.credit_card_sharp,
             buttonText: "Methodes de paiements",
             onTap: () => Navigator.push(context,
                 CupertinoPageRoute(builder: (context) => PaymentMethodPage()))),
 
         SettingsItemWithLeftIcon(
+          icon: Icons.account_balance_wallet_sharp,
             buttonText: "Portefeuille",
             onTap: () => Navigator.push(context,
                 CupertinoPageRoute(builder: (context) => BalancePage()))),
 
 
         SettingsItemWithLeftIcon(
-            buttonText: "Iban",
+          icon: Icons.account_balance,
+            buttonText: "Comptes bancaires",
             onTap: () => Navigator.push(context,
                 CupertinoPageRoute(builder: (context) => IbanPage()))),
 
@@ -235,4 +247,7 @@ class _SettingsState extends State<Settings> {
 
     });
   }
+
+
+  
 }

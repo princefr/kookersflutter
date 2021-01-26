@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +11,9 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
+import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Widgets/StatusChip.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
@@ -90,7 +93,7 @@ class _VendorPageChildState extends State<VendorPageChild> {
 }
 
 
-Future<Map<String, dynamic>> refuseOrder(GraphQLClient client, OrderVendor order) async {
+Future<void> refuseOrder(GraphQLClient client, OrderVendor order) async {
 final MutationOptions _options  = MutationOptions(
       documentNode: gql(r"""
         mutation RefuseOrder($order: OrderInput!){
@@ -105,11 +108,11 @@ final MutationOptions _options  = MutationOptions(
       }
     );
 
-    return await client.mutate(_options).then((result) => result.data);
+    return await client.mutate(_options).then((result) => result.data["refuseOrder"]);
 }
 
 
-Future<Map<String, dynamic>> acceptOrder(GraphQLClient client, OrderVendor order) async {
+Future<void> acceptOrder(GraphQLClient client, OrderVendor order) async {
 final MutationOptions _options  = MutationOptions(
       documentNode: gql(r"""
         mutation AcceptOrder($order: OrderInput!){
@@ -124,16 +127,9 @@ final MutationOptions _options  = MutationOptions(
       }
     );
 
-    return await client.mutate(_options).then((result) => result.data);
+    return await client.mutate(_options).then((result) => result.data["refuseOrder"]);
 }
 
-  String subscribeToOrderUpdate = r"""
-      subscription orderUpdated($id: ID!)  {
-        orderUpdated(id: $id) {
-          orderState
-        }
-      }
-""";
 
  StreamButtonController _streamButtonController = StreamButtonController();
  StreamButtonController _streamButtonController2 = StreamButtonController();
@@ -194,11 +190,31 @@ final MutationOptions _options  = MutationOptions(
                       style: GoogleFonts.montserrat(
                           fontSize: 26, color: Colors.grey)),
                 )),
+
+                
                 
                 Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text("2"),)
               ],
+            ),
+
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(child: SizedBox()),
+                  StreamBuilder<OrderVendor>(
+                        stream: this.order.stream,
+                        builder: (context, snapshot) {
+                          if(snapshot.connectionState == ConnectionState.waiting) return Text("nope");
+                          return StatusChip(state: EnumToString.fromString(OrderState.values, snapshot.data.orderState));
+                        }
+                      ),
+                ],
+              ),
             ),
 
               Container(
@@ -226,6 +242,12 @@ final MutationOptions _options  = MutationOptions(
                   }
                 }),
               ),
+
+             SizedBox(height:30),
+
+
+             Text( "  réference: " + this.widget.vendor.id),
+
 
              SizedBox(height:30),
              
@@ -263,7 +285,7 @@ final MutationOptions _options  = MutationOptions(
 
                     switch (snapshot.data.orderState) {
                       case "ACCEPTED":
-                          return Center(child: Text("plat recu par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17),));
+                          return Center(child: Text("Le plat a été accepté", style: GoogleFonts.montserrat(fontSize: 17),));
                         break;
                       case "CANCELLED":
                           return Center(child: Text("le plat a été annulé par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));

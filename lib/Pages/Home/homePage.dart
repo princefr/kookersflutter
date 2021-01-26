@@ -70,11 +70,11 @@ class _HomeTopBarState extends State<HomeTopBar> {
                     child: Container(
                         padding: EdgeInsets.all(5),
                         decoration: new BoxDecoration(
-                          color: Colors.grey,
+                          color: Colors.grey[400],
                           shape: BoxShape.circle,
                         ),
                         child: Icon(CupertinoIcons.slider_horizontal_3,
-                            size: 24.0, color: Colors.black))),
+                            size: 23.0, color: Colors.black))),
                 Flexible(
                   child: ListTile(
                     onTap: () {

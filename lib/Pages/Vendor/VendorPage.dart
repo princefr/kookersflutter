@@ -146,8 +146,9 @@ class _VendorPageState extends State<VendorPage>
     super.build(context);
     return Container(
         child: Column(children: [
-      PageTitle(title: "Vendeur"),
+      PageTitle(title: "Ventes"),
       SizedBox(height: 20),
+
       StreamBuilder<int>(
           initialData: this.initialLabel.value,
           stream: this.initialLabel.stream,
@@ -168,9 +169,11 @@ class _VendorPageState extends State<VendorPage>
               },
             );
           }),
+
       SizedBox(height: 20),
       Expanded(
         child: PageView(
+          
           physics: NeverScrollableScrollPhysics(),
           controller: this._controller,
           children: [VendorPubView(), VendorSellView()],

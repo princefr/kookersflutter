@@ -45,7 +45,7 @@ class Publication {
 }
 
 
-class PublicationProvider with PublicationValidation {
+class PublicationProvider  with PublicationValidation {
   List<FoodPreference> prefs = [
     FoodPreference(id: 0, isSelected: false, title: "Végétarien"),
     FoodPreference(id: 1, isSelected: false, title: "Vegan"),
@@ -55,37 +55,50 @@ class PublicationProvider with PublicationValidation {
         id: 4, isSelected: false, title: "Adapté aux allergies alimentaires")
   ];
 
-  // ignore: close_sinks
+
+
+  void dispose() { 
+    this.description.close();
+    this.file0.close();
+    this.file1.close();
+    this.file2.close();
+    this.name.close();
+    this.priceall.close();
+    this.priceaPerPortion.close();
+    this.pricePrefs.close();
+  }
+
+
   BehaviorSubject<List<FoodPreference>> pricePrefs =
     new BehaviorSubject<List<FoodPreference>>();
       
-  // ignore: close_sinks
+  
   BehaviorSubject<File> file0 = new BehaviorSubject<File>();
   
-  // ignore: close_sinks
+  
   BehaviorSubject<File> file1 = new BehaviorSubject<File>();
-  // ignore: close_sinks
+  
   BehaviorSubject<File> file2 = new BehaviorSubject<File>();
 
 
-  // ignore: close_sinks
-  final name = new BehaviorSubject<String>();
+  
+  BehaviorSubject<String> name = new BehaviorSubject<String>();
   Stream<String> get name$ => name.stream.transform(validateName).asBroadcastStream();
   Sink<String> get inName => name.sink;
 
-  // ignore: close_sinks
-  final  description = new BehaviorSubject<String>();
+  
+  BehaviorSubject<String>  description = new BehaviorSubject<String>();
   Stream<String> get description$ => description.stream.transform(validateDescription).asBroadcastStream();
   Sink<String> get inDescription => description.sink;
 
 
-  // ignore: close_sinks
-  final priceall = new BehaviorSubject<String>();
+  
+  BehaviorSubject<String> priceall = new BehaviorSubject<String>();
   Stream<String> get priceall$ => priceall.stream.transform(validatePrice).asBroadcastStream();
   Sink<String> get inPriceall => priceall.sink;
 
-  // ignore: close_sinks
-  final priceaPerPortion = new BehaviorSubject<String>();
+  
+  BehaviorSubject<String> priceaPerPortion = new BehaviorSubject<String>();
   Stream<String> get priceaPerPortion$ => priceaPerPortion.stream.transform(validatePricePerPortion).asBroadcastStream();
   Sink<String> get inPriceaPerPortion => priceaPerPortion.sink;
 

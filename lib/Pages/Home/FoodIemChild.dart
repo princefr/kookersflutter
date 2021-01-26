@@ -366,6 +366,15 @@ class _FoodItemChildState extends State<FoodItemChild> {
                         title: Text(cardChosed.last4));
                   }),
             ),
+
+            SizedBox(height: 15),
+
+            ListTile(
+                leading: Icon(CupertinoIcons.info_circle),
+                title : Text("Frais de service"),
+                trailing: Text("3%")
+              ),
+
             SizedBox(
               height: 30,
             ),
@@ -384,7 +393,8 @@ class _FoodItemChildState extends State<FoodItemChild> {
               ),
             ),
             Divider(),
-            SizedBox(height: 10),
+
+            SizedBox(height: 20),
             
             StreamBuilder(
                 stream: orderProvider.isAllFilled$,

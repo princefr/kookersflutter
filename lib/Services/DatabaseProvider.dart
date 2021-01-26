@@ -293,9 +293,10 @@ class OrderVendor {
   String paymentMethodAssociated;
   String currency;
   PublicationVendor publication;
+  String stripeTransactionId;
   BuyerVendor buyer;
 
-  OrderVendor({@required this.productId, @required this.quantity, @required this.totalPrice, @required this.buyerID, @required this.orderState, @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency, this.publication, this.buyer, this.id});
+  OrderVendor({@required this.productId, @required this.quantity, @required this.totalPrice, @required this.buyerID, @required this.orderState, @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency, this.publication, this.buyer, this.id, this.stripeTransactionId});
 
   static OrderVendor fromJson(Map<String, dynamic> data) => OrderVendor(
     productId: data["productId"],
@@ -308,6 +309,7 @@ class OrderVendor {
     sellerStAccountid: data["seller_stripe_account"],
     paymentMethodAssociated: data["payment_method_id"],
     currency: data["currency"],
+    stripeTransactionId: data["stripeTransactionId"],
     publication: PublicationVendor.fromJson(data["publication"]),
     buyer: BuyerVendor.fromJson(data["buyer"]),
     id: data["_id"]
@@ -325,6 +327,7 @@ class OrderVendor {
     data["deliveryDay"] = this.deliveryDay;
     data["seller_stripe_account"] = this.sellerStAccountid;
     data["payment_method_id"] = this.paymentMethodAssociated;
+    data["stripeTransactionId"] = this.stripeTransactionId;
     data["currency"] = this.currency;
     data["id"] = this.id;
 
@@ -638,7 +641,7 @@ class DatabaseProviderService {
 
 
 
-     GraphQLClient _client = clientFor(uri: "https://921f6bd6742b.ngrok.io/graphql", subscriptionUri: 'wss://921f6bd6742b.ngrok.io/graphql').value;
+     GraphQLClient _client = clientFor(uri: "https://kookers-app.herokuapp.com/graphql", subscriptionUri: 'wss://kookers-app.herokuapp.com/graphql').value;
 
      
 

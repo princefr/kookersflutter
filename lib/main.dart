@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 
-final host = '921f6bd6742b.ngrok.io/graphql';
+final host = 'kookers-app.herokuapp.com/graphql';
 final graphqlEndpoint = 'https://$host';
 final subscriptionEndpoint = 'wss://$host';
 
