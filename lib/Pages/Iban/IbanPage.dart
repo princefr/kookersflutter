@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:iban_form_field/iban_form_field.dart';
+import 'package:kookers/Blocs/IbanBloc.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:rxdart/subjects.dart';
 
 
 
@@ -21,20 +20,23 @@ class AddIbanPage extends StatefulWidget {
 class _AddIbanPageState extends State<AddIbanPage> {
   final StreamButtonController _streamButtonController = StreamButtonController();
 
+  IbanBloc bloc = IbanBloc();
 
   @override
   void initState() {
     super.initState();
   }
 
-  // ignore: close_sinks
-  BehaviorSubject<Iban> iban = BehaviorSubject<Iban>();
+  @override
+  void dispose() { 
+    this.bloc.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
 
-      final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
-      
+    final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
     
     return Scaffold(
           body: SafeArea(
@@ -57,21 +59,29 @@ class _AddIbanPageState extends State<AddIbanPage> {
               SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: StreamBuilder<Iban>(
-                stream: this.iban.stream,
+              child: StreamBuilder<String>(
+                stream: this.bloc.iban$,
                 builder: (context, snapshot) {
-                  return IbanFormField(
-                      onSaved: this.iban.add,
-                      initialValue: Iban('FR'),
-                      validator: (Iban iban) {
-                      if (!iban.isValid) {
-                        print("not valid");
-                      return 'This IBAN is not valid';
-                    }
-                    print("iban is valid");
-                    return null;
-                      },
-
+                  return Container(
+                    height: 54,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.grey),
+                    child: TextField(
+                      onChanged: this.bloc.inBan.add,
+                      decoration: InputDecoration(
+                        hintText: 'Renseignez un iban',
+                        fillColor: Colors.grey[200],
+                        filled: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                      )
+                    ),
                   );
                 }
               ),
@@ -91,23 +101,28 @@ class _AddIbanPageState extends State<AddIbanPage> {
 
             Expanded(child: SizedBox()),
 
-            StreamButton(buttonColor: Color(0xFFF95F5F),
-                                 buttonText: "Ajouter l'iban",
-                                 errorText: "Une erreur s'est produite",
-                                 loadingText: "Ajout en cours",
-                                 successText: "Iban ajouté",
-                                  controller: _streamButtonController, onClick: () async {
-
-                                    print(this.iban.value);
-
-                                    // _streamButtonController.isLoading();
-                                    // databaseService.createBankAccount("FR1420041010050500013M02606").then((value) {
-                                    //     _streamButtonController.isSuccess();
-                                    // }).catchError((onError) {
-                                    //    _streamButtonController.isError();
-                                    // });
-                                    
-                                  })
+            StreamBuilder<String>(
+              stream: this.bloc.iban$,
+              builder: (context, snapshot) {
+                return StreamButton(buttonColor: snapshot.data != null ? Color(0xFFF95F5F) : Colors.grey,
+                                     buttonText: "Ajouter l'iban",
+                                     errorText: "Une erreur s'est produite, reessayer",
+                                     loadingText: "Ajout en cours",
+                                     successText: "Iban ajouté",
+                                      controller: _streamButtonController, onClick: snapshot.data == null ? null :  () async {
+                                        _streamButtonController.isLoading();
+                                        databaseService.createBankAccount(snapshot.data).then((value) {
+                                            this.bloc.iban.sink.add(null);
+                                            _streamButtonController.isSuccess();
+                                            databaseService.listExternalAccount();
+                                            Navigator.pop(context);
+                                        }).catchError((onError) {
+                                           _streamButtonController.isError();
+                                        });
+                                        
+                                      });
+              }
+            )
 
 
               ],)

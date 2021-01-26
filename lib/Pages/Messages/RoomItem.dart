@@ -88,6 +88,8 @@ class Message {
       this.messagePicture, this.isRead, this.isSent, this.receiverPushToken, this.roomId});
 
   static List<Message> fromJSON(List<Object> map) {
+
+
     List<Message> messages = [];
     if(map != null){
       map.forEach((element) {

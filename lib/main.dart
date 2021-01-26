@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -34,7 +35,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  runApp(MyApp());
+  runApp(EasyLocalization(child: MyApp(), supportedLocales: [Locale('en', 'US'), Locale('de', 'DE'), Locale('fr', 'FR')], path: 'assets/translations', fallbackLocale: Locale('en', 'US'),));
 }
 
 class MyApp extends StatelessWidget {
@@ -65,7 +66,9 @@ class MyApp extends StatelessWidget {
           uri: graphqlEndpoint,
           subscriptionUri: subscriptionEndpoint,
           child: MaterialApp(
-          
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
           color: Colors.white,
           title: 'Kookers',
           home: AuthentificationnWrapper(),
