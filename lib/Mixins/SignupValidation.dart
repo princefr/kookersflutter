@@ -62,6 +62,14 @@ mixin SignupValidation {
       }
     });
 
+    final validatebirthDate = StreamTransformer<DateTime, DateTime>.fromHandlers(handleData: (value, sink) {
+      if(value != null) {
+        sink.add(value);
+      }else{
+        sink.addError("validate date of birth");
+      }
+    });
+
 
         
 

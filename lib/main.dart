@@ -90,13 +90,22 @@ class _AuthentificationnWrapperState extends State<AuthentificationnWrapper> {
   @override
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();
+    final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
+    
     if(firebaseUser != null) {
-      return Provider<User>.value(value: firebaseUser, child: TabHome(user: firebaseUser,));
+      return FutureBuilder<UserDef>(
+        future: databaseService.loadUserData(firebaseUser.uid),
+        builder: (context, snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator(),);
+          if(snapshot.data == null) return OnBoardingPager();
+          return Provider<User>.value(value: firebaseUser, child: TabHome(user: firebaseUser,));
+        }
+      );
     }
 
     
 
-   return GestureDetector(onTap: (){FocusScope.of(context).requestFocus(new FocusNode());}, child: OnBoardingPager()); 
+   return OnBoardingPager(); 
 
     
     

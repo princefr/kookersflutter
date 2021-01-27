@@ -46,8 +46,8 @@ class ChooseDatePage extends StatelessWidget {
               child: CupertinoDatePicker(
                   use24hFormat: true,
                   mode: this.datemode,
-                  minimumDate: DateTime.now().add(Duration(hours: 3)),
-                  initialDateTime: DateTime.now().add(Duration(hours: 3)),
+                  minimumDate: datemode == CupertinoDatePickerMode.date ? null : DateTime.now().add(Duration(hours: 3)) ,
+                  initialDateTime: datemode == CupertinoDatePickerMode.date ? null : DateTime.now().add(Duration(hours: 3)),
                   onDateTimeChanged: (DateTime newDateTime) {
                     this.date = newDateTime;
                   }),
@@ -67,7 +67,6 @@ class ChooseDatePage extends StatelessWidget {
   }
 }
 
-// ignore: must_be_immutable
 class Stepper extends StatefulWidget {
   final BehaviorSubject<int> quantity;
   Stepper({Key key, this.quantity}) : super(key: key);
@@ -84,7 +83,7 @@ class _StepperState extends State<Stepper> {
 
   void downNumber() {
     setState(() {
-      if (this.widget.quantity.value != 0) {
+      if (this.widget.quantity.value != 0 && this.widget.quantity.value != null) {
         this.widget.quantity.add(this.widget.quantity.value - 1);
       }
     });

@@ -190,7 +190,7 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
                     child: StreamBuilder(
                     stream: databaseService.user.stream,
                     builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                      if(snapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
+                      if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                       return ListView.builder(
                         shrinkWrap: true,
                         itemCount: snapshot.data.adresses.length,

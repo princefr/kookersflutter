@@ -67,9 +67,6 @@ class _TabHomeState extends State<TabHome>
           Provider.of<DatabaseProviderService>(context, listen: false);
       final notificationService =
           Provider.of<NotificationService>(context, listen: false);
-      await Provider.of<DatabaseProviderService>(context, listen: false)
-          .loadUserData(this.widget.user.uid)
-          .then((value) async {
         databaseService.loadPublication();
         databaseService.loadSellerPublications();
         databaseService.loadSellerOrders();
@@ -78,7 +75,6 @@ class _TabHomeState extends State<TabHome>
         notificationService.messaging.subscribeToTopic("new_message");
         notificationService.messaging.subscribeToTopic("new_order");
         notificationService.messaging.subscribeToTopic("order_update");
-      });
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {

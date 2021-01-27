@@ -643,7 +643,7 @@ class DatabaseProviderService {
 
 
 
-     GraphQLClient client = clientFor(uri: "https://921f6bd6742b.ngrok.io/graphql", subscriptionUri: 'wss://921f6bd6742b.ngrok.io/graphql').value;
+     GraphQLClient client = clientFor(uri: "https://ae01e44184bc.ngrok.io/graphql", subscriptionUri: 'wss://ae01e44184bc.ngrok.io/graphql').value;
 
      
 
@@ -1189,9 +1189,12 @@ Future<List<Order>>  loadbuyerOrders() {
 
 
       return client.query(_options).then((kooker) {
+        if(kooker.data["usersExist"] != null){
                   final kookersUser = UserDef.fromJson(kooker.data["usersExist"]);
                   this.user.add(kookersUser);
-                return kookersUser;
+                  return kookersUser;
+        }
+        return null;
       });
     }
 

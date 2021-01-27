@@ -9,8 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
+import 'package:kookers/Pages/Home/FoodIemChild.dart';
 import 'package:kookers/Pages/Home/HomeSearchPage.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/NotificiationService.dart';
@@ -35,18 +37,23 @@ class _SignupPageState extends State<SignupPage> {
   Adress adress = Adress();
   String adressString = "";
 
-  Future<QueryResult> createUser(String uid, GraphQLClient client, String firstname, String lastName, String email, String phoneNumber, String notifToken, String photoUrl, Adress  adress, String currency, String country) async {
+  Future<UserDef> createUser(String uid, GraphQLClient client, String firstname, String lastName, String email, String phoneNumber, String notifToken, String photoUrl, Adress  adress, String currency, String country, DateOfBirth dateofbirth) async {
     final MutationOptions _options = MutationOptions(documentNode: gql(r"""
           mutation CreateAnUser($first_name: String!, $last_name: String!, $email: String!, $phonenumber: String!, $fcmToken: String!, $display_name: String!,
-          $createdAt: String, $updatedAt: String, $photoUrl: String!, $firebaseUID: String!, $adresses: [AdressInput], $country: String!, $currency: String!) {
+          $createdAt: String, $updatedAt: String, $photoUrl: String!, $firebaseUID: String!, $adresses: [AdressInput], $country: String!, $currency: String!, $birth_date: BirthDate!) {
             createUser(user: {first_name: $first_name, last_name: $last_name, email: $email, phonenumber: $phonenumber, fcmToken: $fcmToken, display_name: $display_name,
-          createdAt: $createdAt, updatedAt: $updatedAt, photoUrl: $photoUrl, firebaseUID: $firebaseUID, adresses: $adresses, country: $country, currency: $currency}){
+          createdAt: $createdAt, updatedAt: $updatedAt, photoUrl: $photoUrl, firebaseUID: $firebaseUID, adresses: $adresses, country: $country, currency: $currency, birth_date: $birth_date}){
               _id
-              firebaseUID
               email
               first_name
               last_name
               phonenumber
+              customerId
+              country
+              currency
+              default_source
+              default_iban
+              stripe_account
               settings {
                   food_preferences {id, title, is_selected}
                   food_price_ranges {id, title, is_selected}
@@ -60,8 +67,8 @@ class _SignupPageState extends State<SignupPage> {
               adresses {title, location {latitude, longitude}, is_chosed}
               fcmToken
               rating {rating_total, rating_count}
+                }
             }
-          }
         """),
         variables: <String, dynamic> {
           "first_name" : firstname,
@@ -74,6 +81,7 @@ class _SignupPageState extends State<SignupPage> {
           "updatedAt": DateTime.now().toIso8601String(),
           "photoUrl": photoUrl,
           "firebaseUID": uid,
+          "birth_date": dateofbirth.toJson(),
           "adresses": [{
               "title": adress.title,
               "is_chosed": true,
@@ -89,7 +97,10 @@ class _SignupPageState extends State<SignupPage> {
         }
         );
 
-    return client.mutate(_options);
+    return client.mutate(_options).then((kooker) {
+        final kookersUser = UserDef.fromJson(kooker.data["createUser"]);
+        return kookersUser;
+    });
   }
 
     final picker = ImagePicker();
@@ -100,12 +111,18 @@ class _SignupPageState extends State<SignupPage> {
   }
 
    StreamButtonController _streamButtonController = StreamButtonController();
+   SignupBloc signupBloc = SignupBloc();
+
+   @override
+   void dispose() { 
+     this.signupBloc.dispose();
+     super.dispose();
+   }
 
   @override
   Widget build(BuildContext context) {
     final notificationService = Provider.of<NotificationService>(context, listen: false);
     final storageService = Provider.of<StorageService>(context, listen: false);
-    final signupBloc = Provider.of<SignupBloc>(context, listen: false);
     final phoneAuthBloc = Provider.of<PhoneAuthBloc>(context, listen: false);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
 
@@ -253,6 +270,27 @@ class _SignupPageState extends State<SignupPage> {
               ),
               SizedBox(height: 15),
 
+              StreamBuilder<DateTime>(
+                stream: signupBloc.dateOfBirth$,
+                builder: (context, AsyncSnapshot<DateTime> snapshot) {
+                  return ListTile(
+                    onTap: () async {
+                      DateTime date = await showCupertinoModalBottomSheet(
+                        expand: false,
+                        context: context,
+                        builder: (context) => ChooseDatePage(datemode: CupertinoDatePickerMode.date),
+                      );
+
+                      signupBloc.dateOfBirth.add(date);
+                    },
+                    leading: Icon(CupertinoIcons.calendar),
+                    title: Text("Date de naissance"),
+                    trailing: snapshot.data != null ? Text(Jiffy(snapshot.data).yMMMMd) : Text("Choisir"),
+                  );
+                }),
+
+                SizedBox(height: 15),
+
               Align(
                   alignment: Alignment.centerLeft,
                   child: Text("VOTRE ADRESSE",
@@ -367,7 +405,9 @@ class _SignupPageState extends State<SignupPage> {
                                           _streamButtonController.isLoading();
                                           final notifID = await notificationService.notificationID();
                                           SignupInformations infos = signupBloc.validate();
-                                          this.createUser(this.widget.user.uid, databaseService.client, infos.firstName, infos.lastName, infos.email, this.widget.user.phoneNumber, notifID, this.photoUrl, infos.adress, phoneAuthBloc.userCurrency.value, phoneAuthBloc.userCountry.value).then((kooker)  {
+                                          this.createUser(this.widget.user.uid, databaseService.client, infos.firstName, infos.lastName, infos.email, this.widget.user.phoneNumber, notifID, this.photoUrl, infos.adress, phoneAuthBloc.userCurrency.value, phoneAuthBloc.userCountry.value, infos.birthDate).then((kooker) async {
+                                           databaseService.user.sink.add(kooker);
+                                           await  _streamButtonController.isSuccess();
                                             Navigator.push(context,CupertinoPageRoute(
                                                                               builder: (context) =>
                                                                                   TabHome()));
