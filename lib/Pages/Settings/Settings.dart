@@ -142,7 +142,7 @@ String capitalizeFirstOnly(String string){
     final authentificationService = Provider.of<AuthentificationService>(context, listen: false);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
 
-  return GraphQLConsumer(builder: (GraphQLClient client) {
+
 
 
     return Container(
@@ -175,7 +175,7 @@ String capitalizeFirstOnly(String string){
                 onTap: () {
                   this.getImage().then((file) => {
                     storageService.uploadPictureFile(firebaseUser.uid, "photoUrl.jpg", file).then((url) => {
-                      this.updateUserImage(client, firebaseUser.uid, url, databaseService)
+                      this.updateUserImage(databaseService.client, firebaseUser.uid, url, databaseService)
                     })
                   }).catchError((onError) => print);
                 },
@@ -245,7 +245,7 @@ String capitalizeFirstOnly(String string){
       ]),
     );
 
-    });
+
   }
 
 

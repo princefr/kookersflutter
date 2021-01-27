@@ -87,6 +87,7 @@ class _VendorSellViewState extends State<VendorSellView>
     super.build(context);
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: true);
+        
     return Container(
       child: StreamBuilder<List<OrderVendor>>(
           initialData: databaseService.sellerOrders.value,

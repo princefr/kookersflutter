@@ -51,7 +51,7 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
 
-    return GraphQLConsumer(builder: (GraphQLClient client) {
+
         return Scaffold(
           body: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -141,7 +141,7 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
                                         RatingInput rating = RatingInput(comment: comment.value, createdAt: DateTime.now().toIso8601String() , orderId: this.widget.order.id, publicationId: this.widget.order.publication.id, rate: initialRate.value.toString(), whoRate: databaseService.user.value.id);
-                                        this.rateFood(client, rating).then((value){
+                                        this.rateFood(databaseService.client, rating).then((value){
                                           _streamButtonController.isSuccess().then((value){
                                             Navigator.pop(context);
                                           });
@@ -158,6 +158,6 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
           )
       ),
     );
-    });
+
   }
 }

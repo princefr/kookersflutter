@@ -92,7 +92,6 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
 
-    return GraphQLConsumer(builder: (GraphQLClient client) {
       final firebaseUser = context.read<User>();
       return Scaffold(
         body: Container(
@@ -164,7 +163,7 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
                                databaseService.user.value.adresses.forEach((e) => e.isChosed = false);
                                databaseService.user.value.adresses.add(c);
                                textController.text = "";
-                               this.updateUserAdresses(client, firebaseUser.uid, databaseService.user.value.adresses, databaseService).then((value) {
+                               this.updateUserAdresses(databaseService.client, firebaseUser.uid, databaseService.user.value.adresses, databaseService).then((value) {
                                  databaseService.loadPublication().then((value) => Navigator.pop(context));
                                  
                                });
@@ -200,7 +199,7 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
                               setState(() {
                                 snapshot.data.adresses.forEach((e) => e.isChosed = false);
                                 snapshot.data.adresses[index].isChosed = true;
-                                this.updateUserAdresses(client, firebaseUser.uid, databaseService.user.value.adresses, databaseService).then((value) {
+                                this.updateUserAdresses(databaseService.client, firebaseUser.uid, databaseService.user.value.adresses, databaseService).then((value) {
                                   databaseService.loadPublication().then((value) => Navigator.pop(context));
                                   
                                 });
@@ -225,6 +224,6 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
           ),
         ),
       );
-    });
+
   }
 }

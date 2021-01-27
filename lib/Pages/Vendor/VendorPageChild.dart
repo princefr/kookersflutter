@@ -139,7 +139,6 @@ final MutationOptions _options  = MutationOptions(
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
     
-    return GraphQLConsumer(builder: (GraphQLClient client) {
       return Scaffold(
         appBar: TopBarWitBackNav(
                           title: this.widget.vendor.deliveryDay,
@@ -148,7 +147,7 @@ final MutationOptions _options  = MutationOptions(
                           height: 54,
                           onTapRight: () {
                             
-                            this.createRoom(client, this.widget.vendor.buyerID, databaseService.user.value.id).then((result) => Navigator.push(context,
+                            this.createRoom(databaseService.client, this.widget.vendor.buyerID, databaseService.user.value.id).then((result) => Navigator.push(context,
                             CupertinoPageRoute(
                               builder: (context) => ChatPage(room: result))));
                           }),
@@ -303,7 +302,7 @@ final MutationOptions _options  = MutationOptions(
                                      successText: "Commande acceptée",
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
-                                        this.acceptOrder(client, this.widget.vendor).then((result) {
+                                        this.acceptOrder(databaseService.client, this.widget.vendor).then((result) {
                                           _streamButtonController.isSuccess();
                                           databaseService.loadSellerOrders();
                                         }).catchError((err) {
@@ -325,7 +324,7 @@ final MutationOptions _options  = MutationOptions(
                                      successText: "Commande refusée",
                                       controller: _streamButtonController2, onClick: () async {
                                         _streamButtonController2.isLoading();
-                                        this.refuseOrder(client, this.widget.vendor).then((result) {
+                                        this.refuseOrder(databaseService.client, this.widget.vendor).then((result) {
                                           _streamButtonController2.isSuccess();
                                           databaseService.loadSellerOrders();
                                         }).catchError((onError) {
@@ -359,6 +358,6 @@ final MutationOptions _options  = MutationOptions(
         ),
       );
 
-    });
+
   }
 }

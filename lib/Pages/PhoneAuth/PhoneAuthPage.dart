@@ -83,11 +83,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
     final notificationService = Provider.of<NotificationService>(context, listen: false);
     final authentificationService = Provider.of<AuthentificationService>(context, listen: false);
     phoneAuthBloc.listen();
-    // final errorService = Provider.of<ErrorBar>(context, listen: false);
 
-    
-
-    return GraphQLConsumer(builder: (GraphQLClient client) {
       return Scaffold(
         backgroundColor: Colors.white,
         appBar: TopBarWitBackNav(
@@ -227,6 +223,6 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
           ),
         ),
       );
-    });
+
   }
 }

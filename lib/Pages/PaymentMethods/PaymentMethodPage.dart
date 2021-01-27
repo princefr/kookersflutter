@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StripeServices.dart';
@@ -45,7 +44,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
     
-    return GraphQLConsumer(builder: (GraphQLClient client) {
+
       return Scaffold(
         appBar: TopBarWitBackNav(title: "Methodes de paiements", height: 54, rightIcon: CupertinoIcons.plus, isRightIcon: true, onTapRight: (){
                   stripeService.registrarCardWithForm().then((paymentMethod) {
@@ -91,6 +90,6 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
               }
                   )
       );
-    });
+
   }
 }

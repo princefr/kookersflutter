@@ -5,7 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
-import 'package:kookers/GraphQlHelpers/ClientProvider.dart';
 import 'package:kookers/Pages/Onboarding/OnboardingPager.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
@@ -35,7 +34,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  runApp(EasyLocalization(child: MyApp(), supportedLocales: [Locale('en', 'US'), Locale('de', 'DE'), Locale('fr', 'FR')], path: 'assets/translations', fallbackLocale: Locale('en', 'US'),));
+  runApp(EasyLocalization(child: MyApp(), supportedLocales: [Locale('en', 'US'), Locale('de', 'DE'), Locale('fr', 'FR')], path: 'assets/translations', fallbackLocale: Locale('en', 'US'),  saveLocale: true,));
 }
 
 class MyApp extends StatelessWidget {
@@ -62,17 +61,13 @@ class MyApp extends StatelessWidget {
 
           
         ],
-        child: ClientProvider(
-          uri: graphqlEndpoint,
-          subscriptionUri: subscriptionEndpoint,
-          child: MaterialApp(
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          color: Colors.white,
-          title: 'Kookers',
-          home: AuthentificationnWrapper(),
-          ),
+        child: MaterialApp(
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
+        color: Colors.white,
+        title: 'Kookers',
+        home: AuthentificationnWrapper(),
         ),
       ),
     );
@@ -98,49 +93,17 @@ class _AuthentificationnWrapperState extends State<AuthentificationnWrapper> {
     if(firebaseUser != null) {
       return Provider<User>.value(value: firebaseUser, child: TabHome());
     }
+
     
-    return GestureDetector(onTap: (){FocusScope.of(context).requestFocus(new FocusNode());}, child: OnBoardingPager());
+
+   return GestureDetector(onTap: (){FocusScope.of(context).requestFocus(new FocusNode());}, child: OnBoardingPager()); 
+
+    
+    
+    
     
   }
 }
 
 
 
-abstract class RouteAwareState<T extends StatefulWidget> extends State<T>
-    with RouteAware {
-  @override
-  void didChangeDependencies() {
-    routeObserver.subscribe(this, ModalRoute.of(context)); //Subscribe it here
-    super.didChangeDependencies();
-  }
-
-
-  
-
-  @override
-  void didPush() {
-    print('didPush $widget');
-  }
-
-  @override
-  void didPopNext() {
-    print("did pop from $widget");
-    //print('didPopNext $widget');
-  }
-
-  @override
-  void didPop() {
-    print('didPop $widget');
-  }
-
-  @override
-  void didPushNext() {
-    print('didPushNext $widget');
-  }
-
-  @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-    super.dispose();
-  }
-}

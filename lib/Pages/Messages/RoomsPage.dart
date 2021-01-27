@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
@@ -32,8 +31,6 @@ class _RoomsPageState extends State<RoomsPage> with AutomaticKeepAliveClientMixi
     super.build(context);
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
-
-    return GraphQLConsumer(builder: (GraphQLClient client) {
       return Container(
           child: Column(
         children: [
@@ -75,7 +72,6 @@ class _RoomsPageState extends State<RoomsPage> with AutomaticKeepAliveClientMixi
           ),
         ],
       ));
-    });
   }
 
   @override

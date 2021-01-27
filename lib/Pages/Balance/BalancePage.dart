@@ -172,7 +172,7 @@ class _BalancePageState extends State<BalancePage> {
   Widget build(BuildContext context) {
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
-    return GraphQLConsumer(builder: (GraphQLClient client) {
+
       return Scaffold(
           appBar: TopBarWitBackNav(
               title: "Portefeuille",
@@ -305,6 +305,6 @@ class _BalancePageState extends State<BalancePage> {
               ],
             ),
           ));
-    });
+
   }
 }

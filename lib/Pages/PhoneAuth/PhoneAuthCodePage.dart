@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Signup/SignupPage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
+import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:kookers/TabHome/TabHome.dart';
 import 'package:kookers/Widgets/TopBar.dart';
@@ -51,11 +52,11 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
 
   @override
   Widget build(BuildContext context) {
-    //final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
+    final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
     final authentificationService =
                         Provider.of<AuthentificationService>(context, listen: false);
     
-    return GraphQLConsumer(builder: (GraphQLClient client) {
+
       return Scaffold(
         appBar: TopBarWitBackNav(
             title: "Vérification code",
@@ -124,7 +125,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                             widget.verificationId, myController.text)
                         .then((connected) => {
                               this
-                                  .checkUserExist(connected.user.uid, client)
+                                  .checkUserExist(connected.user.uid, databaseService.client)
                                   .then((user){
                                     print(user.data);
                                         if (user.data["usersExist"] == null)
@@ -156,6 +157,5 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
           ),
         ),
       );
-    });
   }
 }

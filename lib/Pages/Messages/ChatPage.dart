@@ -18,7 +18,6 @@ import 'package:kookers/Pages/Messages/isRead.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/TopBar.dart';
-import 'package:kookers/main.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
@@ -33,7 +32,7 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends RouteAwareState<ChatPage>
+class _ChatPageState extends State<ChatPage>
     {
 
 
@@ -145,8 +144,7 @@ class _ChatPageState extends RouteAwareState<ChatPage>
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: true);
     final storage = Provider.of<StorageService>(context, listen: true);
-
-    return GraphQLConsumer(builder: (GraphQLClient client) {
+    
       return Scaffold(
           appBar: TopBarChat(
               displayname: this.widget.room.receiver.firstName +
@@ -448,7 +446,7 @@ class _ChatPageState extends RouteAwareState<ChatPage>
                               this.widget.room.id, message);
                           this.messageToSend.sink.add(null);
                           this.pictureToPreview.sink.add(null);
-                          await this.sendMessage(client, message);
+                          await this.sendMessage(databaseService.client, message);
                           await databaseService.loadrooms();
                         },
                       )
@@ -457,6 +455,6 @@ class _ChatPageState extends RouteAwareState<ChatPage>
                 )
             ),
           ));
-    });
+
   }
 }

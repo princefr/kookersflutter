@@ -168,9 +168,8 @@ class _HomePublishState extends State<HomePublish> {
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
-    return GraphQLConsumer(builder: (GraphQLClient client) {
-      final firebaseUser = context.read<User>();
-      final storageService = Provider.of<StorageService>(context, listen: false);
+    final firebaseUser = context.read<User>();
+    final storageService = Provider.of<StorageService>(context, listen: false);
       
       return Scaffold(
         body: SafeArea(
@@ -484,7 +483,7 @@ class _HomePublishState extends State<HomePublish> {
                                     _streamButtonController.isLoading();
                                     if(snapshot.data != null) {
                                     pubprovider.validate(firebaseUser, storageService, databaseService, this.type).then((publication){
-                                      this.uploadPublication(client, databaseService, publication).then((value){
+                                      this.uploadPublication(databaseService.client, databaseService, publication).then((value){
                                         _streamButtonController.isSuccess().then((value) {
                                           Navigator.pop(context);
                                         });
@@ -505,6 +504,5 @@ class _HomePublishState extends State<HomePublish> {
               )),
         ),
       );
-    });
   }
 }

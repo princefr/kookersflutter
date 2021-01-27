@@ -73,7 +73,7 @@ class _VendorPubPageState extends State<VendorPubPage> {
     final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
 
-    return GraphQLConsumer(builder: (GraphQLClient client) {
+    
         return Scaffold(
           appBar: TopBarWitBackNav(
                               title: this.widget.publication.id,
@@ -215,7 +215,7 @@ class _VendorPubPageState extends State<VendorPubPage> {
                                      successText: "effectuée",
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
-                                       this.cLosePublication(client, this.widget.publication.id, !this.widget.publication.isOpen).then((value){
+                                       this.cLosePublication(databaseService.client, this.widget.publication.id, !this.widget.publication.isOpen).then((value){
                                         //this.widget.publication.isOpen = value;
                                         databaseService.loadSellerPublications();
                                         _streamButtonController.isSuccess();
@@ -238,6 +238,6 @@ class _VendorPubPageState extends State<VendorPubPage> {
           ),
         );
 
-    });
+
   }
 }

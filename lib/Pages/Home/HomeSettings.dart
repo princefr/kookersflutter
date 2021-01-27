@@ -72,7 +72,6 @@ class _HomeSettingsState extends State<HomeSettings> {
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
-    return GraphQLConsumer(builder: (GraphQLClient client) {
       final firebaseUser = context.read<User>();
       return StreamBuilder(
         stream: databaseService.user.stream,
@@ -210,7 +209,7 @@ class _HomeSettingsState extends State<HomeSettings> {
                 SizedBox(height: 60),
                 InkWell(
                   onTap: () async {
-                    this.updateSettings(client, firebaseUser.uid, snapshot.data.settings, databaseService).then((value) {
+                    this.updateSettings(databaseService.client, firebaseUser.uid, snapshot.data.settings, databaseService).then((value) {
                       databaseService.loadPublication();
                       Navigator.pop(context);
                     });
@@ -225,6 +224,6 @@ class _HomeSettingsState extends State<HomeSettings> {
           );
         }
       );
-    });
+
   }
 }

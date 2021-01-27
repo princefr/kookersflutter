@@ -158,7 +158,6 @@ final MutationOptions _options  = MutationOptions(
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
 
-    return GraphQLConsumer(builder: (GraphQLClient client) {
          return Scaffold(
            appBar: TopBarWitBackNav(
               title: this.widget.order.productId,
@@ -222,7 +221,7 @@ final MutationOptions _options  = MutationOptions(
 
                   ListTile(
                     onTap: (){
-                      this.createRoom(client, this.widget.order.sellerId, databaseService.user.value.id).then((result) => Navigator.push(context,
+                      this.createRoom(databaseService.client, this.widget.order.sellerId, databaseService.user.value.id).then((result) => Navigator.push(context,
                             CupertinoPageRoute(
                               builder: (context) => ChatPage(room: result))));
                     },
@@ -273,7 +272,7 @@ final MutationOptions _options  = MutationOptions(
                                      successText: "Commande validée",
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
-                                        this.doneOrder(client, this.widget.order).then((result) {
+                                        this.doneOrder(databaseService.client, this.widget.order).then((result) {
                                           _streamButtonController.isSuccess();
                                           setState(() {
                                             this.widget.order.orderState = EnumToString.fromString(OrderState.values, result["orderState"]);
@@ -294,7 +293,7 @@ final MutationOptions _options  = MutationOptions(
                                      successText: "Commande annulée",
                                       controller: _streamButtonController2, onClick: () async {
                                         _streamButtonController2.isLoading();
-                                          this.cancelOrder(client, this.widget.order).then((result) {
+                                          this.cancelOrder(databaseService.client, this.widget.order).then((result) {
                                             _streamButtonController2.isSuccess();
                                             setState(() {
                                             this.widget.order.orderState = result["orderState"];
@@ -332,7 +331,7 @@ final MutationOptions _options  = MutationOptions(
                                          successText: "Commande annulée",
                                           controller: _streamButtonController3, onClick: () async {
                                             _streamButtonController3.isLoading();
-                                            this.cancelOrder(client, this.widget.order).then((value) {
+                                            this.cancelOrder(databaseService.client, this.widget.order).then((value) {
                                               _streamButtonController3.isSuccess();
                                             }).catchError((onError) {
                                               _streamButtonController3.isError();
@@ -357,6 +356,5 @@ final MutationOptions _options  = MutationOptions(
         ]),
       ),
     ); 
-    });
   }
 }

@@ -107,8 +107,8 @@ class _SignupPageState extends State<SignupPage> {
     final storageService = Provider.of<StorageService>(context, listen: false);
     final signupBloc = Provider.of<SignupBloc>(context, listen: false);
     final phoneAuthBloc = Provider.of<PhoneAuthBloc>(context, listen: false);
+    final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
 
-    return GraphQLConsumer(builder: (GraphQLClient client) {
       return Scaffold(
         appBar: TopBarWitBackNav(
             title: "S'enregistrer",
@@ -367,7 +367,7 @@ class _SignupPageState extends State<SignupPage> {
                                           _streamButtonController.isLoading();
                                           final notifID = await notificationService.notificationID();
                                           SignupInformations infos = signupBloc.validate();
-                                          this.createUser(this.widget.user.uid, client, infos.firstName, infos.lastName, infos.email, this.widget.user.phoneNumber, notifID, this.photoUrl, infos.adress, phoneAuthBloc.userCurrency.value, phoneAuthBloc.userCountry.value).then((kooker)  {
+                                          this.createUser(this.widget.user.uid, databaseService.client, infos.firstName, infos.lastName, infos.email, this.widget.user.phoneNumber, notifID, this.photoUrl, infos.adress, phoneAuthBloc.userCurrency.value, phoneAuthBloc.userCountry.value).then((kooker)  {
                                             Navigator.push(context,CupertinoPageRoute(
                                                                               builder: (context) =>
                                                                                   TabHome()));
@@ -385,6 +385,5 @@ class _SignupPageState extends State<SignupPage> {
           )],
         ),
       );
-    });
   }
 }

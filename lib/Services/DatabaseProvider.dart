@@ -641,7 +641,7 @@ class DatabaseProviderService {
 
 
 
-     GraphQLClient _client = clientFor(uri: "https://kookers-app.herokuapp.com/graphql", subscriptionUri: 'wss://kookers-app.herokuapp.com/graphql').value;
+     GraphQLClient client = clientFor(uri: "https://kookers-app.herokuapp.com/graphql", subscriptionUri: 'wss://kookers-app.herokuapp.com/graphql').value;
 
      
 
@@ -658,7 +658,7 @@ class DatabaseProviderService {
         }
       );
 
-      return await _client.mutate(_options).then((result) =>  result.data["updateDefaultSource"]);
+      return await client.mutate(_options).then((result) =>  result.data["updateDefaultSource"]);
     }
 
 
@@ -697,7 +697,7 @@ class DatabaseProviderService {
         variables: <String, String>{"roomID": roomID},
       );
 
-    return this._client.subscribe(_options).listen((event) => event.data);
+    return this.client.subscribe(_options).listen((event) => event.data);
   }
 
 
@@ -708,7 +708,7 @@ class DatabaseProviderService {
         variables: <String, String>{"roomID": roomID, "listener": this.user.value.id},
       );
 
-    return this._client.subscribe(_options).listen((event) => event.data);
+    return this.client.subscribe(_options).listen((event) => event.data);
   }
 
 
@@ -719,7 +719,7 @@ class DatabaseProviderService {
         variables: <String, String>{"roomID": roomID},
       );
 
-    return this._client.subscribe(_options).listen((event) => event.data);
+    return this.client.subscribe(_options).listen((event) => event.data);
   }
 
 
@@ -758,7 +758,7 @@ class DatabaseProviderService {
           'uid': this.user.value.id
         });
 
-        return this._client.query(_options).then((result) {
+        return this.client.query(_options).then((result) {
             List<Room> list = Room.fromJsonToList(result.data["getUserRooms"], this.user.value.id);
             rooms.sink.add(list);
             return list;
@@ -779,7 +779,7 @@ class DatabaseProviderService {
       }
     );
 
-    return await this._client.mutate(_options).then((result) =>  result.data["updateAllMessageForUser"]);
+    return await this.client.mutate(_options).then((result) =>  result.data["updateAllMessageForUser"]);
   }
 
 
@@ -795,7 +795,7 @@ class DatabaseProviderService {
             }
             );
 
-    return _client.mutate(_options).then((value) => value.data["createOrder"]);
+    return client.mutate(_options).then((value) => value.data["createOrder"]);
   }
 
 
@@ -819,7 +819,7 @@ class DatabaseProviderService {
         }
         );
 
-    return _client.mutate(_options).then((result) => result.data["createBankAccountOnConnect"]);
+    return client.mutate(_options).then((result) => result.data["createBankAccountOnConnect"]);
   }
 
 
@@ -842,7 +842,7 @@ class DatabaseProviderService {
         }
         );
 
-    return _client.query(_options).then((result) => result.data["getPayoutList"]);
+    return client.query(_options).then((result) => result.data["getPayoutList"]);
   }
 
   Future<List<BankAccount>> listExternalAccount() async {
@@ -863,7 +863,7 @@ class DatabaseProviderService {
         }
         );
 
-    return _client.query(_options).then((result) => BankAccount.fromJsonToList(result.data["listExternalAccount"]));
+    return client.query(_options).then((result) => BankAccount.fromJsonToList(result.data["listExternalAccount"]));
   }
 
 
@@ -893,7 +893,7 @@ class DatabaseProviderService {
         }
         );
 
-    return _client.query(_options).then((result) =>Transaction.fromJsonToList(result.data["getBalanceTransaction"]));
+    return client.query(_options).then((result) =>Transaction.fromJsonToList(result.data["getBalanceTransaction"]));
   }
 
 
@@ -918,7 +918,7 @@ class DatabaseProviderService {
         }
         );
 
-    return _client.mutate(_options).then((result) => result.data["createReport"]);
+    return client.mutate(_options).then((result) => result.data["createReport"]);
   }
 
 
@@ -944,7 +944,7 @@ class DatabaseProviderService {
       }
     );
 
-    return await _client.mutate(_options);
+    return await client.mutate(_options);
 }
 
 
@@ -970,7 +970,7 @@ class DatabaseProviderService {
       }
     );
 
-    return await _client.mutate(_options).then((value) => value.data["createBankAccountOnConnect"]);
+    return await client.mutate(_options).then((value) => value.data["createBankAccountOnConnect"]);
 }
 
 Future<List<Order>>  loadbuyerOrders() {
@@ -1006,7 +1006,7 @@ Future<List<Order>>  loadbuyerOrders() {
           'uid': this.user.value.id
         });
 
-        return _client.query(_options).then((result) {
+        return client.query(_options).then((result) {
             List<Order> list = Order.fromJsonToList(result.data["getOrderOwnedBuyer"]);
             buyerOrders.add(list);
             return list;
@@ -1060,7 +1060,7 @@ Future<List<Order>>  loadbuyerOrders() {
           'uid': this.user.value.id
         });
 
-        return _client.query(_options).then((result) {
+        return client.query(_options).then((result) {
             List<OrderVendor> list = OrderVendor.fromJsonToList(result.data["getOrderOwnedSeller"]);
             sellerOrders.add(list);
             return list;
@@ -1101,7 +1101,7 @@ Future<List<Order>>  loadbuyerOrders() {
           'uid': this.user.value.id
         });
 
-        return _client.query(_options).then((result) {
+        return client.query(_options).then((result) {
             List<PublicationVendor> list = PublicationVendor.fromJsonToList(result.data["getpublicationOwned"]);
             sellerPublications.add(list);
             return list;
@@ -1147,7 +1147,7 @@ Future<List<Order>>  loadbuyerOrders() {
       
 
 
-      return _client.query(_options).then((kooker) {
+      return client.query(_options).then((kooker) {
                   final kookersUser = UserDef.fromJson(kooker.data["usersExist"]);
                   this.user.add(kookersUser);
                 return kookersUser;
@@ -1225,7 +1225,7 @@ Future<List<Order>>  loadbuyerOrders() {
         "userId": this.user.value.id
       });
 
-      return _client.query(_options).then((publicationsObject) {
+      return client.query(_options).then((publicationsObject) {
         final publicationsall = PublicationHome.fromJsonToList(publicationsObject.data["getPublicationViaGeo"]);
         this.publications.add(publicationsall);
         return publicationsall;
@@ -1250,7 +1250,7 @@ Future<List<Order>>  loadbuyerOrders() {
         'customer_id': this.user.value.customerId,
       });
 
-      return _client.query(_options).then((sourceList) {
+      return client.query(_options).then((sourceList) {
         final sourceAll = CardModel.fromJsonTolist(sourceList.data["getAllCardsForCustomer"]);
         this.sources.sink.add(sourceAll);
         return sourceAll;

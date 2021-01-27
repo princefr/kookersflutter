@@ -55,7 +55,7 @@ class _ReportPageState extends State<ReportPage> {
 
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
     
-    return GraphQLConsumer(builder: (GraphQLClient client) {
+
       return Scaffold(
         body: SafeArea(
           top: false,
@@ -166,7 +166,7 @@ class _ReportPageState extends State<ReportPage> {
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
                                         ReportInput report  = ReportInput(description: this.comment.value, userReported: this.widget.seller,  userReporting: databaseService.user.value.id,  type: EnumToString.convertToString(ReportType.values[this._value], camelCase: true));
-                                        createReport(client, report).then((result){
+                                        createReport(databaseService.client, report).then((result){
                                           _streamButtonController.isSuccess().then((value){
                                             Navigator.pop(context);
                                           });
@@ -181,6 +181,6 @@ class _ReportPageState extends State<ReportPage> {
               )),
         ),
       );
-    });
+
   }
 }

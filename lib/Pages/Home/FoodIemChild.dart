@@ -2,10 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
 import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
@@ -173,7 +171,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
         Provider.of<DatabaseProviderService>(context, listen: true);
     final orderProvider = Provider.of<OrderProvider>(context, listen: true);
 
-    return GraphQLConsumer(builder: (GraphQLClient client) {
+
       return Scaffold(
         appBar: TopBarWitBackNav(
             title: this.widget.publication.title,
@@ -431,6 +429,6 @@ class _FoodItemChildState extends State<FoodItemChild> {
           ]),
         ),
       );
-    });
+
   }
 }
