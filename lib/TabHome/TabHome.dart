@@ -20,7 +20,7 @@ import 'dart:async';
 
 // ignore: must_be_immutable
 class TabHome extends StatefulWidget {
-  UserDef user;
+  User user;
   TabHome({Key key, this.user}) : super(key: key);
 
   @override
@@ -46,34 +46,18 @@ class _TabHomeState extends State<TabHome>
   );
 
   StreamSubscription<RemoteMessage> get onMessage => FirebaseMessaging.onMessage.listen((event) => event);
+  
+  
 
 
   @override
   void dispose() {
-    // FirebaseMessaging.onMessage.
     this.onMessage.cancel();
     super.dispose();
   }
 
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-        switch(state){
-        case AppLifecycleState.resumed:
-          print("app in resumed");
-          break;
-        case AppLifecycleState.inactive:
-          print("app in inactive");
-          break;
-        case AppLifecycleState.paused:
-          print("app in paused");
-          break;
-        case AppLifecycleState.detached:
-          print("app in detached");
-          break;
-      }
-    super.didChangeAppLifecycleState(state);
-  }
+
 
 
   @override
@@ -83,15 +67,9 @@ class _TabHomeState extends State<TabHome>
           Provider.of<DatabaseProviderService>(context, listen: false);
       final notificationService =
           Provider.of<NotificationService>(context, listen: false);
-      final firebaseUser = context.read<User>();
       await Provider.of<DatabaseProviderService>(context, listen: false)
-          .loadUserData(firebaseUser.uid)
+          .loadUserData(this.widget.user.uid)
           .then((value) async {
-        print(await notificationService.messaging
-                .getToken()
-                .then((value) => value) +
-            " " +
-            "token");
         databaseService.loadPublication();
         databaseService.loadSellerPublications();
         databaseService.loadSellerOrders();

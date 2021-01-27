@@ -111,10 +111,11 @@ class _AddIbanPageState extends State<AddIbanPage> {
                                      successText: "Iban ajouté",
                                       controller: _streamButtonController, onClick: snapshot.data == null ? null :  () async {
                                         _streamButtonController.isLoading();
-                                        databaseService.createBankAccount(snapshot.data).then((value) {
+                                        databaseService.createBankAccount(snapshot.data).then((bankaccount) async {
+                                            await databaseService.updateIbanDeposit(bankaccount.id);
                                             this.bloc.iban.sink.add(null);
                                             _streamButtonController.isSuccess();
-                                            databaseService.listExternalAccount();
+                                            await databaseService.listExternalAccount();
                                             Navigator.pop(context);
                                         }).catchError((onError) {
                                            _streamButtonController.isError();
@@ -145,11 +146,9 @@ class _IbanPageState extends State<IbanPage> {
 
   @override
   void initState() { 
-    new Future.delayed(Duration.zero, (){
+    new Future.delayed(Duration.zero, () async {
       final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
-      databaseService.listExternalAccount().then((value){
-        databaseService.userBankAccounts.add(value);
-      });
+      await databaseService.listExternalAccount();
     });
     super.initState();
     
@@ -183,8 +182,14 @@ class _IbanPageState extends State<IbanPage> {
                       itemCount: snapshot.data.length,
                       itemBuilder: (ctx, index){
                         return ListTile(
+                          onTap: (){
+                            databaseService.updateIbanDeposit(snapshot.data[index].id);
+                            setState(() {
+                              databaseService.user.value.defaultIban = snapshot.data[index].id;
+                            });
+                          },
                           title: Text("*************" + " " + snapshot.data[index].last4),
-                          trailing: Icon(CupertinoIcons.check_mark_circled, color: Colors.green,),
+                          trailing: Visibility(visible: databaseService.user.value.defaultIban == snapshot.data[index].id ? true : false, child: Icon(CupertinoIcons.checkmark_circle, color: Colors.green)),
                         );
                     });
                   }

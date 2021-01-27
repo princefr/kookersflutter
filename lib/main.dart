@@ -91,7 +91,7 @@ class _AuthentificationnWrapperState extends State<AuthentificationnWrapper> {
   Widget build(BuildContext context) {
     final firebaseUser = context.watch<User>();
     if(firebaseUser != null) {
-      return Provider<User>.value(value: firebaseUser, child: TabHome());
+      return Provider<User>.value(value: firebaseUser, child: TabHome(user: firebaseUser,));
     }
 
     

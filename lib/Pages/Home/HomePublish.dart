@@ -12,6 +12,7 @@ import 'package:kookers/Pages/Home/HomeSearchPage.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/PublicationProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
+import 'package:kookers/Widgets/InfoDialog.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/Toogle.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -168,7 +169,7 @@ class _HomePublishState extends State<HomePublish> {
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
-    final firebaseUser = context.read<User>();
+    final firebaseUser = context.watch<User>();
     final storageService = Provider.of<StorageService>(context, listen: false);
       
       return Scaffold(
@@ -457,13 +458,19 @@ class _HomePublishState extends State<HomePublish> {
 
 
                             ListTile(
-                              leading: Icon(CupertinoIcons.info_circle),
+                              leading: InkWell(onTap: (){
+                                showDialog(context: context,
+                                       builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
+                              }, child: Icon(CupertinoIcons.info_circle)),
                               title : Text("Frais de la platforme"),
                               trailing: Text("3%")
                             ),
 
                             ListTile(
-                              leading: Icon(CupertinoIcons.info_circle),
+                              leading: InkWell(onTap: (){
+                                showDialog(context: context,
+                                       builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
+                              }, child: Icon(CupertinoIcons.info_circle)),
                               title : Text("Ce que vous recevrez"),
                               trailing: Text("3%")
                             ),

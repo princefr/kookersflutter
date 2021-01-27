@@ -5,6 +5,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
+import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -150,11 +151,16 @@ class _BalancePageState extends State<BalancePage> {
         Provider.of<DatabaseProviderService>(context, listen: false);
     List<Transaction> transactions =
         await databaseService.getBalanceTransactions();
+        Balance remoteBalance = await databaseService.getBalance();
     this.transactions.add(transactions);
+    this.balance.sink.add(remoteBalance);
     Future.delayed(Duration(microseconds: 300)).then((value) {
       _refreshController.refreshCompleted();
     });
   }
+
+
+  BehaviorSubject<Balance> balance = BehaviorSubject<Balance>();
 
   @override
   void initState() {
@@ -162,16 +168,30 @@ class _BalancePageState extends State<BalancePage> {
       final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
       List<Transaction> transactions =
-          await databaseService.getBalanceTransactions();
+      await databaseService.getBalanceTransactions();
+      Balance remoteBalance = await databaseService.getBalance();
       this.transactions.add(transactions);
+      this.balance.sink.add(remoteBalance);
     });
     super.initState();
   }
 
+
+
+  @override
+  void dispose() { 
+    balance.close();
+    super.dispose();
+  }
+
+
+final StreamButtonController _streamButtonController = StreamButtonController();
+
+
+
   @override
   Widget build(BuildContext context) {
-    final databaseService =
-        Provider.of<DatabaseProviderService>(context, listen: false);
+    final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
 
       return Scaffold(
           appBar: TopBarWitBackNav(
@@ -189,7 +209,8 @@ class _BalancePageState extends State<BalancePage> {
                     onRefresh: () {
                       refreshData(context);
                     },
-                    child: ListView(children: [
+                    child: ListView(
+                      children: [
                       Divider(),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -202,25 +223,11 @@ class _BalancePageState extends State<BalancePage> {
                                     fontSize: 10))),
                       ),
                       SizedBox(height: 50),
-                      Query(
-                        options: QueryOptions(documentNode: gql(r'''
-                            query GetAcountBalance($account_id: String!) {
-                                  accountbalance(account_id: $account_id) {
-                                    current_balance
-                                    pending_balance
-                                    currency
-                                  }
-                              }
-                            '''), variables: <String, String>{
-                          "account_id":
-                              databaseService.user.value.stripeaccountId,
-                        }),
-                        builder: (result, {fetchMore, refetch}) {
-                          if (result.hasException) {
-                            return Text(result.exception.toString());
-                          }
 
-                          if (result.loading) {
+                      StreamBuilder<Balance>(
+                            stream: this.balance.stream,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
                             return Shimmer.fromColors(
                                   child: Center(
                             child: Container(
@@ -239,31 +246,31 @@ class _BalancePageState extends State<BalancePage> {
                                   highlightColor: Colors.grey[300]);
                           }
 
-                          if (result.data == null) {
-                            return Text("no data");
-                          }
-
-                          Balance balance =
-                              Balance.fromJson(result.data["accountbalance"]);
-
+                          
                           return Center(
-                            child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 40),
-                                child: Text(
-                                  balance.totalBalance.toString(),
-                                  style: GoogleFonts.montserrat(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w500),
-                                )),
-                          );
-                        },
-                      ),
+                                child: Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 40),
+                                    child: Text(
+                                      snapshot.data.totalBalance.toString(),
+                                      style: GoogleFonts.montserrat(
+                                          fontSize: 40,
+                                          fontWeight: FontWeight.w500),
+                                    )),
+                              );
+                            }
+                          ),
+                        
+
+
+
                       SizedBox(height: 40),
+
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Text("Transactions",
                             style: GoogleFonts.montserrat(fontSize: 18)),
                       ),
+
                       SizedBox(height: 5),
                       Divider(),
                       StreamBuilder<List<Transaction>>(
@@ -282,6 +289,7 @@ class _BalancePageState extends State<BalancePage> {
                                       }),
                                   baseColor: Colors.grey[200],
                                   highlightColor: Colors.grey[300]);
+                                  
                             return ListView(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
@@ -292,15 +300,36 @@ class _BalancePageState extends State<BalancePage> {
                     ]),
                   ),
                 ),
-                InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: KookersButton(
-                        text: "Retirer",
-                        color: Colors.black,
-                        textcolor: Colors.white),
-                  ),
+
+                // makePayout
+
+                StreamBuilder<Balance>(
+                  stream: this.balance.stream,
+                  builder: (context, snapshot) {
+                    if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                    if(snapshot.hasError) return SizedBox();
+                    return StreamButton(buttonColor: snapshot.data.totalBalance > 0 ? Color(0xFFF95F5F) : Colors.grey,
+                                         buttonText: "Retirer sur mon compte",
+                                         errorText: "Une erreur s'est produite, veuillez reessayer",
+                                         loadingText: "Retrait  en cours",
+                                         successText: "Retrait effectué",
+                                          controller: _streamButtonController, onClick: snapshot.data.totalBalance == 0 ? null :  () async {
+                                            _streamButtonController.isLoading();
+                                            databaseService.makePayout(this.balance.value).then((value) async {
+                                              List<Transaction> transactions =
+                                              await databaseService.getBalanceTransactions();
+                                              Balance remoteBalance = await databaseService.getBalance();
+                                              this.transactions.add(transactions);
+                                              this.balance.sink.add(remoteBalance);
+                                              _streamButtonController.isSuccess();
+                                            }).catchError((onError){
+                                              _streamButtonController.isError();
+                                            });
+                                                  
+                                            
+                                            
+                                          });
+                  }
                 )
               ],
             ),

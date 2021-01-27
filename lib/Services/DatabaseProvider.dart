@@ -212,9 +212,10 @@ class UserDef {
  String defaultSource;
  String country;
  String currency;
+ String defaultIban;
  String stripeaccountId;
 
- UserDef({this.id, this.email, this.firstName, this.lastName, this.phonenumber, this.fcmToken, this.settings, this.adresses, this.photoUrl, this.customerId, this.createdAt, this.updatedAt, this.defaultSource, this.country, this.currency, this.stripeaccountId});
+ UserDef({this.id, this.email, this.firstName, this.lastName, this.phonenumber, this.fcmToken, this.settings, this.adresses, this.photoUrl, this.customerId, this.createdAt, this.updatedAt, this.defaultSource, this.country, this.currency, this.stripeaccountId, this.defaultIban});
  
   static UserDef fromJson(Map<String, dynamic> map) => UserDef (
   id: map["_id"],
@@ -232,7 +233,8 @@ class UserDef {
   defaultSource: map["default_source"],
   country: map["country"],
   currency: map["currency"],
-  stripeaccountId: map["stripe_account"]
+  stripeaccountId: map["stripe_account"],
+  defaultIban: map["default_iban"]
 );
 }
 
@@ -641,7 +643,7 @@ class DatabaseProviderService {
 
 
 
-     GraphQLClient client = clientFor(uri: "https://kookers-app.herokuapp.com/graphql", subscriptionUri: 'wss://kookers-app.herokuapp.com/graphql').value;
+     GraphQLClient client = clientFor(uri: "https://921f6bd6742b.ngrok.io/graphql", subscriptionUri: 'wss://921f6bd6742b.ngrok.io/graphql').value;
 
      
 
@@ -659,6 +661,23 @@ class DatabaseProviderService {
       );
 
       return await client.mutate(_options).then((result) =>  result.data["updateDefaultSource"]);
+    }
+
+
+    Future<String> updateIbanDeposit(String iban) async {
+               final MutationOptions _options  = MutationOptions(
+        documentNode: gql(r"""
+          mutation UpdateIbanSource($userId: String!, $iban: String!){
+                updateIbanSource(userId: $userId, iban: $iban)
+            }
+        """),
+        variables:  <String, String> {
+          "userId": this.user.value.id,
+          "iban": iban,
+        }
+      );
+
+      return await client.mutate(_options).then((result) =>  result.data["updateIbanSource"]); 
     }
 
 
@@ -799,7 +818,7 @@ class DatabaseProviderService {
   }
 
 
-   Future<void> createBankAccount(String account) async {
+   Future<BankAccount> createBankAccount(String account) async {
     final MutationOptions _options = MutationOptions(documentNode: gql(r"""
           mutation CreateBankAccountOnConnect($account_id: String!, $country:String!, $currency: String!, $account_number: String!) {
             createBankAccountOnConnect(account_id: $account_id, country: $country, currency: $currency, account_number: $account_number){
@@ -819,7 +838,7 @@ class DatabaseProviderService {
         }
         );
 
-    return client.mutate(_options).then((result) => result.data["createBankAccountOnConnect"]);
+    return client.mutate(_options).then((result) => BankAccount.fromJson(result.data["createBankAccountOnConnect"]));
   }
 
 
@@ -863,7 +882,10 @@ class DatabaseProviderService {
         }
         );
 
-    return client.query(_options).then((result) => BankAccount.fromJsonToList(result.data["listExternalAccount"]));
+    return client.query(_options).then((result) => BankAccount.fromJsonToList(result.data["listExternalAccount"])).then((value){
+      userBankAccounts.sink.add(value);
+      return value;
+    });
   }
 
 
@@ -896,8 +918,26 @@ class DatabaseProviderService {
     return client.query(_options).then((result) =>Transaction.fromJsonToList(result.data["getBalanceTransaction"]));
   }
 
+  Future<Balance> getBalance() async {
+    final QueryOptions _options = QueryOptions(
+      fetchPolicy: FetchPolicy.cacheAndNetwork,
+      documentNode: gql(r"""
+                                  query GetAcountBalance($account_id: String!) {
+                                        accountbalance(account_id: $account_id) {
+                                          current_balance
+                                          pending_balance
+                                          currency
+                                        }
+                                    }
+                    """), variables: <String, String>{
+            "account_id": this.user.value.stripeaccountId
+        });
 
-  Future<void> makePayout(Balance balance) async {
+    return client.query(_options).then((result) => Balance.fromJson(result.data["accountbalance"]));
+}
+
+
+  Future<Payout> makePayout(Balance balance) async {
     final MutationOptions _options = MutationOptions(documentNode: gql(r"""
           mutation MakePayout($account_id: String!, $amount: String!, $currency: String!) {
             makePayout(account_id: $account_id, amount: $amount, $currency: currency){
@@ -913,12 +953,12 @@ class DatabaseProviderService {
         """),
         variables: <String, dynamic> {
           'account_id' : this.user.value.stripeaccountId,
-          'amount': balance.currentBalance,
+          'amount': balance.currentBalance - balance.pendingBalance,
           'currency': balance.currency
         }
         );
 
-    return client.mutate(_options).then((result) => result.data["createReport"]);
+    return client.mutate(_options).then((result) => Payout.fromJson(result.data["makePayout"]));
   }
 
 
@@ -1124,6 +1164,7 @@ Future<List<Order>>  loadbuyerOrders() {
               country
               currency
               default_source
+              default_iban
               stripe_account
               settings {
                   food_preferences {id, title, is_selected}

@@ -10,6 +10,8 @@ import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/OrderProvider.dart';
 import 'package:kookers/Services/StripeServices.dart';
+import 'package:kookers/Widgets/ConfirmationDialog.dart';
+import 'package:kookers/Widgets/InfoDialog.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
@@ -19,14 +21,15 @@ import 'package:rxdart/rxdart.dart';
 
 // ignore: must_be_immutable
 class ChooseDatePage extends StatelessWidget {
-  ChooseDatePage({Key key}) : super(key: key);
+  CupertinoDatePickerMode datemode;
+  ChooseDatePage({Key key, @required this.datemode}) : super(key: key);
 
   DateTime date;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 450,
+        height: 420,
         child: Column(
           children: [
             Padding(
@@ -42,7 +45,7 @@ class ChooseDatePage extends StatelessWidget {
             Expanded(
               child: CupertinoDatePicker(
                   use24hFormat: true,
-                  mode: CupertinoDatePickerMode.dateAndTime,
+                  mode: this.datemode,
                   minimumDate: DateTime.now().add(Duration(hours: 3)),
                   initialDateTime: DateTime.now().add(Duration(hours: 3)),
                   onDateTimeChanged: (DateTime newDateTime) {
@@ -55,7 +58,7 @@ class ChooseDatePage extends StatelessWidget {
                   Navigator.pop(context, this.date);
                 },
                 child: KookersButton(
-                    text: "Commander",
+                    text: "Choisir",
                     color: Colors.black,
                     textcolor: Colors.white)),
             SizedBox(height: 20),
@@ -272,6 +275,16 @@ class _FoodItemChildState extends State<FoodItemChild> {
                 }
               }),
             ),
+            
+
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 17),
+              child: Text("Periode de retrait commande", style: GoogleFonts.montserrat(decoration: TextDecoration.none,
+                          color: Colors.black,
+                          fontSize: 15))
+            ),
+
             Divider(),
             StreamBuilder<DateTime>(
                 stream: orderProvider.deliveryDate.stream,
@@ -281,7 +294,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                       DateTime date = await showCupertinoModalBottomSheet(
                         expand: false,
                         context: context,
-                        builder: (context) => ChooseDatePage(),
+                        builder: (context) => ChooseDatePage(datemode: CupertinoDatePickerMode.dateAndTime),
                       );
 
                       orderProvider.deliveryDate.add(date);
@@ -291,6 +304,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                     trailing: Text(snapshot.data.toString()),
                   );
                 }),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Align(
@@ -368,7 +382,10 @@ class _FoodItemChildState extends State<FoodItemChild> {
             SizedBox(height: 15),
 
             ListTile(
-                leading: Icon(CupertinoIcons.info_circle),
+                leading: InkWell(onTap: (){
+                                showDialog(context: context,
+                                       builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
+                              }, child: Icon(CupertinoIcons.info_circle)),
                 title : Text("Frais de service"),
                 trailing: Text("3%")
               ),
@@ -407,23 +424,26 @@ class _FoodItemChildState extends State<FoodItemChild> {
                       successText: "Plat acheté",
                       controller: _streamButtonController,
                       onClick: () async {
-                        if (snapshot.data != null) {
-                          _streamButtonController.isLoading();
-                          final total = orderProvider.quantity.value * 15;
-                          final totalPlusFees =
-                              total + this.percentage(20, total).toInt();
-                          final order = await orderProvider.validate(
-                              databaseService,
-                              this.widget.publication,
-                              totalPlusFees);
-                          databaseService
-                              .createOrder(order)
-                              .then((value) =>
-                                  {_streamButtonController.isSuccess()})
-                              .catchError((onError) {
-                            _streamButtonController.isError();
-                          });
-                        }
+                        showDialog(context: context,
+                                       builder: (context) => ConfirmationDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", onAcceptTap: (){},));
+                        
+                        // if (snapshot.data != null) {
+                        //   _streamButtonController.isLoading();
+                        //   final total = orderProvider.quantity.value * 15;
+                        //   final totalPlusFees =
+                        //       total + this.percentage(20, total).toInt();
+                        //   final order = await orderProvider.validate(
+                        //       databaseService,
+                        //       this.widget.publication,
+                        //       totalPlusFees);
+                        //   databaseService
+                        //       .createOrder(order)
+                        //       .then((value) =>
+                        //           {_streamButtonController.isSuccess()})
+                        //       .catchError((onError) {
+                        //     _streamButtonController.isError();
+                        //   });
+                        // }
                       });
                 }),
           ]),

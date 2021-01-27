@@ -72,7 +72,7 @@ class _HomeSettingsState extends State<HomeSettings> {
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
-      final firebaseUser = context.read<User>();
+      final firebaseUser = context.watch<User>();
       return StreamBuilder(
         stream: databaseService.user.stream,
         builder: (context, AsyncSnapshot<UserDef> snapshot) {

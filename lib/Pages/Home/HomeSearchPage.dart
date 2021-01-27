@@ -92,7 +92,8 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
 
-      final firebaseUser = context.read<User>();
+      final firebaseUser = context.watch<User>();
+
       return Scaffold(
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
