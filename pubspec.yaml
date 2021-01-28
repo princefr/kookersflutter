@@ -50,7 +50,7 @@ dependencies:
   provider: "^4.3.2+1"
   google_maps_flutter: ^0.5.28+1
   shimmer: ^1.1.2
-  flushbar: ^1.10.4
+  another_flushbar: ^1.10.8
   google_place: ^0.3.3
   cached_network_image: ^2.5.0
   image_picker: ^0.6.7+14

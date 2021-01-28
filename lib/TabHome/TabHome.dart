@@ -1,16 +1,20 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Home/homePage.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Messages/RoomsPage.dart';
+import 'package:kookers/Pages/Orders/OrderItem.dart';
+import 'package:kookers/Pages/Orders/OrderPageChild.dart';
 import 'package:kookers/Pages/Orders/OrdersPage.dart';
 import 'package:kookers/Pages/Settings/Settings.dart';
 import 'package:kookers/Pages/Vendor/VendorPage.dart';
+import 'package:kookers/Pages/Vendor/VendorPageChild.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/NotificiationService.dart';
 import 'package:kookers/TabHome/BottomBar.dart';
 import 'package:provider/provider.dart';
@@ -79,6 +83,10 @@ class _TabHomeState extends State<TabHome>
         notificationService.messaging.subscribeToTopic("new_order");
         notificationService.messaging.subscribeToTopic("order_update");
         this.tokenRefresh = notificationService.tokenChanges;
+        this.tokenRefresh.onData((data) {
+            databaseService.user.value.fcmToken = data;
+            databaseService.updateFirebasetoken(data);
+        });
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -88,32 +96,22 @@ class _TabHomeState extends State<TabHome>
       }
     });
 
-    this.onMessage.onData((event) {
+    this.onMessage.onData((event) async {
       final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
       if (event.data["type"] == "new_message") {
-        databaseService.loadrooms();
-        Flushbar(
-          onTap: (flushbar) {
-            Room room = databaseService.rooms.value
+        await databaseService.loadrooms();
+        Room room = databaseService.rooms.value
                 .firstWhere((element) => element.id == event.data["roomId"]);
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ChatPage(room: room)));
-          },
-          margin: EdgeInsets.all(8),
-          borderRadius: 8,
-          flushbarPosition: FlushbarPosition.TOP,
-          title: event.data["senderName"],
-          message: event.notification.body,
-          icon: CircleAvatar(
-            backgroundImage:
-                CachedNetworkImageProvider(event.data["senderImgUrl"]),
-          ),
-          flushbarStyle: FlushbarStyle.FLOATING,
-          duration: Duration(seconds: 3),
-        ).show(context);
-      } else if(event.data["type"] == "new_order"){
-          print("new_order");
+        NotificationPanelService().showNewMessagePanel(context, event, room);
+      }else if(event.data[""] == "order_seller"){
+          await databaseService.loadSellerOrders();
+          OrderVendor order  = databaseService.sellerOrders.value.firstWhere((element) => element.id == event.data["orderId"]);
+          NotificationPanelService().showOrderSeller(context, event, order);
+      }else if(event.data[""] == "order_buyer"){
+         await databaseService.loadbuyerOrders();
+         final Order order = databaseService.buyerOrders.value.firstWhere((element) => element.id == event.data["orderId"]);
+        NotificationPanelService().showOrderBuyer(context, event, order);
       }
     });
 
@@ -124,12 +122,22 @@ class _TabHomeState extends State<TabHome>
       Future.delayed(Duration(microseconds: 200), () async {
         final databaseService =
             Provider.of<DatabaseProviderService>(context, listen: false);
-            databaseService.loadrooms();
             if (event.data["type"] == "new_message") {
+              await databaseService.loadrooms();
               Room room = databaseService.rooms.value
                   .firstWhere((element) => element.id == event.data["roomId"]);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ChatPage(room: room)));
+            }else if(event.data["type"] == "order_seller"){
+              await databaseService.loadSellerOrders();
+              OrderVendor order  = databaseService.sellerOrders.value.firstWhere((element) => element.id == event.data["orderId"]);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => VendorPageChild(vendor: order)));
+            }else if(event.data["type"] == "order_buyer"){
+              await databaseService.loadbuyerOrders();
+              final Order order = databaseService.buyerOrders.value.firstWhere((element) => element.id == event.data["orderId"]);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => OrderPageChild(order: order)));
 
             }
       });

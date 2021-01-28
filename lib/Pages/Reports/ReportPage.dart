@@ -155,9 +155,7 @@ class _ReportPageState extends State<ReportPage> {
                           fontSize: 10))),
 
                     Expanded(child: SizedBox()),
-
-
-
+                    
                                 StreamButton(buttonColor: Colors.red,
                                      buttonText: "Signaler",
                                      errorText: "Une erreur s'est produite",

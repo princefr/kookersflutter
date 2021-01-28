@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
           Provider<OrderProvider>(create: (_) =>  OrderProvider()),
           Provider<PhoneAuthBloc>(create: (_) =>  PhoneAuthBloc()),
           Provider<SignupBloc>(create: (_) =>  SignupBloc()),
-          Provider<ErrorBar>(create: (_) =>  ErrorBar()),
+          Provider<NotificationPanelService>(create: (_) =>  NotificationPanelService()),
 
           
         ],

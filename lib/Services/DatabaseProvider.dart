@@ -681,6 +681,23 @@ class DatabaseProviderService {
     }
 
 
+      Future<String> updateFirebasetoken(String token) async {
+               final MutationOptions _options  = MutationOptions(
+        documentNode: gql(r"""
+          mutation UpdateFirebasetoken($userId: String!, $token: String!){
+                updateFirebasetoken(userId: $userId, token: $token)
+            }
+        """),
+        variables:  <String, String> {
+          "userId": this.user.value.id,
+          "token": token,
+        }
+      );
+
+      return await client.mutate(_options).then((result) =>  result.data["updateFirebasetoken"]); 
+    }
+
+
     String subscribeToNewMessage = r"""
       subscription getMEssagedAdded($roomID: ID!)  {
         messageAdded(roomID: $roomID) {
