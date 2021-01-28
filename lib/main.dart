@@ -1,7 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
@@ -34,7 +34,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  runApp(EasyLocalization(child: MyApp(), supportedLocales: [Locale('en', 'US'), Locale('de', 'DE'), Locale('fr', 'FR')], path: 'assets/translations', fallbackLocale: Locale('en', 'US'),  saveLocale: true,));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -62,9 +62,6 @@ class MyApp extends StatelessWidget {
           
         ],
         child: MaterialApp(
-        localizationsDelegates: context.localizationDelegates,
-        supportedLocales: context.supportedLocales,
-        locale: context.locale,
         color: Colors.white,
         title: 'Kookers',
         home: AuthentificationnWrapper(),
@@ -94,9 +91,20 @@ class _AuthentificationnWrapperState extends State<AuthentificationnWrapper> {
     
     if(firebaseUser != null) {
       return FutureBuilder<UserDef>(
-        future: databaseService.loadUserData(firebaseUser.uid),
+        future: Future.delayed(Duration(seconds: 3), () => databaseService.loadUserData(firebaseUser.uid)),
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting) return Center(child: CircularProgressIndicator(),);
+          if(snapshot.connectionState == ConnectionState.waiting) return Scaffold(backgroundColor: Colors.white, body: Center(child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image(image: AssetImage('assets/logo/logo_flutter.png'), height: 150,),
+              SizedBox(height: 20),
+              //CupertinoActivityIndicator()
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white),),
+              ),
+            ],
+          ),));
           if(snapshot.data == null) return OnBoardingPager();
           return Provider<User>.value(value: firebaseUser, child: TabHome(user: firebaseUser,));
         }

@@ -214,7 +214,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                         padding: const EdgeInsets.all(8.0),
                         child: Center(
                             child: Text(
-                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
+                                "Votre portefeuille représente la somme de vos montants disponibles et de vos montants en attente. Après une vente réussie, il peut s'écouler 7 jours avant que vous ne puissiez retirer votre argent.",
                                 style: GoogleFonts.montserrat(
                                     decoration: TextDecoration.none,
                                     color: Colors.black,

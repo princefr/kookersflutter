@@ -48,11 +48,14 @@ class _TabHomeState extends State<TabHome>
   StreamSubscription<RemoteMessage> get onMessage => FirebaseMessaging.onMessage.listen((event) => event);
   
   
+  StreamSubscription<String> tokenRefresh; 
+  
 
 
   @override
   void dispose() {
     this.onMessage.cancel();
+    this.tokenRefresh.cancel();
     super.dispose();
   }
 
@@ -75,6 +78,7 @@ class _TabHomeState extends State<TabHome>
         notificationService.messaging.subscribeToTopic("new_message");
         notificationService.messaging.subscribeToTopic("new_order");
         notificationService.messaging.subscribeToTopic("order_update");
+        this.tokenRefresh = notificationService.tokenChanges;
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {

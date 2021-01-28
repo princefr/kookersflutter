@@ -643,7 +643,7 @@ class DatabaseProviderService {
 
 
 
-     GraphQLClient client = clientFor(uri: "https://ae01e44184bc.ngrok.io/graphql", subscriptionUri: 'wss://ae01e44184bc.ngrok.io/graphql').value;
+     GraphQLClient client = clientFor(uri: "https://46cd409c571a.ngrok.io/graphql", subscriptionUri: 'wss://46cd409c571a.ngrok.io/graphql').value;
 
      
 

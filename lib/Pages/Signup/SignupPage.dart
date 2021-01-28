@@ -22,6 +22,7 @@ import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SignupPage extends StatefulWidget {
   final User user;
@@ -328,7 +329,7 @@ class _SignupPageState extends State<SignupPage> {
               SizedBox(height: 10),
 
               Center(child: Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                    "Nous utilisons votre adresse pour vous connecter à des chefs ou à des potentiels clients autour de vous.",
                     style: GoogleFonts.montserrat(
                         decoration: TextDecoration.none,
                         color: Colors.black,
@@ -361,7 +362,7 @@ class _SignupPageState extends State<SignupPage> {
                               decoration: TextDecoration.underline),
                               recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              // open desired screen
+                              launch("urlString");
                             }
                           ),
 
@@ -379,6 +380,7 @@ class _SignupPageState extends State<SignupPage> {
                               decoration: TextDecoration.underline),
                               recognizer: TapGestureRecognizer()
                             ..onTap = () {
+                              launch("urlString");
                               // open desired screen
                             }
                           ),
@@ -411,9 +413,8 @@ class _SignupPageState extends State<SignupPage> {
                                             Navigator.push(context,CupertinoPageRoute(
                                                                               builder: (context) =>
                                                                                   TabHome()));
-                                          }).catchError((onError) => {
-                                              print("une erreur s'est produite"),
-                                              print(onError.toString())
+                                          }).catchError((onError) async {
+                                              await  _streamButtonController.isError();
                                           });
 
                                       }

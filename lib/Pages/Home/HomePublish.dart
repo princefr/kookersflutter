@@ -248,13 +248,13 @@ class _HomePublishState extends State<HomePublish> {
                                         ConnectionState.waiting)
                                       return CircularProgressIndicator();
                                     return ChipsChoice<dynamic>.multiple(
-                                      spinnerColor: Colors.red,
+                                      spinnerColor: Color(0xFFF95F5F),
                                       choiceStyle: C2ChoiceStyle(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       choiceActiveStyle: C2ChoiceStyle(
                                         borderRadius: BorderRadius.circular(10),
-                                        color: Color.fromARGB(255, 255, 43, 84)
+                                        color: Color(0xFFF95F5F)
                                       ),
                                       value: snapshot.data
                                           .where((element) =>
@@ -281,7 +281,7 @@ class _HomePublishState extends State<HomePublish> {
                             Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                                    "Les  préférences alimentaires de vos plats nous aide à les proposer aux bonnes personnes. n’oubliez pas de les renseigner.",
                                     style: GoogleFonts.montserrat(
                                         decoration: TextDecoration.none,
                                         color: Colors.black,
@@ -448,7 +448,7 @@ class _HomePublishState extends State<HomePublish> {
                             Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text(
-                                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                                    "Nous utilisons votre adresse pour vous connecter à des potentiels clients autour de vous.",
                                     style: GoogleFonts.montserrat(
                                         decoration: TextDecoration.none,
                                         color: Colors.black,

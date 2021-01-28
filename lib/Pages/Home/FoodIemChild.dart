@@ -74,7 +74,15 @@ class Stepper extends StatefulWidget {
   _StepperState createState() => _StepperState();
 }
 
+
+
+
 class _StepperState extends State<Stepper> {
+
+  @override
+  void dispose() { 
+    super.dispose();
+  }
   void upNumber() {
     setState(() {
       this.widget.quantity.add(this.widget.quantity.value + 1);
@@ -168,10 +176,17 @@ class _FoodItemChildState extends State<FoodItemChild> {
   StreamButtonController _streamButtonController = StreamButtonController();
 
   @override
+  void dispose() { 
+    this.orderProvider.dispose();
+    super.dispose();
+  }
+
+  OrderProvider orderProvider =  OrderProvider();
+
+  @override
   Widget build(BuildContext context) {
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: true);
-    final orderProvider = Provider.of<OrderProvider>(context, listen: true);
 
 
       return Scaffold(
@@ -299,7 +314,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                       orderProvider.deliveryDate.add(date);
                     },
                     leading: Icon(CupertinoIcons.calendar),
-                    title: Text("Retrait"),
+                    title: Text("Date"),
                     trailing: Text(snapshot.data.toString()),
                   );
                 }),
@@ -309,7 +324,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
               child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                      "Si vous commandez le jour même , l'application prévoit 3 heures de délai pour pouvoir laisser du temps au chef d'acheter des ingrédients frais et de le cuisiner sans stress.",
                       style: GoogleFonts.montserrat(
                           decoration: TextDecoration.none,
                           color: Colors.black,
@@ -424,25 +439,27 @@ class _FoodItemChildState extends State<FoodItemChild> {
                       controller: _streamButtonController,
                       onClick: () async {
                         showDialog(context: context,
-                                       builder: (context) => ConfirmationDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", onAcceptTap: (){},));
+                                       builder: (context) => ConfirmationDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", onAcceptTap: () async {
+                                  if (snapshot.data != null) {
+                                    _streamButtonController.isLoading();
+                                    final total = orderProvider.quantity.value * 15;
+                                    final totalPlusFees =
+                                        total + this.percentage(20, total).toInt();
+                                    final order = await orderProvider.validate(
+                                        databaseService,
+                                        this.widget.publication,
+                                        totalPlusFees);
+                                    databaseService
+                                        .createOrder(order)
+                                        .then((value) =>
+                                            {_streamButtonController.isSuccess()})
+                                        .catchError((onError) {
+                                      _streamButtonController.isError();
+                                    });
+                                  }
+
+                                       },));
                         
-                        // if (snapshot.data != null) {
-                        //   _streamButtonController.isLoading();
-                        //   final total = orderProvider.quantity.value * 15;
-                        //   final totalPlusFees =
-                        //       total + this.percentage(20, total).toInt();
-                        //   final order = await orderProvider.validate(
-                        //       databaseService,
-                        //       this.widget.publication,
-                        //       totalPlusFees);
-                        //   databaseService
-                        //       .createOrder(order)
-                        //       .then((value) =>
-                        //           {_streamButtonController.isSuccess()})
-                        //       .catchError((onError) {
-                        //     _streamButtonController.isError();
-                        //   });
-                        // }
                       });
                 }),
           ]),

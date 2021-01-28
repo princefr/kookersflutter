@@ -70,7 +70,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
             padding: const EdgeInsets.only(left: 10, right: 10, bottom: 15),
             child: Column(children: <Widget>[
               Text(
-                  "Veuillez renseigner votre numéro de téléphone pour vous connecter à votre compte ou vous incrire.",
+                  "Veuillez renseigner ci dessous le code reçu sur votre numéro de téléphone renseigné à la page précédente.",
                   style: GoogleFonts.montserrat(),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 5),
@@ -99,22 +99,16 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                       )),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                    "La photo de vos documents nous aide à prouver votre identité. Elle doit correspondre aux informations que vous avez fournies lors des étapes précédentes.",
-                    style: GoogleFonts.montserrat(fontSize: 10),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 5),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: RichText(
-                  text: TextSpan(
-                      text: "Code non recu? renvoyez le!",
-                      style: TextStyle(color: Colors.red)),
-                ),
-              ),
+              
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 20),
+              //   child: RichText(
+              //     text: TextSpan(
+              //         text: "Code non recu? renvoyez le!",
+              //         style: TextStyle(color: Colors.red)),
+              //   ),
+              // ),
+
               Expanded(
                 child: SizedBox(),
               ),
@@ -127,7 +121,8 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                               this
                                   .checkUserExist(connected.user.uid, databaseService.client)
                                   .then((user){
-                                    print(user.data);
+
+                                      if(user.data != null){
                                         if (user.data["usersExist"] == null)
                                           {
                                             Navigator.push(
@@ -146,6 +141,13 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                                     builder: (context) =>
                                                         TabHome()));
                                           }
+                                      }else{
+                                        print("arf");
+                                      }
+                                    
+                                      
+                                      }).catchError((onError) {
+                                        print(onError);
                                       })
                             });
                   },

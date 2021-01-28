@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 
@@ -7,7 +9,7 @@ class NotificationService {
 
   NotificationService({this.messaging});
 
-  Stream<String> get authStateChanges => messaging.onTokenRefresh;
+  StreamSubscription<String> get tokenChanges => messaging.onTokenRefresh.listen((event) => event);
 
   // Any time the token refreshes, store this in the database too.
   //  FirebaseMessaging.instance.onTokenRefresh.listen(saveTokenToDatabase);

@@ -157,7 +157,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
               Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                  "La photo de vos documents nous aide à prouver votre identité. Elle doit correspondre aux informations que vous avez fournies lors des étapes précédentes.",
+                  "Votre numéro de téléphone nous sert uniquement à vous connecter à nos services et aux services de paiement de nos partenaires.",
                   style: GoogleFonts.montserrat(fontSize: 10),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 5),
@@ -170,11 +170,9 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
               StreamBuilder<bool>(
                 stream: phoneAuthBloc.isAllFilled$,
                 builder: (context, snapshot) {
-                  print(snapshot.data);
                   return FlatButton(
                       onPressed: () async {
                           String phone = await phoneAuthBloc.validate();
-                          print(phone);
                           notificationService.askPermission().then((permission) => {
                                 if (permission.authorizationStatus ==
                                         AuthorizationStatus.authorized ||

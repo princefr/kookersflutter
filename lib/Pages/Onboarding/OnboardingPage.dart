@@ -60,9 +60,9 @@ class OnboardingPage extends StatelessWidget {
                       data.description,
                       textAlign: TextAlign.center,
                       style: GoogleFonts.montserrat(
-                          fontSize: 21,
+                          fontSize: 17,
                           color: Colors.grey,
-                          fontWeight: FontWeight.w500),
+                          fontWeight: FontWeight.w400),
                     ),
                   ),
                   ],

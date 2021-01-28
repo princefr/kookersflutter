@@ -102,6 +102,14 @@ class _HomeSettingsState extends State<HomeSettings> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: ChipsChoice<String>.multiple(
+                    spinnerColor: Color(0xFFF95F5F),
+                    choiceStyle: C2ChoiceStyle(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    choiceActiveStyle: C2ChoiceStyle(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Color(0xFFF95F5F)
+                    ),
                     value: snapshot.data.settings.foodPriceRange.where((element) => element.isSelected == true).map((e) => e.title).toList(),
                     onChanged: (val) {
                       setState(() {
@@ -115,14 +123,6 @@ class _HomeSettingsState extends State<HomeSettings> {
                     ),
                   ),
                 ),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
-                        style: GoogleFonts.montserrat(
-                            decoration: TextDecoration.none,
-                            color: Colors.black,
-                            fontSize: 10))),
                 SizedBox(height: 30),
                 Align(
                     alignment: Alignment.centerLeft,
@@ -134,7 +134,14 @@ class _HomeSettingsState extends State<HomeSettings> {
                 SizedBox(height: 10),
 
                 ChipsChoice<String>.multiple(
-                  spinnerColor: Colors.red,
+                  spinnerColor: Color(0xFFF95F5F),
+                  choiceStyle: C2ChoiceStyle(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  choiceActiveStyle: C2ChoiceStyle(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color(0xFFF95F5F)
+                  ),
                   value: snapshot.data.settings.foodPreference.where((element) => element.isSelected == true).map((e) => e.title).toList(),
                   onChanged: (val) {
                       setState(() {
@@ -150,7 +157,7 @@ class _HomeSettingsState extends State<HomeSettings> {
                 Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                        "Vos préférences alimentaires nous sert à vous proposer uniquement des plats à votre goût.",
                         style: GoogleFonts.montserrat(
                             decoration: TextDecoration.none,
                             color: Colors.black,
@@ -170,7 +177,7 @@ class _HomeSettingsState extends State<HomeSettings> {
                     Expanded(
                           child: SliderTheme(
                           data: SliderTheme.of(context).copyWith(
-                            activeTrackColor: Colors.red[700],
+                            activeTrackColor: Color(0xFFF95F5F),
                             inactiveTrackColor: Colors.red[100],
                             trackShape: RectangularSliderTrackShape(),
                             trackHeight: 4.0,
@@ -201,7 +208,7 @@ class _HomeSettingsState extends State<HomeSettings> {
                 Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                        "Distance de recherche vous separant des potentiels chefs amteurs. Plus la distance est rappoché de votre domicile moins il vous faudra attendre pour deguster vos plats ou desserts.",
                         style: GoogleFonts.montserrat(
                             decoration: TextDecoration.none,
                             color: Colors.black,

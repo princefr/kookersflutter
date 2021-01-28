@@ -24,15 +24,15 @@ class _OnboardingPagerState extends State<OnBoardingPager> {
   final List<Widget> introWidgetsList = [
     OnboardingPage(data:
      OnboardingModel(
-       description: "Kookers vous connecte avec des chefs autour de vous",
+       description: "Kookers  connecte chefs amateurs et gourmands souhaitant faire des découvertes culinaires.",
        placeHolder: "assets/onboarding/Chef-pana.png",
-       title: "Payer",
+       title: "Concept",
       )
      ),
 
     OnboardingPage(data:
      OnboardingModel(
-       description: "Envoyer de l'argent instantanément et gratuitement à travers les frontières.",
+       description: "Commandez  les plats ou dessert en fonction de vos préférences culinaires et de votre géolocalisation.",
        placeHolder: "assets/onboarding/Messaging_fun-pana.png",
        title: "Commandez",
       )
@@ -40,7 +40,7 @@ class _OnboardingPagerState extends State<OnBoardingPager> {
 
      OnboardingPage(data:
       OnboardingModel(
-        description: "Retirer votre argent sur votre compte en banque ou dans l'une de nos agences partenaire.",
+        description: "Retirez votre commande chez le chef amateur à proximité de chez vous ou faites vous livrer directement, si la livraison vous est proposée.",
         placeHolder: "assets/onboarding/Pedestrian_crossing-pana-2.png",
         title: "Retirez",
         )
@@ -48,7 +48,7 @@ class _OnboardingPagerState extends State<OnBoardingPager> {
 
       OnboardingPage(data:
       OnboardingModel(
-        description: "Retirer votre argent sur votre compte en banque ou dans l'une de nos agences partenaire.",
+        description: "Dégustez votre plat ou votre dessert en toute tranquillité.",
         placeHolder: "assets/onboarding/Eating_healthy_food-pana.png",
         title: "Dégustez",
         )

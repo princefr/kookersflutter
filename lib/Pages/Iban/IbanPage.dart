@@ -91,7 +91,7 @@ class _AddIbanPageState extends State<AddIbanPage> {
                       Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Center(child: Text(
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
+                        "L'iban ajouté est tout de suite definie comme celui par défaut, il est possible de le changer en cliquant sur la liste d'ibans sur la page précédente.",
                         style: GoogleFonts.montserrat(
                             decoration: TextDecoration.none,
                             color: Colors.black,

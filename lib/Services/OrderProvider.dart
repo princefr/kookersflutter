@@ -6,13 +6,21 @@ import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class OrderProvider with OrderValidation {
-  // ignore: close_sinks
+
+
+  OrderProvider();
+
+    void dispose (){
+    this.quantity.close();
+    this.deliveryDate.close();
+  }
+
   BehaviorSubject<int> quantity = new BehaviorSubject<int>.seeded(0);
   Stream<int> get quantity$ => quantity.stream.transform(validateQuantity);
   Sink<int> get inQuantity => quantity.sink;
 
 
-  // ignore: close_sinks
+
   BehaviorSubject<DateTime> deliveryDate = new BehaviorSubject<DateTime>.seeded(DateTime.now().add(Duration(hours: 3)));
   Stream<DateTime> get deliveryDate$ => deliveryDate.stream;
   Sink<DateTime> get inDeliveryDate => deliveryDate.sink;
