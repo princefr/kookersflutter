@@ -70,8 +70,11 @@ class Order{
         String currency;
         OrderState orderState;
         Publication publication;
+        int notificationBuyer;
+        int  notificationSeller;
         Seller seller;
-        Order({this.productId, this.stripeTransactionId, this.orderState, this.publication, this.deliveryDay, this.seller, this.currency, this.id, this.quantity, this.sellerId, this.totalPrice});
+        Order({this.productId, this.stripeTransactionId, this.orderState, this.publication, this.deliveryDay,
+         this.seller, this.currency, this.id, this.quantity, this.sellerId, this.totalPrice, this.notificationBuyer, this.notificationSeller});
 
         static Order fromJson(Map<String, dynamic> map) => Order(
           productId: map["productId"],

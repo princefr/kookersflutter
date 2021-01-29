@@ -294,11 +294,15 @@ class OrderVendor {
   String sellerStAccountid;
   String paymentMethodAssociated;
   String currency;
+  int notificationBuyer;
+  int  notificationSeller;
   PublicationVendor publication;
   String stripeTransactionId;
   BuyerVendor buyer;
 
-  OrderVendor({@required this.productId, @required this.quantity, @required this.totalPrice, @required this.buyerID, @required this.orderState, @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency, this.publication, this.buyer, this.id, this.stripeTransactionId});
+  OrderVendor({@required this.productId, @required this.quantity, @required this.totalPrice,
+   @required this.buyerID, @required this.orderState, @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency,
+    this.publication, this.buyer, this.id, this.stripeTransactionId, this.notificationBuyer, this.notificationSeller});
 
   static OrderVendor fromJson(Map<String, dynamic> data) => OrderVendor(
     productId: data["productId"],
@@ -591,6 +595,9 @@ class DatabaseProviderService {
 
     // ignore: close_sinks
   BehaviorSubject<List<OrderVendor>> sellerOrders = new BehaviorSubject<List<OrderVendor>>();
+  Stream<dynamic> get sellingNotificationCount => sellerOrders.stream.map((event) => event.map((order) => order.notificationSeller).fold(0, (previousValue, element) => previousValue + element));
+
+
   // ignore: close_sinks
   BehaviorSubject<OrderVendor> inOrderSeller;
   StreamSubscription<OrderVendor> getOrderSeller(String orderId, BehaviorSubject<OrderVendor> sellorders){
@@ -602,6 +609,8 @@ class DatabaseProviderService {
 
       // ignore: close_sinks
   BehaviorSubject<List<Order>> buyerOrders = new BehaviorSubject<List<Order>>();
+  Stream<int> get buyingNotification => buyerOrders.stream.map((event) => event.map((order) => order.notificationBuyer).fold(0, (previousValue, element) => previousValue + element));
+
         // ignore: close_sinks
   BehaviorSubject<Order> inOrderBuyer;
   StreamSubscription<Order> getOrderBuyer(String orderId, BehaviorSubject<Order> order){
@@ -618,6 +627,7 @@ class DatabaseProviderService {
 
   // ignore: close_sinks
   BehaviorSubject<List<Room>> rooms = new BehaviorSubject<List<Room>>();
+  Stream<int> get messageNotificationCount => rooms.stream.map((event) => event.map((room) => room.messages.where((message) => message.userId != this.user.value.id && message.isRead == false).length).fold(0, (previousValue, element) => previousValue + element));
 
   // ignore: close_sinks
   BehaviorSubject<List<Message>> messagesInRoom;

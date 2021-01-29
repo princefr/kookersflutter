@@ -72,16 +72,8 @@ class MyApp extends StatelessWidget {
 }
 
 
-class AuthentificationnWrapper extends StatefulWidget {
+class AuthentificationnWrapper extends StatelessWidget {
   AuthentificationnWrapper({Key key}): super(key: key);
-
-
-
-  @override
-  _AuthentificationnWrapperState createState() => _AuthentificationnWrapperState();
-}
-
-class _AuthentificationnWrapperState extends State<AuthentificationnWrapper> {
 
   
   @override
@@ -91,6 +83,7 @@ class _AuthentificationnWrapperState extends State<AuthentificationnWrapper> {
     
     if(firebaseUser != null) {
       return FutureBuilder<UserDef>(
+        initialData: null,
         future: Future.delayed(Duration(seconds: 3), () => databaseService.loadUserData(firebaseUser.uid)),
         builder: (context, snapshot) {
           if(snapshot.connectionState == ConnectionState.waiting) return Scaffold(backgroundColor: Colors.white, body: Center(child: Column(

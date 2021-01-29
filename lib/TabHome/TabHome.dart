@@ -1,8 +1,7 @@
-import 'package:another_flushbar/flushbar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:kookers/Pages/Home/homePage.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
@@ -43,16 +42,18 @@ class _TabHomeState extends State<TabHome>
   }
 
   RateMyApp rateMyApp = RateMyApp(
-    preferencesPrefix: 'rateMyApp_',
+    preferencesPrefix: 'rateKookers_',
     minDays: 0, // Show rate popup on first day of install.
     minLaunches:
-        1, // Show rate popup after 5 launches of app after minDays is passed.
+      7, // Show rate popup after 5 launches of app after minDays is passed.
+    //googlePlayIdentifier: "",
+    //appStoreIdentifier: "",
   );
 
   StreamSubscription<RemoteMessage> get onMessage => FirebaseMessaging.onMessage.listen((event) => event);
   
   
-  StreamSubscription<String> tokenRefresh; 
+  StreamSubscription<String> tokenRefresh = FirebaseMessaging.instance.onTokenRefresh.listen((event) => event);
   
 
 
@@ -70,6 +71,7 @@ class _TabHomeState extends State<TabHome>
   @override
   void initState() {
     new Future.delayed(Duration.zero, () async {
+      if(await FlutterAppBadger.isAppBadgeSupported()) FlutterAppBadger.removeBadge();
       final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
       final notificationService =
@@ -82,8 +84,8 @@ class _TabHomeState extends State<TabHome>
         notificationService.messaging.subscribeToTopic("new_message");
         notificationService.messaging.subscribeToTopic("new_order");
         notificationService.messaging.subscribeToTopic("order_update");
-        this.tokenRefresh = notificationService.tokenChanges;
         this.tokenRefresh.onData((data) {
+          print("token refreshed");
             databaseService.user.value.fcmToken = data;
             databaseService.updateFirebasetoken(data);
         });

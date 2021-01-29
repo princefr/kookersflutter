@@ -20,7 +20,6 @@ class MessageToDisplay{
 
 
 class NotificationPanelService {
-
   MessageToDisplay loadMessageTypeSeller(String type) {
     switch (type) {
       case "new_order":
