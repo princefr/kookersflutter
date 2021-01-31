@@ -27,16 +27,17 @@ class BottomBar extends StatelessWidget {
         icon: StreamBuilder<dynamic>(
           stream: badgeCountstream,
           builder: (context, snapshot) {
-            print(snapshot.data);
             if(snapshot.connectionState == ConnectionState.waiting) return Icon(icon);
             if(snapshot.data == 0) return Icon(icon);
             if(snapshot.data == null) return Icon(icon);
-            return Badge(child: Icon(icon), badgeContent: Text(snapshot.data.toString(), style: GoogleFonts.montserrat(color: Colors.white),), elevation: 1, badgeColor: Colors.red,);
+            return Badge(child: Icon(icon), badgeContent: Text(snapshot.data.toString(), style: GoogleFonts.montserrat(color: Colors.white),), elevation: 0, badgeColor: Colors.red, toAnimate: false);
           }
         ),
         label: text,
       );
   }
+
+  
 
   @override
   Widget build(BuildContext context) {

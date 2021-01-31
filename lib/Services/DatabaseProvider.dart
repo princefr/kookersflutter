@@ -1040,6 +1040,40 @@ class DatabaseProviderService {
     return await client.mutate(_options).then((value) => value.data["createBankAccountOnConnect"]);
 }
 
+
+  Future<void> cleanNotificationSeller(String orderId) async {
+    final MutationOptions _options  = MutationOptions(
+      documentNode: gql(r"""
+        mutation CleanNotificationSeller($orderId: Strinng!){
+              cleanNotificationSeller(orderId: $orderId){
+                id
+              }
+          }
+      """),
+      variables:  <String, String> {
+        "orderId": orderId,
+      }
+    );
+    return await client.mutate(_options).then((value) => value.data["cleanNotificationSeller"]);
+}
+
+
+  Future<void> cleanNotificationBuyer(String orderId) async {
+    final MutationOptions _options  = MutationOptions(
+      documentNode: gql(r"""
+        mutation CleanNotificationBuyer($orderId: Strinng!){
+              cleanNotificationBuyer(orderId: $orderId){
+                id
+              }
+          }
+      """),
+      variables:  <String, String> {
+        "orderId": orderId,
+      }
+    );
+    return await client.mutate(_options).then((value) => value.data["cleanNotificationBuyer"]);
+}
+
 Future<List<Order>>  loadbuyerOrders() {
   final QueryOptions _options = QueryOptions(
       fetchPolicy: FetchPolicy.cacheAndNetwork,

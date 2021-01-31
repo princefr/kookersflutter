@@ -99,7 +99,7 @@ class AuthentificationnWrapper extends StatelessWidget {
             ],
           ),));
           if(snapshot.data == null) return OnBoardingPager();
-          return Provider<User>.value(value: firebaseUser, child: TabHome(user: firebaseUser,));
+          return TabHome(user: firebaseUser,);
         }
       );
     }
