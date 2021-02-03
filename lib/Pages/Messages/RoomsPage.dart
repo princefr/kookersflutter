@@ -13,11 +13,8 @@ class RoomsPage extends StatefulWidget {
   _RoomsPageState createState() => _RoomsPageState();
 }
 
-class _RoomsPageState extends State<RoomsPage> with AutomaticKeepAliveClientMixin<RoomsPage> {
-
-
-
-
+class _RoomsPageState extends State<RoomsPage>
+    with AutomaticKeepAliveClientMixin<RoomsPage> {
   @override
   void initState() {
     super.initState();
@@ -31,11 +28,23 @@ class _RoomsPageState extends State<RoomsPage> with AutomaticKeepAliveClientMixi
     super.build(context);
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
-      return Container(
-          child: Column(
-        children: [
-          PageTitle(title: "Messages"),
-          Expanded(
+    return Container(
+        child: Column(
+      children: [
+        PageTitle(title: "Messages"),
+        Divider(),
+        Expanded(
+          child: SmartRefresher(
+            enablePullDown: true,
+            enablePullUp: false,
+            controller: this._refreshController,
+            onRefresh: () {
+              databaseService.loadrooms().then((value) {
+                Future.delayed(Duration(milliseconds: 500)).then((value) {
+                  _refreshController.refreshCompleted();
+                });
+              });
+            },
             child: StreamBuilder<List<Room>>(
                 initialData: databaseService.rooms.value,
                 stream: databaseService.rooms.stream,
@@ -49,31 +58,23 @@ class _RoomsPageState extends State<RoomsPage> with AutomaticKeepAliveClientMixi
                             }),
                         baseColor: Colors.grey[200],
                         highlightColor: Colors.grey[300]);
-                  if(snapshot.hasError) return Text("i've a bad felling");
-                  if(snapshot.data.isEmpty) return Text("its empty out there");
-                  return SmartRefresher(
-                    enablePullDown: true,
-                    controller: this._refreshController,
-                    onRefresh: () {
-                      databaseService.loadrooms().then((value) {
-                        Future.delayed(Duration(milliseconds: 500))
-                            .then((value) {
-                          _refreshController.refreshCompleted();
-                        });
+                  if (snapshot.hasError) return Text("i've a bad felling");
+                  if (snapshot.data.isEmpty) return Text("its empty out there");
+                  return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        return RoomItem(
+                          room: snapshot.data[index],
+                          index: index,
+                        );
                       });
-                    },
-                    child: ListView.builder(
-                        itemCount: snapshot.data.length,
-                        itemBuilder: (context, index) {
-                          return RoomItem(room: snapshot.data[index], index: index,);
-                        }),
-                  );
                 }),
           ),
-        ],
-      ));
+        ),
+      ],
+    ));
   }
 
   @override
-bool get wantKeepAlive => true;
+  bool get wantKeepAlive => true;
 }

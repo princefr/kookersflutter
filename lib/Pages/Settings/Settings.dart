@@ -95,7 +95,7 @@ String capitalizeFirstOnly(String string){
   final picker = ImagePicker();
 
   Future<File> getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
     return File(pickedFile.path);
   }
 

@@ -39,40 +39,41 @@ class _OrdersPageState extends State<OrdersPage> with AutomaticKeepAliveClientMi
       child: Column(
         children: [
           PageTitle(title: "Mes achats"),
+          Divider(),
           
           Expanded(
-            child: StreamBuilder<List<Order>>(
-              stream: databaseService.buyerOrders.stream,
-              builder: (context,AsyncSnapshot<List<Order>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting)
-                          return Shimmer.fromColors(
-                        child: ListView.builder(
-                            itemCount: 10,
-                            itemBuilder: (ctx, index) {
-                              return OrderItemShimmer();
-                            }),
-                        baseColor: Colors.grey[200],
-                        highlightColor: Colors.grey[300]);
-                if (snapshot.data.isEmpty) return Text("this is empty");
-                return SmartRefresher(
-                          enablePullDown: true,
-                          controller: this._refreshController,
-                          onRefresh: (){
-                            databaseService.loadbuyerOrders().then((value) {
-                              Future.delayed(Duration(milliseconds: 500))
-                                    .then((value) {
-                                  _refreshController.refreshCompleted();
-                                });
-                            });
-                          },
+            child: SmartRefresher(
+              enablePullDown: true,
+                            controller: this._refreshController,
+                            onRefresh: (){
+                              databaseService.loadbuyerOrders().then((value) {
+                                Future.delayed(Duration(milliseconds: 1000))
+                                      .then((value) {
+                                    _refreshController.refreshCompleted();
+                                  });
+                              });
+                            },
+                          child: StreamBuilder<List<Order>>(
+                stream: databaseService.buyerOrders.stream,
+                builder: (context,AsyncSnapshot<List<Order>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                            return Shimmer.fromColors(
                           child: ListView.builder(
-                          itemCount: snapshot.data.length,
-                          itemBuilder: (context, index){
-                          return OrderItem(order: snapshot.data[index]);
-                    }
-                    ),
-                     );
-              }
+                              itemCount: 10,
+                              itemBuilder: (ctx, index) {
+                                return OrderItemShimmer();
+                              }),
+                          baseColor: Colors.grey[200],
+                          highlightColor: Colors.grey[300]);
+                  if (snapshot.data.isEmpty) return Text("this is empty");
+                  return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index){
+                  return OrderItem(order: snapshot.data[index]);
+                      }
+                      );
+                }
+              ),
             ),
           ),
         ],

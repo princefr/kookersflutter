@@ -2,6 +2,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
@@ -38,6 +39,11 @@ class NotificationPanelService {
     }
   }
 
+
+  
+
+
+
     MessageToDisplay loadMessageTypeBuyer(String type) {
       switch (type) {
         case "order_accepted":
@@ -60,9 +66,10 @@ class NotificationPanelService {
           },
           margin: EdgeInsets.all(8),
           borderRadius: 10,
+          backgroundColor: Colors.white,
           flushbarPosition: FlushbarPosition.TOP,
-          title: event.data["senderName"],
-          message: event.notification.body,
+          titleText: Text(event.data["senderName"], style: GoogleFonts.montserrat(),),
+          messageText: Text(event.notification.body, style: GoogleFonts.montserrat(),),
           icon: Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
@@ -72,6 +79,7 @@ class NotificationPanelService {
           ),
           flushbarStyle: FlushbarStyle.FLOATING,
           duration: Duration(seconds: 3),
+          boxShadows: [BoxShadow(color: Colors.grey, offset: Offset(1.0, 2.0), blurRadius: 1.0,)]
         ).show(context);
   }
 

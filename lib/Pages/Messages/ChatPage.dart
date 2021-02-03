@@ -417,9 +417,6 @@ class _ChatPageState extends State<ChatPage>
                         message: messageToSend,
                         focusNode: this.focusNode,
                         animationDuration: Duration(milliseconds: 300),
-                        onSubmitted: (String message) {
-                          print("the message has been submitted");
-                        },
                         onAttachmentCiclked: () {
                           getImage().then((file) {
                             this.pictureToPreview.sink.add(file);

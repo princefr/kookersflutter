@@ -13,15 +13,13 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 
-class HomeTopBar extends StatefulWidget {
-  const HomeTopBar({Key key}) : super(key: key);
+class HomeTopBar extends PreferredSize {
+  final double height;
+  const HomeTopBar({Key key, this.height});
 
   @override
-  _HomeTopBarState createState() => _HomeTopBarState();
-}
+  Size get preferredSize => Size.fromHeight(height);
 
-class _HomeTopBarState extends State<HomeTopBar> {
-  @override
   Widget build(BuildContext context) {
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: true);
@@ -46,8 +44,7 @@ class _HomeTopBarState extends State<HomeTopBar> {
                       if (snapshot.connectionState == ConnectionState.waiting)
                         return CircularProgressIndicator();
                       if (snapshot.hasError) return Text("i've a bad felling");
-                      if (!snapshot.hasData)
-                        return Text("its empty out there");
+                      if (!snapshot.hasData) return Text("its empty out there");
                       return CircleAvatar(
                         radius: 25,
                         backgroundImage: CachedNetworkImageProvider(
@@ -88,7 +85,6 @@ class _HomeTopBarState extends State<HomeTopBar> {
                         initialData: null,
                         stream: databaseService.user,
                         builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                          print(snapshot.connectionState);
                           if (snapshot.connectionState ==
                               ConnectionState.waiting)
                             return SizedBox(
@@ -113,6 +109,7 @@ class _HomeTopBarState extends State<HomeTopBar> {
                 )
               ],
             ),
+            Divider()
           ],
         ),
       ),
@@ -142,6 +139,9 @@ class _HomePageState extends State<HomePage> {
         Provider.of<DatabaseProviderService>(context, listen: false);
 
     return Scaffold(
+      appBar: HomeTopBar(
+        height: 144,
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color(0xFFF95F5F),
         onPressed: () {
@@ -155,61 +155,48 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Container(
-            color: Colors.white,
-            child: Column(
-              children: [
-                HomeTopBar(),
-                Divider(),
-                StreamBuilder<List<PublicationHome>>(
-                    stream: databaseService.publications$,
-                    initialData: databaseService.publications.value,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting)
-                        return Expanded(
-                          child: Shimmer.fromColors(
-                              child: ListView.builder(
-                                  itemCount: 10,
-                                  itemBuilder: (ctx, index) {
-                                    return FoodItemShimmer();
-                                  }),
-                              baseColor: Colors.grey[200],
-                              highlightColor: Colors.grey[300]),
-                        );
-                      if (snapshot.hasError) return Text("i've a bad felling");
-                      if (snapshot.data.isEmpty)
-                        return Text("its empty out there");
-                      return Expanded(
-                        child: SmartRefresher(
-                          onRefresh: () {
-                            databaseService.loadPublication().then((value) {
-                              Future.delayed(Duration(milliseconds: 500))
-                                  .then((value) {
-                                _refreshController.refreshCompleted();
-                              });
-                            });
-                          },
-                          enablePullDown: true,
-                          controller: this._refreshController,
-                          child: ListView(
-                            children: snapshot.data
-                                .map((e) => FoodItem(
-                                    publication: e,
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  FoodItemChild(
-                                                      publication: e)));
-                                    }))
-                                .toList(),
-                          ),
-                        ),
-                      );
-                    }),
-              ],
-            )),
+        child: SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: true,
+          controller: this._refreshController,
+          onRefresh: () {
+            databaseService.loadPublication().then((value) {
+              Future.delayed(Duration(milliseconds: 500)).then((value) {
+                _refreshController.refreshCompleted();
+              });
+            });
+          },
+          child: StreamBuilder<List<PublicationHome>>(
+              stream: databaseService.publications$,
+              initialData: databaseService.publications.value,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  return Shimmer.fromColors(
+                      child: ListView.builder(
+                          itemCount: 10,
+                          itemBuilder: (ctx, index) {
+                            return FoodItemShimmer();
+                          }),
+                      baseColor: Colors.grey[200],
+                      highlightColor: Colors.grey[300]);
+                if (snapshot.hasError) return Text("i've a bad felling");
+                if (snapshot.data.isEmpty) return Text("its empty out there");
+                return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (ctx, index) {
+                    return FoodItem(
+                          publication: snapshot.data[index],
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        FoodItemChild(publication: snapshot.data[index])));
+                          });
+                  },
+                );
+              }),
+        ),
       ),
     );
   }

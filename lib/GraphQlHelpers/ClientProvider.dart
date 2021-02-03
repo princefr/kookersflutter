@@ -19,8 +19,18 @@ final OptimisticCache cache = OptimisticCache(
 ValueNotifier<GraphQLClient> clientFor({
   @required String uri,
   String subscriptionUri,
+  String authorization
 }) {
   Link link = HttpLink(uri: uri);
+
+  final AuthLink authLink = AuthLink(
+    getToken: () async => authorization,
+    // OR
+    // getToken: () => 'Bearer <YOUR_PERSONAL_ACCESS_TOKEN>',
+  );
+
+  link = authLink.concat(link);
+
   if (subscriptionUri != null) {
     final WebSocketLink websocketLink = WebSocketLink(
       url: subscriptionUri,

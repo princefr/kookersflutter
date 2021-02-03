@@ -1,8 +1,11 @@
+
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
 import 'package:kookers/Pages/Onboarding/OnboardingPager.dart';
@@ -16,6 +19,7 @@ import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/TabHome/TabHome.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 final host = 'kookers-app.herokuapp.com/graphql';
@@ -28,6 +32,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print("Handling a background message: ${message.messageId}");
 }
+
+
 
 
 void main() async {
@@ -62,6 +68,18 @@ class MyApp extends StatelessWidget {
           
         ],
         child: MaterialApp(
+          localizationsDelegates: [
+              RefreshLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate
+            ],
+            supportedLocales: [
+              const Locale('en'),
+              const Locale('zh'),
+            ],
+            localeResolutionCallback: (Locale locale, Iterable<Locale> supportedLocales) {
+              return locale;
+            },
         color: Colors.white,
         title: 'Kookers',
         home: AuthentificationnWrapper(),
@@ -78,40 +96,48 @@ class AuthentificationnWrapper extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User>();
+    final authentificationService =  Provider.of<AuthentificationService>(context, listen: true);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
-    
-    if(firebaseUser != null) {
-      return FutureBuilder<UserDef>(
-        initialData: null,
-        future: Future.delayed(Duration(seconds: 3), () => databaseService.loadUserData(firebaseUser.uid)),
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting) return Scaffold(backgroundColor: Colors.white, body: Center(child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image(image: AssetImage('assets/logo/logo_flutter.png'), height: 150,),
-              SizedBox(height: 20),
-              //CupertinoActivityIndicator()
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white),),
-              ),
-            ],
-          ),));
-          if(snapshot.data == null) return OnBoardingPager();
-          return TabHome(user: firebaseUser,);
-        }
-      );
-    }
 
-    
+    return StreamBuilder<User>(
+      stream: authentificationService.authStateChanges,
+      initialData: null,
+      builder: (BuildContext ctx, AsyncSnapshot<User> snapshotc){
+        if(snapshotc.connectionState == ConnectionState.waiting) return SplashScreen();
+        if(snapshotc.data == null) return OnBoardingPager();
+        return FutureBuilder<Object>(
+          future: Future.delayed(Duration(seconds: 3), () => databaseService.loadUserData(snapshotc.data.uid)),
+          builder: (context, snapshot) {
+            if(snapshot.connectionState == ConnectionState.waiting) return SplashScreen();
+            if(snapshot.data == null) return OnBoardingPager();
+            return TabHome(user: snapshotc.data);
+          }
+        );
 
-   return OnBoardingPager(); 
+      },
+    );
+  }
+}
 
-    
-    
-    
-    
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(backgroundColor: Colors.white, body: Center(child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image(image: AssetImage('assets/logo/logo_flutter.png'), height: 150,),
+        SizedBox(height: 20),
+        //CupertinoActivityIndicator()
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white),),
+        ),
+      ],
+    ),));
   }
 }
 

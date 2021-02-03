@@ -32,7 +32,6 @@ mixin SignupValidation {
 
 
     final validateEmail = StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
-      print(isEmailValid(value));
       if(value != null && isEmailValid(value))  {
           sink.add(value);
       }else{

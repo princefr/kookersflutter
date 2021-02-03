@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:dart_geohash/dart_geohash.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
@@ -37,7 +39,6 @@ class Adress {
   
     map.forEach((element) {
       final adress = element as Map<String, dynamic>;
-      print(adress["location"]["latitude"]);
       adresses.add(Adress(
         title: adress["title"],
         location: Location(latitude: adress["location"]["latitude"], longitude: adress["location"]["longitude"]),
@@ -159,7 +160,6 @@ class FoodPriceRange {
   }
 
   void toogle(){
-    print("its is toggle");
     this.isSelected = !this.isSelected;
   }
 
@@ -646,14 +646,14 @@ class DatabaseProviderService {
   }
 
 
-
     final OptimisticCache cache = OptimisticCache(
       dataIdFromObject: typenameDataIdFromObject,
     );
 
+    //StreamSubscription<String> token = FirebaseAuth.instance.authStateChanges().listen((event) => event.getIdToken(true).asStream());
+    
 
-
-     GraphQLClient client = clientFor(uri: "https://46cd409c571a.ngrok.io/graphql", subscriptionUri: 'wss://46cd409c571a.ngrok.io/graphql').value;
+     GraphQLClient client = clientFor(uri: "https://46cd409c571a.ngrok.io/graphql", subscriptionUri: 'wss://46cd409c571a.ngrok.io/graphql', authorization: "").value;
 
      
 
@@ -892,7 +892,9 @@ class DatabaseProviderService {
   }
 
   Future<List<BankAccount>> listExternalAccount() async {
-    final QueryOptions _options = QueryOptions(documentNode: gql(r"""
+    final QueryOptions _options = QueryOptions(
+      fetchPolicy: FetchPolicy.cacheAndNetwork,
+      documentNode: gql(r"""
           query ListExternalAccount($accountId: String!) {
             listExternalAccount(accountId: $accountId){
               id

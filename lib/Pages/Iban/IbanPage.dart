@@ -7,6 +7,7 @@ import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 
@@ -153,6 +154,8 @@ class _IbanPageState extends State<IbanPage> {
     super.initState();
     
   }
+
+    RefreshController _refreshController = RefreshController(initialRefresh: false);
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
@@ -172,28 +175,43 @@ class _IbanPageState extends State<IbanPage> {
             }),
             
             body: SafeArea(
-              child: StreamBuilder<List<BankAccount>>(
-                  stream: databaseService.userBankAccounts.stream,
-                  builder: (context, snapshot) {
-                    if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
-                    if(snapshot.hasError) return Text("i've a bad felling");
-                    if(snapshot.data.isEmpty) return Text("its empty out there");
-                    return ListView.builder(
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (ctx, index){
-                        return ListTile(
-                          onTap: (){
-                            databaseService.updateIbanDeposit(snapshot.data[index].id);
-                            setState(() {
-                              databaseService.user.value.defaultIban = snapshot.data[index].id;
-                            });
-                          },
-                          title: Text("*************" + " " + snapshot.data[index].last4),
-                          trailing: Visibility(visible: databaseService.user.value.defaultIban == snapshot.data[index].id ? true : false, child: Icon(CupertinoIcons.checkmark_circle, color: Colors.green)),
-                        );
-                    });
-                  }
-                ),
+              child: SmartRefresher(
+                    onRefresh: () async {
+                          databaseService.listExternalAccount().then((value) {
+                              Future.delayed(Duration(milliseconds: 1000)).then((value) {
+                                _refreshController.refreshCompleted();
+                              });
+                          }).catchError((onError) {
+                            print("an error hapenned");
+                          });
+                          
+                    },
+                    controller: this._refreshController,
+                    enablePullDown: true,
+                    enablePullUp: false,
+                    child: StreamBuilder<List<BankAccount>>(
+                    stream: databaseService.userBankAccounts.stream,
+                    builder: (context, snapshot) {
+                      if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
+                      if(snapshot.hasError) return Text("i've a bad felling");
+                      if(snapshot.data.isEmpty) return Text("its empty out there");
+                      return ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (ctx, index){
+                          return ListTile(
+                            onTap: (){
+                              databaseService.updateIbanDeposit(snapshot.data[index].id);
+                              setState(() {
+                                databaseService.user.value.defaultIban = snapshot.data[index].id;
+                              });
+                            },
+                            title: Text("*************" + " " + snapshot.data[index].last4),
+                            trailing: Visibility(visible: databaseService.user.value.defaultIban == snapshot.data[index].id ? true : false, child: Icon(CupertinoIcons.checkmark_circle, color: Colors.green)),
+                          );
+                      });
+                    }
+                  ),
+              ),
             ),
     );
   }

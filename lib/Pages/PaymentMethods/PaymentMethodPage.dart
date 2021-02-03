@@ -54,39 +54,39 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                     });
                   });
                 }),
-              body: StreamBuilder(
-              stream: databaseService.sources$,
-              builder: (context, AsyncSnapshot<List<CardModel>> snapshot) {
-                  if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
-                  if(snapshot.hasError) return Text("i've a bad felling");
-                  if(snapshot.data.isEmpty) return Text("its empty out there");
-                return SmartRefresher(
-                      onRefresh: () async {
-                                databaseService.loadSourceList().then((value) {
-                                Future.delayed(Duration(milliseconds: 1000)).then((value) {
-                                  _refreshController.refreshCompleted();
-                                });
-                                
-                                }).catchError((onError) {
-                                  print("an error hapenned");
-                                });
-                                
-                          },
-                        controller: this._refreshController,
-                        enablePullDown: true,
-                        enablePullUp: false,
-                        child: ListView(
-                          children: snapshot.data.map((e) => CardItem(card: e, isDefault: databaseService.user.value.defaultSource == e.id ? true : false, onCheckBoxClicked: () {
-                          setState(() {
-                              databaseService.user.value.defaultSource = e.id;
-                            });
-                          databaseService.updatedDefaultSource(e.id);
-                          databaseService.loadSourceList();
-                      },)).toList(),
+              body: SmartRefresher(
+                onRefresh: () async {
+                                  databaseService.loadSourceList().then((value) {
+                                  Future.delayed(Duration(milliseconds: 1000)).then((value) {
+                                    _refreshController.refreshCompleted();
+                                  });
+                                  
+                                  }).catchError((onError) {
+                                    print("an error hapenned");
+                                  });
+                                  
+                            },
+                          controller: this._refreshController,
+                          enablePullDown: true,
+                          enablePullUp: false,
+                child: StreamBuilder(
+                stream: databaseService.sources$,
+                builder: (context, AsyncSnapshot<List<CardModel>> snapshot) {
+                    if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
+                    if(snapshot.hasError) return Text("i've a bad felling");
+                    if(snapshot.data.isEmpty) return Text("its empty out there");
+                  return ListView(
+                    children: snapshot.data.map((e) => CardItem(card: e, isDefault: databaseService.user.value.defaultSource == e.id ? true : false, onCheckBoxClicked: () {
+                    setState(() {
+                        databaseService.user.value.defaultSource = e.id;
+                      });
+                    databaseService.updatedDefaultSource(e.id);
+                    databaseService.loadSourceList();
+                        },)).toList(),
+                      );
+                }
                     ),
-                );
-              }
-                  )
+              )
       );
 
   }

@@ -9,6 +9,8 @@ class AuthentificationService {
 
   Stream<User> get authStateChanges => firebaseAuth.authStateChanges();
 
+ 
+
 
   Future<void> signOut() async {
     await FirebaseAuth.instance.signOut();

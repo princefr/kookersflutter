@@ -53,14 +53,13 @@ class _TabHomeState extends State<TabHome>
   StreamSubscription<RemoteMessage> get onMessage => FirebaseMessaging.onMessage.listen((event) => event);
   
   
-  StreamSubscription<String> tokenRefresh = FirebaseMessaging.instance.onTokenRefresh.listen((event) => event);
   
 
 
   @override
   void dispose() {
     this.onMessage.cancel();
-    this.tokenRefresh.cancel();
+    this._selectedIndex.close();
     super.dispose();
   }
 
@@ -76,19 +75,17 @@ class _TabHomeState extends State<TabHome>
           Provider.of<DatabaseProviderService>(context, listen: false);
       final notificationService =
           Provider.of<NotificationService>(context, listen: false);
-        databaseService.loadPublication();
-        databaseService.loadSellerPublications();
-        databaseService.loadSellerOrders();
-        databaseService.loadrooms();
-        databaseService.loadSourceList();
-        notificationService.messaging.subscribeToTopic("new_message");
-        notificationService.messaging.subscribeToTopic("new_order");
-        notificationService.messaging.subscribeToTopic("order_update");
-        this.tokenRefresh.onData((data) {
-          print("token refreshed");
-            databaseService.user.value.fcmToken = data;
-            databaseService.updateFirebasetoken(data);
-        });
+              databaseService.loadPublication();
+              databaseService.loadSellerPublications();
+              databaseService.loadSellerOrders();
+              databaseService.loadrooms();
+              databaseService.loadSourceList();
+              notificationService.messaging.subscribeToTopic("new_message");
+              notificationService.messaging.subscribeToTopic("new_order");
+              notificationService.messaging.subscribeToTopic("order_update");
+              final token = await  notificationService.messaging.getToken();
+              databaseService.user.value.fcmToken = token;
+              databaseService.updateFirebasetoken(token);
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {

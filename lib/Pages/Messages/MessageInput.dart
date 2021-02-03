@@ -88,7 +88,6 @@ class _MessageInputState extends State<MessageInput> {
                 right: 30,
                 child: InkWell(
                   onTap: () {
-                    print("tapped");
                     this.widget.image.sink.add(null);
                   },
                   child: Container(
