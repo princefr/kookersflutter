@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
@@ -287,6 +288,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                       }),
                                   baseColor: Colors.grey[200],
                                   highlightColor: Colors.grey[300]);
+                            if(snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de transactions");
                                   
                             return ListView(
                                 physics: NeverScrollableScrollPhysics(),

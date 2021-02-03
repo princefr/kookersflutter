@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Blocs/IbanBloc.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -194,7 +195,7 @@ class _IbanPageState extends State<IbanPage> {
                     builder: (context, snapshot) {
                       if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
                       if(snapshot.hasError) return Text("i've a bad felling");
-                      if(snapshot.data.isEmpty) return Text("its empty out there");
+                      if(snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez pas d'iban.");
                       return ListView.builder(
                         itemCount: snapshot.data.length,
                         itemBuilder: (ctx, index){

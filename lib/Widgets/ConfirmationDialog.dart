@@ -36,6 +36,8 @@ class ConfirmationDialog extends StatelessWidget {
 
             SizedBox(height: 40),
 
+            Divider(),
+
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.end,

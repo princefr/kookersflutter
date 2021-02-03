@@ -113,9 +113,18 @@ class HomePublish extends StatefulWidget {
 class _HomePublishState extends State<HomePublish> {
   PublicationProvider pubprovider = PublicationProvider();
 
-  BehaviorSubject<bool> isPricePerPie = BehaviorSubject<bool>.seeded(false);
 
+  double percentage(percent, total) {
+    return ((percent/ 100) * total);
+  }
+
+  BehaviorSubject<bool> isPricePerPie = BehaviorSubject<bool>.seeded(false);
   BehaviorSubject<int> initialLabel = BehaviorSubject<int>.seeded(0);
+  BehaviorSubject<int> fees = BehaviorSubject<int>.seeded(15);
+
+  Stream<double> get feePaid => CombineLatestStream([pubprovider.priceall, fees], (values) => percentage(values[1], int.parse(values[0])));
+  Stream<double> get moneyReceived => CombineLatestStream([pubprovider.priceall$, feePaid], (values) => double.parse(values[0]) - values[1]);
+
 
   SettingType type;
 
@@ -129,6 +138,7 @@ class _HomePublishState extends State<HomePublish> {
         this.type = SettingType.Desserts;
       }
     });
+    moneyReceived.listen((event) {print(event);});
     super.initState();
   }
 
@@ -138,6 +148,7 @@ class _HomePublishState extends State<HomePublish> {
     this.isPricePerPie.close();
     this.initialLabel.close();
     this.pubprovider.dispose();
+    this.fees.close();
     super.dispose();
   }
 
@@ -463,7 +474,16 @@ class _HomePublishState extends State<HomePublish> {
                                        builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
                               }, child: Icon(CupertinoIcons.info_circle)),
                               title : Text("Frais de la platforme"),
-                              trailing: Text("3%")
+                              trailing: Container(
+                                width: 40,
+                                child: StreamBuilder<double>(
+                                  stream: this.feePaid,
+                                  builder: (context, snapshot) {
+                                    if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                                    return Text(snapshot.data.toString(), style: GoogleFonts.montserrat());
+                                  }
+                                ),
+                              )
                             ),
 
                             ListTile(
@@ -472,7 +492,16 @@ class _HomePublishState extends State<HomePublish> {
                                        builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
                               }, child: Icon(CupertinoIcons.info_circle)),
                               title : Text("Ce que vous recevrez"),
-                              trailing: Text("3%")
+                              trailing: Container(
+                                width: 40,
+                                child: StreamBuilder<double>(
+                                  stream: this.moneyReceived,
+                                  builder: (context, snapshot) {
+                                    if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                                    return Text(snapshot.data.toString(), style: GoogleFonts.montserrat());
+                                  }
+                                ),
+                              )
                             ),
 
                             SizedBox(height: 40),

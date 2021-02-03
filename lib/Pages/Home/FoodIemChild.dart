@@ -175,13 +175,23 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
   StreamButtonController _streamButtonController = StreamButtonController();
 
+  
+
+  OrderProvider orderProvider =  OrderProvider();
+  BehaviorSubject<int> serviceFees = BehaviorSubject<int>.seeded(15);
+  Stream<double> get feePaid => CombineLatestStream([orderProvider.quantity, serviceFees], (values) => values[0] * percentage(int.parse(this.widget.publication.pricePerAll), int.parse(values[0])));
+  Stream<double> get total => CombineLatestStream([orderProvider.quantity$, feePaid], (values) => values[0] * int.parse(this.widget.publication.pricePerAll) + values[1]);
+
+
+
   @override
   void dispose() { 
     this.orderProvider.dispose();
+    this.serviceFees.close();
     super.dispose();
   }
 
-  OrderProvider orderProvider =  OrderProvider();
+
 
   @override
   Widget build(BuildContext context) {
@@ -195,275 +205,275 @@ class _FoodItemChildState extends State<FoodItemChild> {
             isRightIcon: true,
             height: 54,
             rightIcon: CupertinoIcons.heart),
-        body: Container(
-          child: ListView(children: [
-            CarouselSlider(
-                items: this.widget.publication.photoUrls.map((e) {
-                  return InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => FullScreenImage(url: e)));
-                    },
-                    child: Hero(
-                      tag: e,
-                      child: Image(
-                        width: MediaQuery.of(context).size.width,
-                        fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(e),
-                      ),
+        body: ListView(
+          shrinkWrap: true,
+          children: [
+          CarouselSlider(
+              items: this.widget.publication.photoUrls.map((e) {
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => FullScreenImage(url: e)));
+                  },
+                  child: Hero(
+                    tag: e,
+                    child: Image(
+                      width: MediaQuery.of(context).size.width,
+                      fit: BoxFit.cover,
+                      image: CachedNetworkImageProvider(e),
                     ),
-                  );
-                }).toList(),
-                options: CarouselOptions(
-                  height: 300.0,
-                  aspectRatio: 16 / 9,
-                  enlargeCenterPage: true,
-                  initialPage: 0,
-                  enableInfiniteScroll: false,
-                )),
-            Row(
-              children: [
-                Expanded(
-                    child: Padding(
+                  ),
+                );
+              }).toList(),
+              options: CarouselOptions(
+                height: 300.0,
+                aspectRatio: 16 / 9,
+                enlargeCenterPage: true,
+                initialPage: 0,
+                enableInfiniteScroll: false,
+              )),
+          Row(
+            children: [
+              Expanded(
+                  child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(this.widget.publication.pricePerAll,
+                    style: GoogleFonts.montserrat(
+                        fontSize: 26, color: Colors.grey)),
+              )),
+              Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(this.widget.publication.pricePerAll,
-                      style: GoogleFonts.montserrat(
-                          fontSize: 26, color: Colors.grey)),
-                )),
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Stepper(quantity: orderProvider.quantity)),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Text(this.widget.publication.description),
-            ),
-            Container(
-              height: 40,
-              child: Builder(builder: (BuildContext ctx) {
-                if (this
-                    .widget
-                    .publication
-                    .preferences
-                    .any((element) => element.isSelected == true)) {
-                  return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: this
-                          .widget
-                          .publication
-                          .preferences
-                          .where((element) => element.isSelected == true)
-                          .toList()
-                          .length,
-                      itemBuilder: (ctx, index) {
-                        return Padding(
-                          padding:
-                              const EdgeInsets.only(left: 5, right: 5, top: 3),
-                          child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.green[100],
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10.0))),
-                              padding: EdgeInsets.all(10),
-                              child: Text(this
-                                  .widget
-                                  .publication
-                                  .preferences
-                                  .where(
-                                      (element) => element.isSelected == true)
-                                  .elementAt(index)
-                                  .title)),
-                        );
-                      });
-                } else {
-                  return Container(
-                    height: 40,
-                    child: Text("Sans préférences"),
-                    decoration: BoxDecoration(
-                        color: Colors.green[100],
-                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  );
-                }
+                  child: Stepper(quantity: orderProvider.quantity)),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(this.widget.publication.description),
+          ),
+          Container(
+            height: 40,
+            child: Builder(builder: (BuildContext ctx) {
+              if (this
+                  .widget
+                  .publication
+                  .preferences
+                  .any((element) => element.isSelected == true)) {
+                return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: this
+                        .widget
+                        .publication
+                        .preferences
+                        .where((element) => element.isSelected == true)
+                        .toList()
+                        .length,
+                    itemBuilder: (ctx, index) {
+                      return Padding(
+                        padding:
+                            const EdgeInsets.only(left: 5, right: 5, top: 3),
+                        child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.green[100],
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0))),
+                            padding: EdgeInsets.all(10),
+                            child: Text(this
+                                .widget
+                                .publication
+                                .preferences
+                                .where(
+                                    (element) => element.isSelected == true)
+                                .elementAt(index)
+                                .title)),
+                      );
+                    });
+              } else {
+                return Container(
+                  height: 40,
+                  child: Text("Sans préférences"),
+                  decoration: BoxDecoration(
+                      color: Colors.green[100],
+                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                );
+              }
+            }),
+          ),
+          
+
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 17),
+            child: Text("Periode de retrait commande", style: GoogleFonts.montserrat(decoration: TextDecoration.none,
+                        color: Colors.black,
+                        fontSize: 15))
+          ),
+
+          Divider(),
+          StreamBuilder<DateTime>(
+              stream: orderProvider.deliveryDate.stream,
+              builder: (context, AsyncSnapshot<DateTime> snapshot) {
+                return ListTile(
+                  onTap: () async {
+                    DateTime date = await showCupertinoModalBottomSheet(
+                      expand: false,
+                      context: context,
+                      builder: (context) => ChooseDatePage(datemode: CupertinoDatePickerMode.dateAndTime),
+                    );
+
+                    orderProvider.deliveryDate.add(date);
+                  },
+                  leading: Icon(CupertinoIcons.calendar),
+                  title: Text("Date"),
+                  trailing: Text(snapshot.data.toString()),
+                );
               }),
-            ),
-            
 
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 17),
-              child: Text("Periode de retrait commande", style: GoogleFonts.montserrat(decoration: TextDecoration.none,
-                          color: Colors.black,
-                          fontSize: 15))
-            ),
-
-            Divider(),
-            StreamBuilder<DateTime>(
-                stream: orderProvider.deliveryDate.stream,
-                builder: (context, AsyncSnapshot<DateTime> snapshot) {
-                  return ListTile(
-                    onTap: () async {
-                      DateTime date = await showCupertinoModalBottomSheet(
-                        expand: false,
-                        context: context,
-                        builder: (context) => ChooseDatePage(datemode: CupertinoDatePickerMode.dateAndTime),
-                      );
-
-                      orderProvider.deliveryDate.add(date);
-                    },
-                    leading: Icon(CupertinoIcons.calendar),
-                    title: Text("Date"),
-                    trailing: Text(snapshot.data.toString()),
-                  );
-                }),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                      "Si vous commandez le jour même , l'application prévoit 3 heures de délai pour pouvoir laisser du temps au chef d'acheter des ingrédients frais et de le cuisiner sans stress.",
-                      style: GoogleFonts.montserrat(
-                          decoration: TextDecoration.none,
-                          color: Colors.black,
-                          fontSize: 10))),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 17),
-              child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Méthodes de paiements",
-                      style: GoogleFonts.montserrat(
-                          decoration: TextDecoration.none,
-                          color: Colors.black,
-                          fontSize: 15))),
-            ),
-            Divider(),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              child: StreamBuilder(
-                  stream: databaseService.sources.stream,
-                  builder: (context, AsyncSnapshot<List<CardModel>> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting)
-                      return LinearProgressIndicator();
-                    if (snapshot.data.isEmpty)
-                      return ListTile(
-                        leading: Icon(CupertinoIcons.creditcard),
-                        trailing: Icon(CupertinoIcons.plus),
-                        title: Text("Ajouter un moyen de paiement"),
-                        onTap: () {
-                          stripeService
-                              .registrarCardWithForm()
-                              .then((paymentMethod) {
-                            databaseService
-                                .addattachPaymentToCustomer(paymentMethod.id)
-                                .then((value) {
-                              databaseService.loadSourceList();
-                            });
-                          });
-                        },
-                      );
-
-                    CardModel cardChosed = snapshot.data.firstWhere((element) =>
-                        element.id == databaseService.user.value.defaultSource);
-
-                    return ListTile(
-                        trailing: Icon(
-                          CupertinoIcons.check_mark_circled,
-                          color: Colors.green,
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                  builder: (context) => PaymentMethodPage()));
-                        },
-                        leading: SvgPicture.asset(
-                                'assets/payments_logo/${cardChosed.brand}.svg',
-                                height: 30,
-                              ),
-                        title: Text(cardChosed.last4));
-                  }),
-            ),
-
-            SizedBox(height: 15),
-
-            ListTile(
-                leading: InkWell(onTap: (){
-                                showDialog(context: context,
-                                       builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
-                              }, child: Icon(CupertinoIcons.info_circle)),
-                title : Text("Frais de service"),
-                trailing: Text("3%")
-              ),
-
-            SizedBox(
-              height: 30,
-            ),
-            ListTile(
-              leading: CircleAvatar(
-                backgroundImage:
-                    CachedNetworkImageProvider(this.widget.publication.seller.photoUrl),
-              ),
-              title: Align(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                    this.widget.publication.seller.firstName +
-                        " " +
-                        this.widget.publication.seller.lastName,
-                    style: GoogleFonts.montserrat()),
-              ),
-            ),
-            Divider(),
+                    "Si vous commandez le jour même , l'application prévoit 3 heures de délai pour pouvoir laisser du temps au chef d'acheter des ingrédients frais et de le cuisiner sans stress.",
+                    style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.none,
+                        color: Colors.black,
+                        fontSize: 10))),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 17),
+            child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Méthodes de paiements",
+                    style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.none,
+                        color: Colors.black,
+                        fontSize: 15))),
+          ),
+          Divider(),
+          SizedBox(
+            height: 10,
+          ),
+          Container(
+            child: StreamBuilder(
+                stream: databaseService.sources.stream,
+                builder: (context, AsyncSnapshot<List<CardModel>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    return LinearProgressIndicator();
+                  if (snapshot.data.isEmpty)
+                    return ListTile(
+                      leading: Icon(CupertinoIcons.creditcard),
+                      trailing: Icon(CupertinoIcons.plus),
+                      title: Text("Ajouter un moyen de paiement"),
+                      onTap: () {
+                        stripeService
+                            .registrarCardWithForm()
+                            .then((paymentMethod) {
+                          databaseService
+                              .addattachPaymentToCustomer(paymentMethod.id)
+                              .then((value) {
+                            databaseService.loadSourceList();
+                          });
+                        });
+                      },
+                    );
 
-            SizedBox(height: 20),
-            
-            StreamBuilder(
-                stream: orderProvider.isAllFilled$,
-                builder: (context, AsyncSnapshot<bool> snapshot) {
-                  return StreamButton(
-                      buttonColor: snapshot.data != null
-                          ? Color(0xFFF95F5F)
-                          : Colors.grey,
-                      buttonText: "Acheter",
-                      errorText: "Une erreur s'est produite",
-                      loadingText: "Achat en cours",
-                      successText: "Plat acheté",
-                      controller: _streamButtonController,
-                      onClick: () async {
-                        showDialog(context: context,
-                                       builder: (context) => ConfirmationDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", onAcceptTap: () async {
-                                  if (snapshot.data != null) {
-                                    _streamButtonController.isLoading();
-                                    final total = orderProvider.quantity.value * 15;
-                                    final totalPlusFees =
-                                        total + this.percentage(20, total).toInt();
-                                    final order = await orderProvider.validate(
-                                        databaseService,
-                                        this.widget.publication,
-                                        totalPlusFees);
-                                    databaseService
-                                        .createOrder(order)
-                                        .then((value) =>
-                                            {_streamButtonController.isSuccess()})
-                                        .catchError((onError) {
-                                      _streamButtonController.isError();
-                                    });
-                                  }
+                  CardModel cardChosed = snapshot.data.firstWhere((element) =>
+                      element.id == databaseService.user.value.defaultSource);
 
-                                       },));
-                        
-                      });
+                  return ListTile(
+                      trailing: Icon(
+                        CupertinoIcons.check_mark_circled,
+                        color: Colors.green,
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) => PaymentMethodPage()));
+                      },
+                      leading: SvgPicture.asset(
+                              'assets/payments_logo/${cardChosed.brand}.svg',
+                              height: 30,
+                            ),
+                      title: Text(cardChosed.last4));
                 }),
-          ]),
-        ),
+          ),
+
+          SizedBox(height: 15),
+
+          ListTile(
+              leading: InkWell(onTap: (){
+                              showDialog(context: context,
+                                     builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
+                            }, child: Icon(CupertinoIcons.info_circle)),
+              title : Text("Frais de service"),
+              trailing: Text("3%")
+            ),
+
+          SizedBox(
+            height: 30,
+          ),
+          ListTile(
+            leading: CircleAvatar(
+              backgroundImage:
+                  CachedNetworkImageProvider(this.widget.publication.seller.photoUrl),
+            ),
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                  this.widget.publication.seller.firstName +
+                      " " +
+                      this.widget.publication.seller.lastName,
+                  style: GoogleFonts.montserrat()),
+            ),
+          ),
+          Divider(),
+
+          SizedBox(height: 20),
+          
+          StreamBuilder(
+              stream: orderProvider.isAllFilled$,
+              builder: (context, AsyncSnapshot<bool> snapshot) {
+                return StreamButton(
+                    buttonColor: snapshot.data != null
+                        ? Color(0xFFF95F5F)
+                        : Colors.grey,
+                    buttonText: "Acheter",
+                    errorText: "Une erreur s'est produite",
+                    loadingText: "Achat en cours",
+                    successText: "Plat acheté",
+                    controller: _streamButtonController,
+                    onClick: () async {
+                      showDialog(context: context,
+                                     builder: (context) => ConfirmationDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", onAcceptTap: () async {
+                                if (snapshot.data != null) {
+                                  _streamButtonController.isLoading();
+                                  final total = orderProvider.quantity.value * 15;
+                                  final totalPlusFees =
+                                      total + this.percentage(20, total).toInt();
+                                  final order = await orderProvider.validate(
+                                      databaseService,
+                                      this.widget.publication,
+                                      totalPlusFees);
+                                  databaseService
+                                      .createOrder(order)
+                                      .then((value) =>
+                                          {_streamButtonController.isSuccess()})
+                                      .catchError((onError) {
+                                    _streamButtonController.isError();
+                                  });
+                                }
+
+                                     },));
+                      
+                    });
+              }),
+        ]),
       );
 
   }

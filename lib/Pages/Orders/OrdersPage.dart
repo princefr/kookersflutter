@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -65,7 +66,7 @@ class _OrdersPageState extends State<OrdersPage> with AutomaticKeepAliveClientMi
                               }),
                           baseColor: Colors.grey[200],
                           highlightColor: Colors.grey[300]);
-                  if (snapshot.data.isEmpty) return Text("this is empty");
+                  if (snapshot.data.isEmpty) return EmptyView();
                   return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (context, index){

@@ -34,6 +34,7 @@ class InfoDialog extends StatelessWidget {
             ),),
 
             SizedBox(height: 40),
+            Divider(),
 
             GestureDetector(onTap: (){Navigator.pop(context);}, child: Text("Compris", style: GoogleFonts.openSans(fontSize: 17, decoration: TextDecoration.none, color: Colors.black),))
           ],

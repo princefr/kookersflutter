@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StripeServices.dart';
+import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -74,8 +75,9 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                 builder: (context, AsyncSnapshot<List<CardModel>> snapshot) {
                     if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
                     if(snapshot.hasError) return Text("i've a bad felling");
-                    if(snapshot.data.isEmpty) return Text("its empty out there");
+                    if(snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de cartes.");
                   return ListView(
+                    shrinkWrap: true,
                     children: snapshot.data.map((e) => CardItem(card: e, isDefault: databaseService.user.value.defaultSource == e.id ? true : false, onCheckBoxClicked: () {
                     setState(() {
                         databaseService.user.value.defaultSource = e.id;

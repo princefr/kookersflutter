@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:dart_geohash/dart_geohash.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';

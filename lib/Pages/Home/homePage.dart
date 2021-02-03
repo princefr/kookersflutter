@@ -8,6 +8,7 @@ import 'package:kookers/Pages/Home/HomePublish.dart';
 import 'package:kookers/Pages/Home/HomeSearchPage.dart';
 import 'package:kookers/Pages/Home/HomeSettings.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -125,13 +126,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +152,7 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: SmartRefresher(
           enablePullDown: true,
-          enablePullUp: true,
+          enablePullUp: false,
           controller: this._refreshController,
           onRefresh: () {
             databaseService.loadPublication().then((value) {
@@ -168,7 +163,6 @@ class _HomePageState extends State<HomePage> {
           },
           child: StreamBuilder<List<PublicationHome>>(
               stream: databaseService.publications$,
-              initialData: databaseService.publications.value,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting)
                   return Shimmer.fromColors(
@@ -180,7 +174,7 @@ class _HomePageState extends State<HomePage> {
                       baseColor: Colors.grey[200],
                       highlightColor: Colors.grey[300]);
                 if (snapshot.hasError) return Text("i've a bad felling");
-                if (snapshot.data.isEmpty) return Text("its empty out there");
+                if (snapshot.data.isEmpty) return EmptyView();
                 return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (ctx, index) {

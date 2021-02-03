@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -59,7 +60,7 @@ class _RoomsPageState extends State<RoomsPage>
                         baseColor: Colors.grey[200],
                         highlightColor: Colors.grey[300]);
                   if (snapshot.hasError) return Text("i've a bad felling");
-                  if (snapshot.data.isEmpty) return Text("its empty out there");
+                  if (snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de messages.");
                   return ListView.builder(
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
