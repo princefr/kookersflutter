@@ -363,7 +363,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                 stream: databaseService.sources.stream,
                 builder: (context, AsyncSnapshot<List<CardModel>> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting)
-                    return LinearProgressIndicator();
+                    return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
                   if (snapshot.data.isEmpty)
                     return ListTile(
                       leading: Icon(CupertinoIcons.creditcard),

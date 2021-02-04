@@ -35,12 +35,6 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
 
-
-
-  
-  
-
-
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
@@ -65,7 +59,6 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                                   }).catchError((onError) {
                                     print("an error hapenned");
                                   });
-                                  
                             },
                           controller: this._refreshController,
                           enablePullDown: true,
@@ -73,7 +66,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                 child: StreamBuilder(
                 stream: databaseService.sources$,
                 builder: (context, AsyncSnapshot<List<CardModel>> snapshot) {
-                    if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator();
+                    if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
                     if(snapshot.hasError) return Text("i've a bad felling");
                     if(snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de cartes.");
                   return ListView(

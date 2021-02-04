@@ -171,7 +171,7 @@ class _ChatPageState extends State<ChatPage>
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting)
-                                  return LinearProgressIndicator();
+                                  return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
                                 if (snapshot.hasError)
                                   return Text("i've a bad felling");
                                 if (snapshot.data.isEmpty)

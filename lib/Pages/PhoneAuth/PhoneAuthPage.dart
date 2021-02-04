@@ -13,6 +13,9 @@ import 'package:kookers/Widgets/TopBar.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:provider/provider.dart';
 
+
+// https://github.com/FirebaseExtended/flutterfire/issues/4651 phonne issue.
+
 class PhoneAuthPage extends StatefulWidget {
   PhoneAuthPage({Key key}) : super(key: key);
 
@@ -184,7 +187,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                                             codeisSent: (verificationId) {
                                               Navigator.push(
                                                   context,
-                                                  CupertinoPageRoute(
+                                                  MaterialPageRoute(
                                                       builder: (context) =>
                                                           PhoneAuthCodePage(
                                                               verificationId:

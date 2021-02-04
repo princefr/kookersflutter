@@ -1,5 +1,3 @@
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -22,11 +20,6 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
-final host = 'kookers-app.herokuapp.com/graphql';
-final graphqlEndpoint = 'https://$host';
-final subscriptionEndpoint = 'wss://$host';
-
-RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -131,10 +124,9 @@ class SplashScreen extends StatelessWidget {
       children: [
         Image(image: AssetImage('assets/logo/logo_flutter.png'), height: 150,),
         SizedBox(height: 20),
-        //CupertinoActivityIndicator()
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white),),
+          child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
         ),
       ],
     ),));

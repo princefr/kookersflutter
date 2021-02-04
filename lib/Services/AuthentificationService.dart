@@ -19,28 +19,23 @@ class AuthentificationService {
   Future<Null> verifyPhone({String phone,
    ValueSetter<PhoneAuthCredential> verificationComplted,
    ValueSetter<FirebaseAuthException> error,
-   ValueSetter<String> codeisSent}) async {
+   ValueSetter<String> codeisSent, ValueSetter<String> codeTimeOut}) async {
 
     await firebaseAuth.verifyPhoneNumber(phoneNumber: phone,
     timeout: const Duration(seconds: 60),
     verificationCompleted: (PhoneAuthCredential credential) {
-        // ANDROID ONLY!
-        //await auth.signInWithCredential(credential);
         verificationComplted(credential);
      },
      verificationFailed: (FirebaseAuthException e) {
-            error(e);
+        error(e);
      },
      codeSent: (String verificationId, int resendToken) {
        print("code has been sent");
-       // prompt the code to the user.
-      // Update the UI - wait for the user to enter the SMS code
-      //String smsCode = 'xxxx';
       codeisSent(verificationId);
 
      },
      codeAutoRetrievalTimeout: (String verificationId) {
-       codeisSent(verificationId);
+       codeTimeOut(verificationId);
      });
   }
 
