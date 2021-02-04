@@ -103,11 +103,11 @@ class _TabHomeState extends State<TabHome>
         Room room = databaseService.rooms.value
                 .firstWhere((element) => element.id == event.data["roomId"]);
         NotificationPanelService().showNewMessagePanel(context, event, room);
-      }else if(event.data[""] == "order_seller"){
+      }else if(event.data["side"] == "order_seller"){
           await databaseService.loadSellerOrders();
           OrderVendor order  = databaseService.sellerOrders.value.firstWhere((element) => element.id == event.data["orderId"]);
           NotificationPanelService().showOrderSeller(context, event, order);
-      }else if(event.data[""] == "order_buyer"){
+      }else if(event.data["side"] == "order_buyer"){
          await databaseService.loadbuyerOrders();
          final Order order = databaseService.buyerOrders.value.firstWhere((element) => element.id == event.data["orderId"]);
         NotificationPanelService().showOrderBuyer(context, event, order);

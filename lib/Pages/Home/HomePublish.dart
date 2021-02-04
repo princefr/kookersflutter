@@ -122,8 +122,8 @@ class _HomePublishState extends State<HomePublish> {
   BehaviorSubject<int> initialLabel = BehaviorSubject<int>.seeded(0);
   BehaviorSubject<int> fees = BehaviorSubject<int>.seeded(15);
 
-  Stream<double> get feePaid => CombineLatestStream([pubprovider.priceall, fees], (values) => percentage(values[1], int.parse(values[0])));
-  Stream<double> get moneyReceived => CombineLatestStream([pubprovider.priceall$, feePaid], (values) => double.parse(values[0]) - values[1]);
+  Stream<double> get feePaid => CombineLatestStream([pubprovider.priceall, fees], (values) => percentage(values[1], int.parse(values[0]))).asBroadcastStream();
+  Stream<double> get moneyReceived => CombineLatestStream([pubprovider.priceall$, feePaid], (values) => double.parse(values[0]) - values[1]).asBroadcastStream();
 
 
   SettingType type;
@@ -138,7 +138,6 @@ class _HomePublishState extends State<HomePublish> {
         this.type = SettingType.Desserts;
       }
     });
-    moneyReceived.listen((event) {print(event);});
     super.initState();
   }
 
@@ -468,41 +467,56 @@ class _HomePublishState extends State<HomePublish> {
                             SizedBox(height: 20),
 
 
-                            ListTile(
-                              leading: InkWell(onTap: (){
-                                showDialog(context: context,
-                                       builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
-                              }, child: Icon(CupertinoIcons.info_circle)),
-                              title : Text("Frais de la platforme"),
-                              trailing: Container(
-                                width: 40,
-                                child: StreamBuilder<double>(
+                            Container(
+                              height: 50,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: (){
+                                      showDialog(context: context,
+                                       builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que la plateforme, kookers prendra dans le cadre des frais de fonctionnement. Il représente 15% du prix de l'assiette/portion vendue."));
+                                    },
+                                    child: Icon(CupertinoIcons.info_circle)),
+                                  Text("Frais de la platforme", style: GoogleFonts.montserrat(),),
+                                  StreamBuilder<double>(
                                   stream: this.feePaid,
                                   builder: (context, snapshot) {
                                     if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                                     return Text(snapshot.data.toString(), style: GoogleFonts.montserrat());
                                   }
-                                ),
-                              )
+                                )
+
+                              ],),
                             ),
 
-                            ListTile(
-                              leading: InkWell(onTap: (){
-                                showDialog(context: context,
-                                       builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
-                              }, child: Icon(CupertinoIcons.info_circle)),
-                              title : Text("Ce que vous recevrez"),
-                              trailing: Container(
-                                width: 40,
-                                child: StreamBuilder<double>(
+
+                            Container(
+                              height: 50,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: (){
+                                      showDialog(context: context,
+                                        builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que vous recevrez pour chacun(e) des portions ou plats que vous vendriez à l'aide la plateforme kookers une fois les frais de fonctionnement déduits."));
+                                    },
+                                    child: Icon(CupertinoIcons.info_circle)),
+                                  Text("Ce que vous recevrez", style: GoogleFonts.montserrat(),),
+                                  StreamBuilder<double>(
                                   stream: this.moneyReceived,
                                   builder: (context, snapshot) {
                                     if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                                     return Text(snapshot.data.toString(), style: GoogleFonts.montserrat());
                                   }
-                                ),
-                              )
+                                )
+
+                              ],),
                             ),
+
+
 
                             SizedBox(height: 40),
 
@@ -520,7 +534,8 @@ class _HomePublishState extends State<HomePublish> {
                                     if(snapshot.data != null) {
                                     pubprovider.validate(firebaseUser, storageService, databaseService, this.type).then((publication){
                                       this.uploadPublication(databaseService.client, databaseService, publication).then((value){
-                                        _streamButtonController.isSuccess().then((value) {
+                                        _streamButtonController.isSuccess().then((value) async {
+                                          await databaseService.loadSellerPublications();
                                           Navigator.pop(context);
                                         });
                                       }).catchError((error) => _streamButtonController.isError());

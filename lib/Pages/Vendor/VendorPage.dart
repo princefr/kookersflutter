@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Vendor/OrderItemSeller.dart';
 import 'package:kookers/Pages/Vendor/PublicationItemVendor.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 import 'package:kookers/Widgets/Toogle.dart';
 import 'package:provider/provider.dart';
@@ -44,7 +45,7 @@ class _VendorPubViewState extends State<VendorPubView>
                       baseColor: Colors.grey[200],
                       highlightColor: Colors.grey[300]);
                 if(snapshot.hasError) return Text("i've a bad felling");
-                              if(snapshot.data.isEmpty) return Text("its empty out there");
+                              if(snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez aucun plat publié.");
                 return SmartRefresher(
                     enablePullDown: true,
                     controller: this._refreshController,
@@ -103,7 +104,7 @@ class _VendorSellViewState extends State<VendorSellView>
                   baseColor: Colors.grey[200],
                   highlightColor: Colors.grey[300]);
             if(snapshot.hasError) return Text("i've a bad felling");
-                              if(snapshot.data.isEmpty) return Text("its empty out there");
+                              if(snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez aucune commande.");
             return SmartRefresher(
               enablePullDown: true,
               onRefresh: () {

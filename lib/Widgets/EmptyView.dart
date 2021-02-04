@@ -23,6 +23,7 @@ class EmptyViewElse extends StatelessWidget {
 
 
 class EmptyView extends StatelessWidget {
+  
   const EmptyView({Key key}) : super(key: key);
 
   @override

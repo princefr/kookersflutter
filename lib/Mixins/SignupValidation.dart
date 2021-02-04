@@ -15,7 +15,7 @@ mixin SignupValidation {
       if(value.isNotEmpty){
       sink.add(value);
     } else{
-      sink.addError("error description must be filled");
+      sink.addError("Veuillez renseigner votre prénom");
     }
   }
   });
@@ -25,7 +25,7 @@ mixin SignupValidation {
           if(value.isNotEmpty){
           sink.add(value);
         } else{
-          sink.addError("error description must be filled");
+          sink.addError("Veuillez renseigner votre nom");
         }
       }
     });
@@ -35,7 +35,7 @@ mixin SignupValidation {
       if(value != null && isEmailValid(value))  {
           sink.add(value);
       }else{
-        sink.addError("an email must be filled must be filled");
+        sink.addError("Veuillez renseigner votre email");
       }
     });
 
@@ -45,7 +45,7 @@ mixin SignupValidation {
           if(value){
           sink.add(value);
         } else{
-          sink.addError("Policies must be accepted");
+          sink.addError("Veuillez accepter nos politiques pour continuer");
         }
       }
     });
@@ -56,7 +56,7 @@ mixin SignupValidation {
           if(value.title.isNotEmpty){
           sink.add(value);
         } else{
-          sink.addError("Policies must be accepted");
+          sink.addError("Veuillez renseigner votre adresse");
         }
       }
     });
@@ -65,7 +65,7 @@ mixin SignupValidation {
       if(value != null) {
         sink.add(value);
       }else{
-        sink.addError("validate date of birth");
+        sink.addError("Veuillez renseigner votre date de naissance");
       }
     });
 

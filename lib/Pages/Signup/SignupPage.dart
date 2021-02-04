@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jiffy/jiffy.dart';
+import 'package:intl/intl.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
 import 'package:kookers/Pages/Home/FoodIemChild.dart';
@@ -34,7 +34,7 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   bool checkbox = false;
-  String photoUrl = "https://t1.gstatic.com/images?q=tbn:ANd9GcRgexJ5aVLMRh8pTx4ktKg3JtDIFtxPR7DCPXkbqoUSA1vx6RBwb4TUGLKMW5fl";
+  String photoUrl = "https://zupimages.net/up/21/05/gyt7.png";
   Adress adress = Adress();
   String adressString = "";
 
@@ -120,6 +120,8 @@ class _SignupPageState extends State<SignupPage> {
      super.dispose();
    }
 
+   final f = new DateFormat('dd-MM-yyyy');
+
   @override
   Widget build(BuildContext context) {
     final notificationService = Provider.of<NotificationService>(context, listen: false);
@@ -147,6 +149,8 @@ class _SignupPageState extends State<SignupPage> {
                 child: Stack(children: [
                   Center(
                     child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.white,
                       radius: 60,
                       backgroundImage: Image(
                               image: CachedNetworkImageProvider(
@@ -286,7 +290,7 @@ class _SignupPageState extends State<SignupPage> {
                     },
                     leading: Icon(CupertinoIcons.calendar),
                     title: Text("Date de naissance"),
-                    trailing: snapshot.data != null ? Text(Jiffy(snapshot.data).yMMMMd) : Text("Choisir"),
+                    trailing: snapshot.data != null ? Text(f.format(snapshot.data)) : Text("Choisir"),
                   );
                 }),
 

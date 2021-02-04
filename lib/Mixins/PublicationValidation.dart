@@ -9,7 +9,7 @@ mixin PublicationValidation {
     if(value.length > 0){
       sink.add(value);
     } else{
-      sink.addError("error name must be filled");
+      sink.addError("Veuillez renseigner un nom de plat");
     }
   });
 
@@ -18,7 +18,7 @@ mixin PublicationValidation {
       if(value.isNotEmpty){
       sink.add(value);
     } else{
-      sink.addError("error description must be filled");
+      sink.addError("Veuillez renseigner une description");
     }
   }
   });
@@ -28,7 +28,7 @@ mixin PublicationValidation {
       if(value.isNotEmpty){
       sink.add(value);
     } else{
-      sink.addError("error Price must be filled");
+      sink.addError("Veuillez renseigner le prix du plat");
     }
     }
   });
@@ -38,7 +38,7 @@ mixin PublicationValidation {
           if(value.isNotEmpty){
       sink.add(value);
     } else{
-      sink.addError("error Price must be filled");
+      sink.addError("Veuillez renseigner prix par portion");
     }
     }
   });

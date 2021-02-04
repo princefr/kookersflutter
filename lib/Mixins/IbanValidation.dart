@@ -10,7 +10,7 @@ mixin IbanValidation {
      if(isValid(value)){
           sink.add(value);
         } else{
-          sink.addError("the iban must be valid");
+          sink.addError("Veuillez renseigner un iban valide");
         }
       
     });

@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
@@ -84,26 +85,21 @@ class NotificationPanelService {
   }
 
 
-
-
   void showOrderSeller(BuildContext context, RemoteMessage event, OrderVendor order){
         MessageToDisplay message =  loadMessageTypeSeller(event.data["order_type"]);
         Flushbar(
           onTap: (flushbar) {
           Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => VendorPageChild(vendor: order)));
+              MaterialPageRoute(builder: (context) => VendorPageChild(vendor: order)));
           },
           margin: EdgeInsets.all(8),
           borderRadius: 8,
           flushbarPosition: FlushbarPosition.TOP,
           title: message.title,
           message: message.body,
-          icon: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundImage:
-                  CachedNetworkImageProvider(event.data["senderImgUrl"]),
-            ),
+          icon: Icon(
+            CupertinoIcons.exclamationmark_circle,
+            color: Colors.black,
           ),
           flushbarStyle: FlushbarStyle.FLOATING,
           duration: Duration(seconds: 3),
@@ -112,7 +108,7 @@ class NotificationPanelService {
 
 
   void showOrderBuyer(BuildContext context, RemoteMessage event, Order order){
-        MessageToDisplay message =  loadMessageTypeSeller(event.data["order_type"]);
+        MessageToDisplay message = loadMessageTypeSeller(event.data["order_type"]);
         Flushbar(
           onTap: (flushbar) {
             Navigator.push(context,
@@ -123,12 +119,9 @@ class NotificationPanelService {
           flushbarPosition: FlushbarPosition.TOP,
           title: message.title,
           message: message.body,
-          icon: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-            backgroundImage:
-                  CachedNetworkImageProvider(event.data["senderImgUrl"]),
-            ),
+          icon: Icon(
+            CupertinoIcons.exclamationmark_circle,
+            color: Colors.black,
           ),
           flushbarStyle: FlushbarStyle.FLOATING,
           duration: Duration(seconds: 3),

@@ -161,6 +161,8 @@ String capitalizeFirstOnly(String string){
                 builder: (context, AsyncSnapshot<UserDef> snapshot) {
                   if(snapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
                   return CircleAvatar(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.white,
                   radius: 65,
                 backgroundImage: CachedNetworkImageProvider(snapshot.data.photoUrl,),
               );

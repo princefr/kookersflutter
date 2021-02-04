@@ -109,7 +109,6 @@ class PublicationProvider  with PublicationValidation {
 
   Stream<bool> get isAllPictureFilled$ => CombineLatestStream([file0.stream, file1.stream, file2.stream], (values) => true).asBroadcastStream();
   Stream<bool> get isFormValidOne$ => CombineLatestStream([name$, description$, priceall$, isAllPictureFilled$], (values) => true).asBroadcastStream();
-  //Stream<bool> get isFormValidTwo$ => CombineLatestStream([name$, description$, priceall$, priceaPerPortion$, isAllPictureFilled$], (values) => true).asBroadcastStream();
   
 
   Future<Publication> validate(User user, StorageService storage, DatabaseProviderService database, SettingType type) async {

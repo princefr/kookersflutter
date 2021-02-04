@@ -10,7 +10,7 @@ mixin PhoneCodeValidation {
      if(value.isNotEmpty){
           sink.add(value);
         } else{
-          sink.addError("the phone must be a valid phone call");
+          sink.addError("Veuillez renseigner le code recu");
         }
       
     });

@@ -47,6 +47,8 @@ class HomeTopBar extends PreferredSize {
                       if (snapshot.hasError) return Text("i've a bad felling");
                       if (!snapshot.hasData) return Text("its empty out there");
                       return CircleAvatar(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.white,
                         radius: 25,
                         backgroundImage: CachedNetworkImageProvider(
                           snapshot.data.photoUrl,
@@ -174,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                       baseColor: Colors.grey[200],
                       highlightColor: Colors.grey[300]);
                 if (snapshot.hasError) return Text("i've a bad felling");
-                if (snapshot.data.isEmpty) return EmptyView();
+                if (snapshot.data.isEmpty) return EmptyViewElse(text: "Aucune vente à proximité");
                 return ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (ctx, index) {

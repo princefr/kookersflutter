@@ -13,7 +13,7 @@ mixin OrderValidation {
       if(isNotZero(value)){
         sink.add(value);
       }else{
-        sink.addError("error description must be filled");
+        sink.addError("Veuillez renseigner une quantité");
       }
       
   });
@@ -23,7 +23,7 @@ mixin OrderValidation {
       if(isFuture(value)){
         sink.add(value);
       }else{
-        sink.addError("error description must be filled");
+        sink.addError("Veuillez renseigner une date");
       }
       
   });
@@ -33,7 +33,7 @@ mixin OrderValidation {
       if(value.isNotEmpty){
         sink.add(value);
       }else{
-        sink.addError("error description must be filled");
+        sink.addError("Veuillez renseigner une méthode de paiement");
       }
   });
 }

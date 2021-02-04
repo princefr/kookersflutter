@@ -23,7 +23,7 @@ mixin PhoneNumberValidation {
      if(isValidPhoneNumber(value)){
           sink.add(value);
         } else{
-          sink.addError("the phone must be a valid phone call");
+          sink.addError("Veuillez renseigner votre numéro de téléphone");
         }
       
     });
@@ -32,7 +32,7 @@ mixin PhoneNumberValidation {
      if(value.isNotEmpty){
           sink.add(value);
         } else{
-          sink.addError("the phone ");
+          sink.addError("Le champs téléphone doit etre remplie");
         }
     });
 

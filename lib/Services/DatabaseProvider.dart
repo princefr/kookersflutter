@@ -20,9 +20,16 @@ class Location {
 }
 
 class RatingUser {
-  int ratingTotal;
+  double ratingTotal;
   int ratingCount;
   RatingUser({this.ratingCount, this.ratingTotal});
+}
+
+
+class RatingPublication{
+    double ratingTotal;
+    int ratingCount;
+    RatingPublication({this.ratingCount, this.ratingTotal});
 }
 
 class Adress {
@@ -362,8 +369,9 @@ class PublicationVendor {
   bool isOpen;
   List<FoodPreference> preferences;
   String createdAt;
+  RatingPublication rating;
 
-  PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.isOpen, this.preferences, this.createdAt});
+  PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.isOpen, this.preferences, this.createdAt, this.rating});
   
 
   static PublicationVendor fromJson(Map<String, dynamic> map) => PublicationVendor(
@@ -371,18 +379,22 @@ class PublicationVendor {
     title: map["title"],
     description : map["description"],
     type: map["type"],
-    pricePerAll: map["price_per_all"].toString(),
+    pricePerAll: map["price_all"].toString(),
     pricePerPie: map["price_per_pie"].toString(),
     photoUrls: map["photoUrls"] as List<Object>,
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["lonngitude"]), title: map["adress"]["title"]),
     isOpen: map["is_open"],
     preferences: FoodPreference.fromJSON(map["food_preferences"]),
-    createdAt: map["createdAt"]
+    createdAt: map["createdAt"],
+    rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString()))
   );
 
   static List<PublicationVendor> fromJsonToList(List<Object> map) {
     List<PublicationVendor> allpublications = [];
     map.forEach((element) {
+      final c = element as Map<String, dynamic>;
+      print(c["rating"]["rating_count"]);
+      print(c["rating"]["rating_total"]);
       final x = PublicationVendor.fromJson(element);
       allpublications.add(x);
     });
@@ -1154,6 +1166,7 @@ Future<List<Order>>  loadbuyerOrders() {
                                         longitude
                                       }
                                     }
+                                    rating {rating_total, rating_count}
                                 }
                             }
                         }
@@ -1175,7 +1188,7 @@ Future<List<Order>>  loadbuyerOrders() {
   final QueryOptions _options = QueryOptions(
       fetchPolicy: FetchPolicy.cacheAndNetwork,
       documentNode: gql(r'''
-                query Order($uid: String!) {
+                query PublicatioinOwned($uid: String!) {
                       getpublicationOwned(userId: $uid){
                           _id
                           title
@@ -1196,6 +1209,8 @@ Future<List<Order>>  loadbuyerOrders() {
                               longitude
                             }
                           }
+
+                          rating {rating_total, rating_count}
                       }
                   }
               '''), variables: <String, String>{
@@ -1312,6 +1327,8 @@ Future<List<Order>>  loadbuyerOrders() {
                       longitude
                     }
                   }
+
+                  rating {rating_total, rating_count}
                   
                   seller {
                     _id

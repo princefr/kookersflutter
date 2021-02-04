@@ -160,7 +160,7 @@ final MutationOptions _options  = MutationOptions(
 
          return Scaffold(
            appBar: TopBarWitBackNav(
-              title: this.widget.order.productId,
+              title: this.widget.order.publication.title,
               rightIcon: CupertinoIcons.exclamationmark_circle_fill,
               isRightIcon: true,
               height: 54,
