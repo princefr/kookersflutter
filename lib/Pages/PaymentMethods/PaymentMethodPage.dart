@@ -42,11 +42,13 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
         appBar: TopBarWitBackNav(title: "Methodes de paiements", height: 54, rightIcon: CupertinoIcons.plus, isRightIcon: true, onTapRight: (){
                   stripeService.registrarCardWithForm().then((paymentMethod) {
                     databaseService.addattachPaymentToCustomer(paymentMethod.id).then((value) {
-                      databaseService.loadSourceList();
                       databaseService.updatedDefaultSource(paymentMethod.id).then((value){
                         databaseService.user.value.defaultSource = paymentMethod.id;
+                        databaseService.loadSourceList();
                       });
                     });
+                  }).catchError((onError){
+                    print(onError);
                   });
                 }),
               body: SmartRefresher(

@@ -39,7 +39,7 @@ class PhoneAuthBloc with PhoneNumberValidation {
 
 
 
-  Stream<String> get phoneAndCode => CombineLatestStream<String , String>([phoneCode$, phoneNumber$], (values) => values[0] + values[1]).transform(validatePhoneNumber);
+  Stream<String> get phoneAndCode => CombineLatestStream<String , String>([phoneCode$, phoneNumber$], (values) => values[0] + values[1]).transform(validatePhoneNumber).asBroadcastStream();
 
 void listen() {
   phoneAndCode.listen((event) {this.telephone = event; });

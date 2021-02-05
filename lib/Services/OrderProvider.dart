@@ -30,7 +30,7 @@ class OrderProvider with OrderValidation {
 
 
 
-  Stream<bool> get isAllFilled$ => CombineLatestStream([quantity$], (values) => true);
+  Stream<bool> get isAllFilled$ => CombineLatestStream([quantity$], (values) => true).asBroadcastStream();
   
   Future<OrderInput> validate(DatabaseProviderService database, PublicationHome publication, int total) async {
    final order =  OrderInput(productId: publication.id, quantity: this.quantity.value, totalPrice: total.toString(),  buyerID: database.user.value.id, orderState: "NOT_ACCEPTED", sellerId: publication.seller.id, deliveryDay: deliveryDate.value.toIso8601String(), sellerStAccountid: "acct_1BZhCVFQoUnpFDpj", paymentMethodAssociated: database.user.value.defaultSource, currency: database.user.value.currency);

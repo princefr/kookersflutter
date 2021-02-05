@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/Orders/OrderPageChild.dart';
+import 'package:kookers/Services/DatabaseProvider.dart';
 
 
 enum OrderState {
@@ -19,7 +20,8 @@ class Publication {
   String title;
   String description;
   List<Object> imagesUrls;
-  Publication({@required this.title, this.description, this.imagesUrls, this.id});
+  List<FoodPreference> preferences;
+  Publication({@required this.title, this.description, this.imagesUrls, this.id, this.preferences});
 
 }
 
@@ -43,23 +45,9 @@ class Seller {
 }
 
 
-  // String id;
-  // String productId;
-  // String quantity;
-  // String totalPrice;
-  // String buyerID;
-  // String deliveryDay;
-  // String orderState;
-  // String sellerId;
-  // String sellerStAccountid;
-  // String paymentMethodAssociated;
-  // String currency;
-  // PublicationVendor publication;
-  // BuyerVendor buyer;
 
 
-
-class Order{
+class Order {
         String id;
         String productId;
         String stripeTransactionId;
@@ -71,22 +59,22 @@ class Order{
         OrderState orderState;
         Publication publication;
         int notificationBuyer;
-        int  notificationSeller;
         Seller seller;
         Order({this.productId, this.stripeTransactionId, this.orderState, this.publication, this.deliveryDay,
-         this.seller, this.currency, this.id, this.quantity, this.sellerId, this.totalPrice, this.notificationBuyer, this.notificationSeller});
+         this.seller, this.currency, this.id, this.quantity, this.sellerId, this.totalPrice, this.notificationBuyer});
 
         static Order fromJson(Map<String, dynamic> map) => Order(
           productId: map["productId"],
           stripeTransactionId: map["stripeTransactionId"],
           deliveryDay: map["deliveryDay"],
           orderState: EnumToString.fromString(OrderState.values, map["orderState"]),
-          publication: Publication(title: map["publication"]["title"], description: map["publication"]["description"], imagesUrls: map["publication"]["photoUrls"], id: map["publication"]["_id"]),
+          publication: Publication(title: map["publication"]["title"], description: map["publication"]["description"], imagesUrls: map["publication"]["photoUrls"], id: map["publication"]["_id"], preferences: FoodPreference.fromJSON(map["publication"]["food_preferences"])),
           seller: Seller.fromJson(map["seller"]),
           id: map["_id"],
           quantity: map["quantity"],
           sellerId: map["sellerId"],
           totalPrice: map["totalPrice"],
+          notificationBuyer: map["notificationBuyer"]
         );
 
         Map<String, dynamic> toJSON() {

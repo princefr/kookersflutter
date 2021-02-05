@@ -58,7 +58,7 @@ class _TabHomeState extends State<TabHome>
 
   @override
   void dispose() {
-    this.onMessage.cancel();
+    //this.onMessage.cancel();
     this._selectedIndex.close();
     super.dispose();
   }
@@ -127,12 +127,12 @@ class _TabHomeState extends State<TabHome>
                   .firstWhere((element) => element.id == event.data["roomId"]);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => ChatPage(room: room)));
-            }else if(event.data["type"] == "order_seller"){
+            }else if(event.data["side"] == "order_seller"){
               await databaseService.loadSellerOrders();
               OrderVendor order  = databaseService.sellerOrders.value.firstWhere((element) => element.id == event.data["orderId"]);
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => VendorPageChild(vendor: order)));
-            }else if(event.data["type"] == "order_buyer"){
+            }else if(event.data["side"] == "order_buyer"){
               await databaseService.loadbuyerOrders();
               final Order order = databaseService.buyerOrders.value.firstWhere((element) => element.id == event.data["orderId"]);
               Navigator.push(context,

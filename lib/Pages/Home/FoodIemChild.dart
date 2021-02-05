@@ -173,14 +173,24 @@ class _FoodItemChildState extends State<FoodItemChild> {
     return (percent / 100) * total;
   }
 
+
+  @override
+  void initState() { 
+    new Future.delayed(Duration.zero, (){
+      stripeService.initiateStripe();
+    });
+    super.initState();
+    
+  }
+
   StreamButtonController _streamButtonController = StreamButtonController();
 
   
 
   OrderProvider orderProvider =  OrderProvider();
   BehaviorSubject<int> serviceFees = BehaviorSubject<int>.seeded(15);
-  Stream<double> get feePaid => CombineLatestStream([orderProvider.quantity, serviceFees], (values) => values[0] * percentage(int.parse(this.widget.publication.pricePerAll), int.parse(values[0])));
-  Stream<double> get total => CombineLatestStream([orderProvider.quantity$, feePaid], (values) => values[0] * int.parse(this.widget.publication.pricePerAll) + values[1]);
+  Stream<double> get feePaid => CombineLatestStream([orderProvider.quantity, serviceFees], (values) => values[0] * percentage(int.parse(this.widget.publication.pricePerAll), int.parse(values[0]))).asBroadcastStream();
+  Stream<double> get total => CombineLatestStream([orderProvider.quantity$, feePaid], (values) => values[0] * int.parse(this.widget.publication.pricePerAll) + values[1]).asBroadcastStream();
 
 
 
@@ -376,8 +386,13 @@ class _FoodItemChildState extends State<FoodItemChild> {
                           databaseService
                               .addattachPaymentToCustomer(paymentMethod.id)
                               .then((value) {
-                            databaseService.loadSourceList();
+                                databaseService.updatedDefaultSource(paymentMethod.id).then((value){
+                                databaseService.user.value.defaultSource = paymentMethod.id;
+                                databaseService.loadSourceList();
+                              });
                           });
+                        }).catchError((onError){
+                          print(onError);
                         });
                       },
                     );
@@ -418,8 +433,11 @@ class _FoodItemChildState extends State<FoodItemChild> {
           SizedBox(
             height: 30,
           ),
+
           ListTile(
             leading: CircleAvatar(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.white,
               backgroundImage:
                   CachedNetworkImageProvider(this.widget.publication.seller.photoUrl),
             ),

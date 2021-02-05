@@ -53,6 +53,8 @@ class TopBarChat extends PreferredSize {
           leading: InkWell(onTap: () => Navigator.pop(context), child: Icon(CupertinoIcons.chevron_back)),
           title: Row(children: [
             CircleAvatar(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.white,
                 radius: 20,
                 backgroundImage: CachedNetworkImageProvider(this.imageUrl),
             ),

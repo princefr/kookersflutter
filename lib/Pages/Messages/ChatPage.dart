@@ -300,6 +300,8 @@ class _ChatPageState extends State<ChatPage>
                                                 const EdgeInsets.only(top: 20),
                                             child: ListTile(
                                                 leading: CircleAvatar(
+                                                  backgroundColor: Colors.white,
+                                                  foregroundColor: Colors.white,
                                                   radius: 20,
                                                   backgroundImage:
                                                       CachedNetworkImageProvider(

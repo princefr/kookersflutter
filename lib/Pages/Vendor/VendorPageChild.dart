@@ -58,8 +58,8 @@ class _VendorPageChildState extends State<VendorPageChild> {
   Future<Room> createRoom(GraphQLClient client, String user1, String user2) async {
     final MutationOptions _options  = MutationOptions(
           documentNode: gql(r"""
-            mutation CreateChatRoom($user1: String!, $user2: String!){
-                  createChatRoom(user1:$user1 , user2: $user2){
+            mutation CreateChatRoom($user1: String!, $user2: String!, $uid: String!){
+                  createChatRoom(user1:$user1 , user2: $user2, uid: $uid){
                               _id
                               updatedAt
                               
@@ -85,7 +85,8 @@ class _VendorPageChildState extends State<VendorPageChild> {
           """),
           variables:  <String, String> {
             "user1": user1,
-            "user2": user2
+            "user2": user2,
+            "uid": user2
           }
         );
 
@@ -147,9 +148,12 @@ final MutationOptions _options  = MutationOptions(
                           height: 54,
                           onTapRight: () {
                             
-                            this.createRoom(databaseService.client, this.widget.vendor.buyerID, databaseService.user.value.id).then((result) => Navigator.push(context,
+                            this.createRoom(databaseService.client, this.widget.vendor.buyerID, databaseService.user.value.id).then((result) async {
+                              await databaseService.loadrooms();
+                              Navigator.push(context,
                             CupertinoPageRoute(
-                              builder: (context) => ChatPage(room: result))));
+                              builder: (context) => ChatPage(room: result, uid: databaseService.user.value.id)));
+                            });
                           }),
         body: Center(
           child: ListView(

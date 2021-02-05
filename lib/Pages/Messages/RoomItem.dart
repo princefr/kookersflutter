@@ -154,6 +154,8 @@ class RoomItemShimmer extends StatelessWidget {
               ),
             ),
             leading: CircleAvatar(
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.white,
               radius: 30
             ),
             trailing: Column(
@@ -221,6 +223,8 @@ class RoomItem extends StatelessWidget {
               style: TextStyle(fontSize: 14),
             ),
             leading: CircleAvatar(
+              backgroundColor: Colors.white,
+                    foregroundColor: Colors.white,
               radius: 30,
               backgroundImage: CachedNetworkImageProvider(this.room.receiver.photoUrl),
             ),

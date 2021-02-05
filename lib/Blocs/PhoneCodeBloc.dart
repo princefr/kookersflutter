@@ -10,7 +10,7 @@ class PhoneCodeBloc with PhoneCodeValidation {
   Sink<String> get inCode => code.sink;
 
 
-  Stream<String> get validatecode => CombineLatestStream<String , String>([code$], (values) => values[0] + values[1]).transform(validateCode);
+  Stream<String> get validatecode => CombineLatestStream<String , String>([code$], (values) => values[0] + values[1]).transform(validateCode).asBroadcastStream();
 
 
 

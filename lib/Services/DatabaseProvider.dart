@@ -299,7 +299,6 @@ class OrderVendor {
   String sellerStAccountid;
   String paymentMethodAssociated;
   String currency;
-  int notificationBuyer;
   int  notificationSeller;
   PublicationVendor publication;
   String stripeTransactionId;
@@ -307,7 +306,7 @@ class OrderVendor {
 
   OrderVendor({@required this.productId, @required this.quantity, @required this.totalPrice,
    @required this.buyerID, @required this.orderState, @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency,
-    this.publication, this.buyer, this.id, this.stripeTransactionId, this.notificationBuyer, this.notificationSeller});
+    this.publication, this.buyer, this.id, this.stripeTransactionId,  this.notificationSeller});
 
   static OrderVendor fromJson(Map<String, dynamic> data) => OrderVendor(
     productId: data["productId"],
@@ -323,7 +322,8 @@ class OrderVendor {
     stripeTransactionId: data["stripeTransactionId"],
     publication: PublicationVendor.fromJson(data["publication"]),
     buyer: BuyerVendor.fromJson(data["buyer"]),
-    id: data["_id"]
+    id: data["_id"],
+    notificationSeller: data["notificationSeller"]
   );
 
 
@@ -414,8 +414,9 @@ class PublicationHome {
   Adress adress;
   SellerDef seller;
   List<FoodPreference> preferences;
+  RatingPublication rating;
 
-  PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.seller, this.preferences});
+  PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.seller, this.preferences, this.rating});
   
 
   static PublicationHome fromJson(Map<String, dynamic> map) => PublicationHome(
@@ -428,7 +429,8 @@ class PublicationHome {
     photoUrls: map["photoUrls"] as List<Object>,
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["longitude"]), title: ""),
     seller: SellerDef.fromJson(map["seller"]),
-    preferences: FoodPreference.fromJSON(map["food_preferences"])
+    preferences: FoodPreference.fromJSON(map["food_preferences"]),
+    rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString()))
   );
 
   static List<PublicationHome> fromJsonToList(List<Object> map) {
@@ -623,6 +625,7 @@ class DatabaseProviderService {
 
         // ignore: close_sinks
   BehaviorSubject<Order> inOrderBuyer;
+  
   StreamSubscription<Order> getOrderBuyer(String orderId, BehaviorSubject<Order> order){
     this.inOrderBuyer = order;
     return this.buyerOrders.map((event) => event.firstWhere((order) => order.id == orderId)).listen((event) => inOrderBuyer.sink.add(event));
@@ -784,7 +787,7 @@ class DatabaseProviderService {
 
   Future<List<Room>>  loadrooms() {
   final QueryOptions _options = QueryOptions(
-      fetchPolicy: FetchPolicy.networkOnly,
+      fetchPolicy: FetchPolicy.cacheAndNetwork,
       documentNode: gql( r'''
                   query GetUserRoom($uid: String!) {
                         getUserRooms(userId: $uid){
@@ -880,7 +883,9 @@ class DatabaseProviderService {
 
 
     Future<void> getPayoutList() async {
-    final QueryOptions _options = QueryOptions(documentNode: gql(r"""
+    final QueryOptions _options = QueryOptions(
+      fetchPolicy: FetchPolicy.cacheAndNetwork,
+      documentNode: gql(r"""
           query GetPayoutList($accountId: String!) {
             getPayoutList(accountId: $accountId){
                   id
@@ -1097,6 +1102,9 @@ Future<List<Order>>  loadbuyerOrders() {
                             stripeTransactionId
                             orderState
                             deliveryDay
+                            sellerId
+
+                            notificationBuyer
                             
                             publication {
                                  _id
@@ -1144,6 +1152,7 @@ Future<List<Order>>  loadbuyerOrders() {
                                 buyerID
                                 sellerId
                                 currency
+                                notificationSeller
 
                                 buyer {
                                   _id
@@ -1302,7 +1311,7 @@ Future<List<Order>>  loadbuyerOrders() {
       List<String> geohashes = geohashWithinRange(location, this.user.value.settings.distanceFromSeller);
       
       final QueryOptions _options = QueryOptions(
-        fetchPolicy: FetchPolicy.cacheFirst,
+        fetchPolicy: FetchPolicy.cacheAndNetwork,
         documentNode: gql(r"""
             query GetPublicationViaGeo($greather: String!, $lesser: String!, $userId: String!) {
                 getPublicationViaGeo(greather: $greather, lesser: $lesser, userId: $userId){

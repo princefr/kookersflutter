@@ -14,8 +14,4 @@ mixin PhoneCodeValidation {
         }
       
     });
-
-
-  
-
 }

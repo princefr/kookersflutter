@@ -86,7 +86,7 @@ class NotificationPanelService {
 
 
   void showOrderSeller(BuildContext context, RemoteMessage event, OrderVendor order){
-        MessageToDisplay message =  loadMessageTypeSeller(event.data["order_type"]);
+        MessageToDisplay message =  loadMessageTypeSeller(event.data["type"]);
         Flushbar(
           onTap: (flushbar) {
           Navigator.push(context,
@@ -108,7 +108,7 @@ class NotificationPanelService {
 
 
   void showOrderBuyer(BuildContext context, RemoteMessage event, Order order){
-        MessageToDisplay message = loadMessageTypeSeller(event.data["order_type"]);
+        MessageToDisplay message = loadMessageTypeBuyer(event.data["type"]);
         Flushbar(
           onTap: (flushbar) {
             Navigator.push(context,

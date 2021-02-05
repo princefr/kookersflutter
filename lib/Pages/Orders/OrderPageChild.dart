@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chips_choice/chips_choice.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,11 +9,13 @@ import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
+import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Ratings/RatePlate.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
+import 'package:kookers/Widgets/StatusChip.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:kookers/Pages/Reports/ReportPage.dart';
@@ -38,7 +41,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
 
   @override
   void initState() { 
-        Future.delayed(Duration.zero, (){
+      Future.delayed(Duration.zero, (){
       final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
           this.orderSubscription = databaseService.getOrderBuyer(this.widget.order.id, this.order);
@@ -66,11 +69,9 @@ class _OrderPageChildState extends State<OrderPageChild> {
 Future<Map<String, dynamic>> cancelOrder(GraphQLClient client, Order order) async {
 final MutationOptions _options  = MutationOptions(
       documentNode: gql(r"""
-        mutation CancelOrder($order: OrderInput!){
+        mutation CancelOrder($order: OrderInputBuyer!){
               cancelOrder(order: $order){
-                id,
-                object
-                orderState
+                _id
               }
           }
       """),
@@ -79,7 +80,7 @@ final MutationOptions _options  = MutationOptions(
       }
     );
 
-    return await client.mutate(_options).then((result) => result.data);
+    return await client.mutate(_options).then((result) => result.data["cancelOrder"]);
 }
 
 Future<Map<String, dynamic>> doneOrder(GraphQLClient client, Order order) async {
@@ -87,8 +88,7 @@ final MutationOptions _options  = MutationOptions(
       documentNode: gql(r"""
         mutation ValidateOrder($order: OrderInputBuyer!){
               validateOrder(order: $order){
-                _id,
-                orderState
+                _id
               }
           }
       """),
@@ -97,7 +97,7 @@ final MutationOptions _options  = MutationOptions(
       }
     );
 
-    return await client.mutate(_options).then((result) => result.data);
+    return await client.mutate(_options).then((result) => result.data["validateOrder"]);
 }
 
 
@@ -105,8 +105,8 @@ final MutationOptions _options  = MutationOptions(
   Future<Room> createRoom(GraphQLClient client, String user1, String user2) async {
     final MutationOptions _options  = MutationOptions(
           documentNode: gql(r"""
-            mutation CreateChatRoom($user1: String!, $user2: String!){
-                  createChatRoom(user1:$user1 , user2: $user2){
+            mutation CreateChatRoom($user1: String!, $user2: String!, $uid: String!){
+                  createChatRoom(user1:$user1 , user2: $user2, uid: $uid){
                               _id
                               updatedAt
                               
@@ -132,7 +132,8 @@ final MutationOptions _options  = MutationOptions(
           """),
           variables:  <String, String> {
             "user1": user1,
-            "user2": user2
+            "user2": user2,
+            "uid": user2
           }
         );
 
@@ -177,13 +178,29 @@ final MutationOptions _options  = MutationOptions(
           Expanded(
               child: ListView(
                 children: [
-            Image(
-              height: 300,
-              width: MediaQuery.of(context).size.width,
-              fit: BoxFit.cover,
-              image: CachedNetworkImageProvider(
-              'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-            ),
+                  CarouselSlider(items: this.widget.order.publication.imagesUrls.map((e) {
+                                return InkWell(
+                                  onTap: (){
+                                    Navigator.push(
+                                            context,
+                                            CupertinoPageRoute(
+                                                builder: (context) => FullScreenImage(url: e)));
+                                  },
+                                                child: Hero(
+                                                  tag: e,
+                                                  child: Image(
+                                  
+                                  width: MediaQuery.of(context).size.width,
+                                  fit: BoxFit.cover,
+                                  image: CachedNetworkImageProvider(e),
+                              ),
+                                                ),
+                                );
+                              }).toList(),
+                              options: CarouselOptions(height: 300.0, aspectRatio: 16/9, enlargeCenterPage: true, initialPage: 0,
+                              enableInfiniteScroll: false,)),
+
+                SizedBox(height:10),
 
 
                  Row(children: [
@@ -195,37 +212,64 @@ final MutationOptions _options  = MutationOptions(
                       )
                     ),
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(padding: const EdgeInsets.all(8.0), color: Colors.red, child: Text(this.widget.order.orderState.toString(), style: GoogleFonts.montserrat(color: Colors.white),)),
-                    ),
+                    StreamBuilder<Order>(
+                        stream: this.order.stream,
+                        builder: (context, snapshot) {
+                          if(snapshot.connectionState == ConnectionState.waiting) return Text("nope");
+                          return StatusChip(state: snapshot.data.orderState);
+                        }
+                      ),
+
+                      SizedBox(width:5)
                   ],),
 
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."),
+                    child: Text(this.widget.order.publication.description),
                   ),
 
-                  ChipsChoice<String>.multiple(
-                    spinnerColor: Colors.red,
-                    value: tagfood,
-                    onChanged: (val) => print("d"),
-                    choiceItems: C2Choice.listFrom<String, String>(
-                    source: foodpreferences,
-                    value: (i, v) => v,
-                    label: (i, v) => v,
-                    ),
-                  ),
+                                Container(
+                height: 40,
+                child: Builder(builder: (BuildContext ctx) {
+                  if(this.widget.order.publication.preferences.any((element) => element.isSelected == true)){
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: this.widget.order.publication.preferences.where((element) => element.isSelected == true).toList().length,
+                      itemBuilder: (ctx, index){
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 5, right: 5, top: 3),
+                          child: Container(
+                                  decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
+                    ), padding: EdgeInsets.all(10), child: Text(this.widget.order.publication.preferences.where((element) => element.isSelected == true).elementAt(index).title)),
+                        );
+                    });
+                  }else{
+                    return Container(height: 40, child: Text("Sans préférences"), decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
+                    ),);
+                  }
+                }),
+              ),
 
                   Divider(),
 
                   ListTile(
                     onTap: (){
-                      this.createRoom(databaseService.client, this.widget.order.sellerId, databaseService.user.value.id).then((result) => Navigator.push(context,
+                      this.createRoom(databaseService.client, this.widget.order.sellerId, databaseService.user.value.id).then((result) async {
+                        await databaseService.loadrooms();
+                        Navigator.push(context,
                             CupertinoPageRoute(
-                              builder: (context) => ChatPage(room: result))));
+                              builder: (context) => ChatPage(room: result, uid: databaseService.user.value.id)));
+                      });
                     },
-                    leading: CircleAvatar(radius: 15, backgroundImage: CachedNetworkImageProvider(this.widget.order.seller.photoUrl),),
+
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.white,
+                      radius: 15, backgroundImage: CachedNetworkImageProvider(this.widget.order.seller.photoUrl),),
                     trailing: Icon(CupertinoIcons.chat_bubble),
                     title: Text(this.widget.order.seller.firstName + " " + this.widget.order.seller.lastName)
                   ),
@@ -242,7 +286,7 @@ final MutationOptions _options  = MutationOptions(
 
                   ListTile(
                     leading: Icon(CupertinoIcons.chart_pie),
-                    title: Text("2 parts"),
+                    title: Text(this.widget.order.quantity.toString()),
                     trailing: Text("parts"),
                   ),
 
@@ -272,11 +316,11 @@ final MutationOptions _options  = MutationOptions(
                                      successText: "Commande validée",
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
-                                        this.doneOrder(databaseService.client, this.widget.order).then((result) {
+                                        this.doneOrder(databaseService.client, this.widget.order).then((result) async {
+                                          
                                           _streamButtonController.isSuccess();
-                                          setState(() {
-                                            this.widget.order.orderState = EnumToString.fromString(OrderState.values, result["orderState"]);
-                                          });
+                                          databaseService.loadbuyerOrders();
+                                          
                                         }).catchError((err) {
                                           _streamButtonController.isError();
                                         });
@@ -293,11 +337,10 @@ final MutationOptions _options  = MutationOptions(
                                      successText: "Commande annulée",
                                       controller: _streamButtonController2, onClick: () async {
                                         _streamButtonController2.isLoading();
-                                          this.cancelOrder(databaseService.client, this.widget.order).then((result) {
+                                          this.cancelOrder(databaseService.client, this.widget.order).then((result) async {
+                                            
                                             _streamButtonController2.isSuccess();
-                                            setState(() {
-                                            this.widget.order.orderState = result["orderState"];
-                                          });
+                                            databaseService.loadbuyerOrders();
                                             }).catchError((onError) {
                                               _streamButtonController2.isError();
                                           });
@@ -331,8 +374,9 @@ final MutationOptions _options  = MutationOptions(
                                          successText: "Commande annulée",
                                           controller: _streamButtonController3, onClick: () async {
                                             _streamButtonController3.isLoading();
-                                            this.cancelOrder(databaseService.client, this.widget.order).then((value) {
+                                            this.cancelOrder(databaseService.client, this.widget.order).then((value) async {
                                               _streamButtonController3.isSuccess();
+                                              databaseService.loadbuyerOrders();
                                             }).catchError((onError) {
                                               _streamButtonController3.isError();
                                             });

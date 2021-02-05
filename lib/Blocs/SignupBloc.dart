@@ -82,7 +82,7 @@ class SignupBloc with SignupValidation {
   Stream<bool> get acceptedPolicies$ => acceptedPolicies.stream.transform(validatePoliciesAccepted);
   Sink<bool> get inacceptedPolicies => acceptedPolicies.sink;
 
-  Stream<bool> get isAllFilled$ => CombineLatestStream([lastName$, firstName$, email$, acceptedPolicies$, adress$ ,  dateOfBirth$], (values) => true);
+  Stream<bool> get isAllFilled$ => CombineLatestStream([lastName$, firstName$, email$, acceptedPolicies$, adress$ ,  dateOfBirth$], (values) => true).asBroadcastStream();
 
 
   SignupInformations validate() {
