@@ -161,6 +161,7 @@ class _IbanPageState extends State<IbanPage> {
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
     return Scaffold(
+      backgroundColor: Colors.white,
             appBar: TopBarWitBackNav(
             title: "Iban",
             rightIcon: CupertinoIcons.plus,

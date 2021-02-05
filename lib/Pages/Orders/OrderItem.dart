@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/Orders/OrderPageChild.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Widgets/StatusChip.dart';
 
 
 enum OrderState {
@@ -158,6 +159,7 @@ class OrderItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: this.order.notificationBuyer > 0 ? Colors.red[100]: Colors.white,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
         child: InkWell(
@@ -166,13 +168,13 @@ class OrderItem extends StatelessWidget {
             leading: Image(height: 350, width: 100, fit: BoxFit.cover, image: CachedNetworkImageProvider(order.publication.imagesUrls[0])),
             title: Align(
               alignment: Alignment.centerLeft,
-                          child: Column(
+                child: Column(
                 mainAxisAlignment:  MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(this.order.publication.title),
                   Text(this.order.productId, style: GoogleFonts.montserrat(fontSize: 13)),
-                  Text(this.order.orderState.toString(),  style: GoogleFonts.montserrat(fontSize: 13)),
+                  StatusChip(state: this.order.orderState)
                   
                 ]
               ),

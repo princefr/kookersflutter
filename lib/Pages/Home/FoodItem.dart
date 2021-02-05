@@ -213,7 +213,7 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
                                   child: Row(children: [
                                     Icon(CupertinoIcons.star_fill, size: 13, color: Colors.yellow[900]),
                                     SizedBox(width: 5),
-                                    Text("4.7")
+                                    Text((this.widget.publication.rating.ratingTotal/this.widget.publication.rating.ratingCount).toString() + " " + "(" + this.widget.publication.rating.ratingCount.toString() + ")")
 
                                   ],),
                                 )

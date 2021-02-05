@@ -625,7 +625,7 @@ class DatabaseProviderService {
 
         // ignore: close_sinks
   BehaviorSubject<Order> inOrderBuyer;
-  
+
   StreamSubscription<Order> getOrderBuyer(String orderId, BehaviorSubject<Order> order){
     this.inOrderBuyer = order;
     return this.buyerOrders.map((event) => event.firstWhere((order) => order.id == orderId)).listen((event) => inOrderBuyer.sink.add(event));
@@ -1061,9 +1061,9 @@ class DatabaseProviderService {
   Future<void> cleanNotificationSeller(String orderId) async {
     final MutationOptions _options  = MutationOptions(
       documentNode: gql(r"""
-        mutation CleanNotificationSeller($orderId: Strinng!){
+        mutation CleanNotificationSeller($orderId: String!){
               cleanNotificationSeller(orderId: $orderId){
-                id
+                _id
               }
           }
       """),
@@ -1078,9 +1078,9 @@ class DatabaseProviderService {
   Future<void> cleanNotificationBuyer(String orderId) async {
     final MutationOptions _options  = MutationOptions(
       documentNode: gql(r"""
-        mutation CleanNotificationBuyer($orderId: Strinng!){
+        mutation CleanNotificationBuyer($orderId: String!){
               cleanNotificationBuyer(orderId: $orderId){
-                id
+                _id
               }
           }
       """),

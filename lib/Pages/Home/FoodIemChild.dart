@@ -253,6 +253,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                     style: GoogleFonts.montserrat(
                         fontSize: 26, color: Colors.grey)),
               )),
+              
               Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Stepper(quantity: orderProvider.quantity)),

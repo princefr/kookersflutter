@@ -33,6 +33,7 @@ class _VendorPageChildState extends State<VendorPageChild> {
   StreamSubscription<OrderVendor> orderSubscription;
   // ignore: close_sinks
   BehaviorSubject<OrderVendor>  order = new BehaviorSubject<OrderVendor>();
+  StreamSubscription<int> get notificationIncoming => this.order.where((event) => event.notificationSeller > 0).map((event) => event.notificationSeller).listen((event) => event);
 
 
 
@@ -42,6 +43,9 @@ class _VendorPageChildState extends State<VendorPageChild> {
         final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
           this.orderSubscription = databaseService.getOrderSeller(this.widget.vendor.id, this.order);
+          notificationIncoming.onData((data) {
+              databaseService.cleanNotificationSeller(this.widget.vendor.id).then((value) => databaseService.loadSellerOrders());
+          });
     });
     super.initState();
     
@@ -51,6 +55,7 @@ class _VendorPageChildState extends State<VendorPageChild> {
   @override
   void dispose() { 
     this.orderSubscription.cancel();
+    this.notificationIncoming.cancel();
     this.order.close();
     super.dispose();
   }

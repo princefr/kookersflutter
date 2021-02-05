@@ -50,6 +50,7 @@ class OrderItemSeller extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
+        color: this.vendor.notificationSeller > 0 ? Colors.red[100]: Colors.white,
           child: ListTile(
         onTap: () => Navigator.push(
             context,
