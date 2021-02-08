@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dart_geohash/dart_geohash.dart';
 import 'package:flutter/material.dart';
@@ -200,6 +201,35 @@ class UserSettings {
   }
 }
 
+class StripeRequirements {
+       List<String> currentlyDue;
+       List<String> eventuallyDue;
+       List<String> pastDue;
+       List<String> pendingVerification;
+       StripeRequirements({this.currentlyDue, this.eventuallyDue, this.pastDue, this.pendingVerification});
+       
+       static StripeRequirements fromJson(Map<String, dynamic> map) => StripeRequirements(
+         currentlyDue: List<String>.from(map["currently_due"].map((string) => string)),
+         eventuallyDue: List<String>.from(map["eventually_due"].map((string) => string)),
+         pastDue: List<String>.from(map["past_due"].map((string) => string)),
+         pendingVerification: List<String>.from(map["pending_verification"].map((string) => string))
+       );
+
+
+
+}
+
+
+class StripeAccount{
+  bool chargesEnabled;
+  bool payoutsEnabled;
+  StripeRequirements stripeRequirements;
+  StripeAccount({this.chargesEnabled, this.payoutsEnabled, this.stripeRequirements});
+}
+
+
+
+
 class UserDef {
  String id;
  String email;
@@ -219,8 +249,10 @@ class UserDef {
  String currency;
  String defaultIban;
  String stripeaccountId;
+ StripeAccount stripeAccount;
 
- UserDef({this.id, this.email, this.firstName, this.lastName, this.phonenumber, this.fcmToken, this.settings, this.adresses, this.photoUrl, this.customerId, this.createdAt, this.updatedAt, this.defaultSource, this.country, this.currency, this.stripeaccountId, this.defaultIban});
+
+ UserDef({this.id, this.email, this.firstName, this.lastName, this.phonenumber, this.fcmToken, this.settings, this.adresses, this.photoUrl, this.customerId, this.createdAt, this.updatedAt, this.defaultSource, this.country, this.currency, this.stripeaccountId, this.defaultIban, this.stripeAccount});
  
   static UserDef fromJson(Map<String, dynamic> map) => UserDef (
   id: map["_id"],
@@ -239,7 +271,8 @@ class UserDef {
   country: map["country"],
   currency: map["currency"],
   stripeaccountId: map["stripe_account"],
-  defaultIban: map["default_iban"]
+  defaultIban: map["default_iban"],
+  stripeAccount: StripeAccount(chargesEnabled: map["stripeAccount"]["charges_enabled"], payoutsEnabled: map["stripeAccount"]["payouts_enabled"], stripeRequirements: StripeRequirements.fromJson(map["stripeAccount"]["requirements"]))
 );
 }
 
@@ -666,7 +699,7 @@ class DatabaseProviderService {
     //StreamSubscription<String> token = FirebaseAuth.instance.authStateChanges().listen((event) => event.getIdToken(true).asStream());
     
 
-     GraphQLClient client = clientFor(uri: "https://46cd409c571a.ngrok.io/graphql", subscriptionUri: 'wss://46cd409c571a.ngrok.io/graphql', authorization: "").value;
+     GraphQLClient client = clientFor(uri: "https://ed23ed8dd441.ngrok.io/graphql", subscriptionUri: 'wss://ed23ed8dd441.ngrok.io/graphql', authorization: "").value;
 
      
 
@@ -983,8 +1016,8 @@ class DatabaseProviderService {
 
   Future<Payout> makePayout(Balance balance) async {
     final MutationOptions _options = MutationOptions(documentNode: gql(r"""
-          mutation MakePayout($account_id: String!, $amount: String!, $currency: String!) {
-            makePayout(account_id: $account_id, amount: $amount, $currency: currency){
+          mutation MakePayout($account_id: String!, $amount: Int!, $currency: String!, $destination: String!) {
+            makePayout(account_id: $account_id, amount: $amount, currency: $currency, destination: $destination){
                   id
                   object
                   arrival_date
@@ -997,12 +1030,18 @@ class DatabaseProviderService {
         """),
         variables: <String, dynamic> {
           'account_id' : this.user.value.stripeaccountId,
-          'amount': balance.currentBalance - balance.pendingBalance,
-          'currency': balance.currency
+          'amount': balance.pendingBalance - balance.currentBalance,
+          'currency': balance.currency,
+          'destination': this.user.value.defaultIban
         }
         );
 
-    return client.mutate(_options).then((result) => Payout.fromJson(result.data["makePayout"]));
+    return client.mutate(_options).then((result){
+      if(result.hasException){
+       return throw result.exception.graphqlErrors[0].extensions;
+      }
+      return Payout.fromJson(result.data["makePayout"]);
+    });
   }
 
 
@@ -1111,6 +1150,7 @@ Future<List<Order>>  loadbuyerOrders() {
                                 title
                                 description
                                 photoUrls
+                                adress{title, location {latitude, longitude}} 
                                 food_preferences {id, title, is_selected}
                             }
 
@@ -1256,6 +1296,17 @@ Future<List<Order>>  loadbuyerOrders() {
                   food_price_ranges {id, title, is_selected}
                   distance_from_seller
                   updatedAt
+              }
+
+              stripeAccount {
+                charges_enabled
+                payouts_enabled
+                requirements {
+                      currently_due
+                      eventually_due
+                      past_due
+                      pending_verification
+                }
               }
 
               createdAt

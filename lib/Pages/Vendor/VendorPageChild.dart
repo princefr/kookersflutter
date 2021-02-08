@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
@@ -273,7 +274,7 @@ final MutationOptions _options  = MutationOptions(
 
               ListTile(
                 leading: Icon(CupertinoIcons.calendar),
-                title: Text(this.widget.vendor.deliveryDay)
+                title: Text(Jiffy(this.widget.vendor.deliveryDay).format("do MMMM yyyy, [ À ] HH:mm"), style: GoogleFonts.montserrat(),)
               ),
 
 

@@ -89,14 +89,15 @@ class Message {
 
   static List<Message> fromJSON(List<Object> map) {
 
-
+    
     List<Message> messages = [];
     if(map != null){
-      map.forEach((element) {
+      map.forEach((element) async {
+        // await Jiffy.locale("fr");
         final dou = element as Map<String, dynamic>;
         final date = Jiffy(dou["createdAt"]);
         messages.add(Message(
-          createdAt: date.yMMMMd == Jiffy(DateTime.now()).yMMMMd ? date.fromNow() : date.yMMMMd,
+          createdAt: date.format("do MMMM, HH:mm:ss"),
           userId: dou["userId"],
           message: dou["message"],
           isRead: dou["is_read"],

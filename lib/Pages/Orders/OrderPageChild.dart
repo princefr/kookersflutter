@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
@@ -302,17 +303,26 @@ class _OrderPageChildState extends State<OrderPageChild> {
                 title: Text(this.widget.order.seller.firstName +
                     " " +
                     this.widget.order.seller.lastName)),
+
             ListTile(
               leading: Icon(CupertinoIcons.house_alt),
               title: Text("303 quai aux fleurs"),
-              trailing: Text(this.widget.order.deliveryDay),
             ),
+
             SizedBox(height: 10),
+
             ListTile(
               leading: Icon(CupertinoIcons.chart_pie),
               title: Text(this.widget.order.quantity.toString()),
               trailing: Text("parts"),
             ),
+
+            ListTile(
+              leading: Icon(CupertinoIcons.calendar),
+              title: Text(Jiffy(this.widget.order.deliveryDay).format("do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat(),),
+            ),
+
+
             SizedBox(height: 30),
             StreamBuilder<Order>(
                 stream: this.order,

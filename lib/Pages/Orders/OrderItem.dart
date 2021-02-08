@@ -22,6 +22,7 @@ class Publication {
   String description;
   List<Object> imagesUrls;
   List<FoodPreference> preferences;
+  
   Publication({@required this.title, this.description, this.imagesUrls, this.id, this.preferences});
 
 }

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Home/homePage.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
@@ -70,6 +71,7 @@ class _TabHomeState extends State<TabHome>
   @override
   void initState() {
     new Future.delayed(Duration.zero, () async {
+      await Jiffy.locale("fr");
       if(await FlutterAppBadger.isAppBadgeSupported()) FlutterAppBadger.removeBadge();
       final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);

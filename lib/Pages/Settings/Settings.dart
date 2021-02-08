@@ -228,16 +228,22 @@ String capitalizeFirstOnly(String string){
             onTap: () {
               launch("https://kookers-4e54e.firebaseapp.com/#/terms");
               
+            }, buttonText: "Vérification d'identité"),
+
+        SettingsItem(
+            onTap: () {
+              launch("https://getkookers.com/terms");
+              
             }, buttonText: "Conditions générale d'utilisation"),
         SettingsItem(onTap: () {
-
+            launch("http://getkookers.com/privacy");
         }, buttonText: "Politique de confidentialité"),
         SettingsItem(onTap: () {
-          launch("http://google.com");
+          launch("http://getkookers.com/privacy");
         }, buttonText: "Gestion des cookies"),
 
                 SettingsItem(onTap: () {
-          launch("https://kookers-4e54e.firebaseapp.com/#/guidelines");
+          launch("https://getkookers.com/guidelines");
         }, buttonText: "Règles de la communauté"),
 
         SettingsItem(onTap: () {

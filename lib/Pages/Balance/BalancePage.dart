@@ -301,7 +301,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                   ),
                 ),
 
-                // makePayout
+                
 
                 StreamBuilder<Balance>(
                   stream: this.balance.stream,
@@ -323,6 +323,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                               this.balance.sink.add(remoteBalance);
                                               _streamButtonController.isSuccess();
                                             }).catchError((onError){
+                                               print(onError["exception"]["raw"]["code"]);
                                               _streamButtonController.isError();
                                             });
                                                   

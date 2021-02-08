@@ -400,7 +400,7 @@ class _ChatPageState extends State<ChatPage>
                                                         alignment:
                                                             Alignment.centerLeft,
                                                         child: Text(
-                                                          "date d'envoie",
+                                                          snapshot.data[index].createdAt,
                                                           style: GoogleFonts
                                                               .montserrat(
                                                                   fontSize: 11),
