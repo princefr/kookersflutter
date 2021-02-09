@@ -128,7 +128,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   Widget build(BuildContext context) {
@@ -152,47 +153,61 @@ class _HomePageState extends State<HomePage> {
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: SmartRefresher(
-          enablePullDown: true,
-          enablePullUp: false,
-          controller: this._refreshController,
-          onRefresh: () {
-            databaseService.loadPublication().then((value) {
-              Future.delayed(Duration(milliseconds: 500)).then((value) {
-                _refreshController.refreshCompleted();
-              });
-            });
-          },
-          child: StreamBuilder<List<PublicationHome>>(
-              stream: databaseService.publications$,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting)
-                  return Shimmer.fromColors(
-                      child: ListView.builder(
-                          itemCount: 10,
-                          itemBuilder: (ctx, index) {
-                            return FoodItemShimmer();
-                          }),
-                      baseColor: Colors.grey[200],
-                      highlightColor: Colors.grey[300]);
-                if (snapshot.hasError) return Text("i've a bad felling");
-                if (snapshot.data.isEmpty) return EmptyViewElse(text: "Aucune vente à proximité");
-                return ListView.builder(
+        child: StreamBuilder<List<PublicationHome>>(
+            stream: databaseService.publications$,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting)
+                return Shimmer.fromColors(
+                    child: ListView.builder(
+                        itemCount: 10,
+                        itemBuilder: (ctx, index) {
+                          return FoodItemShimmer();
+                        }),
+                    baseColor: Colors.grey[200],
+                    highlightColor: Colors.grey[300]);
+              if (snapshot.hasError) return Text("i've a bad felling");
+              if (snapshot.data.isEmpty)
+                return SmartRefresher(
+                    enablePullDown: true,
+                    enablePullUp: false,
+                    controller: this._refreshController,
+                    onRefresh: () {
+                      databaseService.loadPublication().then((value) {
+                        Future.delayed(Duration(milliseconds: 500))
+                            .then((value) {
+                          _refreshController.refreshCompleted();
+                        });
+                      });
+                    },
+                    child: EmptyViewElse(text: "Aucune vente à proximité"));
+
+              return SmartRefresher(
+                enablePullDown: true,
+                enablePullUp: false,
+                controller: this._refreshController,
+                onRefresh: () {
+                  databaseService.loadPublication().then((value) {
+                    Future.delayed(Duration(milliseconds: 500)).then((value) {
+                      _refreshController.refreshCompleted();
+                    });
+                  });
+                },
+                child: ListView.builder(
                   itemCount: snapshot.data.length,
                   itemBuilder: (ctx, index) {
                     return FoodItem(
-                          publication: snapshot.data[index],
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        FoodItemChild(publication: snapshot.data[index])));
-                          });
+                        publication: snapshot.data[index],
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FoodItemChild(
+                                      publication: snapshot.data[index])));
+                        });
                   },
-                );
-              }),
-        ),
+                ),
+              );
+            }),
       ),
     );
   }

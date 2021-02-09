@@ -45,7 +45,17 @@ class _VendorPubViewState extends State<VendorPubView>
                       baseColor: Colors.grey[200],
                       highlightColor: Colors.grey[300]);
                 if(snapshot.hasError) return Text("i've a bad felling");
-                              if(snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez aucun plat publié.");
+                if(snapshot.data.isEmpty) return SmartRefresher(
+                  enablePullDown: true,
+                    controller: this._refreshController,
+                    onRefresh: () {
+                      databaseService.loadSellerPublications().then((value) {
+                        Future.delayed(Duration(milliseconds: 500))
+                            .then((value) {
+                          _refreshController.refreshCompleted();
+                        });
+                      });
+                    },child: EmptyViewElse(text: "Vous n'avez aucun plat publié."));
                 return SmartRefresher(
                     enablePullDown: true,
                     controller: this._refreshController,
@@ -104,7 +114,17 @@ class _VendorSellViewState extends State<VendorSellView>
                   baseColor: Colors.grey[200],
                   highlightColor: Colors.grey[300]);
             if(snapshot.hasError) return Text("i've a bad felling");
-                              if(snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez aucune commande.");
+                              if(snapshot.data.isEmpty) return SmartRefresher(
+                                controller: this._refreshController,
+                                enablePullDown: true,
+                                onRefresh: () {
+                                  databaseService.loadSellerOrders().then((value) {
+                                    Future.delayed(Duration(milliseconds: 500)).then((value) {
+                                      _refreshController.refreshCompleted();
+                                    });
+                                  });
+                                },
+                                child: EmptyViewElse(text: "Vous n'avez aucune commande."));
             return SmartRefresher(
               enablePullDown: true,
               onRefresh: () {

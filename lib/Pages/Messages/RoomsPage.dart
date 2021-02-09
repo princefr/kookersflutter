@@ -35,42 +35,56 @@ class _RoomsPageState extends State<RoomsPage>
         PageTitle(title: "Messages"),
         Divider(),
         Expanded(
-          child: SmartRefresher(
-            enablePullDown: true,
-            enablePullUp: false,
-            controller: this._refreshController,
-            onRefresh: () {
-              databaseService.loadrooms().then((value) {
-                Future.delayed(Duration(milliseconds: 500)).then((value) {
-                  _refreshController.refreshCompleted();
-                });
-              });
-            },
-            child: StreamBuilder<List<Room>>(
-                initialData: databaseService.rooms.value,
-                stream: databaseService.rooms.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting)
-                    return Shimmer.fromColors(
-                        child: ListView.builder(
-                            itemCount: 10,
-                            itemBuilder: (ctx, index) {
-                              return RoomItemShimmer();
-                            }),
-                        baseColor: Colors.grey[200],
-                        highlightColor: Colors.grey[300]);
-                  if (snapshot.hasError) return Text("i've a bad felling");
-                  if (snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de messages.");
-                  return ListView.builder(
+          child: StreamBuilder<List<Room>>(
+              initialData: databaseService.rooms.value,
+              stream: databaseService.rooms.stream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  return Shimmer.fromColors(
+                      child: ListView.builder(
+                          itemCount: 10,
+                          itemBuilder: (ctx, index) {
+                            return RoomItemShimmer();
+                          }),
+                      baseColor: Colors.grey[200],
+                      highlightColor: Colors.grey[300]);
+                if (snapshot.hasError) return Text("i've a bad felling");
+                if (snapshot.data.isEmpty)
+                  return SmartRefresher(
+                      enablePullDown: true,
+                      enablePullUp: false,
+                      controller: this._refreshController,
+                      onRefresh: () {
+                        databaseService.loadrooms().then((value) {
+                          Future.delayed(Duration(milliseconds: 500))
+                              .then((value) {
+                            _refreshController.refreshCompleted();
+                          });
+                        });
+                      },
+                      child:
+                          EmptyViewElse(text: "Vous n'avez pas de messages."));
+                return SmartRefresher(
+                  enablePullDown: true,
+                  enablePullUp: false,
+                  controller: this._refreshController,
+                  onRefresh: () {
+                    databaseService.loadrooms().then((value) {
+                      Future.delayed(Duration(milliseconds: 500)).then((value) {
+                        _refreshController.refreshCompleted();
+                      });
+                    });
+                  },
+                  child: ListView.builder(
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
                         return RoomItem(
                           room: snapshot.data[index],
                           index: index,
                         );
-                      });
-                }),
-          ),
+                      }),
+                );
+              }),
         ),
       ],
     ));
