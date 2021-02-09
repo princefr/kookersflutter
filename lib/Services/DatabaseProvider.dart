@@ -394,7 +394,6 @@ class PublicationVendor {
   String description;
   String type;
   String pricePerAll;
-  String pricePerPie;
   List<Object> photoUrls;
   Adress adress;
   bool isOpen;
@@ -402,7 +401,7 @@ class PublicationVendor {
   String createdAt;
   RatingPublication rating;
 
-  PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.isOpen, this.preferences, this.createdAt, this.rating});
+  PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.photoUrls, this.adress, this.isOpen, this.preferences, this.createdAt, this.rating});
   
 
   static PublicationVendor fromJson(Map<String, dynamic> map) => PublicationVendor(
@@ -411,7 +410,6 @@ class PublicationVendor {
     description : map["description"],
     type: map["type"],
     pricePerAll: map["price_all"].toString(),
-    pricePerPie: map["price_per_pie"].toString(),
     photoUrls: map["photoUrls"] as List<Object>,
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["lonngitude"]), title: map["adress"]["title"]),
     isOpen: map["is_open"],
@@ -440,14 +438,13 @@ class PublicationHome {
   String description;
   String type;
   String pricePerAll;
-  String pricePerPie;
   List<Object> photoUrls;
   Adress adress;
   SellerDef seller;
   List<String> preferences;
   RatingPublication rating;
 
-  PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.seller, this.preferences, this.rating});
+  PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll,  this.photoUrls, this.adress, this.seller, this.preferences, this.rating});
   
 
   static PublicationHome fromJson(Map<String, dynamic> map) => PublicationHome(
@@ -456,7 +453,6 @@ class PublicationHome {
     description : map["description"],
     type: map["type"],
     pricePerAll: map["price_per_all"].toString(),
-    pricePerPie: map["price_per_pie"].toString(),
     photoUrls: map["photoUrls"] as List<Object>,
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["longitude"]), title: ""),
     seller: SellerDef.fromJson(map["seller"]),
@@ -1242,7 +1238,6 @@ Future<List<Order>>  loadbuyerOrders() {
                           description
                           type
                           price_all
-                          price_per_pie
                           photoUrls
                           createdAt
                           is_open
@@ -1369,7 +1364,6 @@ Future<List<Order>>  loadbuyerOrders() {
                   description
                   type
                   price_all
-                  price_per_pie
                   photoUrls
                   createdAt
 

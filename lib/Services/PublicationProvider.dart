@@ -21,11 +21,10 @@ class Publication {
   String name;
   String description;
   String pricePerPerson;
-  String pricePerportion;
   String sellerId;
   String geohash;
 
-  Publication({@required this.photoUrls, @required this.type, @required this.foodPreferences, @required this.adress, @required this.name, @required this.description, @required this.pricePerPerson, @required this.pricePerportion, @required this.sellerId, @required this.geohash});
+  Publication({@required this.photoUrls, @required this.type, @required this.foodPreferences, @required this.adress, @required this.name, @required this.description, @required this.pricePerPerson,  @required this.sellerId, @required this.geohash});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -34,7 +33,6 @@ class Publication {
     data["type"] = "PLATES";
     data["food_preferences"] = this.foodPreferences;
     data["price_all"] = this.pricePerPerson;
-    data["price_per_pie"] = this.pricePerportion;
     data["adress"] = this.adress.toJSON();
     data["sellerId"] = this.sellerId;
     data["geohash"] = this.geohash;
@@ -114,13 +112,13 @@ class PublicationProvider  with PublicationValidation {
 
   Future<Publication> validate(User user, StorageService storage, DatabaseProviderService database, SettingType type) async {
     GeoHasher geoHasher = GeoHasher();
-    final url1 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file0.value).catchError((onError) => print);
-    final url2 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file1.value).catchError((onError) => print);
-    final url3 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file2.value).catchError((onError) => print);
+    final url1 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file0.value).catchError((onError) => throw onError);
+    final url2 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file1.value).catchError((onError) => throw onError);
+    final url3 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file2.value).catchError((onError) => throw onError);
     final photosUrls = [url1, url2, url3];
     Adress adress = database.user.value.adresses.firstWhere((element) => element.isChosed == true);
     String geohash = geoHasher.encode(adress.location.longitude, adress.location.latitude);
-    Publication publication = Publication(photoUrls : photosUrls, type: type, foodPreferences : pricePrefs.value, adress: adress, name: this.name.value, description : this.description.value, pricePerPerson : this.priceall.value, pricePerportion : "15", sellerId: database.user.value.id, geohash: geohash);
+    Publication publication = Publication(photoUrls : photosUrls, type: type, foodPreferences : pricePrefs.value, adress: adress, name: this.name.value, description : this.description.value, pricePerPerson : this.priceall.value,  sellerId: database.user.value.id, geohash: geohash);
     return publication;
 
   }

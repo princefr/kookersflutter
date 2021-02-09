@@ -173,8 +173,6 @@ class _HomePublishState extends State<HomePublish> {
   StreamButtonController _streamButtonController = StreamButtonController();
 
 
-
-
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
@@ -217,7 +215,7 @@ class _HomePublishState extends State<HomePublish> {
 
                             Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text("TYPE DE VENTE",
+                                child: Text("TYPE",
                                     style: GoogleFonts.montserrat(
                                         decoration: TextDecoration.none,
                                         color: Colors.black,
@@ -232,7 +230,7 @@ class _HomePublishState extends State<HomePublish> {
                                   activeBgColor: Color(0xFFF95F5F),
                                   initialLabelIndex: initialLabel.value,
                                   minWidth: MediaQuery.of(context).size.width,
-                                  labels: ['Plats', 'Desserts'],
+                                  labels: ['Vente', 'Don'],
                                   onToggle: this.initialLabel.add,
                                 );
                               }
@@ -348,72 +346,53 @@ class _HomePublishState extends State<HomePublish> {
                               }
                             ),
                             SizedBox(height: 30),
-                            Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text("PRIX",
-                                    style: GoogleFonts.montserrat(
-                                        decoration: TextDecoration.none,
-                                        color: Colors.black,
-                                        fontSize: 15))),
-                            SizedBox(height: 10),
 
-                            Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 5),
-                                    child: StreamBuilder<Object>(
-                                      stream: pubprovider.priceall$,
-                                      builder: (context, snapshot) {
-                                        return TextField(
-                                          keyboardType: TextInputType.number,
-                                          onChanged: pubprovider.priceall.add,
-                                          decoration: InputDecoration(
-                                          hintText: "Prix du plat",
-                                          fillColor: Colors.grey[200],
-                                          filled: true,
-                                          errorText: snapshot.error,
-                                          border: OutlineInputBorder(
-                                            borderRadius: BorderRadius.circular(10),
-                                            borderSide: BorderSide(
-                                              width: 0,
-                                              style: BorderStyle.none,
-                                            ),
-                                          ),
-                                        ));
-                                      }
-                                    ),
-                                  ),
-
-                            SizedBox(height: 10),
+                            
 
 
                                StreamBuilder<int>(
                                  stream: this.initialLabel.stream,
                                  builder: (context, snapshot) {
                                    return Visibility(
-                                        visible: snapshot.data == 1,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          child: StreamBuilder<Object>(
-                                            stream: pubprovider.priceaPerPortion$,
-                                            builder: (context, snapshot) {
-                                              return TextField(
-                                                onChanged: pubprovider.priceaPerPortion.add,
-                                                decoration: InputDecoration(
-                                                errorText: snapshot.error,
-                                                hintText: "Prix par portion",
-                                                fillColor: Colors.grey[200],
-                                                filled: true,
-                                                border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                  borderSide: BorderSide(
-                                                    width: 0,
-                                                    style: BorderStyle.none,
-                                                  ),
+                                        visible: snapshot.data == 0,
+                                        child: Column(
+                                          children: [
+                                Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text("PRIX",
+                                    style: GoogleFonts.montserrat(
+                                        decoration: TextDecoration.none,
+                                        color: Colors.black,
+                                        fontSize: 15))),
+
+                                         SizedBox(height: 10),
+
+                                            Padding(
+                                    padding:
+                                            const EdgeInsets.symmetric(horizontal: 5),
+                                    child: StreamBuilder<Object>(
+                                      stream: pubprovider.priceall$,
+                                      builder: (context, snapshot) {
+                                            return TextField(
+                                              keyboardType: TextInputType.number,
+                                              onChanged: pubprovider.priceall.add,
+                                              decoration: InputDecoration(
+                                              hintText: "Prix du plat",
+                                              fillColor: Colors.grey[200],
+                                              filled: true,
+                                              errorText: snapshot.error,
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                                borderSide: BorderSide(
+                                                  width: 0,
+                                                  style: BorderStyle.none,
                                                 ),
-                                              ));
-                                            }
-                                          ),
+                                              ),
+                                            ));
+                                      }
+                                    ),
+                                  ),
+                                          ],
                                         ));
                                  }
                                ),
@@ -456,55 +435,66 @@ class _HomePublishState extends State<HomePublish> {
                             SizedBox(height: 20),
 
 
-                            Container(
-                              height: 50,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: (){
-                                      showDialog(context: context,
-                                       builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que la plateforme, kookers prendra dans le cadre des frais de fonctionnement. Il représente 15% du prix de l'assiette/portion vendue."));
-                                    },
-                                    child: Icon(CupertinoIcons.info_circle)),
-                                  Text("Frais de la platforme", style: GoogleFonts.montserrat(),),
-                                  StreamBuilder<double>(
-                                  stream: this.feePaid,
-                                  builder: (context, snapshot) {
-                                    if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
-                                    return Text(snapshot.data.toString(), style: GoogleFonts.montserrat());
-                                  }
-                                )
+                            StreamBuilder<int>(
+                              stream: this.initialLabel.stream,
+                              builder: (context, snapshot) {
+                                return Visibility(
+                                    visible: snapshot.data == 0,
+                                    child: Column(
+                                    children: [
+                                      Container(
+                                        height: 50,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: (){
+                                                showDialog(context: context,
+                                                 builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que la plateforme, kookers prendra dans le cadre des frais de fonctionnement. Il représente 15% du prix de l'assiette/portion vendue."));
+                                              },
+                                              child: Icon(CupertinoIcons.info_circle)),
+                                            Text("Frais de la platforme", style: GoogleFonts.montserrat(),),
+                                            StreamBuilder<double>(
+                                            stream: this.feePaid,
+                                            builder: (context, snapshot) {
+                                              if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                                              return Text(snapshot.data.toString(), style: GoogleFonts.montserrat());
+                                            }
+                                          )
 
-                              ],),
+                                        ],),
+                                      ),
+
+
+                                    Container(
+                                    height: 50,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: (){
+                                            showDialog(context: context,
+                                              builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que vous recevrez pour chacun(e) des portions ou plats que vous vendriez à l'aide la plateforme kookers une fois les frais de fonctionnement déduits."));
+                                          },
+                                          child: Icon(CupertinoIcons.info_circle)),
+                                        Text("Ce que vous recevrez", style: GoogleFonts.montserrat(),),
+                                        StreamBuilder<double>(
+                                        stream: this.moneyReceived,
+                                        builder: (context, snapshot) {
+                                          if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                                          return Text(snapshot.data.toString(), style: GoogleFonts.montserrat());
+                                        }
+                                      )
+
+                                    ],),
+                                  ),
+                                    ],
+                                  ),
+                                );
+                              }
                             ),
-
-
-                            Container(
-                              height: 50,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: (){
-                                      showDialog(context: context,
-                                        builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que vous recevrez pour chacun(e) des portions ou plats que vous vendriez à l'aide la plateforme kookers une fois les frais de fonctionnement déduits."));
-                                    },
-                                    child: Icon(CupertinoIcons.info_circle)),
-                                  Text("Ce que vous recevrez", style: GoogleFonts.montserrat(),),
-                                  StreamBuilder<double>(
-                                  stream: this.moneyReceived,
-                                  builder: (context, snapshot) {
-                                    if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
-                                    return Text(snapshot.data.toString(), style: GoogleFonts.montserrat());
-                                  }
-                                )
-
-                              ],),
-                            ),
-
 
 
                             SizedBox(height: 40),
