@@ -177,7 +177,7 @@ String capitalizeFirstOnly(String string){
               child: InkWell(
                 onTap: () {
                   this.getImage().then((file) => {
-                    storageService.uploadPictureFile(firebaseUser.uid, "photoUrl.jpg", file).then((url) => {
+                    storageService.uploadPictureFile(firebaseUser.uid, "photoUrl.jpg", file, "profilImage").then((url) => {
                       this.updateUserImage(databaseService.client, firebaseUser.uid, url, databaseService)
                     })
                   }).catchError((onError){

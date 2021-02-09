@@ -26,12 +26,18 @@ class StorageService {
         return ref.getDownloadURL();
   }
  
-  Future<String>  uploadPictureFile(String uid, String pictureName, File file) async {
+  Future<String>  uploadPictureFile(String uid, String pictureName, File file, String uploadType) async {
+        firebase_storage.SettableMetadata metadata = firebase_storage.SettableMetadata(
+        cacheControl: 'max-age=60',
+        customMetadata: <String, String>{
+          'type': uploadType,
+        },
+      );
         firebase_storage.Reference ref = storage
         .ref()
         .child(uid)
         .child(pictureName);
-        await ref.putFile(file);
+        await ref.putFile(file, metadata);
         final url = await ref.getDownloadURL();
         return  url;
   }
