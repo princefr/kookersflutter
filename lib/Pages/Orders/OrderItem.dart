@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/Orders/OrderPageChild.dart';
-import 'package:kookers/Services/DatabaseProvider.dart';
+// import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/StatusChip.dart';
 
 
@@ -21,7 +21,7 @@ class Publication {
   String title;
   String description;
   List<Object> imagesUrls;
-  List<FoodPreference> preferences;
+  List<String> preferences;
   
   Publication({@required this.title, this.description, this.imagesUrls, this.id, this.preferences});
 
@@ -70,7 +70,7 @@ class Order {
           stripeTransactionId: map["stripeTransactionId"],
           deliveryDay: map["deliveryDay"],
           orderState: EnumToString.fromString(OrderState.values, map["orderState"]),
-          publication: Publication(title: map["publication"]["title"], description: map["publication"]["description"], imagesUrls: map["publication"]["photoUrls"], id: map["publication"]["_id"], preferences: FoodPreference.fromJSON(map["publication"]["food_preferences"])),
+          publication: Publication(title: map["publication"]["title"], description: map["publication"]["description"], imagesUrls: map["publication"]["photoUrls"], id: map["publication"]["_id"], preferences: List<String>.from(map["publication"]["food_preferences"])),
           seller: Seller.fromJson(map["seller"]),
           id: map["_id"],
           quantity: map["quantity"],

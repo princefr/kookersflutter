@@ -173,7 +173,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
               StreamBuilder<bool>(
                 stream: phoneAuthBloc.isAllFilled$,
                 builder: (context, snapshot) {
-                  return FlatButton(
+                  return TextButton(
                       onPressed: () async {
                           String phone = await phoneAuthBloc.validate();
                           notificationService.askPermission().then((permission) => {

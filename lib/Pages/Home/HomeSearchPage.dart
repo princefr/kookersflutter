@@ -59,8 +59,8 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
                 last_name
                 phonenumber
                 settings {
-                    food_preferences {id, title, is_selected}
-                    food_price_ranges {id, title, is_selected}
+                    food_preferences
+                    food_price_ranges
                     distance_from_seller
                     updatedAt
                 }

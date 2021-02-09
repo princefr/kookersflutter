@@ -166,15 +166,13 @@ class _VendorPubPageState extends State<VendorPubPage> {
                   .widget
                   .publication
                   .preferences
-                  .any((element) => element.isSelected == true)) {
+                  .length > 0) {
                 return ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: this
                         .widget
                         .publication
                         .preferences
-                        .where((element) => element.isSelected == true)
-                        .toList()
                         .length,
                     itemBuilder: (ctx, index) {
                       return Padding(
@@ -189,10 +187,7 @@ class _VendorPubPageState extends State<VendorPubPage> {
                             child: Text(this
                                 .widget
                                 .publication
-                                .preferences
-                                .where((element) => element.isSelected == true)
-                                .elementAt(index)
-                                .title)),
+                                .preferences[index])),
                       );
                     });
               } else {

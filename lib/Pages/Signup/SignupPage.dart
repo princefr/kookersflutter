@@ -56,8 +56,8 @@ class _SignupPageState extends State<SignupPage> {
               default_iban
               stripe_account
               settings {
-                  food_preferences {id, title, is_selected}
-                  food_price_ranges {id, title, is_selected}
+                  food_preferences
+                  food_price_ranges
                   distance_from_seller
                   updatedAt
               }

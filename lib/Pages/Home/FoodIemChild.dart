@@ -53,7 +53,7 @@ class ChooseDatePage extends StatelessWidget {
                   }),
             ),
             SizedBox(height: 20),
-            FlatButton(
+            TextButton(
                 onPressed: () {
                   Navigator.pop(context, this.date);
                 },
@@ -269,16 +269,13 @@ class _FoodItemChildState extends State<FoodItemChild> {
               if (this
                   .widget
                   .publication
-                  .preferences
-                  .any((element) => element.isSelected == true)) {
+                  .preferences.length > 0) {
                 return ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: this
                         .widget
                         .publication
                         .preferences
-                        .where((element) => element.isSelected == true)
-                        .toList()
                         .length,
                     itemBuilder: (ctx, index) {
                       return Padding(
@@ -293,11 +290,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                             child: Text(this
                                 .widget
                                 .publication
-                                .preferences
-                                .where(
-                                    (element) => element.isSelected == true)
-                                .elementAt(index)
-                                .title)),
+                                .preferences[index])),
                       );
                     });
               } else {

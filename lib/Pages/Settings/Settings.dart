@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:kookers/Pages/Balance/BalancePage.dart';
 import 'package:kookers/Pages/Iban/IbanPage.dart';
 import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
+import 'package:kookers/Pages/Verification/VerificationPage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
@@ -110,8 +111,8 @@ String capitalizeFirstOnly(String string){
                 last_name
                 phonenumber
                 settings {
-                    food_preferences {id, title, is_selected}
-                    food_price_ranges {id, title, is_selected}
+                    food_preferences
+                    food_price_ranges
                     distance_from_seller
                     updatedAt
                 }
@@ -179,7 +180,9 @@ String capitalizeFirstOnly(String string){
                     storageService.uploadPictureFile(firebaseUser.uid, "photoUrl.jpg", file).then((url) => {
                       this.updateUserImage(databaseService.client, firebaseUser.uid, url, databaseService)
                     })
-                  }).catchError((onError) => print);
+                  }).catchError((onError){
+                    print(onError);
+                  });
                 },
                 child: Container(
                     padding: EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
@@ -226,7 +229,8 @@ String capitalizeFirstOnly(String string){
 
         SettingsItem(
             onTap: () {
-              launch("https://kookers-4e54e.firebaseapp.com/#/terms");
+              Navigator.push(context,
+                CupertinoPageRoute(builder: (context) => VerificationPage()));
               
             }, buttonText: "Vérification d'identité"),
 

@@ -36,8 +36,8 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                 fcmToken
                 rating {rating_total, rating_count}
                 settings {
-                  food_preferences {id, title, is_selected}
-                  food_price_ranges {id, title, is_selected}
+                  food_preferences
+                  food_price_ranges
                   distance_from_seller
                   updatedAt
                 }
@@ -112,7 +112,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
               Expanded(
                 child: SizedBox(),
               ),
-              FlatButton(
+              TextButton(
                   onPressed: () {
                     authentificationService
                         .signInWithVerificationID(

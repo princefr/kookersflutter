@@ -231,7 +231,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
                     .order
                     .publication
                     .preferences
-                    .any((element) => element.isSelected == true)) {
+                    .length > 0) {
                   return ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: this
@@ -239,8 +239,6 @@ class _OrderPageChildState extends State<OrderPageChild> {
                           .order
                           .publication
                           .preferences
-                          .where((element) => element.isSelected == true)
-                          .toList()
                           .length,
                       itemBuilder: (ctx, index) {
                         return Padding(
@@ -256,11 +254,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
                                   .widget
                                   .order
                                   .publication
-                                  .preferences
-                                  .where(
-                                      (element) => element.isSelected == true)
-                                  .elementAt(index)
-                                  .title)),
+                                  .preferences[index])),
                         );
                       });
                 } else {
@@ -387,7 +381,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
                           return Text("La commande a été annulé");
                           break;
                         case OrderState.DONE:
-                          return FlatButton(
+                          return TextButton(
                               onPressed: () {
                                 showCupertinoModalBottomSheet(
                                   expand: true,

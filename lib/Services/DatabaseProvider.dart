@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-
 import 'package:dart_geohash/dart_geohash.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -176,16 +174,16 @@ class FoodPriceRange {
 
 class UserSettings {
   int distanceFromSeller;
-  List<FoodPreference> foodPreference;
-  List<FoodPriceRange> foodPriceRange;
+  List<String> foodPreference;
+  List<String> foodPriceRange;
   String createdAt;
   String updatedAt;
   UserSettings({this.distanceFromSeller, this.foodPreference, this.foodPriceRange, this.createdAt, this.updatedAt});
   
   static UserSettings fromJson(Map<String, dynamic> map) => UserSettings(
     distanceFromSeller: map['distance_from_seller'],
-    foodPreference: FoodPreference.fromJSON(map["food_preferences"]),
-    foodPriceRange: FoodPriceRange.fromJSON(map["food_price_ranges"]),
+    foodPreference: List<String>.from(map["food_preferences"]),
+    foodPriceRange: List<String>.from(map["food_price_ranges"]),
     updatedAt: map['updatedAt'],
     createdAt: map['createdAt']
   );
@@ -195,8 +193,8 @@ class UserSettings {
     data["distance_from_seller"] = this.distanceFromSeller;
     data["createdAt"] = this.createdAt;
     data["updatedAt"] = DateTime.now().toIso8601String();
-    data["food_preferences"] = this.foodPreference.map((e) => {"id": e.id, "title": e.title, "is_selected": e.isSelected}).toList();
-    data["food_price_ranges"] = this.foodPriceRange.map((e) => {"id": e.id, "title": e.title, "is_selected": e.isSelected}).toList();
+    data["food_preferences"] = this.foodPreference;
+    data["food_price_ranges"] = this.foodPriceRange;
     return data;
   }
 }
@@ -207,7 +205,7 @@ class StripeRequirements {
        List<String> pastDue;
        List<String> pendingVerification;
        StripeRequirements({this.currentlyDue, this.eventuallyDue, this.pastDue, this.pendingVerification});
-       
+
        static StripeRequirements fromJson(Map<String, dynamic> map) => StripeRequirements(
          currentlyDue: List<String>.from(map["currently_due"].map((string) => string)),
          eventuallyDue: List<String>.from(map["eventually_due"].map((string) => string)),
@@ -400,7 +398,7 @@ class PublicationVendor {
   List<Object> photoUrls;
   Adress adress;
   bool isOpen;
-  List<FoodPreference> preferences;
+  List<String> preferences;
   String createdAt;
   RatingPublication rating;
 
@@ -417,7 +415,7 @@ class PublicationVendor {
     photoUrls: map["photoUrls"] as List<Object>,
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["lonngitude"]), title: map["adress"]["title"]),
     isOpen: map["is_open"],
-    preferences: FoodPreference.fromJSON(map["food_preferences"]),
+    preferences: List<String>.from(map["food_preferences"]),
     createdAt: map["createdAt"],
     rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString()))
   );
@@ -446,7 +444,7 @@ class PublicationHome {
   List<Object> photoUrls;
   Adress adress;
   SellerDef seller;
-  List<FoodPreference> preferences;
+  List<String> preferences;
   RatingPublication rating;
 
   PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll, this.pricePerPie, this.photoUrls, this.adress, this.seller, this.preferences, this.rating});
@@ -462,7 +460,7 @@ class PublicationHome {
     photoUrls: map["photoUrls"] as List<Object>,
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["longitude"]), title: ""),
     seller: SellerDef.fromJson(map["seller"]),
-    preferences: FoodPreference.fromJSON(map["food_preferences"]),
+    preferences: List<String>.from(map["food_preferences"]),
     rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString()))
   );
 
@@ -1151,7 +1149,7 @@ Future<List<Order>>  loadbuyerOrders() {
                                 description
                                 photoUrls
                                 adress{title, location {latitude, longitude}} 
-                                food_preferences {id, title, is_selected}
+                                food_preferences
                             }
 
                             seller {
@@ -1207,7 +1205,7 @@ Future<List<Order>>  loadbuyerOrders() {
                                     title
                                     description
                                     photoUrls
-                                    food_preferences {id, title, is_selected}
+                                    food_preferences
                                     adress {
                                       title
                                       location {
@@ -1249,7 +1247,7 @@ Future<List<Order>>  loadbuyerOrders() {
                           createdAt
                           is_open
 
-                          food_preferences {id, title, is_selected}
+                          food_preferences
                           
                           adress {
                             title
@@ -1292,8 +1290,8 @@ Future<List<Order>>  loadbuyerOrders() {
               default_iban
               stripe_account
               settings {
-                  food_preferences {id, title, is_selected}
-                  food_price_ranges {id, title, is_selected}
+                  food_preferences
+                  food_price_ranges
                   distance_from_seller
                   updatedAt
               }
@@ -1375,11 +1373,7 @@ Future<List<Order>>  loadbuyerOrders() {
                   photoUrls
                   createdAt
 
-                  food_preferences {
-                    id
-                    title
-                    is_selected
-                  }
+                  food_preferences
 
                   adress {
                     location {

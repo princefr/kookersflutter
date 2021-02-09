@@ -103,7 +103,7 @@ class _StreamButtonState extends State<StreamButton> {
           child: Builder(builder: (ctx) {
                 switch (state) {
                   case StreamButtonState.Normal:
-                    return FlatButton(onPressed: this.widget.onClick, child: KookersButton(text: this.widget.buttonText, color: this.widget.buttonColor, textcolor: Colors.white));
+                    return TextButton(onPressed: this.widget.onClick, child: KookersButton(text: this.widget.buttonText, color: this.widget.buttonColor, textcolor: Colors.white));
                     break;
                   case StreamButtonState.Loading:
                       return Center(
@@ -129,7 +129,7 @@ class _StreamButtonState extends State<StreamButton> {
                       );
                     break;
                   default:
-                    return FlatButton(onPressed: this.widget.onClick, child: KookersButton(text: this.widget.buttonText, color: Colors.black, textcolor: Colors.white));
+                    return TextButton(onPressed: this.widget.onClick, child: KookersButton(text: this.widget.buttonText, color: Colors.black, textcolor: Colors.white));
                 }
               })
         );

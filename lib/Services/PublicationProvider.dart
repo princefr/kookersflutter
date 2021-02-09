@@ -16,7 +16,7 @@ var uuid = Uuid();
 class Publication {
   List<String> photoUrls;
   SettingType type;
-  List<FoodPreference> foodPreferences;
+  List<String> foodPreferences;
   Adress adress;
   String name;
   String description;
@@ -32,7 +32,7 @@ class Publication {
     data["title"] = this.name;
     data["description"] = this.description;
     data["type"] = "PLATES";
-    data["food_preferences"] = this.foodPreferences.map((e) => {"id": e.id, "title": e.title, "is_selected": e.isSelected}).toList();
+    data["food_preferences"] = this.foodPreferences;
     data["price_all"] = this.pricePerPerson;
     data["price_per_pie"] = this.pricePerportion;
     data["adress"] = this.adress.toJSON();
@@ -46,13 +46,14 @@ class Publication {
 
 
 class PublicationProvider  with PublicationValidation {
-  List<FoodPreference> prefs = [
-    FoodPreference(id: 0, isSelected: false, title: "Végétarien"),
-    FoodPreference(id: 1, isSelected: false, title: "Vegan"),
-    FoodPreference(id: 2, isSelected: false, title: "Sans gluten"),
-    FoodPreference(id: 3, isSelected: false, title: "Hallal"),
-    FoodPreference(
-        id: 4, isSelected: false, title: "Adapté aux allergies alimentaires")
+
+  List<String> prefs = [
+    'Végétarien',
+    'Vegan',
+    'Sans gluten',
+    'Hallal',
+    'Adapté aux allergies alimentaires',
+    'Cacherout'
   ];
 
 
@@ -69,8 +70,8 @@ class PublicationProvider  with PublicationValidation {
   }
 
 
-  BehaviorSubject<List<FoodPreference>> pricePrefs =
-    new BehaviorSubject<List<FoodPreference>>();
+  BehaviorSubject<List<String>> pricePrefs =
+    new BehaviorSubject<List<String>>();
       
   
   BehaviorSubject<File> file0 = new BehaviorSubject<File>();
@@ -103,7 +104,7 @@ class PublicationProvider  with PublicationValidation {
   Sink<String> get inPriceaPerPortion => priceaPerPortion.sink;
 
   PublicationProvider(){
-    this.pricePrefs.add(this.prefs);
+    this.pricePrefs.add([]);
   }
 
 

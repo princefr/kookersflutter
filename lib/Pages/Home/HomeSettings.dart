@@ -28,8 +28,18 @@ class _HomeSettingsState extends State<HomeSettings> {
     'Vegan',
     'Sans gluten',
     'Hallal',
-    'Adapté aux allergies alimentaires'
+    'Adapté aux allergies alimentaires',
+    'Cacherout'
   ];
+
+
+    List<String> pricRanges = [
+    '\$',
+    '\$\$',
+    '\$\$\$',
+    '\$\$\$\$',
+  ];
+  
 
   double _currentSliderValue = 20;
 
@@ -44,11 +54,22 @@ class _HomeSettingsState extends State<HomeSettings> {
                 last_name
                 phonenumber
                 settings {
-                    food_preferences {id, title, is_selected}
-                    food_price_ranges {id, title, is_selected}
+                    food_preferences
+                    food_price_ranges
                     distance_from_seller
                     updatedAt
                 }
+
+                stripeAccount {
+                charges_enabled
+                payouts_enabled
+                requirements {
+                      currently_due
+                      eventually_due
+                      past_due
+                      pending_verification
+                }
+              }
 
                 createdAt
                 photoUrl
@@ -110,16 +131,12 @@ class _HomeSettingsState extends State<HomeSettings> {
                       borderRadius: BorderRadius.circular(10),
                       color: Color(0xFFF95F5F)
                     ),
-                    value: snapshot.data.settings.foodPriceRange.where((element) => element.isSelected == true).map((e) => e.title).toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        return snapshot.data.settings.foodPriceRange.forEach((element) => val.contains(element.title) ? element.isSelected = true: element.isSelected = false);
-                      });
-                    },
-                    choiceItems: C2Choice.listFrom<String, FoodPriceRange>(
-                      source: snapshot.data.settings.foodPriceRange.toList(),
-                      value: (i, v) => v.title,
-                      label: (i, v) => v.title,
+                    value: snapshot.data.settings.foodPriceRange,
+                    onChanged: (val) => setState(() => snapshot.data.settings.foodPriceRange = val),
+                    choiceItems: C2Choice.listFrom<String, String>(
+                      source: this.pricRanges,
+                      value: (i, v) => v,
+                      label: (i, v) => v,
                     ),
                   ),
                 ),
@@ -142,16 +159,12 @@ class _HomeSettingsState extends State<HomeSettings> {
                     borderRadius: BorderRadius.circular(10),
                     color: Color(0xFFF95F5F)
                   ),
-                  value: snapshot.data.settings.foodPreference.where((element) => element.isSelected == true).map((e) => e.title).toList(),
-                  onChanged: (val) {
-                      setState(() {
-                        return snapshot.data.settings.foodPreference.forEach((element) => val.contains(element.title) ? element.isSelected = true: element.isSelected = false);
-                      });
-                  },
-                  choiceItems: C2Choice.listFrom<String, FoodPreference>(
-                    source: snapshot.data.settings.foodPreference.toList(),
-                    value: (i, v) => v.title,
-                    label: (i, v) => v.title,
+                  value: snapshot.data.settings.foodPreference,
+                  onChanged: (val) => setState(() => snapshot.data.settings.foodPreference = val),
+                  choiceItems: C2Choice.listFrom<String, String>(
+                    source: this.foodpreferences,
+                    value: (i, v) => v,
+                    label: (i, v) => v,
                   ),
                 ),
                 Align(

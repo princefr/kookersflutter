@@ -128,6 +128,8 @@ class _HomePublishState extends State<HomePublish> {
 
   SettingType type;
 
+    
+
   @override
   void initState() { 
     this.type = SettingType.Plates;
@@ -158,17 +160,14 @@ class _HomePublishState extends State<HomePublish> {
                 _id
                 description
                 type
-                food_preferences {
-                    is_selected
-                    title
-                }
+                food_preferences
               }
               }
           """), variables: <String, dynamic>{
             "publication": pub.toJson()
         });
 
-        return client.mutate(_options);
+        return client.mutate(_options).then((result) => result.data["createPublication"]);
   }
 
   StreamButtonController _streamButtonController = StreamButtonController();
@@ -257,7 +256,7 @@ class _HomePublishState extends State<HomePublish> {
                                     if (snapshot.connectionState ==
                                         ConnectionState.waiting)
                                       return CircularProgressIndicator();
-                                    return ChipsChoice<dynamic>.multiple(
+                                    return ChipsChoice<String>.multiple(
                                       spinnerColor: Color(0xFFF95F5F),
                                       choiceStyle: C2ChoiceStyle(
                                         borderRadius: BorderRadius.circular(10),
@@ -266,24 +265,14 @@ class _HomePublishState extends State<HomePublish> {
                                         borderRadius: BorderRadius.circular(10),
                                         color: Color(0xFFF95F5F)
                                       ),
-                                      value: snapshot.data
-                                          .where((element) =>
-                                              element.isSelected == true)
-                                          .map((e) => e.title)
-                                          .toList(),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          return snapshot.data.forEach((element) =>
-                                              val.contains(element.title)
-                                                  ? element.isSelected = true
-                                                  : element.isSelected = false);
-                                        });
-                                      },
-                                      choiceItems: C2Choice.listFrom<dynamic,
-                                          FoodPreference>(
-                                        source: snapshot.data.toList(),
-                                        value: (i, v) => v.title,
-                                        label: (i, v) => v.title,
+                                      value: snapshot.data,
+                                      onChanged: (val) => setState(() => pubprovider.pricePrefs.add(val)),
+                                      
+                                      choiceItems: C2Choice.listFrom<String,
+                                          String>(
+                                        source: pubprovider.prefs,
+                                        value: (i, v) => v,
+                                        label: (i, v) => v,
                                       ),
                                     );
                                   }),
