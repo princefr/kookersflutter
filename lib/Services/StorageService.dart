@@ -26,11 +26,12 @@ class StorageService {
         return ref.getDownloadURL();
   }
  
-  Future<String>  uploadPictureFile(String uid, String pictureName, File file, String uploadType) async {
+  Future<String>  uploadPictureFile(String uid, String pictureName, File file, String uploadType, String stripeAcct) async {
         firebase_storage.SettableMetadata metadata = firebase_storage.SettableMetadata(
         cacheControl: 'max-age=60',
         customMetadata: <String, String>{
           'type': uploadType,
+          'stripe_acct': stripeAcct
         },
       );
         firebase_storage.Reference ref = storage

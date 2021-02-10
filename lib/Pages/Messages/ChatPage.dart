@@ -436,7 +436,7 @@ class _ChatPageState extends State<ChatPage>
                                   ? await storage.uploadPictureFile(
                                       databaseService.user.value.id,
                                       "messages/" + Uuid().v1(),
-                                      this.pictureToPreview.value, "message")
+                                      this.pictureToPreview.value, "message", databaseService.user.value.stripeaccountId)
                                   : "",
                               roomId: this.widget.room.id,
                               receiverPushToken:

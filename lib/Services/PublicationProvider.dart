@@ -112,9 +112,9 @@ class PublicationProvider  with PublicationValidation {
 
   Future<Publication> validate(User user, StorageService storage, DatabaseProviderService database, SettingType type) async {
     GeoHasher geoHasher = GeoHasher();
-    final url1 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file0.value, "publicationImage").catchError((onError) => throw onError);
-    final url2 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file1.value, "publicationImage").catchError((onError) => throw onError);
-    final url3 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file2.value, "publicationImage").catchError((onError) => throw onError);
+    final url1 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file0.value, "publicationImage", database.user.value.stripeaccountId).catchError((onError) => throw onError);
+    final url2 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file1.value, "publicationImage", database.user.value.stripeaccountId).catchError((onError) => throw onError);
+    final url3 = await storage.uploadPictureFile(user.uid, uuid.v1() + ".png", this.file2.value, "publicationImage", database.user.value.stripeaccountId).catchError((onError) => throw onError);
     final photosUrls = [url1, url2, url3];
     Adress adress = database.user.value.adresses.firstWhere((element) => element.isChosed == true);
     String geohash = geoHasher.encode(adress.location.longitude, adress.location.latitude);

@@ -164,7 +164,7 @@ class _SignupPageState extends State<SignupPage> {
                     child: InkWell(
                       onTap: () {
                         this.getImage().then((file){
-                          storageService.uploadPictureFile(this.widget.user.uid, "profilePicture.png", file, "profilImage").then((url) {
+                          storageService.uploadPictureFile(this.widget.user.uid, "profilePicture.png", file, "profilImage", "").then((url) {
                             setState(() {
                               this.photoUrl = url;
                             });

@@ -47,20 +47,24 @@ class _VerificationPageState extends State<VerificationPage> {
 
       body: SafeArea(
         child: Container(
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Text("La photo de vos documents nous aide à prouver votre identité. L'identité sur les documents doit correspondre à votre personne.",
-                  style: GoogleFonts.montserrat(fontSize: 16), overflow: TextOverflow.ellipsis, maxLines: 5
-                 ),
+              SizedBox(height:10),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("La photo de vos documents nous aide à prouver votre identité. L'identité sur les documents doit correspondre à votre personne.",
+                    style: GoogleFonts.montserrat(fontSize: 12), overflow: TextOverflow.ellipsis, maxLines: 5
+                   ),
+              ),
 
-              SizedBox(height: 15),
               Divider(),
 
               SizedBox(height: 15),
 
-              ButtonVerification(leftIcon: Icon(CupertinoIcons.globe, color: Colors.black, size: 24.0), text: "Passeport", onTap: (){
+              ButtonVerification(color: Colors.grey[300], leftIcon: Icon(CupertinoIcons.globe, color: Colors.black, size: 24.0), text: "Passeport", onTap: (){
                 getImage().then((file) => {
-                  storageService.uploadPictureFile(databaseService.user.value.id, "passport.png", file, "residence_proof").then((value){
+                  storageService.uploadPictureFile(databaseService.user.value.id, "passport.png", file, "passport", databaseService.user.value.stripeaccountId).then((value){
                     print("published");
                   }).catchError((onError){
                     print("error");
@@ -78,9 +82,9 @@ class _VerificationPageState extends State<VerificationPage> {
 
               SizedBox(height: 25),
 
-              ButtonVerification(leftIcon: Icon(CupertinoIcons.doc, color: Colors.black, size: 24.0), text: "Attestation d'hébergement", onTap: (){
+              ButtonVerification(color: Colors.grey[300],leftIcon: Icon(CupertinoIcons.doc, color: Colors.black, size: 24.0), text: "Attestation d'hébergement", onTap: (){
                 getImage().then((file) => {
-                  storageService.uploadPictureFile(databaseService.user.value.id, "residenceprof.png", file, "residence_proof").then((value) {
+                  storageService.uploadPictureFile(databaseService.user.value.id, "residenceprof.png", file, "residence_proof", databaseService.user.value.stripeaccountId).then((value) {
                     print("published");
                   }).catchError((onError){
                     print("error");
