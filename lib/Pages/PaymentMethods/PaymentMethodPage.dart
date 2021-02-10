@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
@@ -10,7 +11,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 class PaymentMethodPage extends StatefulWidget {
-  PaymentMethodPage({Key key}) : super(key: key);
+  final User user;
+  PaymentMethodPage({Key key, this.user}) : super(key: key);
 
   @override
   _PaymentMethodPageState createState() => _PaymentMethodPageState();
@@ -44,7 +46,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                     databaseService.addattachPaymentToCustomer(paymentMethod.id).then((value) {
                       databaseService.updatedDefaultSource(paymentMethod.id).then((value){
                         databaseService.user.value.defaultSource = paymentMethod.id;
-                        databaseService.loadSourceList();
+                        databaseService.loadUserData(this.widget.user.uid);
                       });
                     });
                   }).catchError((onError){
@@ -53,32 +55,25 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                 }),
               body: SmartRefresher(
                 onRefresh: () async {
-                                  databaseService.loadSourceList().then((value) {
-                                  Future.delayed(Duration(milliseconds: 1000)).then((value) {
-                                    _refreshController.refreshCompleted();
-                                  });
-                                  
-                                  }).catchError((onError) {
-                                    print("an error hapenned");
-                                  });
+                                databaseService.loadUserData(this.widget.user.uid);
                             },
                           controller: this._refreshController,
                           enablePullDown: true,
                           enablePullUp: false,
                 child: StreamBuilder(
-                stream: databaseService.sources$,
-                builder: (context, AsyncSnapshot<List<CardModel>> snapshot) {
+                stream: databaseService.user,
+                builder: (context, AsyncSnapshot<UserDef> snapshot) {
                     if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
                     if(snapshot.hasError) return Text("i've a bad felling");
-                    if(snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de cartes.");
+                    if(snapshot.data.allCards.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de cartes.");
                   return ListView(
                     shrinkWrap: true,
-                    children: snapshot.data.map((e) => CardItem(card: e, isDefault: databaseService.user.value.defaultSource == e.id ? true : false, onCheckBoxClicked: () {
+                    children: snapshot.data.allCards.map((e) => CardItem(card: e, isDefault: databaseService.user.value.defaultSource == e.id ? true : false, onCheckBoxClicked: () {
                     setState(() {
                         databaseService.user.value.defaultSource = e.id;
                       });
                     databaseService.updatedDefaultSource(e.id);
-                    databaseService.loadSourceList();
+                    databaseService.loadUserData(this.widget.user.uid);
                         },)).toList(),
                       );
                 }

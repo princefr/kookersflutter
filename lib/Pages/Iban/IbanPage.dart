@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,7 +12,8 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class AddIbanPage extends StatefulWidget {
-  AddIbanPage({Key key}) : super(key: key);
+  final User user;
+  AddIbanPage({Key key, this.user}) : super(key: key);
 
   @override
   _AddIbanPageState createState() => _AddIbanPageState();
@@ -116,11 +118,8 @@ class _AddIbanPageState extends State<AddIbanPage> {
                               databaseService
                                   .createBankAccount(snapshot.data)
                                   .then((bankaccount) async {
-                                await databaseService
-                                    .updateIbanDeposit(bankaccount.id);
-                                this.bloc.iban.sink.add(null);
+                                  await databaseService.loadUserData(this.widget.user.uid);
                                 _streamButtonController.isSuccess();
-                                await databaseService.listExternalAccount();
                                 Navigator.pop(context);
                               }).catchError((onError) {
                                 _streamButtonController.isError();
@@ -135,22 +134,15 @@ class _AddIbanPageState extends State<AddIbanPage> {
 }
 
 class IbanPage extends StatefulWidget {
-  const IbanPage({Key key}) : super(key: key);
+  final User user;
+  const IbanPage({Key key, this.user}) : super(key: key);
 
   @override
   _IbanPageState createState() => _IbanPageState();
 }
 
 class _IbanPageState extends State<IbanPage> {
-  @override
-  void initState() {
-    new Future.delayed(Duration.zero, () async {
-      final databaseService =
-          Provider.of<DatabaseProviderService>(context, listen: false);
-      await databaseService.listExternalAccount();
-    });
-    super.initState();
-  }
+
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -173,25 +165,19 @@ class _IbanPageState extends State<IbanPage> {
             );
           }),
       body: SafeArea(
-        child: StreamBuilder<List<BankAccount>>(
-            stream: databaseService.userBankAccounts.stream,
+        child: StreamBuilder<UserDef>(
+            stream: databaseService.user,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting)
                 return LinearProgressIndicator(
                     backgroundColor: Colors.black,
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
               if (snapshot.hasError) return Text("i've a bad felling");
-              if (snapshot.data.isEmpty)
+              if (snapshot.data.ibans.isEmpty)
                 return SmartRefresher(
                     onRefresh: () async {
-                      databaseService.listExternalAccount().then((value) {
-                        Future.delayed(Duration(milliseconds: 1000))
-                            .then((value) {
-                          _refreshController.refreshCompleted();
-                        });
-                      }).catchError((onError) {
-                        print("an error hapenned");
-                      });
+                      await databaseService.loadUserData(this.widget.user.uid);
+                      _refreshController.refreshCompleted();
                     },
                     controller: this._refreshController,
                     enablePullDown: true,
@@ -199,34 +185,29 @@ class _IbanPageState extends State<IbanPage> {
                     child: EmptyViewElse(text: "Vous n'avez pas d'iban."));
               return SmartRefresher(
                 onRefresh: () async {
-                  databaseService.listExternalAccount().then((value) {
-                    Future.delayed(Duration(milliseconds: 1000)).then((value) {
-                      _refreshController.refreshCompleted();
-                    });
-                  }).catchError((onError) {
-                    print("an error hapenned");
-                  });
+                  await databaseService.loadUserData(this.widget.user.uid);
+                  _refreshController.refreshCompleted();
                 },
                 controller: this._refreshController,
                 enablePullDown: true,
                 enablePullUp: false,
                 child: ListView.builder(
-                    itemCount: snapshot.data.length,
+                    itemCount: snapshot.data.ibans.length,
                     itemBuilder: (ctx, index) {
                       return ListTile(
                         onTap: () {
                           databaseService
-                              .updateIbanDeposit(snapshot.data[index].id);
+                              .updateIbanDeposit(snapshot.data.ibans[index].id);
                           setState(() {
                             databaseService.user.value.defaultIban =
-                                snapshot.data[index].id;
+                                snapshot.data.ibans[index].id;
                           });
                         },
                         title: Text(
-                            "*************" + " " + snapshot.data[index].last4),
+                            "*************" + " " + snapshot.data.ibans[index].last4),
                         trailing: Visibility(
                             visible: databaseService.user.value.defaultIban ==
-                                    snapshot.data[index].id
+                                    snapshot.data.ibans[index].id
                                 ? true
                                 : false,
                             child: Icon(CupertinoIcons.checkmark_circle,

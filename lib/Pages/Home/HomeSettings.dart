@@ -68,6 +68,8 @@ class _HomeSettingsState extends State<HomeSettings> {
                       eventually_due
                       past_due
                       pending_verification
+                      disabled_reason
+                      current_deadline
                 }
               }
 

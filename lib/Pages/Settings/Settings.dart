@@ -78,7 +78,8 @@ class SettingsItem extends StatelessWidget {
 }
 
 class Settings extends StatefulWidget {
-  Settings({Key key}) : super(key: key);
+  final User user;
+  Settings({Key key, this.user}) : super(key: key);
 
   @override
   _SettingsState createState() => _SettingsState();
@@ -212,25 +213,25 @@ String capitalizeFirstOnly(String string){
           icon: Icons.credit_card_sharp,
             buttonText: "Methodes de paiements",
             onTap: () => Navigator.push(context,
-                CupertinoPageRoute(builder: (context) => PaymentMethodPage()))),
+                CupertinoPageRoute(builder: (context) => PaymentMethodPage(user: this.widget.user)))),
 
         SettingsItemWithLeftIcon(
           icon: Icons.account_balance_wallet_sharp,
             buttonText: "Portefeuille",
             onTap: () => Navigator.push(context,
-                CupertinoPageRoute(builder: (context) => BalancePage()))),
+                CupertinoPageRoute(builder: (context) => BalancePage(user: this.widget.user)))),
 
 
         SettingsItemWithLeftIcon(
           icon: Icons.account_balance,
             buttonText: "Comptes bancaires",
             onTap: () => Navigator.push(context,
-                CupertinoPageRoute(builder: (context) => IbanPage()))),
+                CupertinoPageRoute(builder: (context) => IbanPage(user: this.widget.user)))),
 
         SettingsItem(
             onTap: () {
               Navigator.push(context,
-                CupertinoPageRoute(builder: (context) => VerificationPage()));
+                CupertinoPageRoute(builder: (context) => VerificationPage(user: this.widget.user)));
               
             }, buttonText: "Vérification d'identité"),
 

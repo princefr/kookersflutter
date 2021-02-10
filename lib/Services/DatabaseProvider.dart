@@ -8,6 +8,7 @@ import 'package:kookers/Pages/Balance/BalancePage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
+import 'package:kookers/Widgets/ButtonVerification.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 
@@ -204,16 +205,49 @@ class StripeRequirements {
        List<String> eventuallyDue;
        List<String> pastDue;
        List<String> pendingVerification;
-       StripeRequirements({this.currentlyDue, this.eventuallyDue, this.pastDue, this.pendingVerification});
+       String disabledReason;
+       int currentDeadline;
+       ButtonVerificationState idStatus;
+       ButtonVerificationState residenceProof;
+       StripeRequirements({this.currentlyDue, this.eventuallyDue, this.pastDue, this.pendingVerification,this.disabledReason, this.currentDeadline, this.idStatus, this.residenceProof});
 
        static StripeRequirements fromJson(Map<String, dynamic> map) => StripeRequirements(
          currentlyDue: List<String>.from(map["currently_due"].map((string) => string)),
          eventuallyDue: List<String>.from(map["eventually_due"].map((string) => string)),
          pastDue: List<String>.from(map["past_due"].map((string) => string)),
-         pendingVerification: List<String>.from(map["pending_verification"].map((string) => string))
+         pendingVerification: List<String>.from(map["pending_verification"].map((string) => string)),
+         disabledReason: map["disabled_reason"],
+         currentDeadline: map["current_deadline"],
+         idStatus: StripeRequirements.buildIdStatus(map),
+         residenceProof: StripeRequirements.buildResidenceStatus(map)
        );
 
+      static ButtonVerificationState buildIdStatus(Map<String, dynamic> map){
+        final pending = List<String>.from(map["pending_verification"].map((string) => string));
+        final currently = List<String>.from(map["currently_due"].map((string) => string));
+        final eventually = List<String>.from(map["eventually_due"].map((string) => string));
+        if(!pending.contains("element") && !currently.contains("element") && !eventually.contains("element")){
+          return ButtonVerificationState.Verified; 
+        }
+        else if(pending.contains("element")){
+          return ButtonVerificationState.VerificationInProgress;
+        }
+        return ButtonVerificationState.Missing;
+      }
 
+
+    static ButtonVerificationState buildResidenceStatus(Map<String, dynamic> map){
+        final pending = List<String>.from(map["pending_verification"].map((string) => string));
+        final currently = List<String>.from(map["currently_due"].map((string) => string));
+        final eventually = List<String>.from(map["eventually_due"].map((string) => string));
+      if(!pending.contains("element") && !currently.contains("element") && !eventually.contains("element")){
+        return ButtonVerificationState.Verified; 
+      }
+      else if(pending.contains("element")){
+        return ButtonVerificationState.VerificationInProgress;
+      }
+      return ButtonVerificationState.Missing;
+    }
 
 }
 
@@ -248,9 +282,15 @@ class UserDef {
  String defaultIban;
  String stripeaccountId;
  StripeAccount stripeAccount;
+ List<Transaction> transactions;
+ Balance balance;
+ List<BankAccount> ibans;
+ List<CardModel> allCards;
 
 
- UserDef({this.id, this.email, this.firstName, this.lastName, this.phonenumber, this.fcmToken, this.settings, this.adresses, this.photoUrl, this.customerId, this.createdAt, this.updatedAt, this.defaultSource, this.country, this.currency, this.stripeaccountId, this.defaultIban, this.stripeAccount});
+ UserDef({this.id, this.email, this.firstName, this.lastName, this.phonenumber, this.fcmToken, this.settings, this.adresses,
+  this.photoUrl, this.customerId, this.createdAt, this.updatedAt, this.defaultSource, this.country, this.currency,
+   this.stripeaccountId, this.defaultIban, this.stripeAccount, this.transactions, this.balance, this.ibans, this.allCards});
  
   static UserDef fromJson(Map<String, dynamic> map) => UserDef (
   id: map["_id"],
@@ -270,7 +310,11 @@ class UserDef {
   currency: map["currency"],
   stripeaccountId: map["stripe_account"],
   defaultIban: map["default_iban"],
-  stripeAccount: StripeAccount(chargesEnabled: map["stripeAccount"]["charges_enabled"], payoutsEnabled: map["stripeAccount"]["payouts_enabled"], stripeRequirements: StripeRequirements.fromJson(map["stripeAccount"]["requirements"]))
+  stripeAccount: StripeAccount(chargesEnabled: map["stripeAccount"]["charges_enabled"], payoutsEnabled: map["stripeAccount"]["payouts_enabled"], stripeRequirements: StripeRequirements.fromJson(map["stripeAccount"]["requirements"])),
+  transactions: Transaction.fromJsonToList(map["transactions"]),
+  balance: Balance.fromJson(map["balance"]),
+  ibans: BankAccount.fromJsonToList(map["ibans"]),
+  allCards: CardModel.fromJsonTolist(map["all_cards"])
 );
 }
 
@@ -657,11 +701,6 @@ class DatabaseProviderService {
     this.inOrderBuyer = order;
     return this.buyerOrders.map((event) => event.firstWhere((order) => order.id == orderId)).listen((event) => inOrderBuyer.sink.add(event));
   }
-
-  
-
-  // ignore: close_sinks
-  BehaviorSubject<List<BankAccount>> userBankAccounts = new BehaviorSubject<List<BankAccount>>();
   
 
 
@@ -909,104 +948,6 @@ class DatabaseProviderService {
   }
 
 
-    Future<void> getPayoutList() async {
-    final QueryOptions _options = QueryOptions(
-      fetchPolicy: FetchPolicy.cacheAndNetwork,
-      documentNode: gql(r"""
-          query GetPayoutList($accountId: String!) {
-            getPayoutList(accountId: $accountId){
-                  id
-                  object
-                  arrival_date
-                  amount
-                  type
-                  status
-                  description
-            }
-          }
-        """),
-        variables: <String, dynamic> {
-          'accountId' : this.user.value.stripeaccountId,
-        }
-        );
-
-    return client.query(_options).then((result) => result.data["getPayoutList"]);
-  }
-
-  Future<List<BankAccount>> listExternalAccount() async {
-    final QueryOptions _options = QueryOptions(
-      fetchPolicy: FetchPolicy.cacheAndNetwork,
-      documentNode: gql(r"""
-          query ListExternalAccount($accountId: String!) {
-            listExternalAccount(accountId: $accountId){
-              id
-              object
-              account_holder_name
-              account_holder_type
-              bank_name
-              last4
-            }
-          }
-        """),
-        variables: <String, dynamic> {
-          'accountId' : this.user.value.stripeaccountId,
-        }
-        );
-
-    return client.query(_options).then((result) => BankAccount.fromJsonToList(result.data["listExternalAccount"])).then((value){
-      userBankAccounts.sink.add(value);
-      return value;
-    });
-  }
-
-
-  Future<List<Transaction>> getBalanceTransactions() async {
-    final QueryOptions _options = QueryOptions(
-      fetchPolicy: FetchPolicy.cacheAndNetwork,
-      documentNode: gql(r"""
-          query GetBalanceTransaction($accountId: String!) {
-            getBalanceTransaction(accountId: $accountId){
-              id
-              object
-              amount
-              available_on
-              created
-              currency
-              description
-              fee
-              net
-              reporting_category
-              type
-              status
-            }
-          }
-        """),
-        variables: <String, dynamic> {
-          'accountId' : this.user.value.stripeaccountId,
-        }
-        );
-
-    return client.query(_options).then((result) =>Transaction.fromJsonToList(result.data["getBalanceTransaction"]));
-  }
-
-  Future<Balance> getBalance() async {
-    final QueryOptions _options = QueryOptions(
-      fetchPolicy: FetchPolicy.cacheAndNetwork,
-      documentNode: gql(r"""
-                                  query GetAcountBalance($account_id: String!) {
-                                        accountbalance(account_id: $account_id) {
-                                          current_balance
-                                          pending_balance
-                                          currency
-                                        }
-                                    }
-                    """), variables: <String, String>{
-            "account_id": this.user.value.stripeaccountId
-        });
-
-    return client.query(_options).then((result) => Balance.fromJson(result.data["accountbalance"]));
-}
-
 
   Future<Payout> makePayout(Balance balance) async {
     final MutationOptions _options = MutationOptions(documentNode: gql(r"""
@@ -1041,9 +982,6 @@ class DatabaseProviderService {
 
   
 
-  // ignore: close_sinks
-  BehaviorSubject<List<CardModel>> sources = new BehaviorSubject<List<CardModel>>();
-  Stream<List<CardModel>> get sources$ => sources.stream.asBroadcastStream();
   
   Future<QueryResult> addattachPaymentToCustomer(String methodeId) async {
     final MutationOptions _options  = MutationOptions(
@@ -1299,7 +1237,54 @@ Future<List<Order>>  loadbuyerOrders() {
                       eventually_due
                       past_due
                       pending_verification
+                      disabled_reason
+                      current_deadline
                 }
+              }
+
+              balance {
+                current_balance
+                pending_balance
+                currency
+              }
+
+              transactions {
+                    id
+                    object
+                    amount
+                    available_on
+                    created
+                    currency
+                    description
+                    fee
+                    net
+                    reporting_category
+                    type
+                    status
+              }
+
+              all_cards {
+                id
+                brand
+                country
+                customer
+                cvc_check
+                exp_month
+                exp_year
+                fingerprint
+                funding
+                last4
+              }
+
+              ibans {
+                    id
+                    object
+                    account_holder_name
+                    account_holder_type
+                    bank_name
+                    country
+                    currency
+                    last4
               }
 
               createdAt
@@ -1403,29 +1388,7 @@ Future<List<Order>>  loadbuyerOrders() {
     }
 
 
-    Future<List<CardModel>> loadSourceList(){
-      final QueryOptions _options = QueryOptions(
-        fetchPolicy: FetchPolicy.cacheAndNetwork,
-        documentNode: gql( r'''
-                      query GetAllCards($customer_id: String!) {
-                            getAllCardsForCustomer(customer_id: $customer_id){
-                                    id
-                                    brand,
-                                    exp_month,
-                                    exp_year,
-                                    last4,
-                            }
-                        }
-                      '''), variables: <String, String>{
-        'customer_id': this.user.value.customerId,
-      });
 
-      return client.query(_options).then((sourceList) {
-        final sourceAll = CardModel.fromJsonTolist(sourceList.data["getAllCardsForCustomer"]);
-        this.sources.sink.add(sourceAll);
-        return sourceAll;
-      });
-    }
 
 
 

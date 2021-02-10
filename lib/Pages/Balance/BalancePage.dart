@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,7 +9,6 @@ import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:rxdart/subjects.dart';
 import 'package:shimmer/shimmer.dart';
 
 class TransationItemShimmer extends StatelessWidget {
@@ -131,55 +131,33 @@ class Balance {
 }
 
 class BalancePage extends StatefulWidget {
-  BalancePage({Key key}) : super(key: key);
+  final User user;
+  BalancePage({Key key, this.user}) : super(key: key);
 
   @override
   _BalancePageState createState() => _BalancePageState();
 }
 
 class _BalancePageState extends State<BalancePage> {
-  // ignore: close_sinks
-  BehaviorSubject<List<Transaction>> transactions =
-      BehaviorSubject<List<Transaction>>();
-
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   void refreshData(context) async {
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
-    List<Transaction> transactions =
-        await databaseService.getBalanceTransactions();
-        Balance remoteBalance = await databaseService.getBalance();
-    this.transactions.add(transactions);
-    this.balance.sink.add(remoteBalance);
+    await databaseService.loadUserData(this.widget.user.uid);
     Future.delayed(Duration(microseconds: 300)).then((value) {
       _refreshController.refreshCompleted();
     });
   }
 
 
-  BehaviorSubject<Balance> balance = BehaviorSubject<Balance>();
 
-  @override
-  void initState() {
-    new Future.delayed(Duration.zero, () async {
-      final databaseService =
-          Provider.of<DatabaseProviderService>(context, listen: false);
-      List<Transaction> transactions =
-      await databaseService.getBalanceTransactions();
-      Balance remoteBalance = await databaseService.getBalance();
-      this.transactions.add(transactions);
-      this.balance.sink.add(remoteBalance);
-    });
-    super.initState();
-  }
 
 
 
   @override
   void dispose() { 
-    balance.close();
     super.dispose();
   }
 
@@ -223,8 +201,8 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                       ),
                       SizedBox(height: 50),
 
-                      StreamBuilder<Balance>(
-                            stream: this.balance.stream,
+                      StreamBuilder<UserDef>(
+                            stream: databaseService.user,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                             return Shimmer.fromColors(
@@ -250,7 +228,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                 child: Container(
                                     padding: EdgeInsets.symmetric(horizontal: 40),
                                     child: Text(
-                                      snapshot.data.totalBalance.toString(),
+                                      snapshot.data.balance.totalBalance.toString(),
                                       style: GoogleFonts.montserrat(
                                           fontSize: 40,
                                           fontWeight: FontWeight.w500),
@@ -272,10 +250,9 @@ final StreamButtonController _streamButtonController = StreamButtonController();
 
                       SizedBox(height: 5),
                       Divider(),
-                      StreamBuilder<List<Transaction>>(
-                          stream: this.transactions,
-                          builder: (context,
-                              AsyncSnapshot<List<Transaction>> snapshot) {
+                      StreamBuilder<UserDef>(
+                          stream: databaseService.user,
+                          builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting)
                               return Shimmer.fromColors(
@@ -288,12 +265,12 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                       }),
                                   baseColor: Colors.grey[200],
                                   highlightColor: Colors.grey[300]);
-                            if(snapshot.data.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de transactions");
+                            if(snapshot.data.transactions.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de transactions");
                                   
                             return ListView(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                children: snapshot.data
+                                children: snapshot.data.transactions
                                     .map((e) => TransationItem(transaction: e))
                                     .toList());
                           }),
@@ -303,24 +280,20 @@ final StreamButtonController _streamButtonController = StreamButtonController();
 
                 
 
-                StreamBuilder<Balance>(
-                  stream: this.balance.stream,
+                StreamBuilder<UserDef>(
+                  stream: databaseService.user,
                   builder: (context, snapshot) {
                     if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                     if(snapshot.hasError) return SizedBox();
-                    return StreamButton(buttonColor: snapshot.data.totalBalance > 0 ? Color(0xFFF95F5F) : Colors.grey,
+                    return StreamButton(buttonColor: snapshot.data.balance.totalBalance > 0 ? Color(0xFFF95F5F) : Colors.grey,
                                          buttonText: "Retirer sur mon compte",
                                          errorText: "Une erreur s'est produite, veuillez reessayer",
                                          loadingText: "Retrait  en cours",
                                          successText: "Retrait effectué",
-                                          controller: _streamButtonController, onClick: snapshot.data.totalBalance == 0 ? null :  () async {
+                                          controller: _streamButtonController, onClick: snapshot.data.balance.totalBalance == 0 ? null :  () async {
                                             _streamButtonController.isLoading();
-                                            databaseService.makePayout(this.balance.value).then((value) async {
-                                              List<Transaction> transactions =
-                                              await databaseService.getBalanceTransactions();
-                                              Balance remoteBalance = await databaseService.getBalance();
-                                              this.transactions.add(transactions);
-                                              this.balance.sink.add(remoteBalance);
+                                            databaseService.makePayout(snapshot.data.balance).then((value) async {
+                                              await databaseService.loadUserData(this.widget.user.uid);
                                               _streamButtonController.isSuccess();
                                             }).catchError((onError){
                                                print(onError["exception"]["raw"]["code"]);

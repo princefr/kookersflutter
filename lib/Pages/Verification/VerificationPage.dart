@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,7 +14,8 @@ import 'package:provider/provider.dart';
 
 
 class VerificationPage extends StatefulWidget {
-  VerificationPage({Key key}) : super(key: key);
+  final User user;
+  VerificationPage({Key key, this.user}) : super(key: key);
 
   @override
   _VerificationPageState createState() => _VerificationPageState();
@@ -27,6 +29,9 @@ class _VerificationPageState extends State<VerificationPage> {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
     return File(pickedFile.path);
   }
+
+
+  bool isSending = false;
 
 
 
@@ -51,6 +56,11 @@ class _VerificationPageState extends State<VerificationPage> {
           child: Column(
             children: [
               SizedBox(height:10),
+
+              Visibility(
+                visible: this.isSending,
+                child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text("La photo de vos documents nous aide à prouver votre identité. L'identité sur les documents doit correspondre à votre personne.",
@@ -60,17 +70,27 @@ class _VerificationPageState extends State<VerificationPage> {
 
               Divider(),
 
+              
+
               SizedBox(height: 15),
 
-              ButtonVerification(color: Colors.grey[300], leftIcon: Icon(CupertinoIcons.globe, color: Colors.black, size: 24.0), text: "Passeport", onTap: (){
-                getImage().then((file) => {
-                  storageService.uploadPictureFile(databaseService.user.value.id, "passport.png", file, "passport", databaseService.user.value.stripeaccountId).then((value){
-                    print("published");
-                  }).catchError((onError){
-                    print("error");
-                  })
-                });
-              }),
+              StreamBuilder<UserDef>(
+                stream: databaseService.user.stream,
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                  return ButtonVerification(color: Colors.grey[300], leftIcon: Icon(CupertinoIcons.globe, color: Colors.black, size: 24.0), status: snapshot.data.stripeAccount.stripeRequirements.idStatus, text: "Passeport", onTap: (){
+                    getImage().then((file) {
+                      setState(() => this.isSending = true);
+                      storageService.uploadPictureFile(databaseService.user.value.id, "passport.png", file, "passport", databaseService.user.value.stripeaccountId).then((value) {
+                        setState(() => this.isSending = false);
+                      }).catchError((onError){
+                        setState(() => this.isSending = false);
+                        print("error");
+                      });
+                    });
+                  });
+                }
+              ),
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -82,15 +102,23 @@ class _VerificationPageState extends State<VerificationPage> {
 
               SizedBox(height: 25),
 
-              ButtonVerification(color: Colors.grey[300],leftIcon: Icon(CupertinoIcons.doc, color: Colors.black, size: 24.0), text: "Attestation d'hébergement", onTap: (){
-                getImage().then((file) => {
-                  storageService.uploadPictureFile(databaseService.user.value.id, "residenceprof.png", file, "residence_proof", databaseService.user.value.stripeaccountId).then((value) {
-                    print("published");
-                  }).catchError((onError){
-                    print("error");
-                  })
-                });
-              }),
+              StreamBuilder<UserDef>(
+                stream: databaseService.user.stream,
+                builder: (context, snapshot) {
+                  if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                  
+                  return ButtonVerification(color: Colors.grey[300],leftIcon: Icon(CupertinoIcons.doc, color: Colors.black, size: 24.0), status: snapshot.data.stripeAccount.stripeRequirements.residenceProof, text: "Attestation d'hébergement", onTap: (){
+                    getImage().then((file){
+                      setState(() => this.isSending = true);
+                      storageService.uploadPictureFile(databaseService.user.value.id, "residenceprof.png", file, "residence_proof", databaseService.user.value.stripeaccountId).then((value) {
+                        setState(() => this.isSending = false);
+                      }).catchError((onError){
+                        setState(() => this.isSending = false);
+                      });
+                    });
+                  });
+                }
+              ),
 
               Padding(
                 padding: const EdgeInsets.all(8.0),

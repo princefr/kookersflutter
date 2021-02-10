@@ -81,7 +81,6 @@ class _TabHomeState extends State<TabHome>
               databaseService.loadSellerPublications();
               databaseService.loadSellerOrders();
               databaseService.loadrooms();
-              databaseService.loadSourceList();
               notificationService.messaging.subscribeToTopic("new_message");
               notificationService.messaging.subscribeToTopic("new_order");
               notificationService.messaging.subscribeToTopic("order_update");
@@ -166,7 +165,7 @@ class _TabHomeState extends State<TabHome>
             OrdersPage(),
             VendorPage(),
             RoomsPage(),
-            Settings()
+            Settings(user: this.widget.user)
           ],
         ),
       ),
