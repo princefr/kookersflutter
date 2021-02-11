@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -41,7 +40,7 @@ class HomeTopBar extends PreferredSize {
                         fontSize: 30,
                         color: Colors.black)),
                 StreamBuilder(
-                    stream: databaseService.user,
+                    stream: databaseService.user$,
                     builder: (context, AsyncSnapshot<UserDef> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting)
                         return CircularProgressIndicator();
@@ -87,7 +86,7 @@ class HomeTopBar extends PreferredSize {
                     },
                     title: StreamBuilder(
                         initialData: null,
-                        stream: databaseService.user,
+                        stream: databaseService.user$,
                         builder: (context, AsyncSnapshot<UserDef> snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting)
@@ -122,19 +121,19 @@ class HomeTopBar extends PreferredSize {
 }
 
 class HomePage extends StatefulWidget {
-  final User user;
-  HomePage({Key key, this.user}) : super(key: key);
+  HomePage({Key key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage>  {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
 
@@ -203,7 +202,7 @@ class _HomePageState extends State<HomePage> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => FoodItemChild(user: this.widget.user,
+                                  builder: (context) => FoodItemChild(
                                       publication: snapshot.data[index])));
                         });
                   },
@@ -213,4 +212,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

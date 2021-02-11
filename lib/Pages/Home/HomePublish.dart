@@ -414,7 +414,7 @@ class _HomePublishState extends State<HomePublish> {
                         );},
                               leading: Icon(CupertinoIcons.home),
                               title: StreamBuilder(
-                                stream: databaseService.user,
+                                stream: databaseService.user$,
                                 builder: (context, AsyncSnapshot<UserDef> snapshot) {
                                   if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
                                   return Text(snapshot.data.adresses.where((element) => element.isChosed == true).first.title, style: GoogleFonts.montserrat(fontSize: 17));

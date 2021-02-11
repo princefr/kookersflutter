@@ -118,7 +118,7 @@ class _AddIbanPageState extends State<AddIbanPage> {
                               databaseService
                                   .createBankAccount(snapshot.data)
                                   .then((bankaccount) async {
-                                  await databaseService.loadUserData(this.widget.user.uid);
+                                  await databaseService.loadUserData();
                                 _streamButtonController.isSuccess();
                                 Navigator.pop(context);
                               }).catchError((onError) {
@@ -134,8 +134,7 @@ class _AddIbanPageState extends State<AddIbanPage> {
 }
 
 class IbanPage extends StatefulWidget {
-  final User user;
-  const IbanPage({Key key, this.user}) : super(key: key);
+  const IbanPage({Key key}) : super(key: key);
 
   @override
   _IbanPageState createState() => _IbanPageState();
@@ -166,7 +165,7 @@ class _IbanPageState extends State<IbanPage> {
           }),
       body: SafeArea(
         child: StreamBuilder<UserDef>(
-            stream: databaseService.user,
+            stream: databaseService.user$,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting)
                 return LinearProgressIndicator(
@@ -176,7 +175,7 @@ class _IbanPageState extends State<IbanPage> {
               if (snapshot.data.ibans.isEmpty)
                 return SmartRefresher(
                     onRefresh: () async {
-                      await databaseService.loadUserData(this.widget.user.uid);
+                      await databaseService.loadUserData();
                       _refreshController.refreshCompleted();
                     },
                     controller: this._refreshController,
@@ -185,7 +184,7 @@ class _IbanPageState extends State<IbanPage> {
                     child: EmptyViewElse(text: "Vous n'avez pas d'iban."));
               return SmartRefresher(
                 onRefresh: () async {
-                  await databaseService.loadUserData(this.widget.user.uid);
+                  await databaseService.loadUserData();
                   _refreshController.refreshCompleted();
                 },
                 controller: this._refreshController,

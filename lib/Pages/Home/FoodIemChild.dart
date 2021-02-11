@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_svg/flutter_svg.dart';
@@ -150,9 +149,8 @@ class _StepperState extends State<Stepper> {
 }
 
 class FoodItemChild extends StatefulWidget {
-  final User user;
   final PublicationHome publication;
-  FoodItemChild({Key key, @required this.publication, @required this.user}) : super(key: key);
+  FoodItemChild({Key key, @required this.publication}) : super(key: key);
 
   @override
   _FoodItemChildState createState() => _FoodItemChildState();
@@ -366,7 +364,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
           ),
           Container(
             child: StreamBuilder<UserDef>(
-                stream: databaseService.user,
+                stream: databaseService.user$,
                 builder: (context,  snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting)
                     return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
@@ -384,7 +382,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                               .then((value) {
                                 databaseService.updatedDefaultSource(paymentMethod.id).then((value) async {
                                 databaseService.user.value.defaultSource = paymentMethod.id;
-                                await databaseService.loadUserData(this.widget.user.uid);
+                                await databaseService.loadUserData();
                               });
                           });
                         }).catchError((onError){

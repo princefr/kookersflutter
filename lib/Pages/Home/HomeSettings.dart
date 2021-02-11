@@ -97,7 +97,7 @@ class _HomeSettingsState extends State<HomeSettings> {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
       final firebaseUser = context.watch<User>();
       return StreamBuilder(
-        stream: databaseService.user.stream,
+        stream: databaseService.user$,
         builder: (context, AsyncSnapshot<UserDef> snapshot) {
           if(snapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
           return Material(

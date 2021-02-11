@@ -78,17 +78,17 @@ class SettingsItem extends StatelessWidget {
 }
 
 class Settings extends StatefulWidget {
-  final User user;
-  Settings({Key key, this.user}) : super(key: key);
+  Settings({Key key}) : super(key: key);
 
   @override
   _SettingsState createState() => _SettingsState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsState extends State<Settings> with AutomaticKeepAliveClientMixin<Settings> {
 
  
-
+  @override
+  bool get wantKeepAlive => true;
 
 String capitalizeFirstOnly(String string){
   return string.characters.first.toUpperCase() + string.substring(1);
@@ -139,6 +139,7 @@ String capitalizeFirstOnly(String string){
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final firebaseUser = context.watch<User>();
     final storageService = Provider.of<StorageService>(context, listen: false);
     final authentificationService = Provider.of<AuthentificationService>(context, listen: false);
@@ -159,7 +160,7 @@ String capitalizeFirstOnly(String string){
           child: Stack(children: [
             Center(
               child: StreamBuilder(
-                stream: databaseService.user.stream,
+                stream: databaseService.user$,
                 builder: (context, AsyncSnapshot<UserDef> snapshot) {
                   if(snapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
                   return CircleAvatar(
@@ -213,25 +214,25 @@ String capitalizeFirstOnly(String string){
           icon: Icons.credit_card_sharp,
             buttonText: "Methodes de paiements",
             onTap: () => Navigator.push(context,
-                CupertinoPageRoute(builder: (context) => PaymentMethodPage(user: this.widget.user)))),
+                CupertinoPageRoute(builder: (context) => PaymentMethodPage()))),
 
         SettingsItemWithLeftIcon(
           icon: Icons.account_balance_wallet_sharp,
             buttonText: "Portefeuille",
             onTap: () => Navigator.push(context,
-                CupertinoPageRoute(builder: (context) => BalancePage(user: this.widget.user)))),
+                CupertinoPageRoute(builder: (context) => BalancePage()))),
 
 
         SettingsItemWithLeftIcon(
           icon: Icons.account_balance,
             buttonText: "Comptes bancaires",
             onTap: () => Navigator.push(context,
-                CupertinoPageRoute(builder: (context) => IbanPage(user: this.widget.user)))),
+                CupertinoPageRoute(builder: (context) => IbanPage()))),
 
         SettingsItem(
             onTap: () {
               Navigator.push(context,
-                CupertinoPageRoute(builder: (context) => VerificationPage(user: this.widget.user)));
+                CupertinoPageRoute(builder: (context) => VerificationPage()));
               
             }, buttonText: "Vérification d'identité"),
 

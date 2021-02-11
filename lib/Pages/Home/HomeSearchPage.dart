@@ -188,7 +188,7 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
                 visible: (this.textController?.value?.text?.isEmpty),
                 child: Expanded(
                     child: StreamBuilder(
-                    stream: databaseService.user.stream,
+                    stream: databaseService.user$,
                     builder: (context, AsyncSnapshot<UserDef> snapshot) {
                       if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                       return ListView.builder(

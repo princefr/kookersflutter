@@ -165,7 +165,7 @@ class _TabHomeState extends State<TabHome>
             OrdersPage(),
             VendorPage(),
             RoomsPage(),
-            Settings(user: this.widget.user)
+            Settings()
           ],
         ),
       ),

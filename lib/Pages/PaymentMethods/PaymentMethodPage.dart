@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
@@ -11,8 +10,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 class PaymentMethodPage extends StatefulWidget {
-  final User user;
-  PaymentMethodPage({Key key, this.user}) : super(key: key);
+  PaymentMethodPage({Key key}) : super(key: key);
 
   @override
   _PaymentMethodPageState createState() => _PaymentMethodPageState();
@@ -46,7 +44,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                     databaseService.addattachPaymentToCustomer(paymentMethod.id).then((value) {
                       databaseService.updatedDefaultSource(paymentMethod.id).then((value){
                         databaseService.user.value.defaultSource = paymentMethod.id;
-                        databaseService.loadUserData(this.widget.user.uid);
+                        databaseService.loadUserData();
                       });
                     });
                   }).catchError((onError){
@@ -55,13 +53,14 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                 }),
               body: SmartRefresher(
                 onRefresh: () async {
-                                databaseService.loadUserData(this.widget.user.uid);
+                                await databaseService.loadUserData();
+                                this._refreshController.refreshCompleted();
                             },
                           controller: this._refreshController,
                           enablePullDown: true,
                           enablePullUp: false,
                 child: StreamBuilder(
-                stream: databaseService.user,
+                stream: databaseService.user$,
                 builder: (context, AsyncSnapshot<UserDef> snapshot) {
                     if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
                     if(snapshot.hasError) return Text("i've a bad felling");
@@ -73,7 +72,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                         databaseService.user.value.defaultSource = e.id;
                       });
                     databaseService.updatedDefaultSource(e.id);
-                    databaseService.loadUserData(this.widget.user.uid);
+                    databaseService.loadUserData();
                         },)).toList(),
                       );
                 }

@@ -75,7 +75,7 @@ class _VerificationPageState extends State<VerificationPage> {
               SizedBox(height: 15),
 
               StreamBuilder<UserDef>(
-                stream: databaseService.user.stream,
+                stream: databaseService.user$,
                 builder: (context, snapshot) {
                   if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                   return ButtonVerification(color: Colors.grey[300], leftIcon: Icon(CupertinoIcons.globe, color: Colors.black, size: 24.0), status: snapshot.data.stripeAccount.stripeRequirements.idStatus, text: "Passeport", onTap: (){
@@ -103,10 +103,9 @@ class _VerificationPageState extends State<VerificationPage> {
               SizedBox(height: 25),
 
               StreamBuilder<UserDef>(
-                stream: databaseService.user.stream,
+                stream: databaseService.user$,
                 builder: (context, snapshot) {
                   if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
-                  
                   return ButtonVerification(color: Colors.grey[300],leftIcon: Icon(CupertinoIcons.doc, color: Colors.black, size: 24.0), status: snapshot.data.stripeAccount.stripeRequirements.residenceProof, text: "Attestation d'hébergement", onTap: (){
                     getImage().then((file){
                       setState(() => this.isSending = true);

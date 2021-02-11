@@ -37,8 +37,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -99,15 +97,15 @@ class AuthentificationnWrapper extends StatelessWidget {
       builder: (BuildContext ctx, AsyncSnapshot<User> snapshotc){
         if(snapshotc.connectionState == ConnectionState.waiting) return SplashScreen();
         if(snapshotc.data == null) return OnBoardingPager();
+        databaseService.firebaseUser = snapshotc.data;
         return FutureBuilder<Object>(
-          future: Future.delayed(Duration(seconds: 3), () => databaseService.loadUserData(snapshotc.data.uid)),
+          future: Future.delayed(Duration(seconds: 3), () => databaseService.loadUserData()),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting) return SplashScreen();
             if(snapshot.data == null) return OnBoardingPager();
             return TabHome(user: snapshotc.data);
           }
         );
-
       },
     );
   }

@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -131,8 +130,7 @@ class Balance {
 }
 
 class BalancePage extends StatefulWidget {
-  final User user;
-  BalancePage({Key key, this.user}) : super(key: key);
+  BalancePage({Key key}) : super(key: key);
 
   @override
   _BalancePageState createState() => _BalancePageState();
@@ -145,7 +143,7 @@ class _BalancePageState extends State<BalancePage> {
   void refreshData(context) async {
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
-    await databaseService.loadUserData(this.widget.user.uid);
+    await databaseService.loadUserData();
     Future.delayed(Duration(microseconds: 300)).then((value) {
       _refreshController.refreshCompleted();
     });
@@ -202,7 +200,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                       SizedBox(height: 50),
 
                       StreamBuilder<UserDef>(
-                            stream: databaseService.user,
+                            stream: databaseService.user$,
                             builder: (context, snapshot) {
                               if (snapshot.connectionState == ConnectionState.waiting) {
                             return Shimmer.fromColors(
@@ -251,7 +249,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                       SizedBox(height: 5),
                       Divider(),
                       StreamBuilder<UserDef>(
-                          stream: databaseService.user,
+                          stream: databaseService.user$,
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting)
@@ -281,7 +279,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                 
 
                 StreamBuilder<UserDef>(
-                  stream: databaseService.user,
+                  stream: databaseService.user$,
                   builder: (context, snapshot) {
                     if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                     if(snapshot.hasError) return SizedBox();
@@ -293,7 +291,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                           controller: _streamButtonController, onClick: snapshot.data.balance.totalBalance == 0 ? null :  () async {
                                             _streamButtonController.isLoading();
                                             databaseService.makePayout(snapshot.data.balance).then((value) async {
-                                              await databaseService.loadUserData(this.widget.user.uid);
+                                              await databaseService.loadUserData();
                                               _streamButtonController.isSuccess();
                                             }).catchError((onError){
                                                print(onError["exception"]["raw"]["code"]);

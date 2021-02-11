@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dart_geohash/dart_geohash.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
@@ -658,6 +659,9 @@ class Payout {
 class DatabaseProviderService {
   // ignore: close_sinks
   BehaviorSubject<UserDef> user = new BehaviorSubject<UserDef>();
+  Stream<UserDef> get user$ => user.stream.asBroadcastStream();
+
+  User firebaseUser;
 
   // ignore: close_sinks
   BehaviorSubject<List<PublicationHome>> publications = new BehaviorSubject<List<PublicationHome>>();
@@ -1205,7 +1209,7 @@ Future<List<Order>>  loadbuyerOrders() {
         });
   }
 
-  Future<UserDef> loadUserData(String uid) {
+  Future<UserDef> loadUserData() {
   final QueryOptions _options = QueryOptions(
     fetchPolicy: FetchPolicy.cacheAndNetwork,
     documentNode: gql(r"""
@@ -1296,7 +1300,7 @@ Future<List<Order>>  loadbuyerOrders() {
                 }
             }
         """), variables: <String, String>{
-        "uid": uid,
+        "uid": this.firebaseUser.uid
       });
 
       
