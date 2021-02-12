@@ -145,9 +145,6 @@ String capitalizeFirstOnly(String string){
     final authentificationService = Provider.of<AuthentificationService>(context, listen: false);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
 
-
-
-
     return Container(
       child: ListView(
         children: [

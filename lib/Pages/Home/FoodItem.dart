@@ -213,8 +213,7 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
                                   child: Row(children: [
                                     Icon(CupertinoIcons.star_fill, size: 13, color: Colors.yellow[900]),
                                     SizedBox(width: 5),
-                                    Text((this.widget.publication.rating.ratingTotal/this.widget.publication.rating.ratingCount).toString() + " " + "(" + this.widget.publication.rating.ratingCount.toString() + ")")
-
+                                    Text(this.widget.publication.getRating().toString() + " " + "(" + this.widget.publication.rating.ratingCount.toString() + ")")
                                   ],),
                                 )
                               )
@@ -228,7 +227,7 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
 
 
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text("15 \$", style: GoogleFonts.montserrat(color: Colors.grey, fontSize: 20))
+                Text(this.widget.publication.pricePerAll, style: GoogleFonts.montserrat(color: Colors.grey, fontSize: 20))
               ],),
 
               SizedBox(height: 10),

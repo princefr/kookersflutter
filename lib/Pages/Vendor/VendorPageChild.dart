@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
@@ -140,6 +142,7 @@ final MutationOptions _options  = MutationOptions(
 
  StreamButtonController _streamButtonController = StreamButtonController();
  StreamButtonController _streamButtonController2 = StreamButtonController();
+ bool isLoading = false;
 
 
   @override
@@ -153,19 +156,28 @@ final MutationOptions _options  = MutationOptions(
                           isRightIcon: true,
                           height: 54,
                           onTapRight: () {
-                            
+                            setState((){
+                              this.isLoading = true;
+                            });
                             this.createRoom(databaseService.client, this.widget.vendor.buyerID, databaseService.user.value.id).then((result) async {
                               await databaseService.loadrooms();
+                              setState(() {
+                                this.isLoading = false;
+                              });
                               Navigator.push(context,
                             CupertinoPageRoute(
                               builder: (context) => ChatPage(room: result, uid: databaseService.user.value.id)));
+                            }).catchError((onError) {
+                              setState(() {
+                                this.isLoading = false;
+                              });
                             });
                           }),
         body: Center(
           child: ListView(
             children: [
+              Visibility(visible: this.isLoading, child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
               Divider(),
-
               CarouselSlider(items: this.widget.vendor.publication.photoUrls.map((e) {
               return InkWell(
                 onTap: (){
@@ -195,7 +207,7 @@ final MutationOptions _options  = MutationOptions(
                 Expanded(
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(this.widget.vendor.totalPrice + " " + this.widget.vendor.currency,
+                  child: Text(this.widget.vendor.totalPrice + " " + NumberFormat.simpleCurrency(locale: Platform.localeName).currencySymbol,
                       style: GoogleFonts.montserrat(
                           fontSize: 26, color: Colors.grey)),
                 )),
@@ -204,7 +216,14 @@ final MutationOptions _options  = MutationOptions(
                 
                 Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("2"),)
+                    child: Row(
+                      children: [
+                        Icon(CupertinoIcons.chart_pie),
+                        SizedBox(width: 10,),
+                        Text(this.widget.vendor.quantity, style: GoogleFonts.montserrat(fontSize: 24),),
+                      
+                      ],
+                    ),)
               ],
             ),
 
@@ -262,6 +281,8 @@ final MutationOptions _options  = MutationOptions(
              
               ListTile(
                 leading: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.white,
                   radius: 25,
                 backgroundImage:
                     CachedNetworkImageProvider(this.widget.vendor.buyer.photoUrl),

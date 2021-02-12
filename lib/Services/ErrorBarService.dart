@@ -25,18 +25,18 @@ class NotificationPanelService {
   MessageToDisplay loadMessageTypeSeller(String type) {
     switch (type) {
       case "new_order":
-          return MessageToDisplay(body: "Commande", title: "Vous avez une nouvelle commande.");
+          return MessageToDisplay(body: "Vous avez une nouvelle commande.", title: "Commande");
       break;
       case "order_cancelled":
-          return MessageToDisplay(body: "Annnulation", title: "Une commande a été annulé.");
+          return MessageToDisplay(body: "Une commande a été annulé.", title: "Annnulation");
         break;
       case "order_done":
-          return MessageToDisplay(body: "Commande finie", title: "Une commande vient de se terminer.");
+          return MessageToDisplay(body: "Une commande vient de se terminer.", title: "Commande Terminée");
         break;
       case "order_rated":
-          return MessageToDisplay(body: "Notation", title: "Vous avez recu une nouvelle note pour une de vos commandes.");
+          return MessageToDisplay(body: "Vous avez recu une nouvelle note pour une de vos commandes.", title: "Notation");
         break;
-      default: return MessageToDisplay(body: "Commande", title: "Vous avez une nouvelle commande.");
+      default: return MessageToDisplay(body: "Vous avez une nouvelle commande.", title: "Commande");
     }
   }
 
@@ -48,13 +48,13 @@ class NotificationPanelService {
     MessageToDisplay loadMessageTypeBuyer(String type) {
       switch (type) {
         case "order_accepted":
-            return MessageToDisplay(body: "Acceptation commande", title: "Votre commande a été accepté par le chef");
+            return MessageToDisplay(body: "Votre commande a été accepté par le chef.", title: "Acceptation commande");
         break;
         case "order_refused":
-            return MessageToDisplay(body: "Annulation commande", title: "Le chef a malheuresement annulé votre commande");
+            return MessageToDisplay(body: "Le chef a malheuresement annulé votre commande.", title: "Annulation commande");
           break;
         default:
-        return MessageToDisplay(body: "Acceptation commande", title: "Votre commande a été accepté par le chef");
+        return MessageToDisplay(body: "Votre commande a été accepté par le chef.", title: "Acceptation commande");
       }
   }
 

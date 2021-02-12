@@ -156,6 +156,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       body: SafeArea(
         child: StreamBuilder<List<PublicationHome>>(
             stream: databaseService.publications$,
+            initialData: [],
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting)
                 return Shimmer.fromColors(

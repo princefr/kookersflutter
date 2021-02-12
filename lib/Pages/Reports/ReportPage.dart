@@ -19,7 +19,7 @@ enum ReportType {
 class ReportPage extends StatefulWidget {
   final String publicatonId;
   final String seller;
-  ReportPage({Key key, this.publicatonId, this.seller}) : super(key: key);
+  ReportPage({Key key,@required this.publicatonId,@required this.seller}) : super(key: key);
 
   @override
   _ReportPageState createState() => _ReportPageState();

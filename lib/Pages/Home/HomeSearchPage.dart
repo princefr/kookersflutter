@@ -19,7 +19,10 @@ class HomeSearchPage extends StatefulWidget {
   _HomeSearchPageState createState() => _HomeSearchPageState();
 }
 
-class _HomeSearchPageState extends State<HomeSearchPage> {
+class _HomeSearchPageState extends State<HomeSearchPage> with AutomaticKeepAliveClientMixin<HomeSearchPage>  {
+    @override
+  bool get wantKeepAlive => true;
+
   GooglePlace googlePlace;
   List<AutocompletePrediction> predictions = [];
   DetailsResult detailresult;
@@ -90,6 +93,7 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
 
       final firebaseUser = context.watch<User>();
@@ -189,8 +193,9 @@ class _HomeSearchPageState extends State<HomeSearchPage> {
                 child: Expanded(
                     child: StreamBuilder(
                     stream: databaseService.user$,
+                    initialData: databaseService.user.value,
                     builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                      if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                      if(snapshot.data == null) return SizedBox();
                       return ListView.builder(
                         shrinkWrap: true,
                         itemCount: snapshot.data.adresses.length,

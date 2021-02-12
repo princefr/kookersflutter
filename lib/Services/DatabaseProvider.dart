@@ -20,12 +20,6 @@ class Location {
   Location({this.latitude, this.longitude});
 }
 
-class RatingUser {
-  double ratingTotal;
-  int ratingCount;
-  RatingUser({this.ratingCount, this.ratingTotal});
-}
-
 
 class RatingPublication{
     double ratingTotal;
@@ -71,107 +65,9 @@ class Adress {
   static List<Map<String, Object>> toJson(List<Adress> allAdress) {
     return allAdress.map((e) => {"title": e.title, "is_chosed": e.isChosed, "location": {"longitude": e.location.longitude, "latitude": e.location.latitude}}).toList();
   }
-
-  
-
-  
-}
-
-class FoodPreference {
-int id;
-String title;
-bool isSelected;
-static List<dynamic> allSelectedToArray;
-static List<FoodPreference> allSelected;
-FoodPreference({this.id, this.title, this.isSelected});
-
-static List<FoodPreference> fromJSON(List<Object> map) {
-    List<FoodPreference> prefs = [];
-    final  selected = [];
-    map.forEach((element) {
-      final pref = element as Map<String, dynamic>;
-      prefs.add(FoodPreference(
-        id: pref["id"],
-        title: pref["title"],
-        isSelected: pref["is_selected"],
-      ));
-
-      if (pref["is_selected"]){
-        selected.add(pref["title"]);
-      }
-    });
-    FoodPreference.allSelectedToArray = selected;
-    FoodPreference.allSelected = prefs;
-    return prefs;
-}
-
-  static List<Map<String, dynamic>> getDataForServer() {
-    final List<Map<String, dynamic>> all = [];
-    FoodPriceRange.allSelected.forEach((element) {
-      all.add({"id": element.id, "title": element.title, "is_selected": element.isSelected});
-    });
-
-    return all;
-  }
-
-
-  void toogle(){
-    this.isSelected = !this.isSelected;
-  }
-
-
-
 }
 
 
-class FoodPriceRange {
-  int id;
-  String title;
-  bool isSelected;
-  static List<dynamic> allSelectedToArray;
-  static List<FoodPriceRange> allSelected;
-  FoodPriceRange({this.id, this.title, this.isSelected});
-
-  static List<FoodPriceRange> fromJSON(List<Object> map) {
-    List<FoodPriceRange> ranges = [];
-    final  selected = [];
-    map.forEach((element) {
-      final pref = element as Map<String, dynamic>;
-      ranges.add(FoodPriceRange(
-        id: pref["id"],
-        title: pref["title"],
-        isSelected: pref["is_selected"],
-      ));
-
-      if (pref["is_selected"]){
-        selected.add(pref["title"]);
-      }
-
-
-    });
-
-    FoodPriceRange.allSelectedToArray = selected;
-    FoodPriceRange.allSelected = ranges;
-
-    return ranges;
-  }
-
-  static List<Map<String, dynamic>> getDataForServer() {
-    final List<Map<String, dynamic>> all = [];
-    FoodPriceRange.allSelected.forEach((element) {
-      all.add({"id": element.id, "title": element.title, "is_selected": element.isSelected});
-    });
-
-    return all;
-  }
-
-  void toogle(){
-    this.isSelected = !this.isSelected;
-  }
-
-
-  
-}
 
 
 class UserSettings {
@@ -227,10 +123,10 @@ class StripeRequirements {
         final pending = List<String>.from(map["pending_verification"].map((string) => string));
         final currently = List<String>.from(map["currently_due"].map((string) => string));
         final eventually = List<String>.from(map["eventually_due"].map((string) => string));
-        if(!pending.contains("element") && !currently.contains("element") && !eventually.contains("element")){
+        if(!pending.contains("individual.verification.document") && !currently.contains("individual.verification.document") && !eventually.contains("individual.verification.document")){
           return ButtonVerificationState.Verified; 
         }
-        else if(pending.contains("element")){
+        else if(pending.contains("individual.verification.document")){
           return ButtonVerificationState.VerificationInProgress;
         }
         return ButtonVerificationState.Missing;
@@ -241,10 +137,10 @@ class StripeRequirements {
         final pending = List<String>.from(map["pending_verification"].map((string) => string));
         final currently = List<String>.from(map["currently_due"].map((string) => string));
         final eventually = List<String>.from(map["eventually_due"].map((string) => string));
-      if(!pending.contains("element") && !currently.contains("element") && !eventually.contains("element")){
+      if(!pending.contains("individual.verification.additional_document") && !currently.contains("individual.verification.additional_document") && !eventually.contains("individual.verification.additional_document")){
         return ButtonVerificationState.Verified; 
       }
-      else if(pending.contains("element")){
+      else if(pending.contains("individual.verification.additional_document")){
         return ButtonVerificationState.VerificationInProgress;
       }
       return ButtonVerificationState.Missing;
@@ -325,13 +221,12 @@ class UserDef {
 
 class SellerDef {
   String id;
-  RatingUser rating;
   String email;
   String firstName;
   String lastName;
   String fcmToken;
   String photoUrl;
-  SellerDef({this.id, this.rating, this.firstName, this.email, this.lastName, this.fcmToken, this.photoUrl});
+  SellerDef({this.id, this.firstName, this.email, this.lastName, this.fcmToken, this.photoUrl});
   static SellerDef fromJson(Map<String, dynamic> map) => SellerDef(
     id: map["_id"],
     email: map["email"],
@@ -488,8 +383,14 @@ class PublicationHome {
   SellerDef seller;
   List<String> preferences;
   RatingPublication rating;
+  
 
   PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll,  this.photoUrls, this.adress, this.seller, this.preferences, this.rating});
+
+  double getRating(){
+    if((this.rating.ratingTotal / this.rating.ratingCount).isNaN) return 0;
+    return (this.rating.ratingTotal / this.rating.ratingCount);
+  }
   
 
   static PublicationHome fromJson(Map<String, dynamic> map) => PublicationHome(
@@ -497,7 +398,7 @@ class PublicationHome {
     title: map["title"],
     description : map["description"],
     type: map["type"],
-    pricePerAll: map["price_per_all"].toString(),
+    pricePerAll: map["price_all"].toString(),
     photoUrls: map["photoUrls"] as List<Object>,
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["longitude"]), title: ""),
     seller: SellerDef.fromJson(map["seller"]),
@@ -588,13 +489,13 @@ class  Transaction {
   );
 
 
-      static List<Transaction> fromJsonToList(List<Object> map) {
-    List<Transaction> alltransactions = [];
-    map.forEach((element) {
-      final x = Transaction.fromJson(element);
-      alltransactions.add(x);
-    });
-    return alltransactions;
+    static List<Transaction> fromJsonToList(List<Object> map) {
+        List<Transaction> alltransactions = [];
+        map.forEach((element) {
+          final x = Transaction.fromJson(element);
+          alltransactions.add(x);
+        });
+        return alltransactions;
   }
 
 
@@ -732,8 +633,6 @@ class DatabaseProviderService {
     final OptimisticCache cache = OptimisticCache(
       dataIdFromObject: typenameDataIdFromObject,
     );
-
-    //StreamSubscription<String> token = FirebaseAuth.instance.authStateChanges().listen((event) => event.getIdToken(true).asStream());
     
 
      GraphQLClient client = clientFor(uri: "https://ed23ed8dd441.ngrok.io/graphql", subscriptionUri: 'wss://ed23ed8dd441.ngrok.io/graphql', authorization: "").value;
@@ -1078,7 +977,8 @@ Future<List<Order>>  loadbuyerOrders() {
                             orderState
                             deliveryDay
                             sellerId
-
+                            quantity
+                            total_price
                             notificationBuyer
                             
                             publication {
@@ -1339,7 +1239,6 @@ Future<List<Order>>  loadbuyerOrders() {
 
 
     Future<List<PublicationHome>> loadPublication() async {
-      //Location location = this.user.value.adresses.firstWhere((element) => element.isChosed == true).location;
       Location location = this.user.value.adresses.firstWhere((element) => element.isChosed).location;
       List<String> geohashes = geohashWithinRange(location, this.user.value.settings.distanceFromSeller);
       

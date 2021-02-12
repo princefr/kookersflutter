@@ -200,29 +200,55 @@ class _OrderPageChildState extends State<OrderPageChild> {
                   enableInfiniteScroll: false,
                 )),
             SizedBox(height: 10),
+
             Row(
               children: [
                 Expanded(
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text("15 €",
+                  child: Text(this.widget.order.totalPrice,
                       style: GoogleFonts.montserrat(
                           fontSize: 26, color: Colors.grey)),
                 )),
-                StreamBuilder<Order>(
+
+                                Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Icon(CupertinoIcons.chart_pie),
+                        SizedBox(width: 10,),
+                        Text(this.widget.order.quantity, style: GoogleFonts.montserrat(fontSize: 24),),
+                      
+                      ],
+                    ),),
+
+
+              ],
+            ),
+
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(child: SizedBox()),
+                                  StreamBuilder<Order>(
                     stream: this.order.stream,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting)
                         return Text("nope");
                       return StatusChip(state: snapshot.data.orderState);
                     }),
-                SizedBox(width: 5)
-              ],
-            ),
+                                ],
+                              ),
+                            ),
+
+
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Text(this.widget.order.publication.description),
             ),
+
             Container(
               height: 40,
               child: Builder(builder: (BuildContext ctx) {
@@ -298,18 +324,9 @@ class _OrderPageChildState extends State<OrderPageChild> {
                     " " +
                     this.widget.order.seller.lastName)),
 
-            ListTile(
-              leading: Icon(CupertinoIcons.house_alt),
-              title: Text("303 quai aux fleurs"),
-            ),
 
             SizedBox(height: 10),
 
-            ListTile(
-              leading: Icon(CupertinoIcons.chart_pie),
-              title: Text(this.widget.order.quantity.toString()),
-              trailing: Text("parts"),
-            ),
 
             ListTile(
               leading: Icon(CupertinoIcons.calendar),

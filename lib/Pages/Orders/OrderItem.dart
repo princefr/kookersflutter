@@ -75,7 +75,7 @@ class Order {
           id: map["_id"],
           quantity: map["quantity"],
           sellerId: map["sellerId"],
-          totalPrice: map["totalPrice"],
+          totalPrice: map["total_price"],
           notificationBuyer: map["notificationBuyer"]
         );
 
@@ -176,7 +176,6 @@ class OrderItem extends StatelessWidget {
                   Text(this.order.publication.title),
                   Text(this.order.productId, style: GoogleFonts.montserrat(fontSize: 13)),
                   StatusChip(state: this.order.orderState)
-                  
                 ]
               ),
             ),

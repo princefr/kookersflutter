@@ -4,9 +4,11 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
 import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
+import 'package:kookers/Pages/Reports/ReportPage.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/OrderProvider.dart';
 import 'package:kookers/Services/StripeServices.dart';
@@ -330,7 +332,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                   },
                   leading: Icon(CupertinoIcons.calendar),
                   title: Text("Date"),
-                  trailing: Text(snapshot.data.toString()),
+                  trailing: Text(Jiffy(snapshot.data).format("do MMMM yyyy [ À ] HH:mm")),
                 );
               }),
 
@@ -452,7 +454,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
               stream: orderProvider.isAllFilled$,
               builder: (context, AsyncSnapshot<bool> snapshot) {
                 return StreamButton(
-                    buttonColor: snapshot.data != null
+                    buttonColor: snapshot.data != null && databaseService.user.value.allCards.isNotEmpty
                         ? Color(0xFFF95F5F)
                         : Colors.grey,
                     buttonText: "Acheter",
@@ -485,6 +487,17 @@ class _FoodItemChildState extends State<FoodItemChild> {
                       
                     });
               }),
+
+
+              Divider(),
+
+
+              InkWell(child:Center(child: Text("Signaler", style: GoogleFonts.montserrat(color: Colors.red))), onTap: (){
+                Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) => ReportPage(publicatonId: this.widget.publication.id, seller: this.widget.publication.seller.id,)));
+              },)
         ]),
       );
 

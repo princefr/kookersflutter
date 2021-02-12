@@ -26,6 +26,7 @@ class OrderProvider with OrderValidation {
   Sink<DateTime> get inDeliveryDate => deliveryDate.sink;
 
 
+  Stream<bool> hasCard(BehaviorSubject<UserDef> user) => user.map((event) => event.allCards.isEmpty);
 
 
 

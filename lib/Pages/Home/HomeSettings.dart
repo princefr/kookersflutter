@@ -17,7 +17,10 @@ class HomeSettings extends StatefulWidget {
   _HomeSettingsState createState() => _HomeSettingsState();
 }
 
-class _HomeSettingsState extends State<HomeSettings> {
+class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClientMixin<HomeSettings>  {
+    @override
+  bool get wantKeepAlive => true;
+
   List<String> tag = [];
   List<String> tagfood = [];
 
@@ -47,20 +50,25 @@ class _HomeSettingsState extends State<HomeSettings> {
     final MutationOptions _options = MutationOptions(documentNode: gql(r"""
               mutation UpdateSettings($userID: String!, $settings: UserSettingsInput!) {
                   updateSettings(userID: $userID, settings: $settings){
-                 _id
-                firebaseUID
-                email
-                first_name
-                last_name
-                phonenumber
-                settings {
-                    food_preferences
-                    food_price_ranges
-                    distance_from_seller
-                    updatedAt
-                }
+              _id
+              email
+              first_name
+              last_name
+              phonenumber
+              customerId
+              country
+              currency
+              default_source
+              default_iban
+              stripe_account
+              settings {
+                  food_preferences
+                  food_price_ranges
+                  distance_from_seller
+                  updatedAt
+              }
 
-                stripeAccount {
+              stripeAccount {
                 charges_enabled
                 payouts_enabled
                 requirements {
@@ -73,12 +81,57 @@ class _HomeSettingsState extends State<HomeSettings> {
                 }
               }
 
-                createdAt
-                photoUrl
-                updatedAt
-                adresses {title, location {latitude, longitude}, is_chosed}
-                fcmToken
-                rating {rating_total, rating_count}
+              balance {
+                current_balance
+                pending_balance
+                currency
+              }
+
+              transactions {
+                    id
+                    object
+                    amount
+                    available_on
+                    created
+                    currency
+                    description
+                    fee
+                    net
+                    reporting_category
+                    type
+                    status
+              }
+
+              all_cards {
+                id
+                brand
+                country
+                customer
+                cvc_check
+                exp_month
+                exp_year
+                fingerprint
+                funding
+                last4
+              }
+
+              ibans {
+                    id
+                    object
+                    account_holder_name
+                    account_holder_type
+                    bank_name
+                    country
+                    currency
+                    last4
+              }
+
+              createdAt
+              photoUrl
+              updatedAt
+              adresses {title, location {latitude, longitude}, is_chosed}
+              fcmToken
+              rating {rating_total, rating_count}
                   }
               }
           """), variables: <String, dynamic>{
@@ -94,12 +147,14 @@ class _HomeSettingsState extends State<HomeSettings> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
       final firebaseUser = context.watch<User>();
+
       return StreamBuilder(
         stream: databaseService.user$,
+        initialData: databaseService.user.value,
         builder: (context, AsyncSnapshot<UserDef> snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
           return Material(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -231,8 +286,8 @@ class _HomeSettingsState extends State<HomeSettings> {
                 SizedBox(height: 60),
                 InkWell(
                   onTap: () async {
-                    this.updateSettings(databaseService.client, firebaseUser.uid, snapshot.data.settings, databaseService).then((value) {
-                      databaseService.loadPublication();
+                    this.updateSettings(databaseService.client, firebaseUser.uid, snapshot.data.settings, databaseService).then((value) async {
+                      await databaseService.loadPublication();
                       Navigator.pop(context);
                     });
                   },

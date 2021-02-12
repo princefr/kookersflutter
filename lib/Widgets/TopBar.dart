@@ -4,6 +4,33 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
+class TopBarTwoWithChat extends PreferredSize {
+  final String title;
+  final double height;
+  final bool isRightIcon;
+  final IconData rightIcon;
+  final Function onTapRight;
+  const TopBarTwoWithChat({Key key, @required this.title, this.isRightIcon, this.rightIcon, this.onTapRight, this.height});
+
+  @override
+  Size get preferredSize => Size.fromHeight(height);
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+          child: Container(
+        height: preferredSize.height,
+        child: ListTile(
+          leading: InkWell(onTap: () => Navigator.pop(context), child: Icon(CupertinoIcons.chevron_back)),
+          title: Text(this.title, style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
+          trailing: Visibility(visible: this.isRightIcon, child: InkWell(onTap: this.onTapRight, child: Icon(this.rightIcon)),
+        ),
+      )
+      ),
+    );
+  }
+}
+
 class TopBarWitBackNav extends PreferredSize {
   final String title;
   final double height;

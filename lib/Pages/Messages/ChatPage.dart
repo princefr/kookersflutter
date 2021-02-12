@@ -17,6 +17,7 @@ import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Messages/isRead.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
+import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
@@ -173,11 +174,11 @@ class _ChatPageState extends State<ChatPage>
                                     ConnectionState.waiting)
                                   return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
                                 if (snapshot.hasError)
-                                  return Text("i've a bad felling");
+                                  return Text("Une erreur s'est produite", style: GoogleFonts.montserrat(),);
                                 if (snapshot.data.isEmpty)
-                                  return Text("its empty out there");
+                                  return EmptyViewElse(text: "Vous n'avez aucun messages");
                                 return Scrollbar(
-                                                                  child: ListView.builder(
+                                      child: ListView.builder(
                                       reverse: true,
                                       shrinkWrap: true,
                                       controller: _controller,
