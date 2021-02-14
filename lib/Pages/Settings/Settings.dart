@@ -209,9 +209,21 @@ String capitalizeFirstOnly(String string){
         Divider(),
         SettingsItemWithLeftIcon(
           icon: Icons.credit_card_sharp,
-            buttonText: "Methodes de paiements",
+            buttonText: "Méthodes de paiements",
             onTap: () => Navigator.push(context,
                 CupertinoPageRoute(builder: (context) => PaymentMethodPage()))),
+
+            Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+          child: Text(
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+              style: GoogleFonts.montserrat(
+                  decoration: TextDecoration.none,
+                  color: Colors.black,
+                  fontSize: 10)),
+        )),
 
         SettingsItemWithLeftIcon(
           icon: Icons.account_balance_wallet_sharp,
@@ -219,12 +231,36 @@ String capitalizeFirstOnly(String string){
             onTap: () => Navigator.push(context,
                 CupertinoPageRoute(builder: (context) => BalancePage()))),
 
+        Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+          child: Text(
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+              style: GoogleFonts.montserrat(
+                  decoration: TextDecoration.none,
+                  color: Colors.black,
+                  fontSize: 10)),
+        )),
+
 
         SettingsItemWithLeftIcon(
           icon: Icons.account_balance,
             buttonText: "Comptes bancaires",
             onTap: () => Navigator.push(context,
                 CupertinoPageRoute(builder: (context) => IbanPage()))),
+
+                  Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+        child: Text(
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+            style: GoogleFonts.montserrat(
+                decoration: TextDecoration.none,
+                color: Colors.black,
+                fontSize: 10)),
+      )),
 
         SettingsItem(
             onTap: () {

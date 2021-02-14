@@ -338,8 +338,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                     orderProvider.deliveryDate.add(date);
                   },
                   leading: Icon(CupertinoIcons.calendar),
-                  title: Text("Date"),
-                  trailing: Text(Jiffy(snapshot.data).format("do MMMM yyyy [ À ] HH:mm")),
+                  title: Text(Jiffy(snapshot.data).format("do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat()),
                 );
               }),
 
@@ -479,9 +478,9 @@ class _FoodItemChildState extends State<FoodItemChild> {
                                      builder: (context) => ConfirmationDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", onAcceptTap: () async {
                                 if (snapshot.data != null) {
                                   _streamButtonController.isLoading();
-                                  final total = orderProvider.quantity.value * 15;
+                                  final total = orderProvider.quantity.value * int.parse(this.widget.publication.pricePerAll);
                                   final totalPlusFees =
-                                      total + this.percentage(20, total).toInt();
+                                      total + this.percentage(15, total).toInt();
                                   final order = await orderProvider.validate(
                                       databaseService,
                                       this.widget.publication,

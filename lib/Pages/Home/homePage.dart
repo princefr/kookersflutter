@@ -28,7 +28,7 @@ class HomeTopBar extends PreferredSize {
 
     return Container(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
     return Scaffold(
       appBar: HomeTopBar(
-        height: 144,
+        height: 116,
       ),
 
       floatingActionButton: FloatingActionButton(

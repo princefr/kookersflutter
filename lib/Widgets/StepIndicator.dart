@@ -17,56 +17,59 @@ class StepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 6,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // ignore: missing_return
-          Builder(builder: (ctx){
-            switch (this.isActive0) {
-              case true:
-                return Container(height: 4, width:70, child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)));
-              case false:
-                return Container(height: 4, width:70,  color: Colors.grey);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        height: 6,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // ignore: missing_return
+            Builder(builder: (ctx){
+              switch (this.isActive0) {
+                case true:
+                  return Container(height: 4, width:70, child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)));
+                case false:
+                  return Container(height: 4, width:70,  color: Colors.grey);
 
-            }
-          }),
+              }
+            }),
 
-                    // ignore: missing_return
-                    Builder(builder: (ctx){
-            switch (this.isActive1) {
-              case true:
-                return Container(height: 4, width:70, child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)));
-              case false:
-                return Container(height: 4, width: 70,  color: Colors.grey);
+                      // ignore: missing_return
+                      Builder(builder: (ctx){
+              switch (this.isActive1) {
+                case true:
+                  return Container(height: 4, width:70, child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)));
+                case false:
+                  return Container(height: 4, width: 70,  color: Colors.grey);
 
-            }
-          }),
+              }
+            }),
 
-                    // ignore: missing_return
-                    Builder(builder: (ctx){
-            switch (this.isActive2) {
-              case true:
-                return Container(height: 4, width:70, child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)));
-              case false:
-                return Container(height: 4, width: 70, color: Colors.grey);
+                      // ignore: missing_return
+                      Builder(builder: (ctx){
+              switch (this.isActive2) {
+                case true:
+                  return Container(height: 4, width:70, child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)));
+                case false:
+                  return Container(height: 4, width: 70, color: Colors.grey);
 
-            }
-          }),
+              }
+            }),
 
-                    // ignore: missing_return
-                    Builder(builder: (ctx){
-            switch (this.isActive3) {
-              case true:
-                return Container(height: 4, width:70, child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)));
-              case false:
-                return Container(height: 4, width: 70,  color: Colors.grey);
+                      // ignore: missing_return
+                      Builder(builder: (ctx){
+              switch (this.isActive3) {
+                case true:
+                  return Container(height: 4, width:70, child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)));
+                case false:
+                  return Container(height: 4, width: 70,  color: Colors.grey);
 
-            }
-          }),
+              }
+            }),
 
-      ])
+        ])
+      ),
     );
   }
 }

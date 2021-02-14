@@ -63,7 +63,8 @@ class MyApp extends StatelessWidget {
               RefreshLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate
+              GlobalCupertinoLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate
             ],
             supportedLocales: [
               const Locale('en'),
@@ -95,7 +96,7 @@ class AuthentificationnWrapper extends StatelessWidget {
       stream: authentificationService.authStateChanges,
       initialData: null,
       builder: (BuildContext ctx, AsyncSnapshot<User> snapshotc){
-        print(snapshotc.hasData);
+        if(snapshotc.connectionState == ConnectionState.waiting) return SizedBox();
         if(snapshotc.hasData){
           return FutureBuilder<Object>(
           future: Future.delayed(Duration(seconds: 3), () => databaseService.loadUserData()),
@@ -106,6 +107,7 @@ class AuthentificationnWrapper extends StatelessWidget {
           }
           );
         }
+        print("doesnt have data");
         return OnBoardingPager();
       },
     );

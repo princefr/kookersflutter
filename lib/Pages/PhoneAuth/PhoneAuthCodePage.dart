@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:kookers/Blocs/PhoneCodeBloc.dart';
 import 'package:kookers/Pages/Signup/SignupPage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
-import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:kookers/TabHome/TabHome.dart';
+import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,7 @@ class PhoneAuthCodePage extends StatefulWidget {
 }
 
 class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
+  
   final myController = TextEditingController();
 
   Future<UserDef> checkUserExist(String uid, GraphQLClient client) async {
@@ -124,6 +126,16 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
     });
   }
 
+
+  @override
+  void dispose() { 
+    this.bloc.dispose();
+    super.dispose();
+  }
+
+    StreamButtonController _streamButtonController = StreamButtonController();
+    PhoneCodeBloc bloc = PhoneCodeBloc();
+
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
@@ -150,6 +162,8 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                   maxLines: 5),
               SizedBox(height: 15),
               Divider(color: Colors.grey),
+
+
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Container(
@@ -157,20 +171,26 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.grey),
-                  child: TextField(
-                      controller: myController,
-                      decoration: InputDecoration(
-                        hintText: 'Renseignez votre code',
-                        fillColor: Colors.grey[200],
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                            width: 0,
-                            style: BorderStyle.none,
-                          ),
-                        ),
-                      )),
+
+                  child: StreamBuilder<Object>(
+                    stream: bloc.code$,
+                    builder: (context, snapshot) {
+                      return TextField(
+                          onChanged: bloc.code.add,
+                          decoration: InputDecoration(
+                            hintText: 'Renseignez votre code',
+                            fillColor: Colors.grey[200],
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                width: 0,
+                                style: BorderStyle.none,
+                              ),
+                            ),
+                          ));
+                    }
+                  ),
                 ),
               ),
               
@@ -186,19 +206,22 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
               Expanded(
                 child: SizedBox(),
               ),
-              TextButton(
-                  onPressed: () {
-                    authentificationService
-                        .signInWithVerificationID(
-                            widget.verificationId, myController.text)
-                        .then((connected) => {
-                              this
-                                  .checkUserExist(connected.user.uid, databaseService.client)
-                                  .then((user){
 
-                                    print("i got here");
 
-                                    if(user == null) {
+              StreamBuilder<String>(
+                      stream: bloc.code,
+                      builder: (ctx, snapshot) {
+                        return StreamButton(buttonColor: snapshot.data != null ? Colors.black : Colors.grey,
+                          buttonText: "Vérifier mon code",
+                          errorText: "Une erreur s'est produite, Veuillez reesayer",
+                          loadingText: "Vérification en cours",
+                          successText: "Vérification terminée",
+                          controller: _streamButtonController, onClick: () async {
+                            _streamButtonController.isLoading();
+                            if(snapshot.data != null) {
+                              authentificationService.signInWithVerificationID(widget.verificationId, bloc.code.value).then((connected) {
+                                this.checkUserExist(connected.user.uid, databaseService.client).then((user) {
+                                  if(user == null) {
                                                 Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
@@ -214,17 +237,13 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                                     builder: (context) =>
                                                         TabHome()));
                                     }
-                                    
-                                      
-                                      }).catchError((onError) {
-                                        print(onError);
-                                      })
-                            });
-                  },
-                  child: KookersButton(
-                      text: "Verifier le code",
-                      color: Colors.black,
-                      textcolor: Colors.white)),
+                                });
+                              });
+                          }
+                          });
+                      }
+                    ),
+
             ]),
           ),
         ),

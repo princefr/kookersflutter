@@ -175,8 +175,8 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
                       alignment: Alignment.topLeft,
                       child: Container(decoration: BoxDecoration(
                       color: Colors.red,
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))
-                    ),padding: const EdgeInsets.all(10.0), child: Text((this.distanceBetween(this.widget.publication.adress.location.latitude, this.widget.publication.adress.location.longitude, databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location.latitude, databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location.longitude).floor() / 1000).round().toString() + " " + "km", style: GoogleFonts.montserrat(color: Colors.white))),
+                      borderRadius: BorderRadius.all(Radius.circular(15.0))
+                    ),padding: const EdgeInsets.all(7.0), child: Text((this.distanceBetween(this.widget.publication.adress.location.latitude, this.widget.publication.adress.location.longitude, databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location.latitude, databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location.longitude).floor() / 1000).round().toString() + " " + "km", style: GoogleFonts.montserrat(color: Colors.white))),
                     ),
                   ),
 

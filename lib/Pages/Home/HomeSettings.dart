@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
-import 'package:kookers/Widgets/KookersButton.dart';
+import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:provider/provider.dart';
 
 
@@ -145,6 +145,8 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
       });
   }
 
+  StreamButtonController _streamButtonController = StreamButtonController();
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -283,19 +285,27 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                             decoration: TextDecoration.none,
                             color: Colors.black,
                             fontSize: 10))),
-                SizedBox(height: 60),
-                InkWell(
-                  onTap: () async {
-                    this.updateSettings(databaseService.client, firebaseUser.uid, snapshot.data.settings, databaseService).then((value) async {
-                      await databaseService.loadPublication();
-                      Navigator.pop(context);
-                    });
-                  },
-                  child: KookersButton(
-                      text: "Sauvegarder",
-                      color: Color(0xFFF95F5F),
-                      textcolor: Colors.white),
-                )
+
+
+                Expanded(child: SizedBox()),
+
+
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: StreamButton(buttonColor: Colors.black,
+                      buttonText: "Sauvegarder",
+                      errorText: "Une erreur s'est produite, Veuillez reesayer.",
+                      loadingText: "Sauvegarde en cours",
+                      successText: "Paramètres sauvegardés",
+                      controller: this._streamButtonController, onClick: () async {
+                        this._streamButtonController.isLoading();
+                        this.updateSettings(databaseService.client, firebaseUser.uid, snapshot.data.settings, databaseService).then((value) async {
+                        await databaseService.loadPublication();
+                        await this._streamButtonController.isSuccess();
+                        Navigator.pop(context);
+                      });
+                      }),
+                ),   
               ]),
             ),
           );

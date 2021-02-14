@@ -489,6 +489,7 @@ class _HomePublishState extends State<HomePublish> {
                                   });
                               }
                             ),
+                            
                             SizedBox(height: 30)
                       ],
                     ),
