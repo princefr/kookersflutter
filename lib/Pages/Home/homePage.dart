@@ -1,9 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/Home/FoodIemChild.dart';
 import 'package:kookers/Pages/Home/FoodItem.dart';
+import 'package:kookers/Pages/Home/Guidelines.dart';
 import 'package:kookers/Pages/Home/HomePublish.dart';
 import 'package:kookers/Pages/Home/HomeSearchPage.dart';
 import 'package:kookers/Pages/Home/HomeSettings.dart';
@@ -32,29 +33,23 @@ class HomeTopBar extends PreferredSize {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Container(
+                  height: 30,
+                  width: 30,
+                  child: SvgPicture.asset(
+                                'assets/logo/logo_white.svg',
+                                height: 30,
+                                width: 30,
+                              ),
+                ),
+
+                            SizedBox(width: 10),
                 Text("Kookers",
                     style: GoogleFonts.montserrat(
                         fontWeight: FontWeight.w900,
                         fontSize: 30,
                         color: Colors.black)),
-                StreamBuilder(
-                    stream: databaseService.user$,
-                    builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting)
-                        return CircularProgressIndicator();
-                      if (snapshot.hasError) return Text("i've a bad felling");
-                      if (!snapshot.hasData) return Text("its empty out there");
-                      return CircleAvatar(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.white,
-                        radius: 25,
-                        backgroundImage: CachedNetworkImageProvider(
-                          snapshot.data.photoUrl,
-                        ),
-                      );
-                    })
               ],
             ),
             Row(
@@ -141,14 +136,23 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       appBar: HomeTopBar(
         height: 144,
       ),
+
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color(0xFFF95F5F),
         onPressed: () {
-          showCupertinoModalBottomSheet(
-            expand: true,
-            context: context,
-            builder: (context) => HomePublish(),
-          );
+            if(databaseService.user.value.isSeller == false) {
+                showCupertinoModalBottomSheet(
+                  expand: true,
+                  context: context,
+                  builder: (context) => GuidelinesToSell(),
+                );
+            }else{
+              showCupertinoModalBottomSheet(
+                  expand: true,
+                  context: context,
+                  builder: (context) => HomePublish(),
+                );
+            }
         },
         child: Icon(CupertinoIcons.pencil, size: 34.0, color: Colors.white),
       ),

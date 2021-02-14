@@ -14,7 +14,6 @@ import 'package:kookers/Services/PublicationProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/InfoDialog.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
-import 'package:kookers/Widgets/Toogle.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
@@ -211,30 +210,6 @@ class _HomePublishState extends State<HomePublish> {
                               ),
                             )),
                             
-                            SizedBox(height: 30),
-
-                            Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text("TYPE",
-                                    style: GoogleFonts.montserrat(
-                                        decoration: TextDecoration.none,
-                                        color: Colors.black,
-                                        fontSize: 15))),
-                            SizedBox(height: 15),
-
-                            StreamBuilder<int>(
-                              stream: initialLabel.stream,
-                              builder: (context, snapshot) {
-                                return ToggleSwitch(
-                                  inactiveBgColor: Colors.grey[300],
-                                  activeBgColor: Color(0xFFF95F5F),
-                                  initialLabelIndex: initialLabel.value,
-                                  minWidth: MediaQuery.of(context).size.width,
-                                  labels: ['Vente', 'Don'],
-                                  onToggle: this.initialLabel.add,
-                                );
-                              }
-                            ),
 
                             SizedBox(height: 30),
                             Align(
@@ -347,55 +322,46 @@ class _HomePublishState extends State<HomePublish> {
                             ),
                             SizedBox(height: 30),
 
-                            
-
-
-                               StreamBuilder<int>(
-                                 stream: this.initialLabel.stream,
-                                 builder: (context, snapshot) {
-                                   return Visibility(
-                                        visible: snapshot.data == 0,
-                                        child: Column(
-                                          children: [
+                            Column(
+                                     children: [
                                 Align(
                                 alignment: Alignment.centerLeft,
                                 child: Text("PRIX",
                                     style: GoogleFonts.montserrat(
-                                        decoration: TextDecoration.none,
-                                        color: Colors.black,
-                                        fontSize: 15))),
+                                   decoration: TextDecoration.none,
+                                   color: Colors.black,
+                                   fontSize: 15))),
 
-                                         SizedBox(height: 10),
+                                    SizedBox(height: 10),
 
-                                            Padding(
+                                       Padding(
                                     padding:
-                                            const EdgeInsets.symmetric(horizontal: 5),
+                                       const EdgeInsets.symmetric(horizontal: 5),
                                     child: StreamBuilder<Object>(
                                       stream: pubprovider.priceall$,
                                       builder: (context, snapshot) {
-                                            return TextField(
-                                              keyboardType: TextInputType.number,
-                                              onChanged: pubprovider.priceall.add,
-                                              decoration: InputDecoration(
-                                              hintText: "Prix du plat",
-                                              fillColor: Colors.grey[200],
-                                              filled: true,
-                                              errorText: snapshot.error,
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.circular(10),
-                                                borderSide: BorderSide(
-                                                  width: 0,
-                                                  style: BorderStyle.none,
-                                                ),
-                                              ),
-                                            ));
+                                       return TextField(
+                                         keyboardType: TextInputType.number,
+                                         onChanged: pubprovider.priceall.add,
+                                         decoration: InputDecoration(
+                                         hintText: "Prix du plat",
+                                         fillColor: Colors.grey[200],
+                                         filled: true,
+                                         errorText: snapshot.error,
+                                         border: OutlineInputBorder(
+                                           borderRadius: BorderRadius.circular(10),
+                                           borderSide: BorderSide(
+                                             width: 0,
+                                             style: BorderStyle.none,
+                                           ),
+                                         ),
+                                       ));
                                       }
                                     ),
                                   ),
-                                          ],
-                                        ));
-                                 }
-                               ),
+                                     ],
+                                   ),
+    
 
                             SizedBox(height: 20),
                             Align(

@@ -94,7 +94,7 @@ class _HomeSearchPageState extends State<HomeSearchPage> with AutomaticKeepAlive
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
+    final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
 
       final firebaseUser = context.watch<User>();
 

@@ -150,42 +150,45 @@ class _TabHomeState extends State<TabHome>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: PageView(
-          controller: _controller,
-          onPageChanged: (value) {
-            this._selectedIndex.add(value);
-            this._controller.jumpToPage(value);
-          },
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            HomePage(),
-            OrdersPage(),
-            VendorPage(),
-            RoomsPage(),
-            Settings()
-          ],
+    return WillPopScope(
+        onWillPop: () async => false,
+          child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: PageView(
+            controller: _controller,
+            onPageChanged: (value) {
+              this._selectedIndex.add(value);
+              this._controller.jumpToPage(value);
+            },
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              HomePage(),
+              OrdersPage(),
+              VendorPage(),
+              RoomsPage(),
+              Settings()
+            ],
+          ),
         ),
+        bottomNavigationBar: new Theme(
+            data: Theme.of(context).copyWith(
+                // sets the background color of the `BottomNavigationBar`
+                canvasColor: Colors.white,
+                // sets the active color of the `BottomNavigationBar` if `Brightness` is light
+                primaryColor: Colors.white,
+                textTheme: Theme.of(context)
+                    .textTheme
+                    .copyWith(caption: new TextStyle(color: Colors.white))),
+            child: StreamBuilder<int>(
+                stream: _selectedIndex.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    return SizedBox();
+                  return BottomBar(
+                      onTap: _onItemTapped, selectedIndex: snapshot.data);
+                })),
       ),
-      bottomNavigationBar: new Theme(
-          data: Theme.of(context).copyWith(
-              // sets the background color of the `BottomNavigationBar`
-              canvasColor: Colors.white,
-              // sets the active color of the `BottomNavigationBar` if `Brightness` is light
-              primaryColor: Colors.white,
-              textTheme: Theme.of(context)
-                  .textTheme
-                  .copyWith(caption: new TextStyle(color: Colors.white))),
-          child: StreamBuilder<int>(
-              stream: _selectedIndex.stream,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting)
-                  return SizedBox();
-                return BottomBar(
-                    onTap: _onItemTapped, selectedIndex: snapshot.data);
-              })),
     );
   }
 

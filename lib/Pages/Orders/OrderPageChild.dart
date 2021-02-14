@@ -35,6 +35,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
   // ignore: close_sinks
   BehaviorSubject<Order> order = new BehaviorSubject<Order>();
 
+
   StreamSubscription<int> get notificationIncoming => this.order.where((event) => event.notificationBuyer > 0).map((event) => event.notificationBuyer).listen((event) => event);
 
   @override

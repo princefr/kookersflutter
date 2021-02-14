@@ -22,32 +22,106 @@ class PhoneAuthCodePage extends StatefulWidget {
 class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
   final myController = TextEditingController();
 
-  Future<QueryResult> checkUserExist(String uid, GraphQLClient client) async {
+  Future<UserDef> checkUserExist(String uid, GraphQLClient client) async {
     final QueryOptions _options = QueryOptions(documentNode: gql(r"""
           query GetIfUSerExist($uid: String!) {
               usersExist(firebase_uid: $uid){
-                _id
-                email
-                first_name
-                last_name
-                phonenumber
-                photoUrl
-                adresses {title, location {latitude, longitude}, is_chosed}
-                fcmToken
-                rating {rating_total, rating_count}
-                settings {
+              _id
+              email
+              first_name
+              last_name
+              phonenumber
+              customerId
+              country
+              currency
+              default_source
+              default_iban
+              stripe_account
+              is_seller
+              settings {
                   food_preferences
                   food_price_ranges
                   distance_from_seller
                   updatedAt
+              }
+
+              stripeAccount {
+                charges_enabled
+                payouts_enabled
+                requirements {
+                      currently_due
+                      eventually_due
+                      past_due
+                      pending_verification
+                      disabled_reason
+                      current_deadline
                 }
+              }
+
+              balance {
+                current_balance
+                pending_balance
+                currency
+              }
+
+              transactions {
+                    id
+                    object
+                    amount
+                    available_on
+                    created
+                    currency
+                    description
+                    fee
+                    net
+                    reporting_category
+                    type
+                    status
+              }
+
+              all_cards {
+                id
+                brand
+                country
+                customer
+                cvc_check
+                exp_month
+                exp_year
+                fingerprint
+                funding
+                last4
+              }
+
+              ibans {
+                    id
+                    object
+                    account_holder_name
+                    account_holder_type
+                    bank_name
+                    country
+                    currency
+                    last4
+              }
+
+              createdAt
+              photoUrl
+              updatedAt
+              adresses {title, location {latitude, longitude}, is_chosed}
+              fcmToken
               }
           }
       """), variables: <String, String>{
       "uid": uid,
     });
 
-    return await client.query(_options);
+    return await client.query(_options).then((kooker) {
+      if(kooker.data != null) {
+        final kookersUser = UserDef.fromJson(kooker.data["usersExist"]);
+        return kookersUser;
+      }
+      return null;
+
+    });
   }
 
   @override
@@ -122,28 +196,24 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                   .checkUserExist(connected.user.uid, databaseService.client)
                                   .then((user){
 
-                                      if(user.data != null){
-                                        if (user.data["usersExist"] == null)
-                                          {
-                                            Navigator.push(
+                                    print("i got here");
+
+                                    if(user == null) {
+                                                Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
                                                     builder: (context) =>
                                                         SignupPage(
                                                             user: connected
                                                                 .user)));
-                                          }
-                                        else
-                                          {
-                                            Navigator.push(
+                                    }else{
+                                      databaseService.user.add(user);
+                                    Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
                                                     builder: (context) =>
                                                         TabHome()));
-                                          }
-                                      }else{
-                                        print("arf");
-                                      }
+                                    }
                                     
                                       
                                       }).catchError((onError) {

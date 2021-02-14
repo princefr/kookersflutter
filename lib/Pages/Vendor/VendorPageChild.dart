@@ -153,26 +153,9 @@ final MutationOptions _options  = MutationOptions(
         appBar: TopBarWitBackNav(
                           title: this.widget.vendor.deliveryDay,
                           rightIcon: CupertinoIcons.chat_bubble,
-                          isRightIcon: true,
-                          height: 54,
-                          onTapRight: () {
-                            setState((){
-                              this.isLoading = true;
-                            });
-                            this.createRoom(databaseService.client, this.widget.vendor.buyerID, databaseService.user.value.id).then((result) async {
-                              await databaseService.loadrooms();
-                              setState(() {
-                                this.isLoading = false;
-                              });
-                              Navigator.push(context,
-                            CupertinoPageRoute(
-                              builder: (context) => ChatPage(room: result, uid: databaseService.user.value.id)));
-                            }).catchError((onError) {
-                              setState(() {
-                                this.isLoading = false;
-                              });
-                            });
-                          }),
+                          isRightIcon: false,
+                          height: 54
+                          ),
         body: Center(
           child: ListView(
             children: [
@@ -280,6 +263,24 @@ final MutationOptions _options  = MutationOptions(
              SizedBox(height:30),
              
               ListTile(
+                    onTap: (){
+                            setState((){
+                              this.isLoading = true;
+                            });
+                            this.createRoom(databaseService.client, this.widget.vendor.buyerID, databaseService.user.value.id).then((result) async {
+                              await databaseService.loadrooms();
+                              setState(() {
+                                this.isLoading = false;
+                              });
+                              Navigator.push(context,
+                            CupertinoPageRoute(
+                              builder: (context) => ChatPage(room: result, uid: databaseService.user.value.id)));
+                            }).catchError((onError) {
+                              setState(() {
+                                this.isLoading = false;
+                              });
+                            });
+                },
                 leading: CircleAvatar(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.white,
@@ -289,6 +290,7 @@ final MutationOptions _options  = MutationOptions(
               ),
 
               title: Text(this.widget.vendor.buyer.firstName + " " + this.widget.vendor.buyer.lastName),
+              trailing: Icon(CupertinoIcons.chat_bubble),
 
               ),
 

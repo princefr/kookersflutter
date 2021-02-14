@@ -22,6 +22,7 @@ environment:
 
 dependency_overrides:
    intl: ^0.17.0-nullsafety.2
+   rxdart: ^0.25.0
 
 dependencies:
   flutter:

@@ -46,7 +46,7 @@ class BottomBar extends StatelessWidget {
             
     return BottomNavigationBar(
             backgroundColor: Colors.white,
-            showUnselectedLabels: false,
+            showUnselectedLabels: true,
             showSelectedLabels: true,
             selectedItemColor: Color(0xFFF95F5F),
             unselectedItemColor: Colors.black,
@@ -55,9 +55,9 @@ class BottomBar extends StatelessWidget {
             currentIndex: selectedIndex,
             onTap: onTap,
             items: [
-              _icons(CupertinoIcons.house_alt, "Accueuil"),
-              _iconWithBadge(CupertinoIcons.cart, "Achats", databaseService.buyingNotification),
-              _iconWithBadge(CupertinoIcons.arrow_down_circle_fill, "Ventes", databaseService.sellingNotificationCount),
+              _icons(CupertinoIcons.house_alt, "Accueil"),
+              _iconWithBadge(Icons.shopping_bag, "Achats", databaseService.buyingNotification),
+              _iconWithBadge(Icons.store, "Ventes", databaseService.sellingNotificationCount),
               _iconWithBadge(CupertinoIcons.chat_bubble, "Messages",  databaseService.messageNotificationCount),
               _icons(CupertinoIcons.gear_alt, "Réglages"),
             ],

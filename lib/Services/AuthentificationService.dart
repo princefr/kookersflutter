@@ -13,7 +13,9 @@ class AuthentificationService {
 
 
   Future<void> signOut() async {
+
     await FirebaseAuth.instance.signOut();
+
   }
 
   Future<Null> verifyPhone({String phone,
@@ -30,7 +32,6 @@ class AuthentificationService {
         error(e);
      },
      codeSent: (String verificationId, int resendToken) {
-       print("code has been sent");
       codeisSent(verificationId);
 
      },

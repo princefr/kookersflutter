@@ -88,24 +88,25 @@ class AuthentificationnWrapper extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    final authentificationService =  Provider.of<AuthentificationService>(context, listen: true);
+    final authentificationService =  Provider.of<AuthentificationService>(context, listen: false);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
 
     return StreamBuilder<User>(
       stream: authentificationService.authStateChanges,
       initialData: null,
       builder: (BuildContext ctx, AsyncSnapshot<User> snapshotc){
-        if(snapshotc.connectionState == ConnectionState.waiting) return SplashScreen();
-        if(snapshotc.data == null) return OnBoardingPager();
-        databaseService.firebaseUser = snapshotc.data;
-        return FutureBuilder<Object>(
+        print(snapshotc.hasData);
+        if(snapshotc.hasData){
+          return FutureBuilder<Object>(
           future: Future.delayed(Duration(seconds: 3), () => databaseService.loadUserData()),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting) return SplashScreen();
             if(snapshot.data == null) return OnBoardingPager();
             return TabHome(user: snapshotc.data);
           }
-        );
+          );
+        }
+        return OnBoardingPager();
       },
     );
   }

@@ -249,9 +249,9 @@ String capitalizeFirstOnly(String string){
           launch("https://getkookers.com/guidelines");
         }, buttonText: "Règles de la communauté"),
 
-        SettingsItem(onTap: () {
+        SettingsItem(onTap: () async {
             print("i'm signign out");
-            authentificationService.signOut();
+           await authentificationService.signOut();
         }, buttonText: "Se deconnecter"),
       ]),
     );

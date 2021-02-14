@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Pages/PhoneAuth/PhoneAuthCodePage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
@@ -33,35 +32,6 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
     
   }
 
-  Future<void> withdrawMoney(GraphQLClient client, String accountId, String amount, String currency) async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
-          query MakePayout($account_id: String!, $amount: String!, $currency: String!) {
-              makePayout(account_id: $account_id, amount: $amount, currency: $currency){
-                id
-          }
-      """), variables: <String, String>{
-      "account_id": accountId,
-      "amount": amount,
-      "currency": currency
-    });
-
-    return await client.mutate(_options).then((value) => value.data["makePayout"]);
-  }
-
-
-
-  Future<void> loadAllWithdraws(GraphQLClient client, accountId) async{
-        final QueryOptions _options = QueryOptions(documentNode: gql(r"""
-          query GetPayoutList($accountId: String!) {
-              getPayoutList(accountId: $accountId){
-                i
-          }
-      """), variables: <String, String>{
-      "account_id": accountId,
-    });
-    
-    return await client.query(_options).then((value) => value.data["getPayoutList"]);
-  }
 
   bool isValidPhoneNumber(String string) {
     // Null or empty string is invalid phone number

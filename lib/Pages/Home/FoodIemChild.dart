@@ -80,7 +80,6 @@ class Stepper extends StatefulWidget {
 
 
 class _StepperState extends State<Stepper> {
-
   @override
   void dispose() { 
     super.dispose();
@@ -171,8 +170,16 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
   final stripeService = StripeServices();
 
-  double percentage(percent, total) {
+
+    double percentage(percent, total) {
     return (percent / 100) * total;
+
+    }
+  
+
+  double percentage2(x, percent, total) {
+    print("ok i 'm starting");
+    return ((percent / 100) * total) * x;
   }
 
 
@@ -191,7 +198,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
   OrderProvider orderProvider =  OrderProvider();
   BehaviorSubject<int> serviceFees = BehaviorSubject<int>.seeded(15);
-  Stream<double> get feePaid => CombineLatestStream([orderProvider.quantity, serviceFees], (values) => values[0] * percentage(int.parse(this.widget.publication.pricePerAll), int.parse(values[0]))).asBroadcastStream();
+  Stream<double> get feePaid => CombineLatestStream([orderProvider.quantity$, serviceFees.stream], (values) => percentage2(values[0], int.parse(this.widget.publication.pricePerAll), int.parse(values[0]))).asBroadcastStream();
   Stream<double> get total => CombineLatestStream([orderProvider.quantity$, feePaid], (values) => values[0] * int.parse(this.widget.publication.pricePerAll) + values[1]).asBroadcastStream();
 
 
@@ -417,14 +424,19 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
           SizedBox(height: 15),
 
-          ListTile(
-              leading: InkWell(onTap: (){
-                              showDialog(context: context,
-                                     builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
-                            }, child: Icon(CupertinoIcons.info_circle)),
-              title : Text("Frais de service"),
-              trailing: Text("3%")
-            ),
+          StreamBuilder<double>(
+            stream: this.feePaid,
+            builder: (ctx, snapshot) {
+              return ListTile(
+                  leading: InkWell(onTap: (){
+                                  showDialog(context: context,
+                                         builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
+                                }, child: Icon(CupertinoIcons.info_circle)),
+                  title : Text("Frais de service"),
+                  trailing: snapshot.data == null ? SizedBox() : Text(snapshot.data.toString())
+                );
+            }
+          ),
 
           SizedBox(
             height: 30,

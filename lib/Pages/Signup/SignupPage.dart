@@ -55,6 +55,7 @@ class _SignupPageState extends State<SignupPage> {
               default_source
               default_iban
               stripe_account
+              is_seller
               settings {
                   food_preferences
                   food_price_ranges
@@ -125,7 +126,6 @@ class _SignupPageState extends State<SignupPage> {
               updatedAt
               adresses {title, location {latitude, longitude}, is_chosed}
               fcmToken
-              rating {rating_total, rating_count}
                 }
             }
         """),
@@ -470,7 +470,7 @@ class _SignupPageState extends State<SignupPage> {
                                           final notifID = await notificationService.notificationID();
                                           SignupInformations infos = signupBloc.validate();
                                           this.createUser(this.widget.user.uid, databaseService.client, infos.firstName, infos.lastName, infos.email, this.widget.user.phoneNumber, notifID, this.photoUrl, infos.adress, phoneAuthBloc.userCurrency.value, phoneAuthBloc.userCountry.value, infos.birthDate).then((kooker) async {
-                                           databaseService.user.sink.add(kooker);
+                                           databaseService.user.add(kooker);
                                            await  _streamButtonController.isSuccess();
                                             Navigator.push(context,CupertinoPageRoute(
                                                                               builder: (context) =>
