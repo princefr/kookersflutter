@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/Orders/OrderPageChild.dart';
 import 'package:kookers/Services/CurrencyService.dart';
+import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/StatusChip.dart';
 
 
@@ -64,8 +65,12 @@ class Order {
         String totalWithFees;
         String fees;
         Seller seller;
+        Adress adress;
+        String createdAt;
+        String updatedAt;
+        String shortId;
         Order({this.productId, this.stripeTransactionId, this.orderState, this.publication, this.deliveryDay,
-         this.seller, this.currency, this.id, this.quantity, this.sellerId, this.totalPrice, this.notificationBuyer, this.totalWithFees, this.fees});
+         this.seller, this.currency, this.id, this.quantity, this.sellerId, this.totalPrice, this.notificationBuyer, this.totalWithFees, this.fees, this.adress, this.createdAt, this.updatedAt, this.shortId});
 
         static Order fromJson(Map<String, dynamic> map) => Order(
           productId: map["productId"],
@@ -81,7 +86,11 @@ class Order {
           totalPrice: map["total_price"],
           notificationBuyer: map["notificationBuyer"],
           totalWithFees: map["total_with_fees"],
-          fees: map["fees"]
+          fees: map["fees"],
+          adress: Adress.fromJsonOne(map["adress"]),
+          createdAt: map["createdAt"],
+          updatedAt: map["updatedAt"],
+          shortId: map["shortId"]
           
         );
 
@@ -190,7 +199,7 @@ class OrderItem extends StatelessWidget {
                 ]
               ),
             ),
-            trailing: Text(this.order.totalWithFees + CurrencyService.getCurrencySymbol(this.order.currency)),
+            trailing: Text(this.order.totalWithFees + " " + CurrencyService.getCurrencySymbol(this.order.currency), style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, color: Colors.grey),),
           ),
         ),
       )

@@ -34,6 +34,13 @@ class Adress {
   static List<Adress> allAdress;
   Adress({this.title,  this.location, this.isChosed});
 
+
+  static Adress fromJsonOne(Map<String, dynamic> map) => Adress(
+    title: map['title'],
+    location: Location(latitude: map["location"]["latitude"], longitude: map["location"]["longitude"]),
+  );
+  
+
   static List<Adress> fromJson(List<Object> map) {
     List<Adress> adresses = [];
   
@@ -275,10 +282,14 @@ class OrderVendor {
   PublicationVendor publication;
   String stripeTransactionId;
   BuyerVendor buyer;
+  Adress adress;
+  String createdAt;
+  String updatedAt;
+  String shortId;
 
   OrderVendor({@required this.productId, @required this.quantity, @required this.totalPrice,
    @required this.buyerID, @required this.orderState, @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency,
-    this.publication, this.buyer, this.id, this.stripeTransactionId,  this.notificationSeller});
+    this.publication, this.buyer, this.id, this.stripeTransactionId,  this.notificationSeller, this.adress, this.createdAt, this.updatedAt, this.shortId});
 
   static OrderVendor fromJson(Map<String, dynamic> data) => OrderVendor(
     productId: data["productId"],
@@ -295,7 +306,11 @@ class OrderVendor {
     publication: PublicationVendor.fromJson(data["publication"]),
     buyer: BuyerVendor.fromJson(data["buyer"]),
     id: data["_id"],
-    notificationSeller: data["notificationSeller"]
+    notificationSeller: data["notificationSeller"],
+    adress: Adress.fromJsonOne(data["adress"]),
+    createdAt: data["createdAt"],
+    updatedAt: data["updatedAt"],
+    shortId: data["shortId"]
   );
 
 
@@ -384,9 +399,10 @@ class PublicationHome {
   SellerDef seller;
   List<String> preferences;
   RatingPublication rating;
+  String currency;
   
 
-  PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll,  this.photoUrls, this.adress, this.seller, this.preferences, this.rating});
+  PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll,  this.photoUrls, this.adress, this.seller, this.preferences, this.rating, this.currency});
 
   double getRating(){
     if((this.rating.ratingTotal / this.rating.ratingCount).isNaN) return 0;
@@ -405,6 +421,7 @@ class PublicationHome {
     seller: SellerDef.fromJson(map["seller"]),
     preferences: List<String>.from(map["food_preferences"]),
     rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString())),
+    currency: map["currency"]
   );
 
   static List<PublicationHome> fromJsonToList(List<Object> map) {
@@ -1003,8 +1020,18 @@ Future<List<Order>>  loadbuyerOrders() {
                             total_price
                             notificationBuyer
                             fees
+                            createdAt
+                            updatedAt
                             total_with_fees
                             currency
+                            shortId
+                            adress {
+                                  title
+                                  location {
+                                    latitude
+                                    longitude
+                                  }
+                                }
                             
                             publication {
                                  _id
@@ -1049,6 +1076,7 @@ Future<List<Order>>  loadbuyerOrders() {
                                 quantity
                                 total_price
                                 createdAt
+                                updatedAt
                                 deliveryDay
                                 buyerID
                                 sellerId
@@ -1056,6 +1084,14 @@ Future<List<Order>>  loadbuyerOrders() {
                                 notificationSeller
                                 fees
                                 total_with_fees
+                                shortId
+                                adress {
+                                  title
+                                  location {
+                                    latitude
+                                    longitude
+                                  }
+                                }
 
                                 buyer {
                                   _id
@@ -1388,6 +1424,7 @@ Future<List<Order>>  loadbuyerOrders() {
                   price_all
                   photoUrls
                   createdAt
+                  currency
 
                   food_preferences
 

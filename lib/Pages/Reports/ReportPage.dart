@@ -131,7 +131,7 @@ class _ReportPageState extends State<ReportPage> {
                   Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                      "Définissez le type de signalement que vous souhaitez effectuer.",
                       style: GoogleFonts.montserrat(
                           decoration: TextDecoration.none,
                           color: Colors.black,
@@ -167,7 +167,7 @@ class _ReportPageState extends State<ReportPage> {
                   Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+                      "Ajoutez une description à votre signalement pour nous aider à traiter plus efficacement la requête envoyée.",
                       style: GoogleFonts.montserrat(
                           decoration: TextDecoration.none,
                           color: Colors.black,

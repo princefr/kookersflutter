@@ -142,12 +142,12 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
                                         _streamButtonController.isLoading();
                                         RatingInput rating = RatingInput(comment: comment.value, createdAt: DateTime.now().toIso8601String() , orderId: this.widget.order.id, publicationId: this.widget.order.publication.id, rate: initialRate.value.toString(), whoRate: databaseService.user.value.id);
                                         this.rateFood(databaseService.client, rating).then((value){
-                                          _streamButtonController.isSuccess().then((value){
+                                          _streamButtonController.isSuccess().then((value) async {
+                                            await _streamButtonController.isSuccess();
                                             Navigator.pop(context);
                                           });
                                           
                                         }).catchError((onError) {
-                                          print(onError);
                                           _streamButtonController.isError();
                                         });
                                         

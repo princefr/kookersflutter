@@ -8,6 +8,7 @@ import 'package:kookers/Pages/Home/HomeSearchPage.dart';
 import 'package:kookers/Pages/Home/PaymentConfirmation.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/Reports/ReportPage.dart';
+import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/OrderProvider.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
@@ -252,7 +253,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
               Expanded(
                   child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(this.widget.publication.pricePerAll,
+                child: Text(this.widget.publication.pricePerAll + " " + CurrencyService.getCurrencySymbol(this.widget.publication.currency),
                     style: GoogleFonts.montserrat(
                         fontSize: 26, color: Colors.grey)),
               )),

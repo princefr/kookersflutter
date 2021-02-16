@@ -55,25 +55,88 @@ class _HomeSearchPageState extends State<HomeSearchPage> with AutomaticKeepAlive
     final MutationOptions _options = MutationOptions(documentNode: gql(r"""
               mutation UpdateUserAdresses($userID: String!, $adresses: [AdressInput]!) {
                 updateUserAdresses(userID: $userID, adresses: $adresses){
-                _id
-                firebaseUID
-                email
-                first_name
-                last_name
-                phonenumber
-                settings {
-                    food_preferences
-                    food_price_ranges
-                    distance_from_seller
-                    updatedAt
-                }
+              _id
+              email
+              first_name
+              last_name
+              is_seller
+              phonenumber
+              customerId
+              country
+              currency
+              default_source
+              default_iban
+              stripe_account
+              settings {
+                  food_preferences
+                  food_price_ranges
+                  distance_from_seller
+                  updatedAt
+              }
 
-                createdAt
-                photoUrl
-                updatedAt
-                adresses {title, location {latitude, longitude}, is_chosed}
-                fcmToken
-                rating {rating_total, rating_count}
+              stripeAccount {
+                charges_enabled
+                payouts_enabled
+                requirements {
+                      currently_due
+                      eventually_due
+                      past_due
+                      pending_verification
+                      disabled_reason
+                      current_deadline
+                }
+              }
+
+              balance {
+                current_balance
+                pending_balance
+                currency
+              }
+
+              transactions {
+                    id
+                    object
+                    amount
+                    available_on
+                    created
+                    currency
+                    description
+                    fee
+                    net
+                    reporting_category
+                    type
+                    status
+              }
+
+              all_cards {
+                id
+                brand
+                country
+                customer
+                cvc_check
+                exp_month
+                exp_year
+                fingerprint
+                funding
+                last4
+              }
+
+              ibans {
+                    id
+                    object
+                    account_holder_name
+                    account_holder_type
+                    bank_name
+                    country
+                    currency
+                    last4
+              }
+
+              createdAt
+              photoUrl
+              updatedAt
+              adresses {title, location {latitude, longitude}, is_chosed}
+              fcmToken
                   }
               }
           """), variables: <String, dynamic>{

@@ -38,7 +38,7 @@ class _OrdersPageState extends State<OrdersPage>
       color: Colors.white,
       child: Column(
         children: [
-          PageTitle(title: "Mes achats"),
+          PageTitle(title: "Achats"),
           Divider(),
           Expanded(
             child: StreamBuilder<List<Order>>(

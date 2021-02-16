@@ -169,6 +169,7 @@ class _VendorPageState extends State<VendorPage>
     return Container(
         child: Column(children: [
       PageTitle(title: "Ventes"),
+      Divider(),
       SizedBox(height: 20),
 
       StreamBuilder<int>(

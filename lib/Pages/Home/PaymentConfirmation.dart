@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
 import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
+import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StripeServices.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
@@ -77,13 +78,13 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
               ListTile(
                 leading: Text("x" +this.widget.order.quantity.toString(), style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),
                 title: Text(this.widget.order.title, style: GoogleFonts.montserrat()),
-                trailing: Text(this.widget.order.totalPrice + " " + "€" , style: GoogleFonts.montserrat(fontSize: 20)),
+                trailing: Text(this.widget.order.totalPrice + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
               ListTile(
                 leading: Icon(CupertinoIcons.exclamationmark_circle),
                 title: Text("Frais de service", style: GoogleFonts.montserrat()),
-                trailing: Text(this.widget.order.fees + " " + "€" , style: GoogleFonts.montserrat(fontSize: 20)),
+                trailing: Text(this.widget.order.fees + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
                         Padding(
@@ -100,7 +101,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
 
               ListTile(
                 leading: Text("Total", style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold),),
-                trailing: Text(this.widget.order.totalWithFees + " " + "€", style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),
+                trailing: Text(this.widget.order.totalWithFees + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency), style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),
               ),
 
 

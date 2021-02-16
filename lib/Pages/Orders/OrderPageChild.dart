@@ -159,7 +159,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
 
     return Scaffold(
       appBar: TopBarWitBackNav(
-          title: this.widget.order.publication.title,
+          title: "ref:" + " " +this.widget.order.shortId,
           rightIcon: CupertinoIcons.exclamationmark_circle_fill,
           isRightIcon: true,
           height: 54,
@@ -179,7 +179,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Flexible(child: SizedBox()),
+                      Expanded(child: SizedBox(),),
                       StreamBuilder<Order>(
               stream: this.order.stream,
               builder: (context, snapshot) {
@@ -192,7 +192,13 @@ class _OrderPageChildState extends State<OrderPageChild> {
                 ),
 
 
-            SizedBox(height: 10),
+              SizedBox(height: 10),
+
+              ListTile(
+                leading: Icon(CupertinoIcons.location),
+                title: Text(this.widget.order.adress.title, style: GoogleFonts.montserrat()),
+                
+              ),
 
               ListTile(
                 leading: Text("x" + this.widget.order.quantity.toString(), style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),

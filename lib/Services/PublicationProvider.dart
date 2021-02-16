@@ -23,8 +23,9 @@ class Publication {
   String pricePerPerson;
   String sellerId;
   String geohash;
+  String currency;
 
-  Publication({@required this.photoUrls, @required this.type, @required this.foodPreferences, @required this.adress, @required this.name, @required this.description, @required this.pricePerPerson,  @required this.sellerId, @required this.geohash});
+  Publication({@required this.photoUrls, @required this.type, @required this.foodPreferences, @required this.adress, @required this.name, @required this.description, @required this.pricePerPerson,  @required this.sellerId, @required this.geohash, @required this.currency});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -37,6 +38,7 @@ class Publication {
     data["sellerId"] = this.sellerId;
     data["geohash"] = this.geohash;
     data["photoUrls"]=  this.photoUrls;
+    data["currency"] = this.currency;
     return data;
   }
 
@@ -118,7 +120,8 @@ class PublicationProvider  with PublicationValidation {
     final photosUrls = [url1, url2, url3];
     Adress adress = database.user.value.adresses.firstWhere((element) => element.isChosed == true);
     String geohash = geoHasher.encode(adress.location.longitude, adress.location.latitude);
-    Publication publication = Publication(photoUrls : photosUrls, type: type, foodPreferences : pricePrefs.value, adress: adress, name: this.name.value, description : this.description.value, pricePerPerson : this.priceall.value,  sellerId: database.user.value.id, geohash: geohash);
+    Publication publication = Publication(photoUrls : photosUrls, type: type, foodPreferences : pricePrefs.value, adress: adress,
+     name: this.name.value, description : this.description.value, pricePerPerson : this.priceall.value,  sellerId: database.user.value.id, geohash: geohash, currency: database.user.value.currency);
     return publication;
 
   }

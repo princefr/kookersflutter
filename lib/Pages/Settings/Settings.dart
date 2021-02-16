@@ -218,7 +218,7 @@ String capitalizeFirstOnly(String string){
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
           child: Text(
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+              "Regroupe toutes les cartes de crédit ajoutées et utilisées pour payer dans l’application kookers.",
               style: GoogleFonts.montserrat(
                   decoration: TextDecoration.none,
                   color: Colors.black,
@@ -236,7 +236,7 @@ String capitalizeFirstOnly(String string){
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
           child: Text(
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+              "Regroupe le montant de votre portefeuille et les transactions qui y sont associées. Quand vous vendez sur kookers l’argent arrive d’abord dans votre portefeuille avant de pouvoir être retirer sur un compte en banque.",
               style: GoogleFonts.montserrat(
                   decoration: TextDecoration.none,
                   color: Colors.black,
@@ -255,7 +255,7 @@ String capitalizeFirstOnly(String string){
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
         child: Text(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
+            "Regroupe tous les comptes bancaires utilisés pour retirer l’argent de votre portefeuille. Vos ibans sont uniquement utilisés à cet effet, retirer l’argent de votre portefeuille.",
             style: GoogleFonts.montserrat(
                 decoration: TextDecoration.none,
                 color: Colors.black,

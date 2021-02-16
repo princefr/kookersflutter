@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:provider/provider.dart';
 
@@ -227,7 +228,7 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
 
 
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(this.widget.publication.pricePerAll, style: GoogleFonts.montserrat(color: Colors.grey, fontSize: 20))
+                Text(this.widget.publication.pricePerAll + " " + CurrencyService.getCurrencySymbol(this.widget.publication.currency), style: GoogleFonts.montserrat(color: Colors.grey, fontSize: 20))
               ],),
 
               SizedBox(height: 10),
