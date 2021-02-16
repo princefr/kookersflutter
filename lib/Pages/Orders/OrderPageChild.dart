@@ -13,7 +13,6 @@ import 'package:kookers/Pages/Ratings/RatePlate.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:kookers/Widgets/StatusChip.dart';
-import 'package:kookers/Widgets/StepIndicator.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:kookers/Pages/Reports/ReportPage.dart';
@@ -34,11 +33,11 @@ class _OrderPageChildState extends State<OrderPageChild> {
   // ignore: close_sinks
   BehaviorSubject<Order> order = new BehaviorSubject<Order>();
 
-  StreamSubscription<int> get notificationIncoming => this
-      .order
-      .where((event) => event.notificationBuyer > 0)
-      .map((event) => event.notificationBuyer)
-      .listen((event) => event);
+  double percentage(percent, total) {
+    return ((percent/ 100) * total);
+  }
+
+  StreamSubscription<int> get notificationIncoming => this.order.where((event) => event.notificationBuyer > 0).map((event) => event.notificationBuyer).listen((event) => event);
 
   @override
   void initState() {
@@ -47,11 +46,10 @@ class _OrderPageChildState extends State<OrderPageChild> {
           Provider.of<DatabaseProviderService>(context, listen: false);
       this.orderSubscription =
           databaseService.getOrderBuyer(this.widget.order.id, this.order);
-      notificationIncoming.onData((data) {
-        databaseService
-            .cleanNotificationBuyer(this.widget.order.id)
-            .then((value) => databaseService.loadbuyerOrders());
-      });
+          notificationIncoming.onData((data) {
+            databaseService.cleanNotificationBuyer(this.widget.order.id).then((value) => databaseService.loadbuyerOrders());
+          });
+          
     });
     super.initState();
   }
@@ -159,7 +157,6 @@ class _OrderPageChildState extends State<OrderPageChild> {
         Provider.of<DatabaseProviderService>(context, listen: false);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: TopBarWitBackNav(
           title: this.widget.order.publication.title,
           rightIcon: CupertinoIcons.exclamationmark_circle_fill,
@@ -174,243 +171,228 @@ class _OrderPageChildState extends State<OrderPageChild> {
                   seller: this.widget.order.seller.id),
             );
           }),
-      body: ListView(children: [
-        SizedBox(height: 10),
+      body: Container(
+        child: ListView(children: [
+               Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(child: SizedBox()),
+                      StreamBuilder<Order>(
+              stream: this.order.stream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  return Text("nope");
+                return StatusChip(state: snapshot.data.orderState);
+              }),
+                    ],
+                  ),
+                ),
 
-        ListTile(
-      contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0, left: 15, right: 15),
-      leading: Text(this.widget.order.totalPrice + " " + "€",
-                style: GoogleFonts.montserrat(
-                    fontSize: 20, color: Colors.grey)),
-      
-      trailing: Text(
-              this.widget.order.quantity,
-              style: GoogleFonts.montserrat(fontSize: 20, color: Colors.grey),
+
+            SizedBox(height: 10),
+
+              ListTile(
+                leading: Text("x" + this.widget.order.quantity.toString(), style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),
+                title: Text(this.widget.order.publication.title, style: GoogleFonts.montserrat()),
+                trailing: Text(this.widget.order.totalPrice , style: GoogleFonts.montserrat(fontSize: 20)),
+              ),
+
+              ListTile(
+                leading: Icon(CupertinoIcons.exclamationmark_circle),
+                title: Text("Frais de service", style: GoogleFonts.montserrat()),
+                trailing: Text(this.widget.order.fees , style: GoogleFonts.montserrat(fontSize: 20)),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                        "Si vous commandez le jour même , l'application prévoit 3 heures de délai pour pouvoir laisser du temps au chef d'acheter des ingrédients frais et de le cuisiner sans stress.",
+                        style: GoogleFonts.montserrat(
+                            decoration: TextDecoration.none,
+                            color: Colors.black,
+                            fontSize: 10))),
+              ),
+
+              SizedBox(height: 10),
+
+            ListTile(
+        leading: Icon(CupertinoIcons.calendar),
+        title: Text(Jiffy(this.widget.order.deliveryDay).format("do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat(),),
             ),
-                
-        ),
 
-        ListTile(
-      contentPadding: EdgeInsets.only(top: 0.0, bottom: 0.0, left: 15),
-      leading: Icon(CupertinoIcons.calendar),
-      title: Text(
-        Jiffy(this.widget.order.deliveryDay)
-            .format("do MMMM yyyy [ À ] HH:mm"),
-        style: GoogleFonts.montserrat(),
+              ListTile(
+                leading: Text("Total Payé: ", style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold)),
+                trailing: Text(this.widget.order.totalWithFees, style: GoogleFonts.montserrat(fontSize: 24, color: Colors.green)),
+              ),
+
+              Divider(),
+
+            ListTile(
+          onTap: () {
+            this
+                .createRoom(
+                    databaseService.client,
+                    this.widget.order.sellerId,
+                    databaseService.user.value.id)
+                .then((result) async {
+              await databaseService.loadrooms();
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) => ChatPage(
+                          room: result,
+                          uid: databaseService.user.value.id)));
+            });
+          },
+          leading: CircleAvatar(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.white,
+            radius: 15,
+            backgroundImage: CachedNetworkImageProvider(
+                this.widget.order.seller.photoUrl),
+          ),
+          trailing: Icon(CupertinoIcons.chat_bubble),
+          title: Text(this.widget.order.seller.firstName +
+              " " +
+              this.widget.order.seller.lastName)),
+
+
+            SizedBox(height: 30),
+            StreamBuilder<Order>(
+          stream: this.order,
+          builder: (context, snapshot) {
+            return Builder(
+              // ignore: missing_return
+              builder: (context) {
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  return LinearProgressIndicator(
+                      backgroundColor: Colors.black,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.white));
+                if (snapshot.hasError) return Text("i've a bad felling");
+                if (snapshot.data == null)
+                  return Text("its empty out there");
+                switch (snapshot.data.orderState) {
+                  case OrderState.ACCEPTED:
+                    return Container(
+                        child: Column(children: [
+                      StreamButton(
+                          buttonColor: Color(0xFFF95F5F),
+                          buttonText: "Valider la reception",
+                          errorText: "Une erreur s'est produite",
+                          loadingText: "Validation en cours",
+                          successText: "Commande validée",
+                          controller: _streamButtonController,
+                          onClick: () async {
+                            _streamButtonController.isLoading();
+                            this
+                                .doneOrder(databaseService.client,
+                                    this.widget.order)
+                                .then((result) async {
+                              _streamButtonController.isSuccess();
+                              databaseService.loadbuyerOrders();
+                            }).catchError((err) {
+                              _streamButtonController.isError();
+                            });
+                          }),
+                      SizedBox(height: 30),
+                      StreamButton(
+                          buttonColor: Colors.red,
+                          buttonText: "Annuler la commande",
+                          errorText: "Une erreur s'est produite",
+                          loadingText: "Annulation en cours",
+                          successText: "Commande annulée",
+                          controller: _streamButtonController2,
+                          onClick: () async {
+                            _streamButtonController2.isLoading();
+                            this
+                                .cancelOrder(databaseService.client,
+                                    this.widget.order)
+                                .then((result) async {
+                              _streamButtonController2.isSuccess();
+                              databaseService.loadbuyerOrders();
+                            }).catchError((onError) {
+                              _streamButtonController2.isError();
+                            });
+                          }),
+                    ]));
+                    break;
+                  case OrderState.CANCELLED:
+                    return Text("La commande a été annulé",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 17
+                          ));
+                    break;
+                  case OrderState.DONE:
+                    return TextButton(
+                        onPressed: () {
+                          showCupertinoModalBottomSheet(
+                            expand: true,
+                            context: context,
+                            builder: (context) =>
+                                RatePlate(order: this.widget.order),
+                          );
+                        },
+                        child: KookersButton(
+                            text: "Noter le plat",
+                            color: Colors.black,
+                            textcolor: Colors.white));
+
+                    break;
+                  case OrderState.NOT_ACCEPTED:
+                    return Column(
+                      children: [
+                        Text(
+                          "Commande en attente d'acceptation",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 17
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        StreamButton(
+                            buttonColor: Colors.red,
+                            buttonText: "Annuler la commande",
+                            errorText: "Une erreur s'est produite",
+                            loadingText: "Annulation en cours",
+                            successText: "Commande annulée",
+                            controller: _streamButtonController3,
+                            onClick: () async {
+                              _streamButtonController3.isLoading();
+                              this
+                                  .cancelOrder(databaseService.client,
+                                      this.widget.order)
+                                  .then((value) async {
+                                _streamButtonController3.isSuccess();
+                                databaseService.loadbuyerOrders();
+                              }).catchError((onError) {
+                                _streamButtonController3.isError();
+                              });
+                            }),
+                      ],
+                    );
+                    break;
+                  case OrderState.RATED:
+                    return Text("La commande est livrée",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 17
+                          ));
+                    break;
+                  case OrderState.REFUSED:
+                    return Text("La commande a été annulé",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 17
+                          ));
+                    break;
+                }
+              },
+            );
+          })
+          ]),
       ),
-        ),
-
-
-        ListTile(
-        onTap: () {
-          this
-              .createRoom(
-                  databaseService.client,
-                  this.widget.order.sellerId,
-                  databaseService.user.value.id)
-              .then((result) async {
-            await databaseService.loadrooms();
-            Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: (context) => ChatPage(
-                        room: result,
-                        uid: databaseService.user.value.id)));
-          });
-        },
-        leading: CircleAvatar(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.white,
-          radius: 16,
-          backgroundImage: CachedNetworkImageProvider(
-              this.widget.order.seller.photoUrl),
-        ),
-        trailing: Icon(CupertinoIcons.chat_bubble),
-        title: Text(this.widget.order.seller.firstName +
-            " " +
-            this.widget.order.seller.lastName)),
-        StepIndicator(),
-
-
- 
-        
-        // Container(
-        //   padding: const EdgeInsets.symmetric(horizontal: 10),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       Flexible(child: SizedBox()),
-        //       StreamBuilder<Order>(
-        //           stream: this.order.stream,
-        //           builder: (context, snapshot) {
-        //             if (snapshot.connectionState == ConnectionState.waiting)
-        //               return Text("nope");
-        //             return StatusChip(state: snapshot.data.orderState);
-        //           }),
-        //     ],
-        //   ),
-        // ),
-        // Container(
-        //   height: 40,
-        //   child: Builder(builder: (BuildContext ctx) {
-        //     if (this.widget.order.publication.preferences.length > 0) {
-        //       return ListView.builder(
-        //           scrollDirection: Axis.horizontal,
-        //           itemCount:
-        //               this.widget.order.publication.preferences.length,
-        //           itemBuilder: (ctx, index) {
-        //             return Padding(
-        //               padding:
-        //                   const EdgeInsets.only(left: 5, right: 5, top: 3),
-        //               child: Container(
-        //                   decoration: BoxDecoration(
-        //                       color: Colors.green[100],
-        //                       borderRadius:
-        //                           BorderRadius.all(Radius.circular(10.0))),
-        //                   padding: EdgeInsets.all(10),
-        //                   child: Text(this
-        //                       .widget
-        //                       .order
-        //                       .publication
-        //                       .preferences[index])),
-        //             );
-        //           });
-        //     } else {
-        //       return Container(
-        //         height: 40,
-        //         child: Text("Sans préférences"),
-        //         decoration: BoxDecoration(
-        //             color: Colors.green[100],
-        //             borderRadius: BorderRadius.all(Radius.circular(10.0))),
-        //       );
-        //     }
-        //   }),
-        // ),
-
-        // Divider(),
-        // SizedBox(height: 10),
-        // SizedBox(height: 30),
-        // StreamBuilder<Order>(
-        //     stream: this.order,
-        //     builder: (context, snapshot) {
-        //       return Builder(
-        //         // ignore: missing_return
-        //         builder: (context) {
-        //           if (snapshot.connectionState == ConnectionState.waiting)
-        //             return LinearProgressIndicator(
-        //                 backgroundColor: Colors.black,
-        //                 valueColor:
-        //                     AlwaysStoppedAnimation<Color>(Colors.white));
-        //           if (snapshot.hasError) return Text("i've a bad felling");
-        //           if (snapshot.data == null)
-        //             return Text("its empty out there");
-        //           switch (snapshot.data.orderState) {
-        //             case OrderState.ACCEPTED:
-        //               return Container(
-        //                   child: Column(children: [
-        //                 StreamButton(
-        //                     buttonColor: Color(0xFFF95F5F),
-        //                     buttonText: "Valider la reception",
-        //                     errorText: "Une erreur s'est produite",
-        //                     loadingText: "Validation en cours",
-        //                     successText: "Commande validée",
-        //                     controller: _streamButtonController,
-        //                     onClick: () async {
-        //                       _streamButtonController.isLoading();
-        //                       this
-        //                           .doneOrder(databaseService.client,
-        //                               this.widget.order)
-        //                           .then((result) async {
-        //                         _streamButtonController.isSuccess();
-        //                         databaseService.loadbuyerOrders();
-        //                       }).catchError((err) {
-        //                         _streamButtonController.isError();
-        //                       });
-        //                     }),
-        //                 SizedBox(height: 30),
-        //                 StreamButton(
-        //                     buttonColor: Colors.red,
-        //                     buttonText: "Annuler la commande",
-        //                     errorText: "Une erreur s'est produite",
-        //                     loadingText: "Annulation en cours",
-        //                     successText: "Commande annulée",
-        //                     controller: _streamButtonController2,
-        //                     onClick: () async {
-        //                       _streamButtonController2.isLoading();
-        //                       this
-        //                           .cancelOrder(databaseService.client,
-        //                               this.widget.order)
-        //                           .then((result) async {
-        //                         _streamButtonController2.isSuccess();
-        //                         databaseService.loadbuyerOrders();
-        //                       }).catchError((onError) {
-        //                         _streamButtonController2.isError();
-        //                       });
-        //                     }),
-        //               ]));
-        //               break;
-        //             case OrderState.CANCELLED:
-        //               return Text("La commande a été annulé");
-        //               break;
-        //             case OrderState.DONE:
-        //               return TextButton(
-        //                   onPressed: () {
-        //                     showCupertinoModalBottomSheet(
-        //                       expand: true,
-        //                       context: context,
-        //                       builder: (context) =>
-        //                           RatePlate(order: this.widget.order),
-        //                     );
-        //                   },
-        //                   child: KookersButton(
-        //                       text: "Noter le plat",
-        //                       color: Colors.black,
-        //                       textcolor: Colors.white));
-
-        //               break;
-        //             case OrderState.NOT_ACCEPTED:
-        //               return Column(
-        //                 children: [
-        //                   Text(
-        //                     "Commande en attente d'acceptation",
-        //                     style: GoogleFonts.montserrat(
-        //                       color: Colors.green,
-        //                     ),
-        //                   ),
-        //                   SizedBox(height: 10),
-        //                   StreamButton(
-        //                       buttonColor: Colors.red,
-        //                       buttonText: "Annuler la commande",
-        //                       errorText: "Une erreur s'est produite",
-        //                       loadingText: "Annulation en cours",
-        //                       successText: "Commande annulée",
-        //                       controller: _streamButtonController3,
-        //                       onClick: () async {
-        //                         _streamButtonController3.isLoading();
-        //                         this
-        //                             .cancelOrder(databaseService.client,
-        //                                 this.widget.order)
-        //                             .then((value) async {
-        //                           _streamButtonController3.isSuccess();
-        //                           databaseService.loadbuyerOrders();
-        //                         }).catchError((onError) {
-        //                           _streamButtonController3.isError();
-        //                         });
-        //                       }),
-        //                 ],
-        //               );
-        //               break;
-        //             case OrderState.RATED:
-        //               return Text("La commande est livrée et livrée");
-        //               break;
-        //             case OrderState.REFUSED:
-        //               return Text("La commande a été annulé");
-        //               break;
-        //           }
-        //         },
-        //       );
-        //     })
-      ]),
     );
   }
 }

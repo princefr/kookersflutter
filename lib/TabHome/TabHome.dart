@@ -33,7 +33,8 @@ class TabHome extends StatefulWidget {
 
 class _TabHomeState extends State<TabHome>
     with AutomaticKeepAliveClientMixin<TabHome> , WidgetsBindingObserver {
-  // ignore: close_sinks
+ 
+ 
   BehaviorSubject<int> _selectedIndex = BehaviorSubject<int>.seeded(0);
   PageController _controller;
 

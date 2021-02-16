@@ -2,18 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:kookers/Pages/Home/HomeSearchPage.dart';
+import 'package:kookers/Pages/Home/PaymentConfirmation.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
-import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
-import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
 import 'package:kookers/Pages/Reports/ReportPage.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/OrderProvider.dart';
-import 'package:kookers/Services/StripeServices.dart';
-import 'package:kookers/Widgets/ConfirmationDialog.dart';
-import 'package:kookers/Widgets/InfoDialog.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
@@ -168,12 +164,11 @@ class _FoodItemChildState extends State<FoodItemChild> {
     'Adapté aux allergies alimentaires'
   ];
 
-  final stripeService = StripeServices();
+
 
 
     double percentage(percent, total) {
-    return (percent / 100) * total;
-
+      return (percent / 100) * total;
     }
   
 
@@ -186,7 +181,6 @@ class _FoodItemChildState extends State<FoodItemChild> {
   @override
   void initState() { 
     new Future.delayed(Duration.zero, (){
-      stripeService.initiateStripe();
     });
     super.initState();
     
@@ -316,9 +310,10 @@ class _FoodItemChildState extends State<FoodItemChild> {
           
 
           SizedBox(height: 20),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 17),
-            child: Text("Periode de retrait commande", style: GoogleFonts.montserrat(decoration: TextDecoration.none,
+            child: Text("Periode de livraison", style: GoogleFonts.montserrat(decoration: TextDecoration.none,
                         color: Colors.black,
                         fontSize: 15))
           ),
@@ -353,89 +348,35 @@ class _FoodItemChildState extends State<FoodItemChild> {
                         color: Colors.black,
                         fontSize: 10))),
           ),
+
           SizedBox(
             height: 30,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 17),
-            child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Méthodes de paiements",
-                    style: GoogleFonts.montserrat(
-                        decoration: TextDecoration.none,
-                        color: Colors.black,
-                        fontSize: 15))),
-          ),
-          Divider(),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            child: StreamBuilder<UserDef>(
-                stream: databaseService.user$,
-                builder: (context,  snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting)
-                    return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
-                  if (snapshot.data.allCards.isEmpty)
-                    return ListTile(
-                      leading: Icon(CupertinoIcons.creditcard),
-                      trailing: Icon(CupertinoIcons.plus),
-                      title: Text("Ajouter un moyen de paiement"),
-                      onTap: () {
-                        stripeService
-                            .registrarCardWithForm()
-                            .then((paymentMethod) {
-                          databaseService
-                              .addattachPaymentToCustomer(paymentMethod.id)
-                              .then((value) {
-                                databaseService.updatedDefaultSource(paymentMethod.id).then((value) async {
-                                databaseService.user.value.defaultSource = paymentMethod.id;
-                                await databaseService.loadUserData();
-                              });
-                          });
-                        }).catchError((onError){
-                          print(onError);
-                        });
-                      },
-                    );
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 17),
+                          child: Text("Adresse de livraison", style: GoogleFonts.montserrat(decoration: TextDecoration.none,
+                                      color: Colors.black,
+                                      fontSize: 15))
+                        ),
+                            Divider(),
 
-                  CardModel cardChosed = snapshot.data.allCards.firstWhere((element) =>
-                      element.id == databaseService.user.value.defaultSource);
-
-                  return ListTile(
-                      trailing: Icon(
-                        CupertinoIcons.check_mark_circled,
-                        color: Colors.green,
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) => PaymentMethodPage()));
-                      },
-                      leading: SvgPicture.asset(
-                              'assets/payments_logo/${cardChosed.brand}.svg',
-                              height: 30,
+                                                        ListTile(
+                              onTap: (){showCupertinoModalBottomSheet(
+                          expand: false,
+                          context: context,
+                          builder: (context) => HomeSearchPage(isReturn: false,),
+                        );},
+                              leading: Icon(CupertinoIcons.home),
+                              title: StreamBuilder(
+                                stream: databaseService.user$,
+                                builder: (context, AsyncSnapshot<UserDef> snapshot) {
+                                  if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
+                                  return Text(snapshot.data.adresses.where((element) => element.isChosed == true).first.title, style: GoogleFonts.montserrat(fontSize: 17));
+                                }
+                              ),
+                              trailing: Icon(CupertinoIcons.chevron_down),
                             ),
-                      title: Text(cardChosed.last4));
-                }),
-          ),
 
-          SizedBox(height: 15),
-
-          StreamBuilder<double>(
-            stream: this.feePaid,
-            builder: (ctx, snapshot) {
-              return ListTile(
-                  leading: InkWell(onTap: (){
-                                  showDialog(context: context,
-                                         builder: (context) => InfoDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam"));
-                                }, child: Icon(CupertinoIcons.info_circle)),
-                  title : Text("Frais de service"),
-                  trailing: snapshot.data == null ? SizedBox() : Text(snapshot.data.toString())
-                );
-            }
-          ),
 
           SizedBox(
             height: 30,
@@ -458,57 +399,42 @@ class _FoodItemChildState extends State<FoodItemChild> {
             ),
           ),
           Divider(),
-
-          SizedBox(height: 20),
           
           StreamBuilder(
               stream: orderProvider.isAllFilled$,
               builder: (context, AsyncSnapshot<bool> snapshot) {
                 return StreamButton(
-                    buttonColor: snapshot.data != null && databaseService.user.value.allCards.isNotEmpty
-                        ? Color(0xFFF95F5F)
+                    buttonColor: snapshot.data != null
+                        ? Colors.black
                         : Colors.grey,
-                    buttonText: "Acheter",
+                    buttonText: "Continuer",
                     errorText: "Une erreur s'est produite",
                     loadingText: "Achat en cours",
                     successText: "Plat acheté",
                     controller: _streamButtonController,
                     onClick: () async {
-                      showDialog(context: context,
-                                     builder: (context) => ConfirmationDialog(infoText: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam", onAcceptTap: () async {
-                                if (snapshot.data != null) {
-                                  _streamButtonController.isLoading();
-                                  final total = orderProvider.quantity.value * int.parse(this.widget.publication.pricePerAll);
-                                  final totalPlusFees =
-                                      total + this.percentage(15, total).toInt();
-                                  final order = await orderProvider.validate(
-                                      databaseService,
-                                      this.widget.publication,
-                                      totalPlusFees);
-                                  databaseService
-                                      .createOrder(order)
-                                      .then((value) =>
-                                          {_streamButtonController.isSuccess()})
-                                      .catchError((onError) {
-                                    _streamButtonController.isError();
-                                  });
-                                }
-
-                                     },));
+                      if(snapshot.data != null){
+                          final order = await orderProvider.validate(databaseService, this.widget.publication);
+                              showCupertinoModalBottomSheet(
+                                          expand: true,
+                                          context: context,
+                                          builder: (context) => PaymentConfirmation(order: order),
+                                      );
+                      }
                       
                     });
               }),
 
 
-              Divider(),
+              InkWell(child:Center(child: Text("Signaler", style: GoogleFonts.montserrat(color: Colors.red, fontSize: 18))), onTap: (){
+                showCupertinoModalBottomSheet(
+                  expand: false,
+                  context: context,
+                  builder: (context) => ReportPage(publicatonId: this.widget.publication.id, seller: this.widget.publication.seller.id,),
+                );
+              },),
 
-
-              InkWell(child:Center(child: Text("Signaler", style: GoogleFonts.montserrat(color: Colors.red))), onTap: (){
-                Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) => ReportPage(publicatonId: this.widget.publication.id, seller: this.widget.publication.seller.id,)));
-              },)
+              SizedBox(height: 10,)
         ]),
       );
 

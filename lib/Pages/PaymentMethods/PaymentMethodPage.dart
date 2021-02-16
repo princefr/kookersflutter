@@ -68,9 +68,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                   return ListView(
                     shrinkWrap: true,
                     children: snapshot.data.allCards.map((e) => CardItem(card: e, isDefault: databaseService.user.value.defaultSource == e.id ? true : false, onCheckBoxClicked: () {
-                    setState(() {
-                        databaseService.user.value.defaultSource = e.id;
-                      });
+                    databaseService.user.value.defaultSource = e.id;
                     databaseService.updatedDefaultSource(e.id);
                     databaseService.loadUserData();
                         },)).toList(),

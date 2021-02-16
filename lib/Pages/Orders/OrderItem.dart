@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/Orders/OrderPageChild.dart';
-// import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/StatusChip.dart';
 
 
@@ -61,9 +60,11 @@ class Order {
         OrderState orderState;
         Publication publication;
         int notificationBuyer;
+        String totalWithFees;
+        String fees;
         Seller seller;
         Order({this.productId, this.stripeTransactionId, this.orderState, this.publication, this.deliveryDay,
-         this.seller, this.currency, this.id, this.quantity, this.sellerId, this.totalPrice, this.notificationBuyer});
+         this.seller, this.currency, this.id, this.quantity, this.sellerId, this.totalPrice, this.notificationBuyer, this.totalWithFees, this.fees});
 
         static Order fromJson(Map<String, dynamic> map) => Order(
           productId: map["productId"],
@@ -76,7 +77,10 @@ class Order {
           quantity: map["quantity"],
           sellerId: map["sellerId"],
           totalPrice: map["total_price"],
-          notificationBuyer: map["notificationBuyer"]
+          notificationBuyer: map["notificationBuyer"],
+          totalWithFees: map["total_with_fees"],
+          fees: map["fees"]
+          
         );
 
         Map<String, dynamic> toJSON() {
@@ -144,7 +148,9 @@ class OrderItemShimmer extends StatelessWidget {
                 ]
               ),
             ),
-            trailing: Text("15€"),
+            trailing: Container(decoration: BoxDecoration(
+                        color: Colors.grey[200],      
+                      ),child: Text("15€")),
           ),
         ),
       )
@@ -155,7 +161,10 @@ class OrderItemShimmer extends StatelessWidget {
 class OrderItem extends StatelessWidget {
   final Order order;
   final Function(Order) onOrderTap;
-  const OrderItem({Key key, @required this.order, this.onOrderTap}) : super(key: key);
+  OrderItem({Key key, @required this.order, this.onOrderTap}) : super(key: key);
+
+  
+
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +188,7 @@ class OrderItem extends StatelessWidget {
                 ]
               ),
             ),
-            trailing: Text("15€"),
+            trailing: Text(this.order.totalWithFees),
           ),
         ),
       )

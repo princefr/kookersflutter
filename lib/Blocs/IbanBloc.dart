@@ -3,7 +3,7 @@ import 'package:rxdart/rxdart.dart';
 
 class IbanBloc with IbanValidation {
 
-    // ignore: close_sinks
+
   BehaviorSubject<String> iban = new BehaviorSubject<String>();
   Stream<String> get iban$ => iban.stream.transform(validateIban);
   Sink<String> get inBan => iban.sink;

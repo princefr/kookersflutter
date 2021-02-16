@@ -74,7 +74,7 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
                   child: CircleAvatar(
                       radius: 60,
                       backgroundImage: CachedNetworkImageProvider(
-                          "https://t1.gstatic.com/images?q=tbn:ANd9GcRgexJ5aVLMRh8pTx4ktKg3JtDIFtxPR7DCPXkbqoUSA1vx6RBwb4TUGLKMW5fl"),
+                          this.widget.order.publication.imagesUrls[0]),
                     ),
                 ),
 

@@ -426,15 +426,20 @@ class OrderInput {
   int quantity;
   String totalPrice;
   String buyerID;
+  String fees;
+  String totalWithFees;
   String deliveryDay;
   String orderState;
   String sellerId;
   String sellerStAccountid;
   String paymentMethodAssociated;
   String currency;
+  String title;
+  Adress adress;
 
 
-  OrderInput({@required this.productId, @required this.quantity, @required this.totalPrice,@required this.buyerID, @required this.orderState, @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency});
+  OrderInput({@required this.productId, @required this.quantity, @required this.totalPrice, @required this.buyerID, @required this.orderState,
+   @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency, this.fees, this.totalWithFees, this.title, @required this.adress});
 
 
    Map<String, dynamic> toJson(UserDef user) {
@@ -450,6 +455,10 @@ class OrderInput {
     data["payment_method_id"] = user.defaultSource;
     data["currency"] = user.currency;
     data["customerId"] = user.customerId;
+    data["fees"] = this.fees;
+    data["total_with_fees"] = this.totalWithFees;
+    data["title"]= this.title;
+    data["adress"] = this.adress;
     return data;
    }
 }
@@ -993,6 +1002,8 @@ Future<List<Order>>  loadbuyerOrders() {
                             quantity
                             total_price
                             notificationBuyer
+                            fees
+                            total_with_fees
                             
                             publication {
                                  _id
@@ -1042,6 +1053,8 @@ Future<List<Order>>  loadbuyerOrders() {
                                 sellerId
                                 currency
                                 notificationSeller
+                                fees
+                                total_with_fees
 
                                 buyer {
                                   _id
