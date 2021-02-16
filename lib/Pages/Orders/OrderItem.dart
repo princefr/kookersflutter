@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/Orders/OrderPageChild.dart';
+import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Widgets/StatusChip.dart';
 
 
@@ -76,6 +77,7 @@ class Order {
           id: map["_id"],
           quantity: map["quantity"],
           sellerId: map["sellerId"],
+          currency: map["currency"],
           totalPrice: map["total_price"],
           notificationBuyer: map["notificationBuyer"],
           totalWithFees: map["total_with_fees"],
@@ -188,7 +190,7 @@ class OrderItem extends StatelessWidget {
                 ]
               ),
             ),
-            trailing: Text(this.order.totalWithFees),
+            trailing: Text(this.order.totalWithFees + CurrencyService.getCurrencySymbol(this.order.currency)),
           ),
         ),
       )

@@ -50,6 +50,25 @@ class _ReportPageState extends State<ReportPage> {
   // ignore: close_sinks
   BehaviorSubject<String> comment =   BehaviorSubject<String>();
 
+  String getEnum(ReportType enumstring){
+    switch (enumstring) {
+      case ReportType.ARNAQUE:
+        return "Arnaque";
+        break;
+    case ReportType.NOTINTERRESTED:
+        return "Pas interessé";
+    break;
+    case ReportType.COPYFRAUD:
+        return "Autres";
+    break;
+    case ReportType.SPAM:
+        return "Spam";
+    break;
+      default:
+      return "Arnaque";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -82,22 +101,22 @@ class _ReportPageState extends State<ReportPage> {
                       elevation: 2,
                       items: [
                           DropdownMenuItem(
-                            child: Text(ReportType.ARNAQUE.toString()),
+                            child: Text(getEnum(ReportType.ARNAQUE), style: GoogleFonts.montserrat(),),
                             value: 0,
                           ),
 
                           DropdownMenuItem(
-                            child: Text(ReportType.COPYFRAUD.toString()),
+                            child: Text(getEnum(ReportType.COPYFRAUD), style: GoogleFonts.montserrat()),
                             value: 1,
                           ),
 
                           DropdownMenuItem(
-                            child: Text(ReportType.NOTINTERRESTED.toString()),
+                            child: Text(getEnum(ReportType.NOTINTERRESTED), style: GoogleFonts.montserrat()),
                             value: 2,
                           ),
 
                           DropdownMenuItem(
-                            child: Text(ReportType.SPAM.toString()),
+                            child: Text(getEnum(ReportType.SPAM), style: GoogleFonts.montserrat()),
                             value: 3,
                           ),
                       ], onChanged: (int value) {

@@ -376,8 +376,6 @@ class _FoodItemChildState extends State<FoodItemChild> {
                               ),
                               trailing: Icon(CupertinoIcons.chevron_down),
                             ),
-
-
           SizedBox(
             height: 30,
           ),

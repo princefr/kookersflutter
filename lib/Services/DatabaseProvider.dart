@@ -404,7 +404,7 @@ class PublicationHome {
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["longitude"]), title: ""),
     seller: SellerDef.fromJson(map["seller"]),
     preferences: List<String>.from(map["food_preferences"]),
-    rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString()))
+    rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString())),
   );
 
   static List<PublicationHome> fromJsonToList(List<Object> map) {
@@ -1004,6 +1004,7 @@ Future<List<Order>>  loadbuyerOrders() {
                             notificationBuyer
                             fees
                             total_with_fees
+                            currency
                             
                             publication {
                                  _id

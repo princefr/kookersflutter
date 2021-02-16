@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
@@ -97,8 +98,7 @@ class TransationItem extends StatelessWidget {
           children: [
             Text(
               (this.transaction.net / 100).toString() +
-                  " " +
-                  this.transaction.currencySymbol,
+                   " " + CurrencyService.getCurrencySymbol(this.transaction.currency),
               style: GoogleFonts.montserrat(fontSize: 17),
             ),
             Text(Jiffy.unix(this.transaction.created).yMd,
@@ -226,7 +226,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                 child: Container(
                                     padding: EdgeInsets.symmetric(horizontal: 40),
                                     child: Text(
-                                      snapshot.data.balance.totalBalance.toString(),
+                                      snapshot.data.balance.totalBalance.toString() + " " + CurrencyService.getCurrencySymbol(snapshot.data.currency),
                                       style: GoogleFonts.montserrat(
                                           fontSize: 40,
                                           fontWeight: FontWeight.w500),

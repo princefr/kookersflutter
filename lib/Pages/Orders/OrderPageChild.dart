@@ -10,6 +10,7 @@ import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Ratings/RatePlate.dart';
+import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:kookers/Widgets/StatusChip.dart';
@@ -196,13 +197,13 @@ class _OrderPageChildState extends State<OrderPageChild> {
               ListTile(
                 leading: Text("x" + this.widget.order.quantity.toString(), style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),
                 title: Text(this.widget.order.publication.title, style: GoogleFonts.montserrat()),
-                trailing: Text(this.widget.order.totalPrice , style: GoogleFonts.montserrat(fontSize: 20)),
+                trailing: Text(this.widget.order.totalPrice + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
               ListTile(
                 leading: Icon(CupertinoIcons.exclamationmark_circle),
                 title: Text("Frais de service", style: GoogleFonts.montserrat()),
-                trailing: Text(this.widget.order.fees , style: GoogleFonts.montserrat(fontSize: 20)),
+                trailing: Text(this.widget.order.fees + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
               Padding(
@@ -226,7 +227,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
 
               ListTile(
                 leading: Text("Total Payé: ", style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold)),
-                trailing: Text(this.widget.order.totalWithFees, style: GoogleFonts.montserrat(fontSize: 24, color: Colors.green)),
+                trailing: Text(this.widget.order.totalWithFees + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency), style: GoogleFonts.montserrat(fontSize: 24, color: Colors.green)),
               ),
 
               Divider(),
