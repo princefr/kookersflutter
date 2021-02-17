@@ -25,7 +25,7 @@ class _OnboardingPagerState extends State<OnBoardingPager> {
     OnboardingPage(data:
      OnboardingModel(
        description: "Kookers  connecte chefs amateurs et gourmands souhaitant faire des découvertes culinaires.",
-       placeHolder: "assets/onboarding/Chef-pana.png",
+       placeHolder: "assets/onboarding/Sush_cook-pana.png",
        title: "Concept",
       )
      ),
@@ -40,9 +40,9 @@ class _OnboardingPagerState extends State<OnBoardingPager> {
 
      OnboardingPage(data:
       OnboardingModel(
-        description: "Retirez votre commande chez le chef amateur à proximité de chez vous ou faites vous livrer directement, si la livraison vous est proposée.",
-        placeHolder: "assets/onboarding/Pedestrian_crossing-pana-2.png",
-        title: "Retirez",
+        description: "Votre chef ou nos partenaires achimine votre commande directement devant votre porte.",
+        placeHolder: "assets/onboarding/Take_Away-pana.png",
+        title: "Faites vous livrer",
         )
       ),
 

@@ -100,7 +100,7 @@ class AuthentificationnWrapper extends StatelessWidget {
         if(snapshotc.data == null) return OnBoardingPager();
         databaseService.firebaseUser = snapshotc.data;
         return FutureBuilder<Object>(
-          future: Future.delayed(Duration(seconds: 3), () => databaseService.loadUserData()),
+          future: Future.delayed(Duration(seconds: 0), () => databaseService.loadUserData()),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting) return SplashScreen();
             if(snapshot.data == null) return OnBoardingPager();

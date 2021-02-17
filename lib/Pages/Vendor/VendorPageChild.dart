@@ -224,7 +224,7 @@ final MutationOptions _options  = MutationOptions(
                 child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                        "Si vous commandez le jour même , l'application prévoit 3 heures de délai pour pouvoir laisser du temps au chef d'acheter des ingrédients frais et de le cuisiner sans stress.",
+                        "Ce montant represente les frais prélévés dans le cadre des frais d'application kookers , il represente 15% du prix de chaque plat vendu et est degressif en fonction de la quantité vendu.",
                         style: GoogleFonts.montserrat(
                             decoration: TextDecoration.none,
                             color: Colors.black,

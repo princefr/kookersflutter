@@ -218,7 +218,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
                 child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                        "Si vous commandez le jour même , l'application prévoit 3 heures de délai pour pouvoir laisser du temps au chef d'acheter des ingrédients frais et de le cuisiner sans stress.",
+                        "Ce montant représente la somme que vous paierez en guise de frais de service de l'application. Le montant maximum que vous paierez dans l'application ne dépassera jamais 2€.",
                         style: GoogleFonts.montserrat(
                             decoration: TextDecoration.none,
                             color: Colors.black,
