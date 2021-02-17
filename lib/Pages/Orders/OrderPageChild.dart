@@ -173,7 +173,8 @@ class _OrderPageChildState extends State<OrderPageChild> {
             );
           }),
       body: Container(
-        child: ListView(children: [
+        child: ListView(
+          children: [
                Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Row(
@@ -268,7 +269,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
               this.widget.order.seller.lastName)),
 
 
-            SizedBox(height: 30),
+            SizedBox(height: 100),
             StreamBuilder<Order>(
           stream: this.order,
           builder: (context, snapshot) {
@@ -329,10 +330,12 @@ class _OrderPageChildState extends State<OrderPageChild> {
                     ]));
                     break;
                   case OrderState.CANCELLED:
-                    return Text("La commande a été annulé",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 17
-                          ));
+                    return Center(
+                      child: Text("La commande a été annulé",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 17
+                            )),
+                    );
                     break;
                   case OrderState.DONE:
                     return TextButton(
@@ -353,10 +356,12 @@ class _OrderPageChildState extends State<OrderPageChild> {
                   case OrderState.NOT_ACCEPTED:
                     return Column(
                       children: [
-                        Text(
-                          "Commande en attente d'acceptation",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 17
+                        Center(
+                          child: Text(
+                            "Commande en attente d'acceptation",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 17
+                            ),
                           ),
                         ),
                         SizedBox(height: 10),
@@ -383,16 +388,20 @@ class _OrderPageChildState extends State<OrderPageChild> {
                     );
                     break;
                   case OrderState.RATED:
-                    return Text("La commande est livrée",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 17
-                          ));
+                    return Center(
+                      child: Text("La commande est livrée",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 17
+                            )),
+                    );
                     break;
                   case OrderState.REFUSED:
-                    return Text("La commande a été annulé",
-                          style: GoogleFonts.montserrat(
-                            fontSize: 17
-                          ));
+                    return Center(
+                      child: Text("La commande a été annulé",
+                            style: GoogleFonts.montserrat(
+                              fontSize: 17
+                            )),
+                    );
                     break;
                 }
               },

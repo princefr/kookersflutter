@@ -217,11 +217,12 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                           loadingText: "Vérification en cours",
                           successText: "Vérification terminée",
                           controller: _streamButtonController, onClick: () async {
-                            _streamButtonController.isLoading();
                             if(snapshot.data != null) {
-                              authentificationService.signInWithVerificationID(widget.verificationId, bloc.code.value).then((connected) {
-                                this.checkUserExist(connected.user.uid, databaseService.client).then((user) {
+                              _streamButtonController.isLoading();
+                              authentificationService.signInWithVerificationID(widget.verificationId, bloc.code.value).then((connected) async {
+                                this.checkUserExist(connected.user.uid, databaseService.client).then((user) async {
                                   if(user == null) {
+                                              await _streamButtonController.isSuccess();
                                                 Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
@@ -231,13 +232,16 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                                                 .user)));
                                     }else{
                                       databaseService.user.add(user);
-                                    Navigator.push(
+                                      await _streamButtonController.isSuccess();
+                                      Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
                                                     builder: (context) =>
                                                         TabHome()));
                                     }
                                 });
+                              }).catchError((onError) async {
+                               await _streamButtonController.isError();
                               });
                           }
                           });

@@ -40,22 +40,26 @@ Future<void> rateFood(GraphQLClient client, RatingInput rating) async {
 }
 
 
-// ignore: close_sinks
 BehaviorSubject<double> initialRate = BehaviorSubject<double>.seeded(3.0);
-// ignore: close_sinks
 BehaviorSubject<String> comment = BehaviorSubject<String>();
   StreamButtonController _streamButtonController = StreamButtonController();
 
 
   @override
+  void dispose() {
+    this.initialRate.close();
+    this.comment.close();
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
-
-
         return Scaffold(
           body: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: ListView(
+          child: Column(
             children: [
               Padding(
               padding: const EdgeInsets.only(top: 10),
@@ -68,17 +72,20 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
               ),
             ),
 
-              SizedBox(height: 100),
+              SizedBox(height: 90),
 
-                Container(
-                  child: CircleAvatar(
-                      radius: 60,
-                      backgroundImage: CachedNetworkImageProvider(
-                          this.widget.order.publication.imagesUrls[0]),
-                    ),
-                ),
+                Flexible(
+                    child: ListView(
+                    children: [
+                      Container(
+                        child: CircleAvatar(
+                            radius: 60,
+                            backgroundImage: CachedNetworkImageProvider(
+                                this.widget.order.publication.imagesUrls[0]),
+                          ),
+                      ),
 
-                  SizedBox(height: 40),
+                                        SizedBox(height: 40),
 
                   Align(
                     alignment: Alignment.center,
@@ -133,7 +140,7 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
               SizedBox(height: 100),
 
 
-              StreamButton(buttonColor: Colors.red,
+              StreamButton(buttonColor: Colors.black,
                                      buttonText: "Noter le plat",
                                      errorText: "Une erreur s'est produite",
                                      loadingText: "Notation en cours",
@@ -143,6 +150,7 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
                                         RatingInput rating = RatingInput(comment: comment.value, createdAt: DateTime.now().toIso8601String() , orderId: this.widget.order.id, publicationId: this.widget.order.publication.id, rate: initialRate.value.toString(), whoRate: databaseService.user.value.id);
                                         this.rateFood(databaseService.client, rating).then((value){
                                           _streamButtonController.isSuccess().then((value) async {
+                                            databaseService.loadbuyerOrders();
                                             await _streamButtonController.isSuccess();
                                             Navigator.pop(context);
                                           });
@@ -152,6 +160,11 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
                                         });
                                         
                                   }),
+                    ],
+                  ),
+                ),
+
+
 
               
             ],

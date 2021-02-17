@@ -10,8 +10,6 @@ class RatingInput {
   String createdAt;
 
   RatingInput({this.comment, this.createdAt, this.orderId, this.publicationId, this.rate, this.whoRate});
-
-
     Map<String, dynamic> toJSON() {
           final Map<String, dynamic> data = new Map<String, dynamic>();
           data["rate"] = this.rate;
@@ -20,7 +18,6 @@ class RatingInput {
           data["orderId"] = this.orderId;
           data["whoRate"] = this.whoRate;
           data["createdAt"] = DateTime.now().toIso8601String();
-
           return data;
     }
 

@@ -68,11 +68,10 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                         activeColor: Colors.green,
                         value: snapshot.data ?? false,
                         onChanged: bloc.acceptMask.add
-                          
                           );
                   }
-                ),
-                    title: Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", style: GoogleFonts.montserrat(fontSize: 13),),
+                ),// jhjhj
+                    title: Text("Vous acceptez de devoir porter des gants et une charlotte lorsque vous cuisinez par les membres de la communauté.", style: GoogleFonts.montserrat(fontSize: 13),),
               ),
 
               SizedBox(height: 30),
@@ -90,7 +89,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                           );
                   }
                 ),
-                    title: Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", style: GoogleFonts.montserrat(fontSize: 13),),
+                    title: Text("Vous acceptez de porter un masque lorsque vous cuisinez pour protéger la santé des autres utilisateurs. ", style: GoogleFonts.montserrat(fontSize: 13),),
               ),
 
 
@@ -110,7 +109,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                           );
                   }
                 ),
-                    title: Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", style: GoogleFonts.montserrat(fontSize: 13),),
+                    title: Text("Vous acceptez de faire attention à l'hygiène de votre  cuisine , des instruments que vous utilisez , à la chaîne du froid et du chaud lorsque vous cuisinez pour les membres de la communauté.", style: GoogleFonts.montserrat(fontSize: 13),),
               ),
 
 
@@ -120,7 +119,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                 stream: bloc.isAllFilled$,
                 builder: (context, AsyncSnapshot<bool> snapshot) {
                   return StreamButton(buttonColor: (snapshot.data != null && snapshot.data != false) ? Colors.black : Colors.grey,
-                                     buttonText: "Continuer",
+                                     buttonText: "Accepter",
                                      errorText: "Erreur, Veuiller ressayer",
                                      loadingText: "Traitement en cours",
                                      successText: "Vous etes désormais un vendeur.",

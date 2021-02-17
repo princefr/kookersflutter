@@ -263,6 +263,26 @@ class _FoodItemChildState extends State<FoodItemChild> {
                   child: Stepper(quantity: orderProvider.quantity)),
             ],
           ),
+          
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              
+              
+              Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(children: [
+                                    Icon(CupertinoIcons.star_fill, size: 13, color: Colors.yellow[900]),
+                                    SizedBox(width: 5),
+                                    Text(this.widget.publication.getRating().toStringAsFixed(2) + " " + "(" + this.widget.publication.rating.ratingCount.toString() + ")", style: GoogleFonts.montserrat(fontSize: 17),)
+                                  ],),
+                                ),
+                                Expanded(child: SizedBox()),
+                                
+            ],
+          ),
+
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: Text(this.widget.publication.description),
@@ -423,6 +443,8 @@ class _FoodItemChildState extends State<FoodItemChild> {
                       
                     });
               }),
+
+              SizedBox(height: 20,),
 
 
               InkWell(child:Center(child: Text("Signaler", style: GoogleFonts.montserrat(color: Colors.red, fontSize: 18))), onTap: (){

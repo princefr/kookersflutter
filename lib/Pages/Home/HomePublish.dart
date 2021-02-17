@@ -196,6 +196,7 @@ class _HomePublishState extends State<HomePublish> {
                         height: 7,
                         width: 80),
                   ),
+                  
                   SizedBox(height: 30),
 
                   Flexible(
@@ -475,8 +476,8 @@ class _HomePublishState extends State<HomePublish> {
                                  loadingText: "Publication en cours",
                                  successText: "Plat publié",
                                   controller: _streamButtonController, onClick: () async {
-                                    _streamButtonController.isLoading();
                                     if(snapshot.data != null) {
+                                      _streamButtonController.isLoading();
                                     pubprovider.validate(firebaseUser, storageService, databaseService, this.type).then((publication){
                                       this.uploadPublication(databaseService.client, databaseService, publication).then((value){
                                         _streamButtonController.isSuccess().then((value) async {

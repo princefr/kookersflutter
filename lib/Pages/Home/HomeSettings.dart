@@ -161,6 +161,8 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+
+
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Container(
@@ -171,14 +173,22 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                       width: 80),
                 ),
                 SizedBox(height: 50),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("FOURCHETTE DE PRIX",
-                        style: GoogleFonts.montserrat(
-                            decoration: TextDecoration.none,
-                            color: Colors.black,
-                            fontSize: 15))),
-                SizedBox(height: 10),
+
+
+
+                Flexible(
+                     child: ListView(
+                       shrinkWrap: true,
+                    children: [
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("FOURCHETTE DE PRIX",
+                              style: GoogleFonts.montserrat(
+                                  decoration: TextDecoration.none,
+                                  color: Colors.black,
+                                  fontSize: 15))),
+
+                                  SizedBox(height: 10),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: ChipsChoice<String>.multiple(
@@ -287,7 +297,7 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                             fontSize: 10))),
 
 
-                Expanded(child: SizedBox()),
+                SizedBox(height: 100),
 
 
                 Padding(
@@ -305,7 +315,13 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                         Navigator.pop(context);
                       });
                       }),
-                ),   
+                ),
+                    ],
+                  ),
+                ),
+
+
+                   
               ]),
             ),
           );

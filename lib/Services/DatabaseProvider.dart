@@ -286,10 +286,12 @@ class OrderVendor {
   String createdAt;
   String updatedAt;
   String shortId;
+  String fees;
+  String totalWithFees;
 
   OrderVendor({@required this.productId, @required this.quantity, @required this.totalPrice,
    @required this.buyerID, @required this.orderState, @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency,
-    this.publication, this.buyer, this.id, this.stripeTransactionId,  this.notificationSeller, this.adress, this.createdAt, this.updatedAt, this.shortId});
+    this.publication, this.buyer, this.id, this.stripeTransactionId,  this.notificationSeller, this.adress, this.createdAt, this.updatedAt, this.shortId, this.fees, this.totalWithFees});
 
   static OrderVendor fromJson(Map<String, dynamic> data) => OrderVendor(
     productId: data["productId"],
@@ -310,7 +312,9 @@ class OrderVendor {
     adress: Adress.fromJsonOne(data["adress"]),
     createdAt: data["createdAt"],
     updatedAt: data["updatedAt"],
-    shortId: data["shortId"]
+    shortId: data["shortId"],
+    fees: data["fees"],
+    totalWithFees: data["total_with_fees"]
   );
 
 
@@ -356,8 +360,9 @@ class PublicationVendor {
   List<String> preferences;
   String createdAt;
   RatingPublication rating;
+  String currency;
 
-  PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.photoUrls, this.adress, this.isOpen, this.preferences, this.createdAt, this.rating});
+  PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.photoUrls, this.adress, this.isOpen, this.preferences, this.createdAt, this.rating, this.currency});
   
 
   static PublicationVendor fromJson(Map<String, dynamic> map) => PublicationVendor(
@@ -371,7 +376,8 @@ class PublicationVendor {
     isOpen: map["is_open"],
     preferences: List<String>.from(map["food_preferences"]),
     createdAt: map["createdAt"],
-    rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString()))
+    rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString())),
+    currency: map["currency"]
   );
 
   static List<PublicationVendor> fromJsonToList(List<Object> map) {
@@ -475,7 +481,7 @@ class OrderInput {
     data["fees"] = this.fees;
     data["total_with_fees"] = this.totalWithFees;
     data["title"]= this.title;
-    data["adress"] = this.adress;
+    data["adress"] = this.adress.toJSON();
     return data;
    }
 }
@@ -1146,6 +1152,7 @@ Future<List<Order>>  loadbuyerOrders() {
                           photoUrls
                           createdAt
                           is_open
+                          currency
 
                           food_preferences
                           

@@ -1,24 +1,22 @@
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
-import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
+import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/StatusChip.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -39,9 +37,18 @@ class _VendorPageChildState extends State<VendorPageChild> {
   StreamSubscription<int> get notificationIncoming => this.order.where((event) => event.notificationSeller > 0).map((event) => event.notificationSeller).listen((event) => event);
 
 
+  double percentage(percent, total) {
+        return (percent / 100) * total;
+  }
+
+  double fees;
+  double total;
+
 
   @override
   void initState() { 
+        fees = this.percentage(15, double.parse(this.widget.vendor.totalPrice));
+        total = double.parse(this.widget.vendor.totalPrice) - fees;
         Future.delayed(Duration.zero, (){
         final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
@@ -70,7 +77,6 @@ class _VendorPageChildState extends State<VendorPageChild> {
                   createChatRoom(user1:$user1 , user2: $user2, uid: $uid){
                               _id
                               updatedAt
-                              
                               
                               receiver {
                                   first_name
@@ -145,13 +151,14 @@ final MutationOptions _options  = MutationOptions(
  bool isLoading = false;
 
 
+
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
     
       return Scaffold(
         appBar: TopBarWitBackNav(
-                          title: this.widget.vendor.deliveryDay,
+                          title: "ref:" + this.widget.vendor.shortId,
                           rightIcon: CupertinoIcons.chat_bubble,
                           isRightIcon: false,
                           height: 54
@@ -161,106 +168,85 @@ final MutationOptions _options  = MutationOptions(
             children: [
               Visibility(visible: this.isLoading, child: LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white))),
               Divider(),
-              CarouselSlider(items: this.widget.vendor.publication.photoUrls.map((e) {
-              return InkWell(
-                onTap: (){
-                  Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => FullScreenImage(url: e)));
-                },
-                              child: Hero(
-                                tag: e,
-                                                              child: Image(
+
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(child: SizedBox()),
+                    StreamBuilder<OrderVendor>(
+                          stream: this.order.stream,
+                          builder: (context, snapshot) {
+                            if(snapshot.connectionState == ConnectionState.waiting) return Text("nope");
+                            return StatusChip(state: EnumToString.fromString(OrderState.values, snapshot.data.orderState));
+                          }
+                        ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height:15),
+
+              ListTile(
+                leading: Lottie.asset('assets/lottie/lf30_KvGsoi.json', height: 140, repeat: true),
+                title: Text("La santé des membres de notre communauté nous est importante , c’est pourquoi nous vous rappelons qu’il est important de porter vos équipements de cuisine (masques, gants, charlottes ) quand vous cuisinez pour un membre.", style: GoogleFonts.montserrat(fontSize:13)),
                 
-                width: MediaQuery.of(context).size.width,
-                fit: BoxFit.cover,
-                image: CachedNetworkImageProvider(e),
-            ),
-                              ),
-              );
-            }).toList(),
-             options: CarouselOptions(height: 300.0, aspectRatio: 16/9, enlargeCenterPage: true, initialPage: 0,
-             enableInfiniteScroll: false,)),
+              ),
+
 
              SizedBox(height:10),
 
-             Row(
-              children: [
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(this.widget.vendor.totalPrice + " " + NumberFormat.simpleCurrency(locale: Platform.localeName).currencySymbol,
-                      style: GoogleFonts.montserrat(
-                          fontSize: 26, color: Colors.grey)),
-                )),
+             ListTile(
+               leading: Text("À livrer: ", style: GoogleFonts.montserrat(fontSize: 18))
+             ),
 
+              ListTile(
+                leading: Icon(CupertinoIcons.location),
+                title: Text(this.widget.vendor.adress.title, style: GoogleFonts.montserrat()),
                 
-                
-                Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        Icon(CupertinoIcons.chart_pie),
-                        SizedBox(width: 10,),
-                        Text(this.widget.vendor.quantity, style: GoogleFonts.montserrat(fontSize: 24),),
-                      
-                      ],
-                    ),)
-              ],
-            ),
-
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(child: SizedBox()),
-                  StreamBuilder<OrderVendor>(
-                        stream: this.order.stream,
-                        builder: (context, snapshot) {
-                          if(snapshot.connectionState == ConnectionState.waiting) return Text("nope");
-                          return StatusChip(state: EnumToString.fromString(OrderState.values, snapshot.data.orderState));
-                        }
-                      ),
-                ],
-              ),
-            ),
-
-              Container(
-                height: 40,
-                child: Builder(builder: (BuildContext ctx) {
-                  if(this.widget.vendor.publication.preferences.length > 0){
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: this.widget.vendor.publication.preferences.length,
-                      itemBuilder: (ctx, index){
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 5, right: 5, top: 3),
-                          child: Container(
-                                  decoration: BoxDecoration(
-                                  color: Colors.green[100],
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
-                    ), padding: EdgeInsets.all(10), child: Text(this.widget.vendor.publication.preferences[index])),
-                        );
-                    });
-                  }else{
-                    return Container(height: 40, child: Text("Sans préférences"), decoration: BoxDecoration(
-                                  color: Colors.green[100],
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
-                    ),);
-                  }
-                }),
               ),
 
-             SizedBox(height:30),
+              ListTile(
+                leading: Text("x" + this.widget.vendor.quantity.toString(), style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),
+                title: Text(this.widget.vendor.publication.title, style: GoogleFonts.montserrat()),
+                trailing: Text(this.widget.vendor.totalPrice + " " + CurrencyService.getCurrencySymbol(this.widget.vendor.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
+              ),
+
+              ListTile(
+                leading: Icon(CupertinoIcons.exclamationmark_circle),
+                title: Text("Frais d'applicaton", style: GoogleFonts.montserrat()),
+                trailing: Text(this.fees.toString() + " " + CurrencyService.getCurrencySymbol(this.widget.vendor.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                        "Si vous commandez le jour même , l'application prévoit 3 heures de délai pour pouvoir laisser du temps au chef d'acheter des ingrédients frais et de le cuisiner sans stress.",
+                        style: GoogleFonts.montserrat(
+                            decoration: TextDecoration.none,
+                            color: Colors.black,
+                            fontSize: 10))),
+              ),
+
+              SizedBox(height: 10),
+
+            ListTile(
+        leading: Icon(CupertinoIcons.calendar),
+        title: Text(Jiffy(this.widget.vendor.deliveryDay).format("do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat(),),
+            ),
+
+              ListTile(
+                leading: Text("Vous recevrez: ", style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold)),
+                trailing: Text(this.total.toString() + " " + CurrencyService.getCurrencySymbol(this.widget.vendor.currency), style: GoogleFonts.montserrat(fontSize: 24, color: Colors.green)),
+              ),
+
+              Divider(),
 
 
-             Text( "  réference: " + this.widget.vendor.id),
-
-
-             SizedBox(height:30),
+             
              
               ListTile(
                     onTap: (){
@@ -292,12 +278,6 @@ final MutationOptions _options  = MutationOptions(
               title: Text(this.widget.vendor.buyer.firstName + " " + this.widget.vendor.buyer.lastName),
               trailing: Icon(CupertinoIcons.chat_bubble),
 
-              ),
-
-
-              ListTile(
-                leading: Icon(CupertinoIcons.calendar),
-                title: Text(Jiffy(this.widget.vendor.deliveryDay).format("do MMMM yyyy, [ À ] HH:mm"), style: GoogleFonts.montserrat(),)
               ),
 
 

@@ -99,7 +99,7 @@ class Order {
           data["id"] = this.id;
           data["productId"] = this.productId;
           data["stripeTransactionId"] = this.stripeTransactionId;
-          data["quantity"] = this.quantity;
+          data["quantity"] = int.parse(this.quantity);
           data["sellerId"] = this.seller.id;
 
           return data;

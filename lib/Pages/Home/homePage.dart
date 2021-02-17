@@ -41,6 +41,7 @@ class HomeTopBar extends PreferredSize {
                                 'assets/logo/logo_white.svg',
                                 height: 30,
                                 width: 30,
+                                color: Colors.black,
                               ),
                 ),
 

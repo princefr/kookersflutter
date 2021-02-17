@@ -8,8 +8,8 @@ import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Pages/PhoneAuth/PhoneAuthCodePage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/NotificiationService.dart';
+import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
-import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:provider/provider.dart';
 
 
@@ -49,6 +49,8 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
     }
     return true;
   }
+
+   StreamButtonController _streamButtonController = StreamButtonController();
 
   @override
   Widget build(BuildContext context) {
@@ -140,55 +142,62 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                 child: SizedBox(),
               ),
 
-              StreamBuilder<bool>(
-                stream: phoneAuthBloc.isAllFilled$,
-                builder: (context, snapshot) {
-                  return TextButton(
-                      onPressed: () async {
-                          String phone = await phoneAuthBloc.validate();
-                          notificationService.askPermission().then((permission) => {
-                                if (permission.authorizationStatus ==
-                                        AuthorizationStatus.authorized ||
-                                    permission.authorizationStatus ==
-                                        AuthorizationStatus.provisional)
-                                  {
-                                    authentificationService.verifyPhone(
-                                            phone: phone,
-                                            codeisSent: (verificationId) {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PhoneAuthCodePage(
-                                                              verificationId:
-                                                                  verificationId)));
-                                            },
-                                            error: (e) {
-                                              // errorService.showError(context);
-                                              print("error" +
-                                                  " " +
-                                                  e.message +
-                                                  " " +
-                                                  e.code +
-                                                  " " +
-                                                  "this is me here");
-                                            })
-                                      
+
+
+                           StreamBuilder(
+                              stream: phoneAuthBloc.isAllFilled$,
+                              builder: (ctx, AsyncSnapshot<bool> snapshot) {
+                                return StreamButton(buttonColor: snapshot.data != null ? Colors.black : Colors.grey,
+                                 buttonText: "Envoyer le sms",
+                                 errorText: "Une erreur s'est produite, veuillez reesayer!",
+                                 loadingText: "Envoie en cours",
+                                 successText: "Sms envoyé",
+                                  controller: _streamButtonController, onClick: () async {
+                                    if(snapshot.data != null) {
+                                      _streamButtonController.isLoading();
+                                    String phone = await phoneAuthBloc.validate();
+                                    notificationService.askPermission().then((permission) async {
+                                          if (permission.authorizationStatus ==
+                                                  AuthorizationStatus.authorized ||
+                                              permission.authorizationStatus ==
+                                                  AuthorizationStatus.provisional)
+                                            {
+                                              authentificationService.verifyPhone(
+                                                      phone: phone,
+                                                      codeisSent: (verificationId) async {
+                                                        await _streamButtonController.isSuccess();
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    PhoneAuthCodePage(
+                                                                        verificationId:
+                                                                            verificationId)));
+                                                      },
+                                                      error: (e) async {
+                                                        await _streamButtonController.isError();
+                                                        // errorService.showError(context);
+                                                        print("error" +
+                                                            " " +
+                                                            e.message +
+                                                            " " +
+                                                            e.code +
+                                                            " " +
+                                                            "this is me here");
+                                                      });
+                                                
+                                            }
+                                          else
+                                            {
+                                              print(
+                                                  'User declined or has not accepted permission');
+                                            }
+                                        });
                                   }
-                                else
-                                  {
-                                    print(
-                                        'User declined or has not accepted permission')
-                                  }
-                              });
-                        
-                      },
-                      child: KookersButton(
-                          text: "Envoyer le sms",
-                          color: snapshot.data == null ? Colors.grey : snapshot.data == false ? Colors.grey : Colors.black,
-                          textcolor: Colors.white));
-                }
-              ),
+                                  });
+                              }
+                            ),
+
                       SizedBox(height: 10)
             ]),
           ),

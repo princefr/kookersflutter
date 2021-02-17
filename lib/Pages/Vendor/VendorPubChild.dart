@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
+import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/InfoDialog.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
@@ -64,6 +65,11 @@ class _VendorPubPageState extends State<VendorPubPage> {
     return (total / count);
   }
 
+
+  double percentage(percent, total) {
+    return (percent / 100) * total;
+  }
+
   @override
   void dispose() {
     this.publication.close();
@@ -118,12 +124,12 @@ class _VendorPubPageState extends State<VendorPubPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(this.widget.publication.pricePerAll,
+                child: Text(this.widget.publication.pricePerAll + " " + CurrencyService.getCurrencySymbol(this.widget.publication.currency),
                     style: GoogleFonts.montserrat(
                         fontSize: 26, color: Colors.grey)),
               ),
               Row(children: [
-                Text(""),
+                
                 SizedBox(width: 20),
                 Container(
                   decoration: BoxDecoration(
@@ -138,7 +144,7 @@ class _VendorPubPageState extends State<VendorPubPage> {
                       Text(calculateRating(
                                   this.widget.publication.rating.ratingTotal,
                                   this.widget.publication.rating.ratingCount)
-                              .toString() +
+                              .toStringAsFixed(2) +
                           " " +
                           "(" +
                           this
@@ -147,7 +153,7 @@ class _VendorPubPageState extends State<VendorPubPage> {
                               .rating
                               .ratingCount
                               .toString() +
-                          ")")
+                          ")", style: GoogleFonts.montserrat(fontSize: 17))
                     ],
                   ),
                 ),
@@ -221,8 +227,9 @@ class _VendorPubPageState extends State<VendorPubPage> {
                           "Ce chiffre représente le montant que vous recevrez pour chacun(e) des portions ou plats que vous vendriez à l'aide la plateforme kookers une fois les frais de fonctionnement déduits."));
             },
             leading: Icon(CupertinoIcons.info_circle),
-            title: Text("Ce que vous recevrez par plat",
+            title: Text("Frais d'application",
                 style: GoogleFonts.montserrat()),
+                trailing: Text(this.percentage(15, double.parse(this.widget.publication.pricePerAll)).toString() + " " + CurrencyService.getCurrencySymbol(this.widget.publication.currency), style: GoogleFonts.montserrat(fontSize: 17)),
           ),
           SizedBox(height: 40),
           StreamBuilder<PublicationVendor>(
