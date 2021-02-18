@@ -28,6 +28,7 @@ class Room {
   Receiver receiver;
   String lastMessage;
   List<Message> messages;
+  
   Room(
       {@required this.id,
       @required this.updatedAt,
@@ -41,6 +42,7 @@ class Room {
         List<Message> messages =  Message.fromJSON(map['messages'] as List<Object>).reversed.toList();
         String last = messages.length > 0 ? messages.first.message : "";
         int notificationCount = messages.length > 0 ? messages.where((element) => element.userId != currentUser).where((element) => element.isRead == false).length : 0;
+        String lastMessageDate = messages.length > 0 ? messages.first.createdAt : map["updatedAt"];
 
         
 
@@ -48,7 +50,7 @@ class Room {
         messages: messages,
         id: map['_id'] as String,
         notificationCountUser_1: notificationCount,
-        updatedAt: map['updateAt'] as String,
+        updatedAt: lastMessageDate,
         lastMessage: last,
 
         receiver: Receiver(
@@ -93,11 +95,11 @@ class Message {
     List<Message> messages = [];
     if(map != null){
       map.forEach((element) async {
-        // await Jiffy.locale("fr");
         final dou = element as Map<String, dynamic>;
-        final date = Jiffy(dou["createdAt"]);
+        // final date = Jiffy(dou["createdAt"]);
         messages.add(Message(
-          createdAt: date.format("do MMMM, HH:mm:ss"),
+          // createdAt: date.format("do MMMM, HH:mm:ss"),
+          createdAt: dou["createdAt"],
           userId: dou["userId"],
           message: dou["message"],
           isRead: dou["is_read"],
@@ -236,7 +238,7 @@ class RoomItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "il y'a 2 mins",
+                  Jiffy(this.room.updatedAt).yMMMMd == Jiffy(DateTime.now()).yMMMMd ? Jiffy(this.room.updatedAt).format("HH:mm") : Jiffy(this.room.updatedAt).format("do MMMM"),
                   style: TextStyle(fontSize: 12),
                 ),
                 room.notificationCountUser_1 > 0

@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql/client.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/Messages/MessageInput.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
@@ -278,8 +279,11 @@ class _ChatPageState extends State<ChatPage>
                                                       MainAxisAlignment.end,
                                                   children: [
                                                     Text(
-                                                      snapshot
-                                                          .data[index].createdAt,
+                                                      Jiffy(snapshot
+                                                          .data[index].createdAt).yMMMMd == Jiffy(DateTime.now()).yMMMMd ?
+                                                          Jiffy(snapshot
+                                                          .data[index].createdAt).format("HH:mm") : Jiffy(snapshot
+                                                          .data[index].createdAt).format("do MMMM, HH:mm"),
                                                       style:
                                                           GoogleFonts.montserrat(
                                                               fontSize: 11),
@@ -403,7 +407,11 @@ class _ChatPageState extends State<ChatPage>
                                                         alignment:
                                                             Alignment.centerLeft,
                                                         child: Text(
-                                                          snapshot.data[index].createdAt,
+                                                          Jiffy(snapshot
+                                                          .data[index].createdAt).yMMMMd == Jiffy(DateTime.now()).yMMMMd ?
+                                                          Jiffy(snapshot
+                                                          .data[index].createdAt).format("HH:mm") : Jiffy(snapshot
+                                                          .data[index].createdAt).format("do MMMM, HH:mm"),
                                                           style: GoogleFonts
                                                               .montserrat(
                                                                   fontSize: 11),

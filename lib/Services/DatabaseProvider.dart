@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:kookers/Env/Environment.dart';
 import 'package:kookers/GraphQlHelpers/ClientProvider.dart';
 import 'package:kookers/Pages/Balance/BalancePage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
@@ -679,7 +680,7 @@ class DatabaseProviderService {
     );
     
 
-     GraphQLClient client = clientFor(uri: "https://ed23ed8dd441.ngrok.io/graphql", subscriptionUri: 'wss://ed23ed8dd441.ngrok.io/graphql', authorization: "").value;
+     GraphQLClient client = clientFor(uri: environment['graphqlUrl'], subscriptionUri: environment['graphqlSocket'], authorization: "").value;
 
      
 
@@ -912,7 +913,7 @@ class DatabaseProviderService {
         """),
         variables: <String, dynamic> {
           'account_id' : this.user.value.stripeaccountId,
-          'amount': balance.pendingBalance - balance.currentBalance,
+          'amount': balance.currentBalance,
           'currency': balance.currency,
           'destination': this.user.value.defaultIban
         }

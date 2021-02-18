@@ -1,10 +1,11 @@
+import 'package:kookers/Env/Environment.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class StripeServices {
   void initiateStripe() async {
     StripePayment.setOptions(StripeOptions(
         publishableKey:
-            "pk_test_51623aEF9cRDonA7mYkDijtSwyubt71keNBa6qMq7zvO9knDpy6ZzYyQEN9YeqLzUJqGm237vJN09eJYwGmEE07EQ00J4LDb1yK",
+            environment['Stripe'],
         merchantId: "Test",
         androidPayMode: 'test'));
   }
@@ -41,6 +42,9 @@ class StripeServices {
     switch (code) {
       case "account_already_exists":
         return "Le compte que vous essayer de creer existe deja";
+        break;
+      case "parameter_invalid_integer":
+        return "La somme du portefeuille non en attente doit etre superieur à 0";
         break;
       case "account_invalid":
           return "Le compte n'est pas valide, veuillez reessayer.";
