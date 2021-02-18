@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/StripeServices.dart';
 import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
@@ -89,7 +90,7 @@ class TransationItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(transaction.type, style: GoogleFonts.montserrat(fontSize: 15)),
+            Text(StripeServices.getSigle(transaction.type), style: GoogleFonts.montserrat(fontSize: 15)),
             Text(transaction.id, style: GoogleFonts.montserrat(fontSize: 12)),
           ]),
       trailing: Column(

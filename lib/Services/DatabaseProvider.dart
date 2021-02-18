@@ -361,8 +361,9 @@ class PublicationVendor {
   String createdAt;
   RatingPublication rating;
   String currency;
+  String shortId;
 
-  PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.photoUrls, this.adress, this.isOpen, this.preferences, this.createdAt, this.rating, this.currency});
+  PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.photoUrls, this.adress, this.isOpen, this.preferences, this.createdAt, this.rating, this.currency, this.shortId});
   
 
   static PublicationVendor fromJson(Map<String, dynamic> map) => PublicationVendor(
@@ -377,15 +378,13 @@ class PublicationVendor {
     preferences: List<String>.from(map["food_preferences"]),
     createdAt: map["createdAt"],
     rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString())),
-    currency: map["currency"]
+    currency: map["currency"],
+    shortId: map["shortId"]
   );
 
   static List<PublicationVendor> fromJsonToList(List<Object> map) {
     List<PublicationVendor> allpublications = [];
     map.forEach((element) {
-      final c = element as Map<String, dynamic>;
-      print(c["rating"]["rating_count"]);
-      print(c["rating"]["rating_total"]);
       final x = PublicationVendor.fromJson(element);
       allpublications.add(x);
     });
@@ -1153,6 +1152,7 @@ Future<List<Order>>  loadbuyerOrders() {
                           createdAt
                           is_open
                           currency
+                          shortId
 
                           food_preferences
                           

@@ -174,7 +174,6 @@ class _FoodItemChildState extends State<FoodItemChild> {
   
 
   double percentage2(x, percent, total) {
-    print("ok i 'm starting");
     return ((percent / 100) * total) * x;
   }
 

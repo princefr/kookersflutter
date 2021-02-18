@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
@@ -215,7 +216,7 @@ class _VendorPubPageState extends State<VendorPubPage> {
           ),
           ListTile(
             leading: Icon(CupertinoIcons.time),
-            title: Text(this.widget.publication.createdAt,
+            title: Text(Jiffy(this.widget.publication.createdAt).format("do MMMM yyyy [ à ] HH:mm"),
                 style: GoogleFonts.montserrat()),
           ),
           ListTile(
@@ -229,9 +230,16 @@ class _VendorPubPageState extends State<VendorPubPage> {
             leading: Icon(CupertinoIcons.info_circle),
             title: Text("Frais d'application",
                 style: GoogleFonts.montserrat()),
-                trailing: Text(this.percentage(15, double.parse(this.widget.publication.pricePerAll)).toString() + " " + CurrencyService.getCurrencySymbol(this.widget.publication.currency), style: GoogleFonts.montserrat(fontSize: 17)),
+                trailing: Text(this.percentage(15, double.parse(this.widget.publication.pricePerAll)).toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(this.widget.publication.currency), style: GoogleFonts.montserrat(fontSize: 17)),
+          ),
+
+          ListTile(
+            leading: Text("Réf:", style: GoogleFonts.montserrat(),),
+            title: Text(this.widget.publication.shortId, style: GoogleFonts.montserrat()),
           ),
           SizedBox(height: 40),
+
+
           StreamBuilder<PublicationVendor>(
               stream: this.publication.stream,
               builder: (context, snapshot) {

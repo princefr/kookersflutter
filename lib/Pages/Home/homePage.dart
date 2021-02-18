@@ -200,6 +200,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                   });
                 },
                 child: ListView.builder(
+                  
                   itemCount: snapshot.data.length,
                   itemBuilder: (ctx, index) {
                     return FoodItem(

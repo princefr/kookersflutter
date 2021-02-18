@@ -8,7 +8,6 @@ import 'dart:async';
 
 mixin GuidelinesValidation {
      final policiesAccepted = StreamTransformer<bool, bool>.fromHandlers(handleData: (value, sink) {
-        print(value);
           if(value){
           sink.add(value);
         } else{

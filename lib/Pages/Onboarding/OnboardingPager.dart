@@ -12,6 +12,8 @@ class OnBoardingPager extends StatefulWidget {
 }
 
 
+// https://storyset.com/pana
+
 
 class _OnboardingPagerState extends State<OnBoardingPager> {
   PageController _pageController;
@@ -40,7 +42,7 @@ class _OnboardingPagerState extends State<OnBoardingPager> {
 
      OnboardingPage(data:
       OnboardingModel(
-        description: "Votre chef ou nos partenaires achimine votre commande directement devant votre porte.",
+        description: "Votre chef ou nos partenaires achiminent votre commande directement devant votre porte.",
         placeHolder: "assets/onboarding/Take_Away-pana.png",
         title: "Faites vous livrer",
         )

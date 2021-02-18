@@ -46,10 +46,11 @@ class _TabHomeState extends State<TabHome>
   RateMyApp rateMyApp = RateMyApp(
     preferencesPrefix: 'rateKookers_',
     minDays: 0, // Show rate popup on first day of install.
-    minLaunches:
-      7, // Show rate popup after 5 launches of app after minDays is passed.
-    //googlePlayIdentifier: "",
-    //appStoreIdentifier: "",
+    minLaunches:10, // Show rate popup after 5 launches of app after minDays is passed.
+    remindDays: 2,
+    remindLaunches: 10,
+    googlePlayIdentifier: "com.getkookers.android",
+    appStoreIdentifier: "1529436130",
   );
 
   StreamSubscription<RemoteMessage> get onMessage => FirebaseMessaging.onMessage.listen((event) => event);

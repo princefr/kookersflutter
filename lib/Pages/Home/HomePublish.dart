@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kookers/Pages/Home/HomeSearchPage.dart';
+import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/PublicationProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
@@ -423,10 +424,12 @@ class _HomePublishState extends State<HomePublish> {
                                               child: Icon(CupertinoIcons.info_circle)),
                                             Text("Frais de la platforme", style: GoogleFonts.montserrat(),),
                                             StreamBuilder<double>(
+                                              initialData: 0.0,
                                             stream: this.feePaid,
                                             builder: (context, snapshot) {
                                               if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
-                                              return Text(snapshot.data.toString(), style: GoogleFonts.montserrat());
+                                              if(snapshot.data == null) return SizedBox();
+                                              return Text(snapshot.data.toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(databaseService.user.value.currency), style: GoogleFonts.montserrat());
                                             }
                                           )
 
@@ -449,9 +452,11 @@ class _HomePublishState extends State<HomePublish> {
                                         Text("Ce que vous recevrez", style: GoogleFonts.montserrat(),),
                                         StreamBuilder<double>(
                                         stream: this.moneyReceived,
+                                        initialData: 0.0,
                                         builder: (context, snapshot) {
                                           if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
-                                          return Text(snapshot.data.toString(), style: GoogleFonts.montserrat());
+                                          if(snapshot.data == null) return SizedBox();
+                                          return Text(snapshot.data.toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(databaseService.user.value.currency) , style: GoogleFonts.montserrat());
                                         }
                                       )
 

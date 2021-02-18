@@ -154,7 +154,7 @@ class _ChatPageState extends State<ChatPage>
               rightIcon: CupertinoIcons.exclamationmark_circle_fill,
               imageUrl: this.widget.room.receiver.photoUrl,
               height: 54,
-              isRightIcon: true,
+              isRightIcon: false,
               onTapRight: () {}),
           body: SafeArea(
             child: GestureDetector(
