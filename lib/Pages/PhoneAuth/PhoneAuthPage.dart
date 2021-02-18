@@ -90,6 +90,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                     borderRadius: BorderRadius.circular(10)
                   ),
                   child: ListTile(
+                    autofocus: false,
                     leading: StreamBuilder<Object>(
                       stream: phoneAuthBloc.phoneCode$,
                       builder: (context, snapshot) {

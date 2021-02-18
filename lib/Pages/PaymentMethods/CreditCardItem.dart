@@ -47,6 +47,7 @@ class CardItem extends StatelessWidget {
     return Container(
       height: 54,
       child: ListTile(
+        autofocus: false,
         onTap: onCheckBoxClicked,
         leading: SvgPicture.asset(
             'assets/payments_logo/${card.brand}.svg',

@@ -17,6 +17,7 @@ class OrderItemSellerShimmer extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
           child: ListTile(
+            autofocus: false,
         leading: Container(
           decoration: BoxDecoration(
                       color: Colors.grey[200],      
@@ -52,6 +53,7 @@ class OrderItemSeller extends StatelessWidget {
       child: Container(
         color: this.vendor.notificationSeller > 0 ? Colors.red[100]: Colors.white,
           child: ListTile(
+            autofocus: false,
         onTap: () => Navigator.push(
             context,
             CupertinoPageRoute(

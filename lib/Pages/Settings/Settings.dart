@@ -39,6 +39,7 @@ class SettingsItemWithLeftIcon extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: ListTile(
+            autofocus: false,
             leading: Icon(this.icon),
             title: Text(this.buttonText,
                 style: GoogleFonts.montserrat(fontSize: 16)),
@@ -67,6 +68,7 @@ class SettingsItem extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: ListTile(
+            autofocus: false,
             title: Text(this.buttonText,
                 style: GoogleFonts.montserrat(fontSize: 16)),
             trailing: Icon(CupertinoIcons.chevron_right),

@@ -23,17 +23,18 @@ enum SettingType { Plates, Desserts }
 
 class Photo extends StatefulWidget {
   final BehaviorSubject<File> file;
-  Photo({Key key,@required this.file}) : super(key: key);
+  final Stream<File> stream;
+  Photo({Key key,@required this.file, @required this.stream}) : super(key: key);
 
   @override
   _PhotoState createState() => _PhotoState();
 }
 
-class _PhotoState extends State<Photo> {
+class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>  {
+    @override
+  bool get wantKeepAlive => true;
+
   final picker = ImagePicker();
-
-
-  
 
   Future<File> getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
@@ -41,76 +42,81 @@ class _PhotoState extends State<Photo> {
   }
 
   @override
-  void dispose() { 
-
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-        return StreamBuilder<File>(
-          stream: this.widget.file,
-          builder: (context, snapshot) {
-            return Container(
-                width: 120,
-                height: 110,
-                child: Stack(children: [
-                  Container(
-                      height: 100,
-                      width: 100,
-                      decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          shape: BoxShape.rectangle,
-                          image: snapshot.data == null ? null : DecorationImage(image: Image.file(this.widget.file.value).image, fit: BoxFit.cover),
-                          borderRadius: BorderRadius.circular(15.0))),
-                          
-                  Positioned(
-                    bottom: 0,
-                    left: 75,
-                    child: InkWell(
-                      onTap: () {
-                        if(snapshot.data == null){
-                            this.getImage().then((file) {
-                              if(file != null){
-                                  this.widget.file.add(file);
-                              }
-                             
-                                                });
-                        }else{
-                          this.widget.file.sink.add(null);
-                        }
-                      },
-                      child: Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
-                          decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 255, 43, 84),
-                              borderRadius: BorderRadius.circular(13.0)),
-                          child: Icon(
-                            snapshot.data == null
-                                ? Icons.add
-                                : CupertinoIcons.multiply,
-                            color: Colors.white,
-                            size: 20.0,
-                          )),
-                    ),
-                  )
-                ]),
-              );
-          }
+        super.build(context);
+        return Container(
+          child: StreamBuilder<File>(
+            initialData: this.widget.file.value,
+            stream: this.widget.stream,
+            builder: (context, snapshot) {
+              print(snapshot.data);
+              return Container(
+                  width: 120,
+                  height: 110,
+                  child: Stack(children: [
+                    Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            shape: BoxShape.rectangle,
+                            image: snapshot.data == null ? null : DecorationImage(image: Image.file(snapshot.data).image, fit: BoxFit.cover),
+                            borderRadius: BorderRadius.circular(15.0))),
+                            
+                    Positioned(
+                      bottom: 0,
+                      left: 75,
+                      child: InkWell(
+                        onTap: () {
+                          if(snapshot.data == null){
+                              this.getImage().then((file) {
+                                if(file != null){
+                                    this.widget.file.add(file);
+                                }
+                               
+                            });
+                          }else{
+                            this.widget.file.sink.add(null);
+                          }
+                        },
+                        child: Container(
+                            padding:
+                                EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
+                            decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 255, 43, 84),
+                                borderRadius: BorderRadius.circular(13.0)),
+                            child: Icon(
+                              snapshot.data == null
+                                  ? Icons.add
+                                  : CupertinoIcons.multiply,
+                              color: Colors.white,
+                              size: 20.0,
+                            )),
+                      ),
+                    )
+                  ]),
+                );
+            }
+          ),
         );
        
   }
 }
 
-class HomePublish extends StatefulWidget {
+class HomePublish extends StatefulWidget  {
   HomePublish({Key key}) : super(key: key);
+
+  
 
   @override
   _HomePublishState createState() => _HomePublishState();
 }
 
-class _HomePublishState extends State<HomePublish> {
+class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClientMixin<HomePublish>  {
+
+  @override
+  bool get wantKeepAlive => true;
+
   PublicationProvider pubprovider = PublicationProvider();
 
 
@@ -118,8 +124,7 @@ class _HomePublishState extends State<HomePublish> {
     return ((percent/ 100) * total);
   }
 
-  BehaviorSubject<bool> isPricePerPie = BehaviorSubject<bool>.seeded(false);
-  BehaviorSubject<int> initialLabel = BehaviorSubject<int>.seeded(0);
+
   BehaviorSubject<int> fees = BehaviorSubject<int>.seeded(15);
 
   Stream<double> get feePaid => CombineLatestStream([pubprovider.priceall, fees], (values) => percentage(values[1], int.parse(values[0]))).asBroadcastStream();
@@ -133,21 +138,12 @@ class _HomePublishState extends State<HomePublish> {
   @override
   void initState() { 
     this.type = SettingType.Plates;
-    this.initialLabel.listen((value) {
-      if(value == 0){
-        this.type = SettingType.Plates;
-      }else{
-        this.type = SettingType.Desserts;
-      }
-    });
     super.initState();
   }
 
 
   @override
-  void dispose() { 
-    this.isPricePerPie.close();
-    this.initialLabel.close();
+  void dispose() {
     this.pubprovider.dispose();
     this.fees.close();
     super.dispose();
@@ -175,6 +171,7 @@ class _HomePublishState extends State<HomePublish> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
     final firebaseUser = context.watch<User>();
     final storageService = Provider.of<StorageService>(context, listen: false);
@@ -206,9 +203,9 @@ class _HomePublishState extends State<HomePublish> {
                       children: [
                         Container(
                                 child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [Photo(file: pubprovider.file0), Photo(file: pubprovider.file1), Photo(file: pubprovider.file2)],
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                children: [Photo(file: pubprovider.file0, stream: pubprovider.file0$,), Photo(file: pubprovider.file1, stream: pubprovider.file1$,), Photo(file: pubprovider.file2, stream: pubprovider.file2$,)],
                               ),
                             )),
                             
@@ -330,9 +327,9 @@ class _HomePublishState extends State<HomePublish> {
                                 alignment: Alignment.centerLeft,
                                 child: Text("PRIX",
                                     style: GoogleFonts.montserrat(
-                                   decoration: TextDecoration.none,
-                                   color: Colors.black,
-                                   fontSize: 15))),
+                                    decoration: TextDecoration.none,
+                                    color: Colors.black,
+                                    fontSize: 15))),
 
                                     SizedBox(height: 10),
 
@@ -340,6 +337,7 @@ class _HomePublishState extends State<HomePublish> {
                                     padding:
                                        const EdgeInsets.symmetric(horizontal: 5),
                                     child: StreamBuilder<Object>(
+                                      initialData: pubprovider.priceall.value,
                                       stream: pubprovider.priceall$,
                                       builder: (context, snapshot) {
                                        return TextField(
@@ -375,6 +373,7 @@ class _HomePublishState extends State<HomePublish> {
                                         fontSize: 15))),
                             SizedBox(height: 10),
                             ListTile(
+                              autofocus: false,
                               onTap: (){showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
@@ -382,9 +381,10 @@ class _HomePublishState extends State<HomePublish> {
                         );},
                               leading: Icon(CupertinoIcons.home),
                               title: StreamBuilder(
+                                initialData: databaseService.user.value,
                                 stream: databaseService.user$,
                                 builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                                  if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
+                                  // if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
                                   return Text(snapshot.data.adresses.where((element) => element.isChosed == true).first.title, style: GoogleFonts.montserrat(fontSize: 17));
                                 }
                               ),
@@ -403,41 +403,9 @@ class _HomePublishState extends State<HomePublish> {
                             SizedBox(height: 20),
 
 
-                            StreamBuilder<int>(
-                              stream: this.initialLabel.stream,
-                              builder: (context, snapshot) {
-                                return Visibility(
-                                    visible: snapshot.data == 0,
-                                    child: Column(
-                                    children: [
-                                      Container(
-                                        height: 50,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: (){
-                                                showDialog(context: context,
-                                                 builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que la plateforme, kookers prendra dans le cadre des frais de fonctionnement. Il représente 15% du prix de l'assiette/portion vendue."));
-                                              },
-                                              child: Icon(CupertinoIcons.info_circle)),
-                                            Text("Frais de la platforme", style: GoogleFonts.montserrat(),),
-                                            StreamBuilder<double>(
-                                              initialData: 0.0,
-                                            stream: this.feePaid,
-                                            builder: (context, snapshot) {
-                                              if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
-                                              if(snapshot.data == null) return SizedBox();
-                                              return Text(snapshot.data.toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(databaseService.user.value.currency), style: GoogleFonts.montserrat());
-                                            }
-                                          )
-
-                                        ],),
-                                      ),
-
-
-                                    Container(
+                            Column(
+                                children: [
+                                  Container(
                                     height: 50,
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -446,33 +414,61 @@ class _HomePublishState extends State<HomePublish> {
                                         GestureDetector(
                                           onTap: (){
                                             showDialog(context: context,
-                                              builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que vous recevrez pour chacun(e) des portions ou plats que vous vendriez à l'aide la plateforme kookers une fois les frais de fonctionnement déduits."));
+                                             builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que la plateforme, kookers prendra dans le cadre des frais de fonctionnement. Il représente 15% du prix de l'assiette/portion vendue."));
                                           },
                                           child: Icon(CupertinoIcons.info_circle)),
-                                        Text("Ce que vous recevrez", style: GoogleFonts.montserrat(),),
+                                        Text("Frais de la platforme", style: GoogleFonts.montserrat(),),
                                         StreamBuilder<double>(
-                                        stream: this.moneyReceived,
                                         initialData: 0.0,
+                                        stream: this.feePaid,
                                         builder: (context, snapshot) {
                                           if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                                           if(snapshot.data == null) return SizedBox();
-                                          return Text(snapshot.data.toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(databaseService.user.value.currency) , style: GoogleFonts.montserrat());
+                                          return Text(snapshot.data.toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(databaseService.user.value.currency), style: GoogleFonts.montserrat());
                                         }
                                       )
 
                                     ],),
                                   ),
-                                    ],
+
+
+                                Container(
+                                height: 50,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: (){
+                                        showDialog(context: context,
+                                          builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que vous recevrez pour chacun(e) des portions ou plats que vous vendriez à l'aide la plateforme kookers une fois les frais de fonctionnement déduits."));
+                                      },
+                                      child: Icon(CupertinoIcons.info_circle)),
+                                    Text("Ce que vous recevrez", style: GoogleFonts.montserrat(),),
+                                    StreamBuilder<double>(
+                                    stream: this.moneyReceived,
+                                    initialData: 0.0,
+                                    builder: (context, snapshot) {
+                                      if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                                      if(snapshot.data == null) return SizedBox();
+                                      return Text(snapshot.data.toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(databaseService.user.value.currency) , style: GoogleFonts.montserrat());
+                                    }
+                                  )
+
+                                ],),
                                   ),
-                                );
-                              }
-                            ),
+                                ],
+                                  ),
 
 
-                            SizedBox(height: 40),
+
+                      ],
+                    ),
+                  ),
 
 
-                            StreamBuilder(
+                            StreamBuilder<bool>(
+                              initialData: null,
                               stream: pubprovider.isFormValidOne$,
                               builder: (ctx, AsyncSnapshot<bool> snapshot) {
                                 return StreamButton(buttonColor: snapshot.data != null ? Color(0xFFF95F5F) : Colors.grey,
@@ -496,10 +492,7 @@ class _HomePublishState extends State<HomePublish> {
                               }
                             ),
                             
-                            SizedBox(height: 30)
-                      ],
-                    ),
-                  )
+                            SizedBox(height: 10)
 
 
  

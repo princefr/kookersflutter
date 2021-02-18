@@ -337,6 +337,7 @@ class _SignupPageState extends State<SignupPage> {
                 stream: signupBloc.dateOfBirth$,
                 builder: (context, AsyncSnapshot<DateTime> snapshot) {
                   return ListTile(
+                    autofocus: false,
                     onTap: () async {
                       DateTime date = await showCupertinoModalBottomSheet(
                         expand: false,
@@ -367,6 +368,7 @@ class _SignupPageState extends State<SignupPage> {
                 stream: signupBloc.adress$,
                 builder: (context, AsyncSnapshot<Adress> snapshot) {
                   return ListTile(
+                    autofocus: false,
                     onTap: () async  {
                        this.adress = await showCupertinoModalBottomSheet(
                           expand: false,
@@ -400,6 +402,7 @@ class _SignupPageState extends State<SignupPage> {
               SizedBox(height: 20),
 
               ListTile(
+                autofocus: false,
                 leading: StreamBuilder<bool>(
                   stream: signupBloc.acceptedPolicies$,
                   builder: (context, snapshot) {

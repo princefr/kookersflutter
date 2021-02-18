@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/StripeServices.dart';
 import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
@@ -18,6 +19,7 @@ class TransationItemShimmer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      autofocus: false,
       leading: Container(
           decoration: BoxDecoration(
             color: Colors.grey[200],
@@ -75,6 +77,7 @@ class TransationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      autofocus: false,
       leading: this.transaction.type == "payment"
           ? Icon(
               CupertinoIcons.arrow_down_circle_fill,
@@ -223,16 +226,22 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                           }
 
                           
-                          return Center(
-                                child: Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 40),
-                                    child: Text(
-                                      snapshot.data.balance.totalBalance.toString() + " " + CurrencyService.getCurrencySymbol(snapshot.data.currency),
-                                      style: GoogleFonts.montserrat(
-                                          fontSize: 40,
-                                          fontWeight: FontWeight.w500),
-                                    )),
-                              );
+                          return Column(
+                            children: [
+                              Center(
+                                    child: Container(
+                                        padding: EdgeInsets.symmetric(horizontal: 40),
+                                        child: Text(
+                                          snapshot.data.balance.totalBalance.toString() + " " + CurrencyService.getCurrencySymbol(snapshot.data.currency),
+                                          style: GoogleFonts.montserrat(
+                                              fontSize: 40,
+                                              fontWeight: FontWeight.w500),
+                                        )),
+                                  ),
+
+                                  Chip(label: Text("Somme en attente: " + " " + (snapshot.data.balance.pendingBalance > 0 ? (snapshot.data.balance.pendingBalance / 100) : 0).toString() + " " + CurrencyService.getCurrencySymbol(snapshot.data.currency), style: GoogleFonts.montserrat()))
+                            ],
+                          );
                             }
                           ),
                         
@@ -295,7 +304,9 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                               await databaseService.loadUserData();
                                               _streamButtonController.isSuccess();
                                             }).catchError((onError){
-                                               print(onError["exception"]["raw"]["code"]);
+
+                                              NotificationPanelService.showError(context, StripeServices.getErrorFromString(onError["exception"]["raw"]["code"]));
+                                               // print(onError["exception"]["raw"]["code"]);
                                               _streamButtonController.isError();
                                             });
                                                   

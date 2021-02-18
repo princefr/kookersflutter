@@ -129,13 +129,13 @@ class NotificationPanelService {
   }
 
 
-  void showError(BuildContext ctx){
+  static void showError(BuildContext ctx, String message){
     Flushbar(
       flushbarPosition: FlushbarPosition.TOP,
       flushbarStyle: FlushbarStyle.FLOATING,
       margin: EdgeInsets.all(8),
       borderRadius: 8,
-      message: "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+      message: message,
       backgroundColor: Colors.red,
       icon: Icon(
         Icons.info_outline,

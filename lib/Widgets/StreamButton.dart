@@ -108,6 +108,7 @@ class _StreamButtonState extends State<StreamButton> {
                   case StreamButtonState.Loading:
                       return Center(
                         child: ListTile(
+                          autofocus: false,
                           leading: SizedBox(),
                           trailing: CupertinoActivityIndicator(radius: 15),
                           title: Text(this.widget.loadingText, style: GoogleFonts.montserrat(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
@@ -116,6 +117,7 @@ class _StreamButtonState extends State<StreamButton> {
                     break;
                   case StreamButtonState.Error:
                       return ListTile(
+                        autofocus: false,
                         leading: SizedBox(),
                         trailing: Container(height:55, width: 55,child: Lottie.asset('assets/lottie/lf30_editor_g0zf4bru.json', width: 45, height: 45, fit: BoxFit.fill, repeat: false)),
                         title: Text(this.widget.errorText, style: GoogleFonts.montserrat(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
@@ -123,6 +125,7 @@ class _StreamButtonState extends State<StreamButton> {
                     break;
                   case StreamButtonState.Success:
                       return ListTile(
+                        autofocus: false,
                         leading: SizedBox(),
                         trailing: Container(height:55, width: 55,child: Lottie.asset('assets/lottie/lf30_editor_m8symrlg.json', width: 45, height: 45, fit: BoxFit.fill, repeat: false)),
                         title: Text(this.widget.successText, style: GoogleFonts.montserrat(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),

@@ -187,6 +187,7 @@ class _ChatPageState extends State<ChatPage>
                                         if (snapshot.data[index].userId ==
                                             databaseService.user.value.id) {
                                           return ListTile(
+                                            autofocus: false,
                                               title: Column(
                                             children: [
 
@@ -300,6 +301,7 @@ class _ChatPageState extends State<ChatPage>
                                             padding:
                                                 const EdgeInsets.only(top: 20),
                                             child: ListTile(
+                                              autofocus: false,
                                                 leading: CircleAvatar(
                                                   backgroundColor: Colors.white,
                                                   foregroundColor: Colors.white,

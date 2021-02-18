@@ -185,41 +185,38 @@ class _VendorPubPageState extends State<VendorPubPage> {
                       return Padding(
                         padding:
                             const EdgeInsets.only(left: 5, right: 5, top: 3),
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.green[100],
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0))),
-                            padding: EdgeInsets.all(10),
-                            child: Text(this
+                        child: Chip(
+                            backgroundColor: Colors.green[100],
+                            label: Text(this
                                 .widget
                                 .publication
                                 .preferences[index])),
                       );
                     });
               } else {
-                return Container(
-                  height: 40,
-                  child: Text("Sans préférences"),
-                  decoration: BoxDecoration(
-                      color: Colors.green[100],
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Align(alignment: Alignment.centerLeft, child: Chip(label: Text("Sans préférences"), backgroundColor: Colors.green[100])),
                 );
+                
               }
             }),
           ),
           Divider(),
           ListTile(
+            autofocus: false,
             leading: Icon(CupertinoIcons.home),
             title: Text(this.widget.publication.adress.title,
                 style: GoogleFonts.montserrat()),
           ),
           ListTile(
+            autofocus: false,
             leading: Icon(CupertinoIcons.time),
             title: Text(Jiffy(this.widget.publication.createdAt).format("do MMMM yyyy [ à ] HH:mm"),
                 style: GoogleFonts.montserrat()),
           ),
           ListTile(
+            autofocus: false,
             onTap: () {
               showDialog(
                   context: context,
@@ -234,6 +231,7 @@ class _VendorPubPageState extends State<VendorPubPage> {
           ),
 
           ListTile(
+            autofocus: false,
             leading: Text("Réf:", style: GoogleFonts.montserrat(),),
             title: Text(this.widget.publication.shortId, style: GoogleFonts.montserrat()),
           ),

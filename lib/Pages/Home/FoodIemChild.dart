@@ -304,25 +304,18 @@ class _FoodItemChildState extends State<FoodItemChild> {
                       return Padding(
                         padding:
                             const EdgeInsets.only(left: 5, right: 5, top: 3),
-                        child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.green[100],
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10.0))),
-                            padding: EdgeInsets.all(10),
-                            child: Text(this
+                        child: Chip(
+                            backgroundColor: Colors.green[100],
+                            label: Text(this
                                 .widget
                                 .publication
                                 .preferences[index])),
                       );
                     });
               } else {
-                return Container(
-                  height: 40,
-                  child: Text("Sans préférences"),
-                  decoration: BoxDecoration(
-                      color: Colors.green[100],
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Align(alignment: Alignment.centerLeft, child: Chip(label: Text("Sans préférences"), backgroundColor: Colors.green[100])),
                 );
               }
             }),
@@ -343,6 +336,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
               stream: orderProvider.deliveryDate.stream,
               builder: (context, AsyncSnapshot<DateTime> snapshot) {
                 return ListTile(
+                  autofocus: false,
                   onTap: () async {
                     DateTime date = await showCupertinoModalBottomSheet(
                       expand: false,
@@ -381,6 +375,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                             Divider(),
 
                                                         ListTile(
+                                                          autofocus: false,
                               onTap: (){showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
@@ -401,6 +396,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
           ),
 
           ListTile(
+            autofocus: false,
             leading: CircleAvatar(
               backgroundColor: Colors.white,
               foregroundColor: Colors.white,

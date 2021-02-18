@@ -21,6 +21,7 @@ class TopBarTwoWithChat extends PreferredSize {
           child: Container(
         height: preferredSize.height,
         child: ListTile(
+          autofocus: false,
           leading: InkWell(onTap: () => Navigator.pop(context), child: Icon(CupertinoIcons.chevron_back)),
           title: Text(this.title, style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
           trailing: Visibility(visible: this.isRightIcon, child: InkWell(onTap: this.onTapRight, child: Icon(this.rightIcon)),
@@ -48,6 +49,7 @@ class TopBarWitBackNav extends PreferredSize {
           child: Container(
         height: preferredSize.height,
         child: ListTile(
+          autofocus: false,
           leading: InkWell(onTap: () => Navigator.pop(context), child: Icon(CupertinoIcons.chevron_back)),
           title: Text(this.title, style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
           trailing: Visibility(visible: this.isRightIcon, child: InkWell(onTap: this.onTapRight, child: Icon(this.rightIcon)),
@@ -77,6 +79,7 @@ class TopBarChat extends PreferredSize {
           child: Container(
         height: preferredSize.height,
         child: ListTile(
+          autofocus: false,
           leading: InkWell(onTap: () => Navigator.pop(context), child: Icon(CupertinoIcons.chevron_back)),
           title: Row(children: [
             CircleAvatar(

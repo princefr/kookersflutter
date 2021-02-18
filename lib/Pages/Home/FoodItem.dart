@@ -243,18 +243,19 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
                       itemBuilder: (ctx, index){
                         return Padding(
                           padding: const EdgeInsets.only(left: 5, right: 5, top: 3),
-                          child: Container(
-                                  decoration: BoxDecoration(
-                                  color: Colors.green[100],
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
-                    ), padding: EdgeInsets.all(10), child: Text(this.widget.publication.preferences[index])),
+                          child: Chip(
+                            backgroundColor: Colors.green[100],
+                            label: Text(this
+                                .widget
+                                .publication
+                                .preferences[index])),
                         );
                     });
                   }else{
-                    return Container(height: 40, child: Text("Sans préférences"), decoration: BoxDecoration(
-                                  color: Colors.green[100],
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
-                    ),);
+                    return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Align(alignment: Alignment.centerLeft, child: Chip(label: Text("Sans préférences"), backgroundColor: Colors.green[100])),
+                );
                   }
                 }),
               ),

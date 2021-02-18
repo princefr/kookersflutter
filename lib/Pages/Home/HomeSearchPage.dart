@@ -222,6 +222,7 @@ class _HomeSearchPageState extends State<HomeSearchPage> with AutomaticKeepAlive
                       itemCount: predictions.length,
                       itemBuilder: (ctx, index) {
                         return ListTile(
+                          autofocus: false,
                           onTap: () async {
                             googlePlace.details.get(predictions[index].placeId).then((value) {
                               final c = db.Adress(isChosed: true, location: db.Location(latitude: value.result.geometry.location.lat, longitude: value.result.geometry.location.lng),  title: predictions[index].description);
@@ -264,6 +265,7 @@ class _HomeSearchPageState extends State<HomeSearchPage> with AutomaticKeepAlive
                         itemCount: snapshot.data.adresses.length,
                         itemBuilder: (BuildContext context, int index) {
                           return ListTile(
+                            autofocus: false,
                             onTap: (){
                               setState(() {
                                 snapshot.data.adresses.forEach((e) => e.isChosed = false);

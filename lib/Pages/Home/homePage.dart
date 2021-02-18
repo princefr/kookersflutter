@@ -73,6 +73,7 @@ class HomeTopBar extends PreferredSize {
                             size: 23.0, color: Colors.black))),
                 Flexible(
                   child: ListTile(
+                    autofocus: false,
                     onTap: () {
                       showCupertinoModalBottomSheet(
                         expand: false,

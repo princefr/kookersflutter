@@ -189,6 +189,7 @@ final MutationOptions _options  = MutationOptions(
               SizedBox(height:15),
 
               ListTile(
+                autofocus: false,
                 leading: Lottie.asset('assets/lottie/lf30_KvGsoi.json', height: 140, repeat: true),
                 title: Text("La santé des membres de notre communauté nous est importante , c’est pourquoi nous vous rappelons qu’il est important de porter vos équipements de cuisine (masques, gants, charlottes ) quand vous cuisinez pour un membre.", style: GoogleFonts.montserrat(fontSize:13)),
                 
@@ -198,22 +199,26 @@ final MutationOptions _options  = MutationOptions(
              SizedBox(height:10),
 
              ListTile(
+               autofocus: false,
                leading: Text("À livrer: ", style: GoogleFonts.montserrat(fontSize: 18))
              ),
 
               ListTile(
+                autofocus: false,
                 leading: Icon(CupertinoIcons.location),
                 title: Text(this.widget.vendor.adress.title, style: GoogleFonts.montserrat()),
                 
               ),
 
               ListTile(
+                autofocus: false,
                 leading: Text("x" + this.widget.vendor.quantity.toString(), style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),
                 title: Text(this.widget.vendor.publication.title, style: GoogleFonts.montserrat()),
                 trailing: Text(this.widget.vendor.totalPrice + " " + CurrencyService.getCurrencySymbol(this.widget.vendor.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
               ListTile(
+                autofocus: false,
                 leading: Icon(CupertinoIcons.exclamationmark_circle),
                 title: Text("Frais d'applicaton", style: GoogleFonts.montserrat()),
                 trailing: Text(this.fees.toString() + " " + CurrencyService.getCurrencySymbol(this.widget.vendor.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
@@ -234,11 +239,13 @@ final MutationOptions _options  = MutationOptions(
               SizedBox(height: 10),
 
             ListTile(
+              autofocus: false,
         leading: Icon(CupertinoIcons.calendar),
         title: Text(Jiffy(this.widget.vendor.deliveryDay).format("do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat(),),
             ),
 
               ListTile(
+                autofocus: false,
                 leading: Text("Vous recevrez: ", style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold)),
                 trailing: Text(this.total.toString() + " " + CurrencyService.getCurrencySymbol(this.widget.vendor.currency), style: GoogleFonts.montserrat(fontSize: 24, color: Colors.green)),
               ),
@@ -249,6 +256,7 @@ final MutationOptions _options  = MutationOptions(
              
              
               ListTile(
+                autofocus: false,
                     onTap: (){
                             setState((){
                               this.isLoading = true;

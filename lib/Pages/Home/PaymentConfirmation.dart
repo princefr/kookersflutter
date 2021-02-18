@@ -69,6 +69,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                       
                       SizedBox(height: 30),
                       ListTile(
+                        autofocus: false,
                         leading: Icon(CupertinoIcons.location_solid),
                         title: Text(
                             databaseService.user.value.adresses
@@ -78,6 +79,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                             style: GoogleFonts.montserrat()),
                       ),
                       ListTile(
+                        autofocus: false,
                         leading: Icon(CupertinoIcons.calendar),
                         title: Text(
                             Jiffy(this.widget.order.deliveryDay)
@@ -85,6 +87,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                             style: GoogleFonts.montserrat()),
                       ),
                       ListTile(
+                        autofocus: false,
                         leading: Text(
                             "x" + this.widget.order.quantity.toString(),
                             style: GoogleFonts.montserrat(
@@ -99,6 +102,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                             style: GoogleFonts.montserrat(fontSize: 20)),
                       ),
                       ListTile(
+                        autofocus: false,
                         leading: Icon(CupertinoIcons.exclamationmark_circle),
                         title: Text("Frais de service",
                             style: GoogleFonts.montserrat()),
@@ -121,6 +125,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                     fontSize: 10))),
                       ),
                       ListTile(
+                        autofocus: false,
                         leading: Text(
                           "Total",
                           style: GoogleFonts.montserrat(
@@ -160,6 +165,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                         Colors.white));
                               if (snapshot.data.allCards.isEmpty)
                                 return ListTile(
+                                  autofocus: false,
                                   leading: Icon(CupertinoIcons.creditcard),
                                   trailing: Icon(CupertinoIcons.plus),
                                   title: Text("Ajouter un moyen de paiement"),
@@ -192,6 +198,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                       databaseService.user.value.defaultSource);
 
                               return ListTile(
+                                autofocus: false,
                                   trailing: Icon(
                                     CupertinoIcons.check_mark_circled,
                                     color: Colors.green,

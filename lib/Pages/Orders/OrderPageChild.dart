@@ -196,18 +196,21 @@ class _OrderPageChildState extends State<OrderPageChild> {
               SizedBox(height: 10),
 
               ListTile(
+                autofocus: false,
                 leading: Icon(CupertinoIcons.location),
                 title: Text(this.widget.order.adress.title, style: GoogleFonts.montserrat()),
                 
               ),
 
               ListTile(
+                autofocus: false,
                 leading: Text("x" + this.widget.order.quantity.toString(), style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),
                 title: Text(this.widget.order.publication.title, style: GoogleFonts.montserrat()),
                 trailing: Text(this.widget.order.totalPrice + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
               ListTile(
+                autofocus: false,
                 leading: Icon(CupertinoIcons.exclamationmark_circle),
                 title: Text("Frais de service", style: GoogleFonts.montserrat()),
                 trailing: Text(this.widget.order.fees + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
@@ -228,11 +231,13 @@ class _OrderPageChildState extends State<OrderPageChild> {
               SizedBox(height: 10),
 
             ListTile(
+              autofocus: false,
         leading: Icon(CupertinoIcons.calendar),
         title: Text(Jiffy(this.widget.order.deliveryDay).format("do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat(),),
             ),
 
               ListTile(
+                autofocus: false,
                 leading: Text("Total Payé: ", style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold)),
                 trailing: Text(this.widget.order.totalWithFees + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency), style: GoogleFonts.montserrat(fontSize: 24, color: Colors.green)),
               ),
@@ -240,6 +245,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
               Divider(),
 
             ListTile(
+              autofocus: false,
           onTap: () {
             this
                 .createRoom(

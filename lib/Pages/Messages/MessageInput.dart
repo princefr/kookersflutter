@@ -111,6 +111,7 @@ class _MessageInputState extends State<MessageInput> {
         ),
 
         ListTile(
+          autofocus: false,
           contentPadding: EdgeInsets.symmetric(horizontal: 15),
           leading: InkWell(onTap: this.widget.onAttachmentCiclked, child: Icon(CupertinoIcons.plus, color: Colors.black, size: 30)),
           trailing: StreamBuilder<String>(

@@ -65,7 +65,6 @@ class PublicationProvider  with PublicationValidation {
     this.file2.close();
     this.name.close();
     this.priceall.close();
-    this.priceaPerPortion.close();
     this.pricePrefs.close();
   }
 
@@ -75,41 +74,40 @@ class PublicationProvider  with PublicationValidation {
       
   
   BehaviorSubject<File> file0 = new BehaviorSubject<File>();
+  Stream<File> get file0$ => file0.stream;
+  Sink<File> get infile0 => file0.sink;
   
   
   BehaviorSubject<File> file1 = new BehaviorSubject<File>();
+  Stream<File> get file1$ => file1.stream;
+  Sink<File> get infile1 => file1.sink;
   
   BehaviorSubject<File> file2 = new BehaviorSubject<File>();
+    Stream<File> get file2$ => file2.stream;
+  Sink<File> get infile2 => file2.sink;
 
 
   
   BehaviorSubject<String> name = new BehaviorSubject<String>();
-  Stream<String> get name$ => name.stream.transform(validateName).asBroadcastStream();
+  Stream<String> get name$ => name.stream.transform(validateName);
   Sink<String> get inName => name.sink;
 
   
   BehaviorSubject<String>  description = new BehaviorSubject<String>();
-  Stream<String> get description$ => description.stream.transform(validateDescription).asBroadcastStream();
+  Stream<String> get description$ => description.stream.transform(validateDescription);
   Sink<String> get inDescription => description.sink;
 
 
   
   BehaviorSubject<String> priceall = new BehaviorSubject<String>();
-  Stream<String> get priceall$ => priceall.stream.transform(validatePrice).asBroadcastStream();
+  Stream<String> get priceall$ => priceall.stream.transform(validatePrice);
   Sink<String> get inPriceall => priceall.sink;
-
-  
-  BehaviorSubject<String> priceaPerPortion = new BehaviorSubject<String>();
-  Stream<String> get priceaPerPortion$ => priceaPerPortion.stream.transform(validatePricePerPortion).asBroadcastStream();
-  Sink<String> get inPriceaPerPortion => priceaPerPortion.sink;
 
   PublicationProvider(){
     this.pricePrefs.add([]);
   }
 
-
-  Stream<bool> get isAllPictureFilled$ => CombineLatestStream([file0.stream, file1.stream, file2.stream], (values) => true).asBroadcastStream();
-  Stream<bool> get isFormValidOne$ => CombineLatestStream([name$, description$, priceall$, isAllPictureFilled$], (values) => true).asBroadcastStream();
+  Stream<bool> get isFormValidOne$ => Rx.combineLatest([name$, description$, priceall$, file0$, file1$, file2$], (values) => true).shareValueSeeded(null);
   
 
   Future<Publication> validate(User user, StorageService storage, DatabaseProviderService database, SettingType type) async {

@@ -127,6 +127,7 @@ class OrderItemShimmer extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
         child: InkWell(
             child: ListTile(
+              autofocus: false,
             leading: Container(
               decoration: BoxDecoration(color: Colors.grey[200],    
               borderRadius: BorderRadius.all(Radius.circular(5.0))  
@@ -186,6 +187,7 @@ class OrderItem extends StatelessWidget {
         child: InkWell(
             onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => OrderPageChild(order: this.order))),
             child: ListTile(
+              autofocus: false,
             leading: Image(height: 350, width: 100, fit: BoxFit.cover, image: CachedNetworkImageProvider(order.publication.imagesUrls[0])),
             title: Align(
               alignment: Alignment.centerLeft,

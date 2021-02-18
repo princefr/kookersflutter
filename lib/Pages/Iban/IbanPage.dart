@@ -194,6 +194,7 @@ class _IbanPageState extends State<IbanPage> {
                     itemCount: snapshot.data.ibans.length,
                     itemBuilder: (ctx, index) {
                       return ListTile(
+                        autofocus: false,
                         onTap: () {
                           databaseService
                               .updateIbanDeposit(snapshot.data.ibans[index].id);

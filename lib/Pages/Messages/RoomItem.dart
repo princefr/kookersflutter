@@ -134,6 +134,7 @@ class RoomItemShimmer extends StatelessWidget {
         Expanded(
           flex: 10,
           child: ListTile(
+            autofocus: false,
             title: Container(
               decoration: BoxDecoration(
                       color: Colors.grey[200],      
@@ -213,6 +214,7 @@ class RoomItem extends StatelessWidget {
         Expanded(
           flex: 10,
           child: ListTile(
+            autofocus: false,
             title: Text(
               this.room.receiver.firstName + " " + this.room.receiver.lastName,
               style: GoogleFonts.montserrat(fontSize: 16),

@@ -13,6 +13,7 @@ class PublicationItemVendorShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         child: ListTile(
+          autofocus: false,
       leading: Container(
         decoration: BoxDecoration(
                       color: Colors.grey[200],      
@@ -45,6 +46,7 @@ class PublicationItemVendor extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         child: ListTile(
+          autofocus: false,
       onTap: () => Navigator.push(
           context,
           CupertinoPageRoute(

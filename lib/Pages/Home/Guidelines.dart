@@ -60,6 +60,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
 
 
                 ListTile(
+                  autofocus: false,
                 leading: StreamBuilder<bool>(
                   stream: bloc.acceptMask$,
                   initialData: bloc.acceptMask.value,
@@ -77,6 +78,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
               SizedBox(height: 30),
 
               ListTile(
+                autofocus: false,
                 leading: StreamBuilder<bool>(
                   stream: bloc.acceptGloves,
                   initialData: bloc.acceptGloves.value,
@@ -97,6 +99,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
               SizedBox(height: 30),
 
               ListTile(
+                autofocus: false,
                 leading: StreamBuilder<bool>(
                   stream: bloc.acceptBeenVerified$,
                   initialData: bloc.acceptBeenVerified.value,
