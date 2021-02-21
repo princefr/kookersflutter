@@ -56,7 +56,7 @@ dependencies:
   provider: "^4.3.2+1"
   google_maps_flutter: ^0.5.28+1
   shimmer: ^1.1.2
-  another_flushbar: ^1.10.8
+  another_flushbar: ^1.10.10
   google_place: ^0.3.3
   cached_network_image: ^2.5.0
   image_picker: ^0.6.7+22
@@ -75,7 +75,6 @@ dependencies:
   flutter_app_badger: ^1.1.2
   badges: ^1.1.6
   flutter_secure_storage: ^3.3.5
-  flutter_dotenv: ^3.1.0
   package_info: ^0.4.3+4
   webview_flutter: ^1.0.7
   flutter_native_image: ^0.0.5+3

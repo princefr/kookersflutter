@@ -22,7 +22,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 
 
 // keytool -list -v -keystore "/Users/part/key.jks" -alias alias
@@ -55,7 +54,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await DotEnv.load(fileName: ".env");
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
