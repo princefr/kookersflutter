@@ -24,7 +24,6 @@ import 'package:kookers/Widgets/TopBar.dart';
 import 'package:kookers/Widgets/WebView.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SignupPage extends StatefulWidget {
   final User user;
