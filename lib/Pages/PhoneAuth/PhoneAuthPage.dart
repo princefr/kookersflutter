@@ -114,6 +114,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                       stream: phoneAuthBloc.phoneNumber$,
                       builder: (context, AsyncSnapshot<String> snapshot) {
                         return TextField(
+                          key: Key("phone_number"),
                           keyboardType: TextInputType.phone,
                           onChanged: phoneAuthBloc.phoneNumber.add,
                           decoration: InputDecoration(
@@ -149,6 +150,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                               stream: phoneAuthBloc.isAllFilled$,
                               builder: (ctx, AsyncSnapshot<bool> snapshot) {
                                 return StreamButton(buttonColor: snapshot.data != null ? Colors.black : Colors.grey,
+                                key: Key("phoneValidationButton"),
                                  buttonText: "Envoyer le sms",
                                  errorText: "Une erreur s'est produite, veuillez reesayer!",
                                  loadingText: "Envoie en cours",

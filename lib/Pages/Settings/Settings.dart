@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +14,7 @@ import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
+import 'package:package_info/package_info.dart';
 import 'dart:io';
 
 import 'package:provider/provider.dart';
@@ -87,14 +89,15 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> with AutomaticKeepAliveClientMixin<Settings> {
-
- 
+  
   @override
   bool get wantKeepAlive => true;
 
 String capitalizeFirstOnly(String string){
   return string.characters.first.toUpperCase() + string.substring(1);
 }
+
+
 
   final picker = ImagePicker();
 
@@ -240,10 +243,11 @@ String capitalizeFirstOnly(String string){
               left: 205,
               child: InkWell(
                 onTap: () {
-                  this.getImage().then((file) => {
-                    storageService.uploadPictureFile(firebaseUser.uid, "photoUrl.jpg", file, "profilImage", databaseService.user.value.stripeaccountId).then((url) => {
+                  this.getImage().then((file) async {
+                    File _file = await FlutterNativeImage.compressImage(file.path, quality: 35);
+                    storageService.uploadPictureFile(databaseService.user.value.id, "photoUrl", _file, "profilImage").then((url) => {
                       this.updateUserImage(databaseService.client, firebaseUser.uid, url, databaseService)
-                    })
+                    });
                   }).catchError((onError){
                     print(onError);
                   });
@@ -346,7 +350,7 @@ String capitalizeFirstOnly(String string){
           launch("http://getkookers.com/privacy");
         }, buttonText: "Gestion des cookies"),
 
-                SettingsItem(onTap: () {
+        SettingsItem(onTap: () {
           launch("https://getkookers.com/guidelines");
         }, buttonText: "Règles de la communauté"),
 
@@ -354,6 +358,20 @@ String capitalizeFirstOnly(String string){
             print("i'm signign out");
            await authentificationService.signOut();
         }, buttonText: "Se deconnecter"),
+
+
+        SizedBox(height: 30,),
+
+        FutureBuilder<PackageInfo>(
+          future: PackageInfo.fromPlatform(),
+          builder: (ctx, snapshot) {
+            if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+            if(snapshot.data == null) return SizedBox();
+            return Center(child: Text("Version:" + " " + snapshot.data.version, style: GoogleFonts.montserrat()));
+          }
+        ),
+
+        SizedBox(height: 20,),
       ]),
     );
 

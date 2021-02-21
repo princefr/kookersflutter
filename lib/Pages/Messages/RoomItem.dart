@@ -96,9 +96,7 @@ class Message {
     if(map != null){
       map.forEach((element) async {
         final dou = element as Map<String, dynamic>;
-        // final date = Jiffy(dou["createdAt"]);
         messages.add(Message(
-          // createdAt: date.format("do MMMM, HH:mm:ss"),
           createdAt: dou["createdAt"],
           userId: dou["userId"],
           message: dou["message"],

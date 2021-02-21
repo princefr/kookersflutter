@@ -2,12 +2,17 @@
 const bool isProduction = bool.fromEnvironment('dart.vm.product');
 
 
+
+
+// testing config.
 const testConfig = {
-  'graphqlUrl': 'https://ed23ed8dd441.ngrok.io/graphql',
-  'graphqlSocket': 'wss://ed23ed8dd441.ngrok.io/graphql',
+  'graphqlUrl': 'https://4a931e2cd77c.ngrok.io/graphql',
+  'graphqlSocket': 'wss://4a931e2cd77c.ngrok.io/graphql',
   'Stripe': 'pk_test_51623aEF9cRDonA7mYkDijtSwyubt71keNBa6qMq7zvO9knDpy6ZzYyQEN9YeqLzUJqGm237vJN09eJYwGmEE07EQ00J4LDb1yK'
 };
 
+
+// production config.
 const productionConfig = {
   'graphqlUrl': 'https://kookers-app.herokuapp.com/graphql',
   'graphqlSocket': 'wss://kookers-app.herokuapp.com/graphql',

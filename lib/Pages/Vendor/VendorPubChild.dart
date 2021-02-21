@@ -10,7 +10,6 @@ import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
-import 'package:kookers/Widgets/InfoDialog.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
@@ -217,18 +216,23 @@ class _VendorPubPageState extends State<VendorPubPage> {
           ),
           ListTile(
             autofocus: false,
-            onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (context) => InfoDialog(
-                      infoText:
-                          "Ce chiffre représente le montant que vous recevrez pour chacun(e) des portions ou plats que vous vendriez à l'aide la plateforme kookers une fois les frais de fonctionnement déduits."));
-            },
             leading: Icon(CupertinoIcons.info_circle),
             title: Text("Frais d'application",
                 style: GoogleFonts.montserrat()),
                 trailing: Text(this.percentage(15, double.parse(this.widget.publication.pricePerAll)).toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(this.widget.publication.currency), style: GoogleFonts.montserrat(fontSize: 17)),
           ),
+
+                        Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                        "Ce montant represente les frais prélévés dans le cadre des frais d'application kookers , il represente 15% du prix de chaque plat vendu et est degressif en fonction de la quantité vendu.",
+                        style: GoogleFonts.montserrat(
+                            decoration: TextDecoration.none,
+                            color: Colors.black,
+                            fontSize: 10))),
+              ),
 
           ListTile(
             autofocus: false,

@@ -237,6 +237,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                             databaseService
                                 .createOrder(this.widget.order)
                                 .then((value) async {
+                              databaseService.loadbuyerOrders();
                               await _streamButtonController.isSuccess();
                               Navigator.pop(context);
                             }).catchError((onError) {

@@ -4,6 +4,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
 import 'package:kookers/Pages/Onboarding/OnboardingPager.dart';
@@ -20,10 +21,32 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
+
+
+// keytool -list -v -keystore "/Users/part/key.jks" -alias alias
+
+// https://stackoverflow.com/questions/57933021/flutter-how-do-i-delete-fluttersecurestorage-items-during-install-uninstall/57937650#57937650
+// delete shared data on ios
+
+
+Future<void> isFirstTime() async {
+  final prefs = await SharedPreferences.getInstance();
+  if (prefs.getBool('first_run') ?? true) {
+    FlutterSecureStorage storage = FlutterSecureStorage();
+    await storage.deleteAll();
+    prefs.setBool('first_run', false);
+    await FirebaseAuth.instance.signOut();
+    return null;
+  }
+
+  print("not the first run");
+  return null;
+}
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
 }
 
 
@@ -32,6 +55,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await DotEnv.load(fileName: ".env");
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }

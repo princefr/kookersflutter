@@ -178,15 +178,17 @@ class _FoodItemChildState extends State<FoodItemChild> {
   }
 
 
+
+
+
   @override
   void initState() { 
-    new Future.delayed(Duration.zero, (){
-    });
     super.initState();
     
   }
 
   StreamButtonController _streamButtonController = StreamButtonController();
+
 
   
 
@@ -208,16 +210,16 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
   @override
   Widget build(BuildContext context) {
-    final databaseService =
-        Provider.of<DatabaseProviderService>(context, listen: true);
+    final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
 
 
       return Scaffold(
         appBar: TopBarWitBackNav(
             title: this.widget.publication.title,
-            isRightIcon: true,
+            isRightIcon: false,
             height: 54,
             rightIcon: CupertinoIcons.heart),
+
         body: ListView(
           shrinkWrap: true,
           children: [
@@ -415,12 +417,10 @@ class _FoodItemChildState extends State<FoodItemChild> {
           Divider(),
           
           StreamBuilder(
-              stream: orderProvider.isAllFilled$,
-              builder: (context, AsyncSnapshot<bool> snapshot) {
+              stream: orderProvider.quantity$,
+              builder: (context, AsyncSnapshot<int> snapshot) {
                 return StreamButton(
-                    buttonColor: snapshot.data != null
-                        ? Colors.black
-                        : Colors.grey,
+                    buttonColor: snapshot.data == null ? Colors.grey : snapshot.data > 0 ? Colors.black : Colors.grey,
                     buttonText: "Continuer",
                     errorText: "Une erreur s'est produite",
                     loadingText: "Achat en cours",

@@ -32,6 +32,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
               email
               first_name
               last_name
+              is_seller
               phonenumber
               customerId
               country
@@ -39,7 +40,6 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
               default_source
               default_iban
               stripe_account
-              is_seller
               settings {
                   food_preferences
                   food_price_ranges
@@ -117,12 +117,11 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
     });
 
     return await client.query(_options).then((kooker) {
-      if(kooker.data != null) {
+      if(kooker.data["usersExist"] != null) {
         final kookersUser = UserDef.fromJson(kooker.data["usersExist"]);
         return kookersUser;
       }
       return null;
-
     });
   }
 

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql/client.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -431,8 +432,10 @@ class _ChatPageState extends State<ChatPage>
                         focusNode: this.focusNode,
                         animationDuration: Duration(milliseconds: 300),
                         onAttachmentCiclked: () {
-                          getImage().then((file) {
-                            this.pictureToPreview.sink.add(file);
+                          getImage().then((file) async {
+                            FlutterNativeImage.compressImage(file.path, quality: 35).then((compressed){
+                              this.pictureToPreview.sink.add(compressed);
+                            });
                           });
                         },
                         onSendingClicked: () async {
@@ -447,7 +450,7 @@ class _ChatPageState extends State<ChatPage>
                                   ? await storage.uploadPictureFile(
                                       databaseService.user.value.id,
                                       "messages/" + Uuid().v1(),
-                                      this.pictureToPreview.value, "message", databaseService.user.value.stripeaccountId)
+                                      this.pictureToPreview.value, "message")
                                   : "",
                               roomId: this.widget.room.id,
                               receiverPushToken:

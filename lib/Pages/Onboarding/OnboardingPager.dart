@@ -120,6 +120,7 @@ class _OnboardingPagerState extends State<OnBoardingPager> {
                           Navigator.push(context, CupertinoPageRoute(builder: (context) => PhoneAuthPage()));
                         },
                         child: Container(
+                          key: Key("OnBording_pass"),
                           padding: EdgeInsets.all(16),
                           decoration: ShapeDecoration(
                             shadows: [

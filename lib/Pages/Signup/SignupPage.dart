@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,6 +21,7 @@ import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/TabHome/TabHome.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
+import 'package:kookers/Widgets/WebView.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -221,8 +223,9 @@ class _SignupPageState extends State<SignupPage> {
                     left: 75,
                     child: InkWell(
                       onTap: () {
-                        this.getImage().then((file){
-                          storageService.uploadPictureFile(this.widget.user.uid, "profilePicture.png", file, "profilImage", "").then((url) {
+                        this.getImage().then((file) async {
+                          File _file = await FlutterNativeImage.compressImage(file.path, quality: 35);
+                          storageService.uploadPictureFile(this.widget.user.uid, "photoUrl", _file, "profilImage").then((url) {
                             setState(() {
                               this.photoUrl = url;
                             });
@@ -427,7 +430,11 @@ class _SignupPageState extends State<SignupPage> {
                               decoration: TextDecoration.underline),
                               recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              launch("urlString");
+                              Navigator.push(context,CupertinoPageRoute(
+                                                                              builder: (context) =>
+                                                                                  WebViewPage(url: "https://getkookers.com/terms", title: "Conditions d'utilisation",)));
+                            
+                              
                             }
                           ),
 
@@ -445,7 +452,11 @@ class _SignupPageState extends State<SignupPage> {
                               decoration: TextDecoration.underline),
                               recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              launch("urlString");
+
+                              Navigator.push(context,CupertinoPageRoute(
+                                                                              builder: (context) =>
+                                                                                  WebViewPage(url: "https://getkookers.com/terms", title: "Politique de confidentialité",)));
+
                               // open desired screen
                             }
                           ),

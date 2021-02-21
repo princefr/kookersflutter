@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
-import 'package:kookers/Services/StorageService.dart';
+import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Widgets/ButtonVerification.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +37,6 @@ class _VerificationPageState extends State<VerificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final storageService = Provider.of<StorageService>(context, listen: false);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
 
     
@@ -81,11 +80,13 @@ class _VerificationPageState extends State<VerificationPage> {
                   return ButtonVerification(color: Colors.grey[300], leftIcon: Icon(CupertinoIcons.globe, color: Colors.black, size: 24.0), status: snapshot.data.stripeAccount.stripeRequirements.idStatus, text: "Passeport", onTap: (){
                     getImage().then((file) {
                       setState(() => this.isSending = true);
-                      storageService.uploadPictureFile(databaseService.user.value.id, "passport.png", file, "passport", databaseService.user.value.stripeaccountId).then((value) {
+                      databaseService.uploadMultipart(file, "passport", databaseService.user.value.stripeaccountId).then((value) {
                         setState(() => this.isSending = false);
-                      }).catchError((onError){
+                        NotificationPanelService.showSuccess(context, "Fichier envoyé avec succès");
+                      }).catchError((err){
+                        print(err);
+                        NotificationPanelService.showError(context, "Une erreur s'est produite, veuillez réessayer");
                         setState(() => this.isSending = false);
-                        print("error");
                       });
                     });
                   });
@@ -109,10 +110,13 @@ class _VerificationPageState extends State<VerificationPage> {
                   return ButtonVerification(color: Colors.grey[300],leftIcon: Icon(CupertinoIcons.doc, color: Colors.black, size: 24.0), status: snapshot.data.stripeAccount.stripeRequirements.residenceProof, text: "Attestation d'hébergement", onTap: (){
                     getImage().then((file){
                       setState(() => this.isSending = true);
-                      storageService.uploadPictureFile(databaseService.user.value.id, "residenceprof.png", file, "residence_proof", databaseService.user.value.stripeaccountId).then((value) {
+                      databaseService.uploadMultipart(file, "residence_proof", databaseService.user.value.stripeaccountId).then((value) {
                         setState(() => this.isSending = false);
-                      }).catchError((onError){
+                        NotificationPanelService.showSuccess(context, "Fichier envoyé avec succès");
+                      }).catchError((err){
+                        NotificationPanelService.showError(context, "Une erreur s'est produite, veuillez réessayer");
                         setState(() => this.isSending = false);
+
                       });
                     });
                   });

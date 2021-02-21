@@ -5,6 +5,7 @@ import 'package:chips_choice/chips_choice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -49,7 +50,6 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
             initialData: this.widget.file.value,
             stream: this.widget.stream,
             builder: (context, snapshot) {
-              print(snapshot.data);
               return Container(
                   width: 120,
                   height: 110,
@@ -69,9 +69,13 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
                       child: InkWell(
                         onTap: () {
                           if(snapshot.data == null){
-                              this.getImage().then((file) {
+                              this.getImage().then((file) async{
                                 if(file != null){
-                                    this.widget.file.add(file);
+                                    FlutterNativeImage.compressImage(file.path, quality: 35).then((compressed) {
+                                      this.widget.file.add(compressed);
+                                    }).catchError((onError){
+                                      print(onError);
+                                    });
                                 }
                                
                             });

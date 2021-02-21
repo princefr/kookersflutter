@@ -167,7 +167,7 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
                           width: MediaQuery.of(context).size.width,
                           fit: BoxFit.cover,
                           image: CachedNetworkImageProvider(this.widget.publication.photoUrls[0]),
-                  ),
+                    ),
                     ),
                   
                   Padding(
@@ -181,12 +181,32 @@ class _FoodItemState extends State<FoodItem> with AutomaticKeepAliveClientMixin<
                     ),
                   ),
 
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child:Align(
-                      alignment: Alignment.topRight,
-                      child: Icon(CupertinoIcons.heart, size: 35, color: Colors.white,),
-                    )
+                  InkWell(
+                      onTap: () async {
+                        if(this.widget.publication.liked){
+                          databaseService.updateLikeInPublication(this.widget.publication.id, false);
+                          databaseService.setDislikePost(this.widget.publication.id);
+                          setState(() {this.widget.publication.liked = false;});
+                          
+                        }else{
+                          databaseService.updateLikeInPublication(this.widget.publication.id, true);
+                          databaseService.setLikePost(this.widget.publication.id);
+                          setState(() {this.widget.publication.liked = true;});
+                        }
+                      },
+                      child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child:Align(
+                        alignment: Alignment.topRight,
+                        child: Builder(builder: (ctx){
+                          if(this.widget.publication.liked){
+                            return Icon(CupertinoIcons.heart_fill, size: 35, color: Colors.red,);
+                          }else{
+                            return Icon(CupertinoIcons.heart, size: 35, color: Colors.white,);
+                          }
+                        },),
+                      )
+                    ),
                   ),
 
                 ],

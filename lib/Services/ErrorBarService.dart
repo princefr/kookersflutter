@@ -74,6 +74,7 @@ class NotificationPanelService {
           icon: Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
+              backgroundColor: Colors.white,
               backgroundImage:
                   CachedNetworkImageProvider(event.data["senderImgUrl"]),
             ),
@@ -148,8 +149,22 @@ class NotificationPanelService {
   }
 
 
-  void showSuccessError(BuildContext ctx){
-
+  static void showSuccess(BuildContext ctx, String message){
+    Flushbar(
+      flushbarPosition: FlushbarPosition.TOP,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      margin: EdgeInsets.all(8),
+      borderRadius: 8,
+      message: message,
+      backgroundColor: Colors.green,
+      icon: Icon(
+        Icons.info_outline,
+        size: 28.0,
+        
+        color: Colors.white,
+        ),
+      duration: Duration(seconds: 5)
+    ).show(ctx);
   }
 
 } 

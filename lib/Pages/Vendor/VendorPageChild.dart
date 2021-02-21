@@ -192,7 +192,6 @@ final MutationOptions _options  = MutationOptions(
                 autofocus: false,
                 leading: Lottie.asset('assets/lottie/lf30_KvGsoi.json', height: 140, repeat: true),
                 title: Text("La santé des membres de notre communauté nous est importante , c’est pourquoi nous vous rappelons qu’il est important de porter vos équipements de cuisine (masques, gants, charlottes ) quand vous cuisinez pour un membre.", style: GoogleFonts.montserrat(fontSize:13)),
-                
               ),
 
 

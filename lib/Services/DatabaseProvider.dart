@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:dart_geohash/dart_geohash.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
 import 'package:kookers/Widgets/ButtonVerification.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
 
 
 class Location {
@@ -406,9 +409,12 @@ class PublicationHome {
   List<String> preferences;
   RatingPublication rating;
   String currency;
+  int likeCount;
+  bool liked;
+
   
 
-  PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll,  this.photoUrls, this.adress, this.seller, this.preferences, this.rating, this.currency});
+  PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll,  this.photoUrls, this.adress, this.seller, this.preferences, this.rating, this.currency, this.likeCount, this.liked});
 
   double getRating(){
     if((this.rating.ratingTotal / this.rating.ratingCount).isNaN) return 0;
@@ -427,7 +433,9 @@ class PublicationHome {
     seller: SellerDef.fromJson(map["seller"]),
     preferences: List<String>.from(map["food_preferences"]),
     rating: RatingPublication(ratingCount: int.parse(map["rating"]["rating_count"].toString()), ratingTotal: double.parse(map["rating"]["rating_total"].toString())),
-    currency: map["currency"]
+    currency: map["currency"],
+    likeCount: map["likeCount"],
+    liked: map["likes"]
   );
 
   static List<PublicationHome> fromJsonToList(List<Object> map) {
@@ -601,20 +609,32 @@ class DatabaseProviderService {
 
   void dispose(){
     this.user.add(null);
-    this.publications.add(null);
-    this.sellerPublications.add(null);
+    this.publications.close();
+    this.sellerPublications.close();
     this.sellerOrders.add(null);
     this.buyerOrders.add(null);
     this.rooms.add(null);
   }
 
 
-  // ignore: close_sinks
+
   BehaviorSubject<List<PublicationHome>> publications = new BehaviorSubject<List<PublicationHome>>();
   Stream<List<PublicationHome>> get publications$ => publications.stream;
 
 
-  // ignore: close_sinks
+  BehaviorSubject<PublicationHome> inHomePublication;
+  StreamSubscription<PublicationHome> getinPublicationHome(String publicationId, BehaviorSubject<PublicationHome> pub){
+    this.inHomePublication = pub;
+    return this.publications.map((event) => event.firstWhere((publication) => publication.id == publicationId)).listen((event) => inHomePublication.sink.add(event));
+  }
+
+
+  void updateLikeInPublication(String pubId, bool liked){
+    this.publications.value.firstWhere((element) => element.id == pubId).liked = liked;
+  }
+
+
+
   BehaviorSubject<List<PublicationVendor>> sellerPublications = new BehaviorSubject<List<PublicationVendor>>();
 
   // ignore: close_sinks
@@ -774,6 +794,9 @@ class DatabaseProviderService {
   }
 
 
+
+
+
   StreamSubscription<dynamic> messageReadStream(String roomID) {
       final Operation _options = Operation(
         operationName: "getMessageRead",
@@ -853,6 +876,30 @@ class DatabaseProviderService {
     );
 
     return await this.client.mutate(_options).then((result) =>  result.data["updateAllMessageForUser"]);
+  }
+
+
+  Future<void> uploadMultipart(File img, String type, String stripeAccount) async {
+    var byteData = img.readAsBytesSync();
+    var file = MultipartFile.fromBytes(
+          "photo",
+          byteData,
+          filename: '${DateTime.now().second}.jpg',
+          contentType: MediaType("image", "jpg"),
+        );
+    final MutationOptions _options = MutationOptions(
+      documentNode: gql(r"""
+          mutation UploadFile($file: Upload!, $type: String!, $stripeAccount: String!){
+            uploadFile(file: $file, type: $type, stripeAccount: $stripeAccount)
+          }
+      """),
+      variables: <String , dynamic>{
+        "file": file,
+        "type": type,
+        "stripeAccount": stripeAccount
+      } 
+    );
+    return this.client.mutate(_options).then((result) => result.data["uploadFile"]).catchError((onError) => throw onError);
   }
 
 
@@ -1062,7 +1109,7 @@ Future<List<Order>>  loadbuyerOrders() {
         });
 
         return client.query(_options).then((result) {
-            List<Order> list = Order.fromJsonToList(result.data["getOrderOwnedBuyer"]);
+            List<Order> list = Order.fromJsonToList(result.data["getOrderOwnedBuyer"]).reversed.toList();
             buyerOrders.add(list);
             return list;
             
@@ -1129,7 +1176,7 @@ Future<List<Order>>  loadbuyerOrders() {
         });
 
         return client.query(_options).then((result) {
-            List<OrderVendor> list = OrderVendor.fromJsonToList(result.data["getOrderOwnedSeller"]);
+            List<OrderVendor> list = OrderVendor.fromJsonToList(result.data["getOrderOwnedSeller"]).reversed.toList();
             sellerOrders.add(list);
             return list;
             
@@ -1173,7 +1220,7 @@ Future<List<Order>>  loadbuyerOrders() {
         });
 
         return client.query(_options).then((result) {
-            List<PublicationVendor> list = PublicationVendor.fromJsonToList(result.data["getpublicationOwned"]);
+            List<PublicationVendor> list = PublicationVendor.fromJsonToList(result.data["getpublicationOwned"]).reversed.toList();
             sellerPublications.add(list);
             return list;
             
@@ -1415,6 +1462,37 @@ Future<List<Order>>  loadbuyerOrders() {
     }
 
 
+      Future<void> setLikePost(String postId) async {
+        final MutationOptions _options  = MutationOptions(
+          documentNode: gql(r"""
+            mutation SetLike($likeId: String!, $userId: String!){
+                  setLike(likeId: $likeId, userId: $userId)
+              }
+          """),
+          variables:  <String, String> {
+            "likeId": postId,
+            "userId": this.user.value.id
+          }
+        );
+        return await client.mutate(_options).then((value) => value.data["setLike"]);
+    }
+
+      Future<void> setDislikePost(String postId) async {
+        final MutationOptions _options  = MutationOptions(
+          documentNode: gql(r"""
+            mutation SetDisklike($likeId: String!, $userId: String!){
+                  setDisklike(likeId: $likeId, userId: $userId)
+              }
+          """),
+          variables:  <String, String> {
+            "likeId": postId,
+            "userId": this.user.value.id
+          }
+        );
+        return await client.mutate(_options).then((value) => value.data["setDisklike"]);
+    }
+
+
 
     Future<List<PublicationHome>> loadPublication() async {
       Location location = this.user.value.adresses.firstWhere((element) => element.isChosed).location;
@@ -1433,6 +1511,8 @@ Future<List<Order>>  loadbuyerOrders() {
                   photoUrls
                   createdAt
                   currency
+                  likeCount
+                  likes
 
                   food_preferences
 
@@ -1463,7 +1543,7 @@ Future<List<Order>>  loadbuyerOrders() {
       });
 
       return client.query(_options).then((publicationsObject) {
-        final publicationsall = PublicationHome.fromJsonToList(publicationsObject.data["getPublicationViaGeo"]);
+        final publicationsall = PublicationHome.fromJsonToList(publicationsObject.data["getPublicationViaGeo"]).reversed.toList();
         this.publications.add(publicationsall);
         return publicationsall;
       });
