@@ -1,5 +1,7 @@
 # kookers_flutter
 
+[![Codemagic build status](https://api.codemagic.io/apps/6010e3a5cb2f38e8e8145a72/6010e3a5cb2f38e8e8145a71/status_badge.svg)](https://codemagic.io/apps/6010e3a5cb2f38e8e8145a72/6010e3a5cb2f38e8e8145a71/latest_build)
+
 A new Flutter project.
 
 ## Getting Started
