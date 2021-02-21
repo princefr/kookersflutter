@@ -1,9 +1,9 @@
-import 'package:another_flushbar/flushbar.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:get/get.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
@@ -60,111 +60,66 @@ class NotificationPanelService {
 
 
   void showNewMessagePanel(BuildContext context, RemoteMessage event, Room room){
-         Flushbar(
-          onTap: (flushbar) {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ChatPage(room: room)));
-          },
-          margin: EdgeInsets.all(8),
-          borderRadius: 10,
-          backgroundColor: Colors.white,
-          flushbarPosition: FlushbarPosition.TOP,
-          titleText: Text(event.data["senderName"], style: GoogleFonts.montserrat(),),
-          messageText: Text(event.notification.body, style: GoogleFonts.montserrat(),),
-          icon: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              backgroundImage:
-                  CachedNetworkImageProvider(event.data["senderImgUrl"]),
-            ),
-          ),
-          flushbarStyle: FlushbarStyle.FLOATING,
-          duration: Duration(seconds: 3),
-          boxShadows: [BoxShadow(color: Colors.grey, offset: Offset(1.0, 2.0), blurRadius: 1.0,)]
-        ).show(context);
+      Get.snackbar(event.data["senderName"], event.notification.body, icon: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: CircleAvatar(
+                backgroundColor: Colors.white,
+                backgroundImage:
+                    CachedNetworkImageProvider(event.data["senderImgUrl"]),
+              ),
+      ), onTap: (snack) {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) =>ChatPage(room: room)));
+      },);
+
   }
 
 
   void showOrderSeller(BuildContext context, RemoteMessage event, OrderVendor order){
         MessageToDisplay message =  loadMessageTypeSeller(event.data["type"]);
-        Flushbar(
-          onTap: (flushbar) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => VendorPageChild(vendor: order)));
-          },
-          margin: EdgeInsets.all(8),
-          borderRadius: 8,
-          flushbarPosition: FlushbarPosition.TOP,
-          title: message.title,
-          message: message.body,
-          icon: Icon(
+        Get.snackbar(message.title, message.body, icon: Icon(
             CupertinoIcons.exclamationmark_circle,
             color: Colors.black,
-          ),
-          flushbarStyle: FlushbarStyle.FLOATING,
-          duration: Duration(seconds: 3),
-        ).show(context);
+          ), onTap: (snack) {
+            Navigator.push(context,
+              MaterialPageRoute(builder: (context) => VendorPageChild(vendor: order)));
+          },);
   }
 
 
   void showOrderBuyer(BuildContext context, RemoteMessage event, Order order){
         MessageToDisplay message = loadMessageTypeBuyer(event.data["type"]);
-        Flushbar(
-          onTap: (flushbar) {
-            Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => OrderPageChild(order: order)));
-          },
-          margin: EdgeInsets.all(8),
-          borderRadius: 8,
-          flushbarPosition: FlushbarPosition.TOP,
-          title: message.title,
-          message: message.body,
-          icon: Icon(
+                Get.snackbar(message.title, message.body, icon: Icon(
             CupertinoIcons.exclamationmark_circle,
             color: Colors.black,
-          ),
-          flushbarStyle: FlushbarStyle.FLOATING,
-          duration: Duration(seconds: 3),
-        ).show(context);
+          ), onTap: (snack) {
+            Navigator.push(context,
+              MaterialPageRoute(builder: (context) => OrderPageChild(order: order)));
+          },);
   }
 
 
   static void showError(BuildContext ctx, String message){
-    Flushbar(
-      flushbarPosition: FlushbarPosition.TOP,
-      flushbarStyle: FlushbarStyle.FLOATING,
-      margin: EdgeInsets.all(8),
-      borderRadius: 8,
-      message: message,
-      backgroundColor: Colors.red,
-      icon: Icon(
-        Icons.info_outline,
-        size: 28.0,
-        
-        color: Colors.white,
-        ),
-      duration: Duration(seconds: 5)
-    ).show(ctx);
+    Get.snackbar("Erreur", message, icon: Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: Icon(
+          Icons.info_outline,
+          size: 28.0,
+          color: Colors.white,
+          ),
+    ), backgroundColor: Colors.red);
   }
 
 
   static void showSuccess(BuildContext ctx, String message){
-    Flushbar(
-      flushbarPosition: FlushbarPosition.TOP,
-      flushbarStyle: FlushbarStyle.FLOATING,
-      margin: EdgeInsets.all(8),
-      borderRadius: 8,
-      message: message,
-      backgroundColor: Colors.green,
-      icon: Icon(
-        Icons.info_outline,
-        size: 28.0,
-        
-        color: Colors.white,
-        ),
-      duration: Duration(seconds: 5)
-    ).show(ctx);
+    Get.snackbar("Succès de l'opération", message, icon: Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: Icon(
+          Icons.check,
+          size: 28.0,
+          color: Colors.white,
+          ),
+    ), backgroundColor: Colors.green);
   }
 
 } 

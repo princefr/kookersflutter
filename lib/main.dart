@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
 import 'package:kookers/Pages/Onboarding/OnboardingPager.dart';
@@ -80,7 +81,7 @@ class MyApp extends StatelessWidget {
 
           
         ],
-        child: MaterialApp(
+        child: GetMaterialApp(
           localizationsDelegates: [
               RefreshLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
