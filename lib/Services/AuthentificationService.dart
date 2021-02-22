@@ -29,6 +29,7 @@ class AuthentificationService {
         verificationComplted(credential);
      },
      verificationFailed: (FirebaseAuthException e) {
+        print(e.message);
         error(e);
      },
      codeSent: (String verificationId, int resendToken) {
