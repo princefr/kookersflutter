@@ -94,6 +94,10 @@ class _ChatPageState extends State<ChatPage>
       this.streamHasRead.onData((data) {
         databaseService.loadrooms();
       });
+
+      this.streamNewMessage.onData((data) {
+          databaseService.loadrooms();
+      });
     });
     focusNode.addListener(onFocusChange);
     super.initState();

@@ -15,10 +15,10 @@ import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
 import 'package:kookers/Pages/Home/FoodIemChild.dart';
 import 'package:kookers/Pages/Home/HomeSearchPage.dart';
+import 'package:kookers/Pages/Notifications/NotificationPage.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/NotificiationService.dart';
 import 'package:kookers/Services/StorageService.dart';
-import 'package:kookers/TabHome/TabHome.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:kookers/Widgets/WebView.dart';
@@ -524,7 +524,7 @@ class _SignupPageState extends State<SignupPage> {
                               Navigator.push(
                                   context,
                                   CupertinoPageRoute(
-                                      builder: (context) => TabHome()));
+                                      builder: (context) => NotificationPage()));
                             }).catchError((onError) async {
                               await _streamButtonController.isError();
                             });

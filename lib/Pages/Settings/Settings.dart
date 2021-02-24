@@ -12,6 +12,7 @@ import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
 import 'package:kookers/Pages/Verification/VerificationPage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 import 'package:package_info/package_info.dart';
@@ -248,8 +249,8 @@ String capitalizeFirstOnly(String string){
                     storageService.uploadPictureFile(databaseService.user.value.id, "photoUrl", _file, "profilImage").then((url) => {
                       this.updateUserImage(databaseService.client, firebaseUser.uid, url, databaseService)
                     });
-                  }).catchError((onError){
-                    print(onError);
+                  }).catchError((error){
+                      NotificationPanelService.showError(context, "Vous avez refusez la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone.");
                   });
                 },
                 child: Container(

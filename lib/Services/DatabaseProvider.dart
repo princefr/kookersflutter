@@ -783,7 +783,7 @@ class DatabaseProviderService {
 
 
 
-  StreamSubscription<void> newMessageStream(String roomID) {
+  StreamSubscription<dynamic> newMessageStream(String roomID) {
       final Operation _options = Operation(
         operationName: "getMEssagedAdded",
         documentNode: gql(subscribeToNewMessage),
