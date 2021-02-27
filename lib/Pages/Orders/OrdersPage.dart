@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
@@ -16,6 +18,15 @@ class OrdersPage extends StatefulWidget {
 
 class _OrdersPageState extends State<OrdersPage>
     with AutomaticKeepAliveClientMixin<OrdersPage> {
+
+
+
+
+  @override
+  void dispose() { 
+    super.dispose();
+  }
+  
   @override
   void initState() {
     new Future.delayed(Duration.zero, () {

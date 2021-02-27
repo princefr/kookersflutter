@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Vendor/OrderItemSeller.dart';
@@ -162,6 +164,19 @@ class _VendorPageState extends State<VendorPage>
   // ignore: close_sinks
   final BehaviorSubject<int> initialLabel = BehaviorSubject<int>.seeded(0);
   PageController _controller = PageController(initialPage: 0);
+
+
+
+  @override
+  void dispose() { 
+    super.dispose();
+  }
+
+
+  @override
+  void initState() { 
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

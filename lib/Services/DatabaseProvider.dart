@@ -779,9 +779,17 @@ class DatabaseProviderService {
       }
 """;
 
+  String subscribeToOrderBuyer = r"""
+      subscription getorderUpdatedBuyer($listener: String!)  {
+        orderUpdatedBuyer(listener: $listener)
+      }
+""";
 
-
-
+  String subscribeToOrderSeller = r"""
+      subscription getorderUpdatedSeller($listener: String!)  {
+        orderUpdatedSeller(listener: $listener)
+      }
+""";
 
   StreamSubscription<dynamic> newMessageStream(String roomID) {
       final Operation _options = Operation(
@@ -793,15 +801,33 @@ class DatabaseProviderService {
     return this.client.subscribe(_options).listen((event) => event.data);
   }
 
-
-
-
-
   StreamSubscription<dynamic> messageReadStream(String roomID) {
       final Operation _options = Operation(
         operationName: "getMessageRead",
         documentNode: gql(subscribeToMessageRead),
         variables: <String, String>{"roomID": roomID, "listener": this.user.value.id},
+      );
+
+    return this.client.subscribe(_options).listen((event) => event.data);
+  }
+
+
+    StreamSubscription<dynamic> orderUpdateBuyerStream() {
+      final Operation _options = Operation(
+        operationName: "getorderUpdatedBuyer",
+        documentNode: gql(subscribeToOrderBuyer),
+        variables: <String, String>{"listener": this.user.value.id},
+      );
+
+    return this.client.subscribe(_options).listen((event) => event.data);
+  }
+
+
+      StreamSubscription<dynamic> orderUpdateSellerStream() {
+      final Operation _options = Operation(
+        operationName: "getorderUpdatedSeller",
+        documentNode: gql(subscribeToOrderSeller),
+        variables: <String, String>{"listener": this.user.value.id},
       );
 
     return this.client.subscribe(_options).listen((event) => event.data);
