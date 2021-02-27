@@ -5,6 +5,7 @@ import 'package:chips_choice/chips_choice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -12,6 +13,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:kookers/Pages/Home/HomeSearchPage.dart';
 import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/PublicationProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/InfoDialog.dart';
@@ -78,6 +80,8 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
                                     });
                                 }
                                
+                            }).catchError((error){
+                              NotificationPanelService.showError(context, "Vous avez refusez la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone.");
                             });
                           }else{
                             this.widget.file.sink.add(null);

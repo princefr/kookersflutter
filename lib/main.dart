@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,8 +41,6 @@ Future<void> isFirstTime() async {
     await FirebaseAuth.instance.signOut();
     return null;
   }
-
-  print("not the first run");
   return null;
 }
 
@@ -56,6 +55,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   runApp(MyApp());
 }
 
@@ -64,8 +64,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (){
-        FocusScope.of(context).requestFocus(new FocusNode());
-      },
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
           child: MultiProvider(
         providers: [
           Provider<AuthentificationService>(create: (_) => AuthentificationService(firebaseAuth: FirebaseAuth.instance)),
@@ -78,8 +78,6 @@ class MyApp extends StatelessWidget {
           Provider<PhoneAuthBloc>(create: (_) =>  PhoneAuthBloc()),
           Provider<SignupBloc>(create: (_) =>  SignupBloc()),
           Provider<NotificationPanelService>(create: (_) =>  NotificationPanelService()),
-
-          
         ],
         child: GetMaterialApp(
           localizationsDelegates: [

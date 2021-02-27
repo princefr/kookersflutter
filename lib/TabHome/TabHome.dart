@@ -48,7 +48,7 @@ class _TabHomeState extends State<TabHome>
     minDays: 0, // Show rate popup on first day of install.
     minLaunches:10, // Show rate popup after 5 launches of app after minDays is passed.
     remindDays: 2,
-    remindLaunches: 10,
+    remindLaunches: 2,
     googlePlayIdentifier: "com.getkookers.android",
     appStoreIdentifier: "1529436130",
   );
@@ -61,7 +61,6 @@ class _TabHomeState extends State<TabHome>
 
   @override
   void dispose() {
-    //this.onMessage.cancel();
     this._selectedIndex.close();
     super.dispose();
   }
@@ -89,6 +88,12 @@ class _TabHomeState extends State<TabHome>
               final token = await  notificationService.messaging.getToken();
               databaseService.user.value.fcmToken = token;
               databaseService.updateFirebasetoken(token);
+              databaseService.orderUpdateSellerStream().onData((data) {
+                if(data.data != null){
+                  print(data.data);
+                  print("new bulshit incoming");
+                }
+              });
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {

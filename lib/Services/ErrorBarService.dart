@@ -100,7 +100,7 @@ class NotificationPanelService {
 
 
   static void showError(BuildContext ctx, String message){
-    Get.snackbar("Erreur", message, icon: Padding(
+    Get.snackbar("Erreur", message, colorText: Colors.white, icon: Padding(
       padding: const EdgeInsets.all(6.0),
       child: Icon(
           Icons.info_outline,
@@ -112,7 +112,7 @@ class NotificationPanelService {
 
 
   static void showSuccess(BuildContext ctx, String message){
-    Get.snackbar("Succès de l'opération", message, icon: Padding(
+    Get.snackbar("Succès de l'opération", message, colorText: Colors.white, icon: Padding(
       padding: const EdgeInsets.all(6.0),
       child: Icon(
           Icons.check,

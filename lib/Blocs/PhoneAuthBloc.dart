@@ -50,11 +50,6 @@ void listen() {
   Stream<bool> get isAllFilled$ => CombineLatestStream([phoneNumber$, phoneAndCode], (values) => true);
 
 
-  
-
-
-
-
   Future<String> validate() async {
       return this.telephone;
   }

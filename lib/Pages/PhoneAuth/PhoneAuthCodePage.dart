@@ -6,6 +6,7 @@ import 'package:kookers/Blocs/PhoneCodeBloc.dart';
 import 'package:kookers/Pages/Signup/SignupPage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/TabHome/TabHome.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
@@ -192,15 +193,6 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                   ),
                 ),
               ),
-              
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 20),
-              //   child: RichText(
-              //     text: TextSpan(
-              //         text: "Code non recu? renvoyez le!",
-              //         style: TextStyle(color: Colors.red)),
-              //   ),
-              // ),
 
               Expanded(
                 child: SizedBox(),
@@ -229,7 +221,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                                         SignupPage(
                                                             user: connected
                                                                 .user)));
-                                    }else{
+                                    } else{
                                       databaseService.user.add(user);
                                       await _streamButtonController.isSuccess();
                                       Navigator.push(
@@ -238,6 +230,9 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                                     builder: (context) =>
                                                         TabHome()));
                                     }
+                                }).catchError((onError) async {
+                                  NotificationPanelService.showError(context, "Veuillez verifier votre connexion à internet et reessayer.");
+                                  await _streamButtonController.isError();
                                 });
                               }).catchError((onError) async {
                                await _streamButtonController.isError();
