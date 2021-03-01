@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
 import 'package:kookers/Pages/Onboarding/OnboardingModel.dart';
 import 'package:kookers/Pages/Onboarding/OnboardingPage.dart';
-import 'package:kookers/Pages/PhoneAuth/PhoneAuthPage.dart';
 import 'package:kookers/Widgets/CircleDot.dart';
+import 'package:get/get.dart';
 
 
 class OnBoardingPager extends StatefulWidget {
@@ -117,7 +118,7 @@ class _OnboardingPagerState extends State<OnBoardingPager> {
 
                       GestureDetector(
                         onTap: (){
-                          Navigator.push(context, CupertinoPageRoute(builder: (context) => PhoneAuthPage()));
+                          Get.to(BeforeSignPage(from: "onboarding",));
                         },
                         child: Container(
                           key: Key("OnBording_pass"),

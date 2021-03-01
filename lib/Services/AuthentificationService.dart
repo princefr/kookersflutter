@@ -13,7 +13,6 @@ class AuthentificationService {
 
 
   Future<void> signOut() async {
-
     await FirebaseAuth.instance.signOut();
 
   }
@@ -49,5 +48,10 @@ class AuthentificationService {
 
   Future<UserCredential> signInWithCredential(PhoneAuthCredential phoneAuthCredential){
     return firebaseAuth.signInWithCredential(phoneAuthCredential);
+  }
+
+
+  Future<UserCredential> signAnonymous(){
+    return this.firebaseAuth.signInAnonymously();
   }
 }

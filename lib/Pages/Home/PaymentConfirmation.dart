@@ -10,6 +10,7 @@ import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StripeServices.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class PaymentConfirmation extends StatefulWidget {
   final OrderInput order;
@@ -170,25 +171,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                   trailing: Icon(CupertinoIcons.plus),
                                   title: Text("Ajouter un moyen de paiement"),
                                   onTap: () {
-                                    stripeService
-                                        .registrarCardWithForm()
-                                        .then((paymentMethod) {
-                                      databaseService
-                                          .addattachPaymentToCustomer(
-                                              paymentMethod.id)
-                                          .then((value) {
-                                        databaseService
-                                            .updatedDefaultSource(
-                                                paymentMethod.id)
-                                            .then((value) async {
-                                          databaseService.user.value
-                                              .defaultSource = paymentMethod.id;
-                                          await databaseService.loadUserData();
-                                        });
-                                      });
-                                    }).catchError((onError) {
-                                      print(onError);
-                                    });
+                                      Get.to(PaymentMethodPage());
                                   },
                                 );
 

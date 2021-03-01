@@ -603,6 +603,7 @@ class DatabaseProviderService {
   // ignore: close_sinks
   BehaviorSubject<UserDef> user = new BehaviorSubject<UserDef>();
   Stream<UserDef> get user$ => user.stream.asBroadcastStream();
+  BehaviorSubject<Adress> adress = new BehaviorSubject<Adress>();
 
   User firebaseUser;
 
@@ -614,6 +615,7 @@ class DatabaseProviderService {
     this.sellerOrders.add(null);
     this.buyerOrders.add(null);
     this.rooms.add(null);
+    this.adress.close();
   }
 
 
@@ -1520,14 +1522,13 @@ Future<List<Order>>  loadbuyerOrders() {
 
 
 
-    Future<List<PublicationHome>> loadPublication() async {
-      Location location = this.user.value.adresses.firstWhere((element) => element.isChosed).location;
-      List<String> geohashes = geohashWithinRange(location, this.user.value.settings.distanceFromSeller);
+    Future<List<PublicationHome>> loadPublication(Location location, int distance) async {
+      List<String> geohashes = geohashWithinRange(location, distance);
       
       final QueryOptions _options = QueryOptions(
         fetchPolicy: FetchPolicy.cacheAndNetwork,
         documentNode: gql(r"""
-            query GetPublicationViaGeo($greather: String!, $lesser: String!, $userId: String!) {
+            query GetPublicationViaGeo($greather: String!, $lesser: String!, $userId: String) {
                 getPublicationViaGeo(greather: $greather, lesser: $lesser, userId: $userId){
                   _id
                   title
@@ -1565,7 +1566,7 @@ Future<List<Order>>  loadbuyerOrders() {
         """), variables: <String, String>{
         "greather": geohashes[0],
         "lesser": geohashes[1],
-        "userId": this.user.value.id
+        "userId": this.user.value == null ? null : this.user.value.id
       });
 
       return client.query(_options).then((publicationsObject) {

@@ -21,8 +21,6 @@ import 'package:kookers/TabHome/TabHome.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -47,8 +45,6 @@ Future<void> isFirstTime() async {
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 }
-
-
 
 
 void main() async {

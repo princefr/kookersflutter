@@ -50,17 +50,17 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Pour pouvoir utiliser les photos dans l'application kookers</string>
+	<string>Nous utilisons cette permission pour pouvoir vous permettre de prendre des photos lorsque vous publier des plats ou lorsque vous ajoutez une photo de profil</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Pour pouvoir vous authentifié dans kookers</string>
+	<string>Nous utilisons cette permission pour pouvoir vous authentifié locale lorsque vous effectuez des actions nécésittant l'authentification locale</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Nous utilisons la geolocalisation pour pouvoir vous connecter à des gourmands ou à des chefs amateur autour de vous</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Nous utilisons la geolocalisation pour pouvoir vous connecter à des gourmands ou à des chefs amateur autour de vous</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Pour pouvoir envoyer des messages vocaux dans le chat kookers</string>
+	<string>Nous utlisons le microphone pour vous permettre d'envoyer des messages vocaux dans la méssagerie</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Pour pouvoir utiliser les photos dans l'application kookers</string>
+	<string>Nous utilisons cette permission pour pouvoir vous permettre d'ajouter des photos lorsque vous publier des plats ou lorsque vous ajoutez une photo de profil</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

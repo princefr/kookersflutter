@@ -175,6 +175,12 @@ class _VendorPageState extends State<VendorPage>
 
   @override
   void initState() { 
+    Future.delayed(Duration.zero, (){
+          final databaseService =
+          Provider.of<DatabaseProviderService>(context, listen: false);
+          databaseService.loadSellerPublications();
+          databaseService.loadSellerOrders();
+    });
     super.initState();
   }
 

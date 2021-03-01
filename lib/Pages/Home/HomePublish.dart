@@ -385,7 +385,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                               onTap: (){showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
-                          builder: (context) => HomeSearchPage(isReturn: false,),
+                          builder: (context) => HomeSearchPage(isReturn: false, isNotAuth: false,),
                         );},
                               leading: Icon(CupertinoIcons.home),
                               title: StreamBuilder(

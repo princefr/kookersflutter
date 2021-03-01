@@ -3,6 +3,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
 import 'package:kookers/Pages/Home/homePage.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
@@ -17,6 +18,7 @@ import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/NotificiationService.dart';
 import 'package:kookers/TabHome/BottomBar.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:rxdart/subjects.dart';
@@ -39,14 +41,23 @@ class _TabHomeState extends State<TabHome>
   PageController _controller;
 
   void _onItemTapped(int index) {
-    this._selectedIndex.add(index);
-    this._controller.jumpToPage(_selectedIndex.value);
+    if(this.widget.user == null && index != 0){
+      showCupertinoModalBottomSheet(
+                          expand: false,
+                          context: context,
+                          builder: (context) => BeforeSignPage(from: "tabhome"));
+                        
+    }else{
+      this._selectedIndex.add(index);
+      this._controller.jumpToPage(_selectedIndex.value);
+    }
+    
   }
 
   RateMyApp rateMyApp = RateMyApp(
     preferencesPrefix: 'rateKookers_',
     minDays: 0, // Show rate popup on first day of install.
-    minLaunches:10, // Show rate popup after 5 launches of app after minDays is passed.
+    minLaunches:5, // Show rate popup after 5 launches of app after minDays is passed.
     remindDays: 2,
     remindLaunches: 2,
     googlePlayIdentifier: "com.getkookers.android",
@@ -78,22 +89,14 @@ class _TabHomeState extends State<TabHome>
           Provider.of<DatabaseProviderService>(context, listen: false);
       final notificationService =
           Provider.of<NotificationService>(context, listen: false);
-              databaseService.loadPublication();
-              databaseService.loadSellerPublications();
-              databaseService.loadSellerOrders();
-              databaseService.loadrooms();
               notificationService.messaging.subscribeToTopic("new_message");
               notificationService.messaging.subscribeToTopic("new_order");
               notificationService.messaging.subscribeToTopic("order_update");
-              final token = await  notificationService.messaging.getToken();
-              databaseService.user.value.fcmToken = token;
-              databaseService.updateFirebasetoken(token);
-              databaseService.orderUpdateSellerStream().onData((data) {
-                if(data.data != null){
-                  print(data.data);
-                  print("new bulshit incoming");
-                }
-              });
+              if(this.widget.user != null){
+                final token = await  notificationService.messaging.getToken();
+                databaseService.user.value.fcmToken = token;
+                databaseService.updateFirebasetoken(token);
+              }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -161,7 +164,6 @@ class _TabHomeState extends State<TabHome>
     return WillPopScope(
         onWillPop: () async => false,
           child: Scaffold(
-            
         backgroundColor: Colors.white,
         body: SafeArea(
           child: PageView(
@@ -172,7 +174,7 @@ class _TabHomeState extends State<TabHome>
             },
             physics: NeverScrollableScrollPhysics(),
             children: [
-              HomePage(),
+              HomePage(user: this.widget.user),
               OrdersPage(),
               VendorPage(),
               RoomsPage(),
@@ -182,9 +184,7 @@ class _TabHomeState extends State<TabHome>
         ),
         bottomNavigationBar: new Theme(
             data: Theme.of(context).copyWith(
-                // sets the background color of the `BottomNavigationBar`
                 canvasColor: Colors.white,
-                // sets the active color of the `BottomNavigationBar` if `Brightness` is light
                 primaryColor: Colors.white,
                 textTheme: Theme.of(context)
                     .textTheme

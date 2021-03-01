@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/DatabaseProvider.dart' as db;
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:provider/provider.dart';
 
@@ -310,7 +311,9 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                       controller: this._streamButtonController, onClick: () async {
                         this._streamButtonController.isLoading();
                         this.updateSettings(databaseService.client, firebaseUser.uid, snapshot.data.settings, databaseService).then((value) async {
-                        await databaseService.loadPublication();
+                          db.Location location = databaseService.user == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
+                          int distance  = databaseService.user == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
+                        await databaseService.loadPublication(location, distance);
                         await this._streamButtonController.isSuccess();
                         Navigator.pop(context);
                       });

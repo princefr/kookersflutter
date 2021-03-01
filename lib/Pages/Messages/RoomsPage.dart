@@ -18,6 +18,11 @@ class _RoomsPageState extends State<RoomsPage>
     with AutomaticKeepAliveClientMixin<RoomsPage> {
   @override
   void initState() {
+    Future.delayed(Duration.zero, (){
+        final databaseService =
+          Provider.of<DatabaseProviderService>(context, listen: false);
+          databaseService.loadrooms();
+    });
     super.initState();
   }
 
