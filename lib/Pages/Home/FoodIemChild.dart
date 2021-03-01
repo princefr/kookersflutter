@@ -10,6 +10,7 @@ import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/Reports/ReportPage.dart';
 import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/OrderProvider.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
@@ -381,13 +382,15 @@ class _FoodItemChildState extends State<FoodItemChild> {
                               onTap: (){showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
-                          builder: (context) => HomeSearchPage(isReturn: false,),
+                          builder: (context) => HomeSearchPage(isReturn: false, isNotAuth: false,),
                         );},
                               leading: Icon(CupertinoIcons.home),
                               title: StreamBuilder(
+                                initialData: null,
                                 stream: databaseService.user$,
                                 builder: (context, AsyncSnapshot<UserDef> snapshot) {
                                   if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
+                                  if(snapshot.data == null) return Text(databaseService.adress.value.title, style: GoogleFonts.montserrat(fontSize: 17));
                                   return Text(snapshot.data.adresses.where((element) => element.isChosed == true).first.title, style: GoogleFonts.montserrat(fontSize: 17));
                                 }
                               ),
@@ -427,13 +430,17 @@ class _FoodItemChildState extends State<FoodItemChild> {
                     successText: "Plat acheté",
                     controller: _streamButtonController,
                     onClick: () async {
-                      if(snapshot.data != null){
-                          final order = await orderProvider.validate(databaseService, this.widget.publication);
-                              showCupertinoModalBottomSheet(
-                                          expand: true,
-                                          context: context,
-                                          builder: (context) => PaymentConfirmation(order: order),
-                                      );
+                      if(databaseService.user.value == null){
+                        NotificationPanelService.showError(context, "Veuillez vous connecter pour commander");
+                      }else{
+                        if(snapshot.data != null){
+                            final order = await orderProvider.validate(databaseService, this.widget.publication);
+                                showCupertinoModalBottomSheet(
+                                            expand: true,
+                                            context: context,
+                                            builder: (context) => PaymentConfirmation(order: order),
+                                        );
+                        }
                       }
                       
                     });
@@ -443,11 +450,15 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
 
               InkWell(child:Center(child: Text("Signaler", style: GoogleFonts.montserrat(color: Colors.red, fontSize: 18))), onTap: (){
-                showCupertinoModalBottomSheet(
+                if(databaseService.user.value == null){
+                  NotificationPanelService.showError(context, "Veuillez vous connecter pour signaler ce plat");
+                }else{
+                            showCupertinoModalBottomSheet(
                   expand: false,
                   context: context,
                   builder: (context) => ReportPage(publicatonId: this.widget.publication.id, seller: this.widget.publication.seller.id,),
-                );
+                );      
+                }
               },),
 
               SizedBox(height: 10,)

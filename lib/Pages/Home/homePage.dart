@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
 import 'package:kookers/Pages/Home/FoodIemChild.dart';
 import 'package:kookers/Pages/Home/FoodItem.dart';
 import 'package:kookers/Pages/Home/Guidelines.dart';
@@ -15,9 +17,10 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 
+// ignore: must_be_immutable
 class HomeTopBar extends PreferredSize {
   final double height;
-  const HomeTopBar({Key key, this.height});
+  HomeTopBar({Key key, this.height});
 
   @override
   Size get preferredSize => Size.fromHeight(height);
@@ -57,11 +60,18 @@ class HomeTopBar extends PreferredSize {
               children: [
                 InkWell(
                     onTap: () {
-                      showCupertinoModalBottomSheet(
-                        expand: false,
-                        context: context,
-                        builder: (context) => HomeSettings(),
-                      );
+                      if(databaseService.user.value == null){
+                        showCupertinoModalBottomSheet(
+                          expand: true,
+                          context: context,
+                          builder: (context) => BeforeSignPage(from: "home"));
+                      }else{
+                        showCupertinoModalBottomSheet(
+                          expand: false,
+                          context: context,
+                          builder: (context) => HomeSettings(),
+                        );
+                      }
                     },
                     child: Container(
                         padding: EdgeInsets.all(5),
@@ -76,12 +86,12 @@ class HomeTopBar extends PreferredSize {
                     autofocus: false,
                     onTap: () {
                       showCupertinoModalBottomSheet(
-                        expand: false,
+                        expand: true,
                         context: context,
-                        builder: (context) => HomeSearchPage(isReturn: false),
+                        builder: (context) => HomeSearchPage(isReturn: false, isNotAuth: false),
                       );
                     },
-                    title: StreamBuilder(
+                    title: StreamBuilder<UserDef>(
                         initialData: null,
                         stream: databaseService.user$,
                         builder: (context, AsyncSnapshot<UserDef> snapshot) {
@@ -95,6 +105,19 @@ class HomeTopBar extends PreferredSize {
                                     child: Container(color: Colors.white),
                                     baseColor: Colors.grey[200],
                                     highlightColor: Colors.grey[300]));
+                          if(snapshot.data == null) {
+                            return StreamBuilder<Adress>(
+                              stream: databaseService.adress,
+                              builder: (context, snapshot) {
+                                if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                                if(snapshot.data == null) return SizedBox();
+                                return Text(
+                                snapshot.data.title,
+                              style: GoogleFonts.montserrat(fontSize: 17),
+                              overflow: TextOverflow.ellipsis);
+                              }
+                            );
+                          }
                           return Text(
                               snapshot.data.adresses
                                   .where((element) => element.isChosed == true)
@@ -118,15 +141,32 @@ class HomeTopBar extends PreferredSize {
 }
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key}) : super(key: key);
+  final User user;
+  HomePage({Key key, @required this.user}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
+
+
+
 class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<HomePage>  {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, (){
+        final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: false);
+        Location location = databaseService.user.value == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
+        int distance  = databaseService.user.value == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
+      databaseService.loadPublication(location, distance);
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +182,13 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color(0xFFF95F5F),
         onPressed: () {
-            if(databaseService.user.value.isSeller == false) {
+          if(this.widget.user == null) {
+                  showCupertinoModalBottomSheet(
+                          expand: false,
+                          context: context,
+                          builder: (context) => BeforeSignPage(from: "home"));
+          }else{
+              if(databaseService.user.value.isSeller == false) {
                 showCupertinoModalBottomSheet(
                   expand: true,
                   context: context,
@@ -155,6 +201,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                   builder: (context) => HomePublish(),
                 );
             }
+          }
         },
         child: Icon(CupertinoIcons.pencil, size: 34.0, color: Colors.white),
       ),
@@ -180,7 +227,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                     enablePullUp: false,
                     controller: this._refreshController,
                     onRefresh: () {
-                      databaseService.loadPublication().then((value) {
+                      Location location = databaseService.user.value == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
+                      int distance  = databaseService.user.value == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
+                      databaseService.loadPublication(location, distance).then((value) {
                         Future.delayed(Duration(milliseconds: 500))
                             .then((value) {
                           _refreshController.refreshCompleted();
@@ -194,7 +243,9 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                 enablePullUp: false,
                 controller: this._refreshController,
                 onRefresh: () {
-                  databaseService.loadPublication().then((value) {
+                  Location location = databaseService.user.value == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
+                  int distance  = databaseService.user.value == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
+                  databaseService.loadPublication(location, distance).then((value) {
                     Future.delayed(Duration(milliseconds: 500)).then((value) {
                       _refreshController.refreshCompleted();
                     });

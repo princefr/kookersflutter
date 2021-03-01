@@ -210,10 +210,12 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                           controller: _streamButtonController, onClick: () async {
                             if(snapshot.data != null) {
                               _streamButtonController.isLoading();
+                              databaseService.adress.add(null);
                               authentificationService.signInWithVerificationID(widget.verificationId, bloc.code.value).then((connected) async {
                                 this.checkUserExist(connected.user.uid, databaseService.client).then((user) async {
                                   if(user == null) {
                                               await _streamButtonController.isSuccess();
+                                              
                                                 Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
@@ -228,7 +230,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                                 context,
                                                 CupertinoPageRoute(
                                                     builder: (context) =>
-                                                        TabHome()));
+                                                        TabHome(user: connected.user,)));
                                     }
                                 }).catchError((onError) async {
                                   NotificationPanelService.showError(context, "Veuillez verifier votre connexion à internet et reessayer.");

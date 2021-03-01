@@ -8,6 +8,16 @@ class CrashService {
   CrashService({@required this.crashlytics});
 
 
+  Future<void> identifyUser(String userId) async {
+      this.crashlytics.setUserIdentifier(userId);
+  }
+
+
+  Future<void> logMessage(String message) async {
+      this.crashlytics.log(message);
+  }
+
+
 
   
   
