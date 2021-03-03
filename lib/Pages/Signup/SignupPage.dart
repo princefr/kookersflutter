@@ -524,7 +524,7 @@ class _SignupPageState extends State<SignupPage> {
                               Navigator.push(
                                   context,
                                   CupertinoPageRoute(
-                                      builder: (context) => NotificationPage()));
+                                      builder: (context) => NotificationPage(user: this.widget.user)));
                             }).catchError((onError) async {
                               await _streamButtonController.isError();
                             });

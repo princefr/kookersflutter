@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
@@ -13,7 +14,8 @@ import 'package:provider/provider.dart';
 
 
 class NotificationPage extends StatefulWidget {
-  NotificationPage({Key key}) : super(key: key);
+  final User user;
+  NotificationPage({Key key, @required this.user}) : super(key: key);
 
   @override
   _NotificationPageState createState() => _NotificationPageState();
@@ -41,9 +43,6 @@ class _NotificationPageState extends State<NotificationPage> {
 
             Expanded(child: SizedBox(),),
 
-
-
-
             StreamButton(buttonColor: Colors.black,
                             buttonText: "Activer les notifications",
                             errorText: "Une erreur s'est produite, Veuillez reesayer",
@@ -59,14 +58,14 @@ class _NotificationPageState extends State<NotificationPage> {
                                                 context,
                                                 CupertinoPageRoute(
                                                     builder: (context) =>
-                                                        TabHome()));
+                                                        TabHome(user:  this.widget.user,)));
                                                   
                                     }else{
                                       Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
                                                     builder: (context) =>
-                                                        TabHome()));
+                                                        TabHome(user: this.widget.user)));
                                     }
                                 });
                               }
@@ -78,7 +77,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                                 context,
                                                 CupertinoPageRoute(
                                                     builder: (context) =>
-                                                        TabHome()));
+                                                        TabHome(user: this.widget.user,)));
                             },child: Center(child: Text("Plus tard.", style: GoogleFonts.montserrat(fontSize: 18, color: Colors.grey),))),
                             SizedBox(height:10),
          ],),
