@@ -176,6 +176,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                     stream: bloc.code$,
                     builder: (context, snapshot) {
                       return TextField(
+                        key:  Key("PhoneCodeTestField"),
                           onChanged: bloc.code.add,
                           decoration: InputDecoration(
                             hintText: 'Renseignez votre code',
@@ -200,9 +201,11 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
 
 
               StreamBuilder<String>(
+                  
                       stream: bloc.code,
                       builder: (ctx, snapshot) {
                         return StreamButton(buttonColor: snapshot.data != null ? Colors.black : Colors.grey,
+                          key: Key("phoneCodeButton"),
                           buttonText: "Vérifier mon code",
                           errorText: "Une erreur s'est produite, Veuillez reesayer",
                           loadingText: "Vérification en cours",

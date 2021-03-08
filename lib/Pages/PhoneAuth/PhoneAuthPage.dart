@@ -137,9 +137,10 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                 stream: phoneAuthBloc.isAllFilled$,
                 builder: (ctx, AsyncSnapshot<bool> snapshot) {
                   return StreamButton(
+                      key: Key("phoneValidationButton"),
                       buttonColor:
                           snapshot.data != null ? Colors.black : Colors.grey,
-                      key: Key("phoneValidationButton"),
+                      
                       buttonText: "Envoyer le sms",
                       errorText:
                           "Une erreur s'est produite, veuillez reesayer!",
@@ -147,6 +148,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                       successText: "Sms envoyé",
                       controller: _streamButtonController,
                       onClick: () async {
+                        print("clicked");
                         if (snapshot.data != null) {
                           _streamButtonController.isLoading();
                           String phone = await phoneAuthBloc.validate();
@@ -164,7 +166,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                             },
                             error: (e) async {
                               await _streamButtonController.isError();
-                            });
+                            }).catchError((err) => err);
                         }
                       });
                 }),
