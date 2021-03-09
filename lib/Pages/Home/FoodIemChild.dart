@@ -382,7 +382,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                               onTap: (){showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
-                          builder: (context) => HomeSearchPage(isReturn: false, isNotAuth: false,),
+                          builder: (context) => HomeSearchPage(isReturn: false),
                         );},
                               leading: Icon(CupertinoIcons.home),
                               title: StreamBuilder(

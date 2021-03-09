@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
-import 'package:kookers/Pages/Home/HomeSearchPage.dart';
+import 'package:kookers/Pages/BeforeSign/BeforeSignAdress.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:kookers/Widgets/WebView.dart';
@@ -116,11 +116,6 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
                       ]
                     )),
                   ),
-
-                  
-
-
-
                 ],
       ),
             ),
@@ -135,7 +130,7 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
                       successText: "Sms envoyé",
                       controller: _streamButtonController,
                       onClick: () async {
-                        Get.to(HomeSearchPage(isReturn: false, isNotAuth: true,));
+                        Get.to(BeforeAdress(isReturn: false,));
                 })
           ],
         ))

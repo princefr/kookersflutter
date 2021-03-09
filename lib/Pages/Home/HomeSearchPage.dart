@@ -7,24 +7,23 @@ import 'package:google_place/google_place.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Services/DatabaseProvider.dart' as db;
 import 'package:kookers/Services/DatabaseProvider.dart';
-import 'package:kookers/TabHome/TabHome.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
-import 'package:get/get.dart';
 
 // ignore: must_be_immutable
 class HomeSearchPage extends StatefulWidget {
-   db.Adress adress;
-   bool isReturn;
-   bool isNotAuth;
-  HomeSearchPage({Key key, this.adress, @required this.isReturn, @required this.isNotAuth}) : super(key: key);
+  db.Adress adress;
+  bool isReturn;
+  HomeSearchPage({Key key, this.adress, @required this.isReturn})
+      : super(key: key);
 
   @override
   _HomeSearchPageState createState() => _HomeSearchPageState();
 }
 
-class _HomeSearchPageState extends State<HomeSearchPage> with AutomaticKeepAliveClientMixin<HomeSearchPage>  {
-    @override
+class _HomeSearchPageState extends State<HomeSearchPage>
+    with AutomaticKeepAliveClientMixin<HomeSearchPage> {
+  @override
   bool get wantKeepAlive => true;
 
   GooglePlace googlePlace;
@@ -43,7 +42,6 @@ class _HomeSearchPageState extends State<HomeSearchPage> with AutomaticKeepAlive
 
   @override
   void initState() {
-    
     googlePlace = GooglePlace("AIzaSyDMv0rYwxFoTb2dZA73i_Bz1xIEy4jeUNw");
     super.initState();
   }
@@ -54,8 +52,8 @@ class _HomeSearchPageState extends State<HomeSearchPage> with AutomaticKeepAlive
     super.dispose();
   }
 
-
-    Future<void> updateUserAdresses(GraphQLClient client, String uid, List<db.Adress> adresses, DatabaseProviderService database) async {
+  Future<void> updateUserAdresses(GraphQLClient client, String uid,
+      List<db.Adress> adresses, DatabaseProviderService database) async {
     final MutationOptions _options = MutationOptions(documentNode: gql(r"""
               mutation UpdateUserAdresses($userID: String!, $adresses: [AdressInput]!) {
                 updateUserAdresses(userID: $userID, adresses: $adresses){
@@ -144,172 +142,189 @@ class _HomeSearchPageState extends State<HomeSearchPage> with AutomaticKeepAlive
                   }
               }
           """), variables: <String, dynamic>{
-          "userID": uid,
-          "adresses": db.Adress.toJson(adresses)
-        });
+      "userID": uid,
+      "adresses": db.Adress.toJson(adresses)
+    });
 
-        return client.mutate(_options).then((kooker) {
-                  final kookersUser = UserDef.fromJson(kooker.data["updateUserAdresses"]);
-                  database.user.add(kookersUser);
-      });
+    return client.mutate(_options).then((kooker) {
+      final kookersUser = UserDef.fromJson(kooker.data["updateUserAdresses"]);
+      database.user.add(kookersUser);
+    });
   }
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
+    final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: false);
 
-      final firebaseUser = context.watch<User>();
+    final firebaseUser = context.watch<User>();
 
-      return Scaffold(
-        appBar: TopBarBackCross(height: 54, title:"Choisir une adresse"),
-        body: SafeArea(
-            child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: 45,
-                  width: MediaQuery.of(context).size.width,
-                  child: TextField(
-                    controller: textController,
-                    onChanged: (value) {
-                      if (value.isNotEmpty) {
-                        autoCompleteSearch(value);
-                      } else {
-                        if (predictions.length > 0 && mounted) {
-                          setState(() {
-                            predictions = [];
-                          });
-                        }
+    return Scaffold(
+      appBar: TopBarBackCross(height: 54, title: "Choisir une adresse"),
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                height: 45,
+                width: MediaQuery.of(context).size.width,
+                child: TextField(
+                  controller: textController,
+                  onChanged: (value) {
+                    if (value.isNotEmpty) {
+                      autoCompleteSearch(value);
+                    } else {
+                      if (predictions.length > 0 && mounted) {
+                        setState(() {
+                          predictions = [];
+                        });
                       }
-                    },
-
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.only(
-                          left: 15, bottom: 11, top: 11, right: 15),
-                      hintText: "Rechercher un lieu",
-                      prefixIcon: Icon(CupertinoIcons.search),
-                      fillColor: Colors.grey[300],
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(
-                          width: 0,
-                          style: BorderStyle.none,
-                        ),
+                    }
+                  },
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(
+                        left: 15, bottom: 11, top: 11, right: 15),
+                    hintText: "Rechercher un lieu",
+                    prefixIcon: Icon(CupertinoIcons.search),
+                    fillColor: Colors.grey[300],
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        width: 0,
+                        style: BorderStyle.none,
                       ),
                     ),
                   ),
                 ),
-
-                Divider(),
-
-                Visibility(
+              ),
+              Divider(),
+              Visibility(
                   visible: (this.textController?.value?.text?.isNotEmpty),
-                  child: 
-                    Expanded(
-                    child: ListView.builder(
-                      dragStartBehavior: DragStartBehavior.down,
-                        itemCount: predictions.length,
-                        itemBuilder: (ctx, index) {
-                          return ListTile(
-                            autofocus: false,
-                            onTap: () async {
-                              googlePlace.details.get(predictions[index].placeId).then((value) {
-                                final c = db.Adress(isChosed: true, location: db.Location(latitude: value.result.geometry.location.lat, longitude: value.result.geometry.location.lng),  title: predictions[index].description);
-                              setState(() {
-                              this.widget.adress = c;
-                                if(this.widget.isReturn == false && this.widget.isNotAuth == false) {
-                                if(databaseService.adress != null){
-                                  databaseService.adress.add(c);
-                                  databaseService.loadPublication(c.location, 45);
-                                  Navigator.pop(context);
-                                }else{
-                                  databaseService.user.value.adresses.forEach((e) => e.isChosed = false);
-                                  databaseService.user.value.adresses.add(c);
-                                  textController.text = "";
-                                  this.updateUserAdresses(databaseService.client, firebaseUser.uid, databaseService.user.value.adresses, databaseService).then((value) {
-                                        db.Location location = databaseService.user == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
-                                        int distance  = databaseService.user == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
-                                    databaseService.loadPublication(location, distance).then((value) => Navigator.pop(context));
-                                  });
-                                }
-                              }else if(this.widget.isNotAuth){
-                                databaseService.adress.add(c);
-                                databaseService.user.add(null);
-                                Get.to(TabHome());
-                              }
-                              else{
-                                textController.text = "";
-                                Navigator.pop(context, c);
-                              }
-                              });
-                              });
-                            },
-                            leading: Icon(CupertinoIcons.location),
-                            title: Text(predictions[index].description),
-                          );
-                        }))
-                
-                ),
-
-
-                Visibility(
-                  visible: (this.textController?.value?.text?.isEmpty),
                   child: Expanded(
-                      child: StreamBuilder(
-                      stream: databaseService.user$,
-                      initialData: databaseService.user.value,
-                      builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                        if(snapshot.data == null) return SizedBox();
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: snapshot.data.adresses.length,
-                          itemBuilder: (BuildContext context, int index) {
+                      child: ListView.builder(
+                          dragStartBehavior: DragStartBehavior.down,
+                          itemCount: predictions.length,
+                          itemBuilder: (ctx, index) {
                             return ListTile(
                               autofocus: false,
-                              onTap: (){
-                                if(this.widget.isNotAuth){
-                                  Get.to(TabHome());
-                                }else{
+                              onTap: () async {
+                                googlePlace.details
+                                    .get(predictions[index].placeId)
+                                    .then((value) {
+                                  final c = db.Adress(
+                                      isChosed: true,
+                                      location: db.Location(
+                                          latitude: value
+                                              .result.geometry.location.lat,
+                                          longitude: value
+                                              .result.geometry.location.lng),
+                                      title: predictions[index].description);
                                   setState(() {
-                                    snapshot.data.adresses.forEach((e) => e.isChosed = false);
-                                    snapshot.data.adresses[index].isChosed = true;
-                                    this.updateUserAdresses(databaseService.client, firebaseUser.uid, databaseService.user.value.adresses, databaseService).then((value) {
-                                      db.Location location = databaseService.user == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
-                                      int distance  = databaseService.user == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
-                                      databaseService.loadPublication(location, distance).then((value) => Navigator.pop(context));
-                                      
-                                    });
+                                    this.widget.adress = c;
+                                    if (this.widget.isReturn == false) {
+                                      databaseService.user.value.adresses
+                                          .forEach((e) => e.isChosed = false);
+                                      databaseService.user.value.adresses
+                                          .add(c);
+                                      textController.text = "";
+                                      this
+                                          .updateUserAdresses(
+                                              databaseService.client,
+                                              firebaseUser.uid,
+                                              databaseService
+                                                  .user.value.adresses,
+                                              databaseService)
+                                          .then((value) {
+                                        databaseService
+                                            .loadPublication(
+                                                databaseService
+                                                    .user.value.adresses
+                                                    .firstWhere((element) =>
+                                                        element.isChosed)
+                                                    .location,
+                                                databaseService
+                                                    .user
+                                                    .value
+                                                    .settings
+                                                    .distanceFromSeller)
+                                            .then((value) =>
+                                                Navigator.pop(context));
+                                      });
+                                    } else {
+                                      textController.text = "";
+                                      Navigator.pop(context, c);
+                                    }
                                   });
-                                }
+                                });
                               },
-                              trailing: CircularCheckBox(
-                              activeColor: Colors.green,
-                              tristate: true,
-                              value: snapshot.data.adresses[index].isChosed,
-                              onChanged: (bool x) {
-                              }),
-                              title: Text(snapshot.data.adresses[index].title)
+                              leading: Icon(CupertinoIcons.location),
+                              title: Text(predictions[index].description),
                             );
-
-                        });
-                      }
-                    ),
+                          }))),
+              Visibility(
+                  visible: (this.textController?.value?.text?.isEmpty),
+                  child: Expanded(
+                    child: StreamBuilder(
+                        stream: databaseService.user$,
+                        initialData: databaseService.user.value,
+                        builder: (context, AsyncSnapshot<UserDef> snapshot) {
+                          if (snapshot.data == null) return SizedBox();
+                          return ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: snapshot.data.adresses.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return ListTile(
+                                    autofocus: false,
+                                    onTap: () {
+                                      setState(() {
+                                        snapshot.data.adresses
+                                            .forEach((e) => e.isChosed = false);
+                                        snapshot.data.adresses[index].isChosed =
+                                            true;
+                                        this
+                                            .updateUserAdresses(
+                                                databaseService.client,
+                                                firebaseUser.uid,
+                                                databaseService
+                                                    .user.value.adresses,
+                                                databaseService)
+                                            .then((value) {
+                                          databaseService
+                                              .loadPublication(
+                                                  databaseService
+                                                      .user.value.adresses
+                                                      .firstWhere((element) =>
+                                                          element.isChosed)
+                                                      .location,
+                                                  databaseService
+                                                      .user
+                                                      .value
+                                                      .settings
+                                                      .distanceFromSeller)
+                                              .then((value) =>
+                                                  Navigator.pop(context));
+                                        });
+                                      });
+                                    },
+                                    trailing: CircularCheckBox(
+                                        activeColor: Colors.green,
+                                        tristate: true,
+                                        value: snapshot
+                                            .data.adresses[index].isChosed,
+                                        onChanged: (bool x) {}),
+                                    title: Text(
+                                        snapshot.data.adresses[index].title));
+                              });
+                        }),
                   ))
-
-
-              ],
-            ),
+            ],
           ),
         ),
-      );
-
+      ),
+    );
   }
 }

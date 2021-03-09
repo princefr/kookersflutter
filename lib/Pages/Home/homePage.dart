@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kookers/Pages/BeforeSign/BeforeSignAdress.dart';
 import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
 import 'package:kookers/Pages/Home/FoodIemChild.dart';
 import 'package:kookers/Pages/Home/FoodItem.dart';
@@ -85,11 +86,19 @@ class HomeTopBar extends PreferredSize {
                   child: ListTile(
                     autofocus: false,
                     onTap: () {
-                      showCupertinoModalBottomSheet(
+                      if(databaseService.user.value == null){
+                        showCupertinoModalBottomSheet(
                         expand: true,
                         context: context,
-                        builder: (context) => HomeSearchPage(isReturn: false, isNotAuth: false),
+                        builder: (context) => BeforeAdress(isReturn: true),
                       );
+                      }else{
+                        showCupertinoModalBottomSheet(
+                        expand: true,
+                        context: context,
+                        builder: (context) => HomeSearchPage(isReturn: false),
+                      );
+                      }
                     },
                     title: StreamBuilder<UserDef>(
                         initialData: null,

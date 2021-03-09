@@ -80,7 +80,6 @@ dependencies:
   webview_flutter: ^1.0.7
   flutter_native_image: ^0.0.5+3
   get: ^3.25.4
-  swipe_to: ^0.0.1+8
 
 
 

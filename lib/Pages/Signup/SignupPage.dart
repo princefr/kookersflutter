@@ -391,7 +391,7 @@ class _SignupPageState extends State<SignupPage> {
                         this.adress = await showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
-                          builder: (context) => HomeSearchPage(isReturn: true, isNotAuth: false,),
+                          builder: (context) => HomeSearchPage(isReturn: true),
                         );
 
                         signupBloc.adress.add(this.adress);
