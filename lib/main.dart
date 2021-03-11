@@ -47,11 +47,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 
-void main() async {
+void main({bool testing: false}) async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  if(testing) FirebaseAuth.instance.signOut();
+  if(!testing) FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   runApp(MyApp());
 }
 
@@ -106,11 +107,11 @@ class AuthentificationnWrapper extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    final authentificationService =  Provider.of<AuthentificationService>(context, listen: true);
+    final authentificationService =  Provider.of<AuthentificationService>(context, listen: false);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
 
-    return StreamBuilder<User>(
-      stream: authentificationService.authStateChanges,
+    return FutureBuilder<User>(
+      future: Future.delayed(Duration(seconds: 3), () => authentificationService.userConnected()),
       initialData: null,
       builder: (BuildContext ctx, AsyncSnapshot<User> snapshotc){
         if(snapshotc.connectionState == ConnectionState.waiting) return SplashScreen();

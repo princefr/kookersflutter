@@ -92,7 +92,7 @@ class _BeforeSignPageState extends State<BeforeSignPage> {
 
                 StreamButton(
                         buttonColor: Colors.black,
-                        key: Key("phoneValidationButton"),
+                        key: Key("beforeSignButton"),
                         buttonText: "Se connecter / S'inscrire",
                         errorText: "Une erreur s'est produite, veuillez reesayer!",
                         loadingText: "Envoie en cours",

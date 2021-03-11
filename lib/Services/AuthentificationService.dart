@@ -9,6 +9,10 @@ class AuthentificationService {
 
   Stream<User> get authStateChanges => firebaseAuth.authStateChanges();
 
+  Future<User> userConnected() async {
+    return firebaseAuth.currentUser;
+  }
+
  
 
 

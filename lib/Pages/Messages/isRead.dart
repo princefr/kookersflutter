@@ -6,8 +6,6 @@ import 'package:flutter/material.dart';
 
 class IsReadWidget extends StatelessWidget {
   const IsReadWidget({Key key, @required this.isRead, @required this.isSent}) : super(key: key);
-
-
   final bool  isRead;
   final bool isSent;
 
@@ -19,7 +17,7 @@ class IsReadWidget extends StatelessWidget {
       }else if(this.isSent == true && this.isRead == true) {
         return Icon(Icons.done_all, size: 17);
       }else{
-        return SizedBox();
+        return Icon(Icons.timelapse_rounded, size: 17);
       }
     });
   }

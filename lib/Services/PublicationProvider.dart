@@ -2,6 +2,7 @@
 import 'dart:io';
 import 'package:dart_geohash/dart_geohash.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Mixins/PublicationValidation.dart';
 import 'package:kookers/Pages/Home/HomePublish.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
@@ -10,7 +11,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
 import "package:flutter/material.dart";
 
-var uuid = Uuid();
+
 
 
 class Publication {
@@ -24,8 +25,12 @@ class Publication {
   String sellerId;
   String geohash;
   String currency;
+  List<File> pictureToUpload;
+  GraphQLClient client;
+  String uid;
+  StorageService storage;
 
-  Publication({@required this.photoUrls, @required this.type, @required this.foodPreferences, @required this.adress, @required this.name, @required this.description, @required this.pricePerPerson,  @required this.sellerId, @required this.geohash, @required this.currency});
+  Publication({this.photoUrls, @required this.type, @required this.foodPreferences, @required this.adress, @required this.name, @required this.description, @required this.pricePerPerson,  @required this.sellerId, @required this.geohash, @required this.currency, this.pictureToUpload, this.client, this.uid, @required this.storage});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -41,6 +46,37 @@ class Publication {
     data["currency"] = this.currency;
     return data;
   }
+
+  Future<void> uploadToServer(BehaviorSubject<int> percentage) async {
+    var uuid = Uuid();
+    final url1 = await storage.uploadPictureFile(this.uid, "publications/" + uuid.v1(), this.pictureToUpload[0], "publicationImage").catchError((onError) => throw onError);
+    percentage.add(15);
+    final url2 = await storage.uploadPictureFile(this.uid, "publications/" + uuid.v1(), this.pictureToUpload[1], "publicationImage").catchError((onError) => throw onError);
+    percentage.add(30);
+    final url3 = await storage.uploadPictureFile(this.uid, "publications/" + uuid.v1(), this.pictureToUpload[1], "publicationImage").catchError((onError) => throw onError);
+    percentage.add(60);
+    this.photoUrls = [url1, url2, url3];
+    return this.uploadPublication(this.client, this);
+  }
+
+  Future<void> uploadPublication(GraphQLClient client, Publication pub) {
+    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+              mutation CreatePub($publication: PublicationInput!) {
+                  createPublication(publication: $publication){
+                _id
+                description
+                type
+                food_preferences
+              }
+              }
+          """), variables: <String, dynamic>{
+            "publication": pub.toJson()
+        });
+
+        return client.mutate(_options).then((result) => result.data["createPublication"]);
+  }
+
+
 
 }
 
@@ -112,14 +148,11 @@ class PublicationProvider  with PublicationValidation {
 
   Future<Publication> validate(User user, StorageService storage, DatabaseProviderService database, SettingType type) async {
     GeoHasher geoHasher = GeoHasher();
-    final url1 = await storage.uploadPictureFile(database.user.value.id, "publications/" + uuid.v1(), this.file0.value, "publicationImage").catchError((onError) => throw onError);
-    final url2 = await storage.uploadPictureFile(database.user.value.id, "publications/" + uuid.v1(), this.file1.value, "publicationImage").catchError((onError) => throw onError);
-    final url3 = await storage.uploadPictureFile(database.user.value.id, "publications/" + uuid.v1(), this.file2.value, "publicationImage").catchError((onError) => throw onError);
-    final photosUrls = [url1, url2, url3];
+    final pictureToUpload  = [this.file0.value, this.file1.value, this.file2.value];
     Adress adress = database.user.value.adresses.firstWhere((element) => element.isChosed == true);
     String geohash = geoHasher.encode(adress.location.longitude, adress.location.latitude);
-    Publication publication = Publication(photoUrls : photosUrls, type: type, foodPreferences : pricePrefs.value, adress: adress,
-     name: this.name.value, description : this.description.value, pricePerPerson : this.priceall.value,  sellerId: database.user.value.id, geohash: geohash, currency: database.user.value.currency);
+    Publication publication = Publication(type: type, foodPreferences : pricePrefs.value, adress: adress,
+     name: this.name.value, description : this.description.value, pricePerPerson : this.priceall.value,  sellerId: database.user.value.id, geohash: geohash, currency: database.user.value.currency, client: database.client, pictureToUpload: pictureToUpload, storage: storage, uid: database.user.value.id);
     return publication;
 
   }

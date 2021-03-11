@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
@@ -9,18 +7,18 @@ import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:graphql/client.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:jiffy/jiffy.dart';
-import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 import 'package:kookers/Pages/Messages/MessageInput.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
+import 'package:kookers/Pages/Messages/SwipeableCell.dart';
+import 'package:kookers/Pages/Messages/chat_image_message.dart';
+import 'package:kookers/Pages/Messages/date_below_message.dart';
 import 'package:kookers/Pages/Messages/isRead.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/TopBar.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
@@ -29,36 +27,21 @@ class ChatPage extends StatefulWidget {
   final Room room;
   final int index;
   final uid;
-  ChatPage({Key key, @required this.room, this.index, this.uid}) : super(key: key);
+  ChatPage({Key key, @required this.room, this.index, this.uid})
+      : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage>
-    {
+class _ChatPageState extends State<ChatPage> {
 
 
-    
 
-  Future<void> sendMessage(GraphQLClient client, Message message) async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
-      mutation SendMEssage($message: MessageInput){
-            sendMessage(message: $message)
-        }
-    """), variables: <String, dynamic>{
-      "message": message.toJSON(),
-    });
-
-    return await client
-        .mutate(_options)
-        .then((value) => value.data["sendMessage"]);
-  }
 
   StreamSubscription<void> streamNewMessage;
   StreamSubscription<dynamic> streamHasRead;
   StreamSubscription<void> streamIsWriting;
-
 
   final TextEditingController textEditingController = TextEditingController();
   final FocusNode focusNode = FocusNode();
@@ -67,11 +50,17 @@ class _ChatPageState extends State<ChatPage>
 // ignore: close_sinks
   final BehaviorSubject<String> messageToSend = BehaviorSubject<String>();
   // ignore: close_sinks
-  final BehaviorSubject<List<Message>> messages = BehaviorSubject<List<Message>>();
+  final BehaviorSubject<List<Message>> messages =
+      BehaviorSubject<List<Message>>();
   StreamSubscription<Room> roomSubscription;
 
-  StreamSubscription<Message> get unreadMessage => messages.map((event) => event.lastWhere((message) => (message.userId != this.widget.uid && message.isRead == false), orElse: () => null)).listen((event) => event);
-  
+  StreamSubscription<Message> get unreadMessage => messages
+      .map((event) => event.lastWhere(
+          (message) =>
+              (message.userId != this.widget.uid && message.isRead == false),
+          orElse: () => null))
+      .listen((event) => event);
+
   // ignore: unused_field
   bool _active = false;
 
@@ -81,22 +70,26 @@ class _ChatPageState extends State<ChatPage>
     Future.delayed(Duration.zero, () async {
       final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
-      this.roomSubscription = databaseService.getRoom(this.widget.room.id, this.messages);
-      this.streamNewMessage = databaseService.newMessageStream(this.widget.room.id);
-      this.streamHasRead = databaseService.messageReadStream(this.widget.room.id);
-      this.streamIsWriting = databaseService.userIsWritingStream(this.widget.room.id);
-      this.unreadMessage.onData((data) { 
-         if(data != null) {
-           databaseService.setIschatAreRead(this.widget.room.id);
-           databaseService.loadrooms();
-         }
-       });
+      this.roomSubscription =
+          databaseService.getRoom(this.widget.room.id, this.messages);
+      this.streamNewMessage =
+          databaseService.newMessageStream(this.widget.room.id);
+      this.streamHasRead =
+          databaseService.messageReadStream(this.widget.room.id);
+      this.streamIsWriting =
+          databaseService.userIsWritingStream(this.widget.room.id);
+      this.unreadMessage.onData((data) {
+        if (data != null) {
+          databaseService.setIschatAreRead(this.widget.room.id);
+          databaseService.loadrooms();
+        }
+      });
       this.streamHasRead.onData((data) {
         databaseService.loadrooms();
       });
 
       this.streamNewMessage.onData((data) {
-          databaseService.loadrooms();
+        databaseService.loadrooms();
       });
     });
     focusNode.addListener(onFocusChange);
@@ -104,7 +97,7 @@ class _ChatPageState extends State<ChatPage>
   }
 
   @override
-  void dispose(){
+  void dispose() {
     this.streamNewMessage.cancel();
     this.streamHasRead.cancel();
     this.streamIsWriting.cancel();
@@ -124,20 +117,11 @@ class _ChatPageState extends State<ChatPage>
     }
   }
 
-  void scrollToBottom() {
-    _controller.animateTo(
-      0.0,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.bounceIn,
-    );
-  }
-
-
-
   final picker = ImagePicker();
 
   // ignore: close_sinks
   BehaviorSubject<String> pictureToSend = BehaviorSubject<String>();
+
   // ignore: close_sinks
   BehaviorSubject<File> pictureToPreview = BehaviorSubject<File>();
 
@@ -151,104 +135,138 @@ class _ChatPageState extends State<ChatPage>
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: true);
     final storage = Provider.of<StorageService>(context, listen: true);
-    
-      return Scaffold(
-          appBar: TopBarChat(
-              displayname: this.widget.room.receiver.firstName +
-                  " " +
-                  this.widget.room.receiver.lastName,
-              rightIcon: CupertinoIcons.exclamationmark_circle_fill,
-              imageUrl: this.widget.room.receiver.photoUrl,
-              height: 54,
-              isRightIcon: false,
-              onTapRight: () {}),
-          body: SafeArea(
-            child: GestureDetector(
-              onPanUpdate: (details) {
-                if (details.delta.dy > 0) {
-                  this.focusNode.unfocus();
-                }
-              },
-              child: Stack(
-                  children: [
-                    Column(children: [
-                      Expanded(
-                          child: StreamBuilder<List<Message>>(
-                              stream: this.messages.stream,
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting)
-                                  return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
-                                if (snapshot.hasError)
-                                  return Text("Une erreur s'est produite", style: GoogleFonts.montserrat(),);
-                                if (snapshot.data.isEmpty)
-                                  return EmptyViewElse(text: "Vous n'avez aucun messages");
-                                return Scrollbar(
-                                      child: ListView.builder(
-                                      reverse: true,
-                                      shrinkWrap: true,
-                                      controller: _controller,
-                                      itemCount: snapshot.data.length,
-                                      itemBuilder: (context, index) {
-                                        if (snapshot.data[index].userId ==
-                                            databaseService.user.value.id) {
-                                          return ListTile(
-                                            autofocus: false,
-                                              title: Column(
+
+    return Scaffold(
+        appBar: TopBarChat(
+            displayname: this.widget.room.receiver.firstName +
+                " " +
+                this.widget.room.receiver.lastName,
+            rightIcon: CupertinoIcons.exclamationmark_circle_fill,
+            imageUrl: this.widget.room.receiver.photoUrl,
+            height: 54,
+            isRightIcon: false,
+            onTapRight: () {}),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Column(children: [
+                Expanded(
+                    child: StreamBuilder<List<Message>>(
+                        stream: this.messages.stream,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting)
+                            return LinearProgressIndicator(
+                                backgroundColor: Colors.black,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white));
+                          if (snapshot.hasError)
+                            return Text(
+                              "Une erreur s'est produite",
+                              style: GoogleFonts.montserrat(),
+                            );
+                          if (snapshot.data.isEmpty)
+                            return EmptyViewElse(
+                                text: "Vous n'avez aucun messages");
+                          return Scrollbar(
+                            child: ListView.builder(
+                                reverse: true,
+                                shrinkWrap: true,
+                                controller: _controller,
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (context, index) {
+                                  if (snapshot.data[index].userId ==
+                                      databaseService.user.value.id) {
+                                    return ListTile(
+                                        autofocus: false,
+                                        title: Column(
+                                          children: [
+                                            ChatImageMessage(
+                                                messagePicture: snapshot
+                                                    .data[index]
+                                                    .messagePicture),
+                                            SizedBox(height: 5),
+                                            ChatBubble(
+                                              elevation: 0,
+                                              shadowColor: Colors.white,
+                                              alignment: Alignment.topRight,
+                                              margin: EdgeInsets.only(top: 5),
+                                              clipper: ChatBubbleClipper5(
+                                                  type: BubbleType.sendBubble),
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                      constraints:
+                                                          BoxConstraints(
+                                                        maxWidth: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.7,
+                                                      ),
+                                                      child: Text(
+                                                        snapshot.data[index]
+                                                            .message,
+                                                        style: GoogleFonts
+                                                            .montserrat(
+                                                                color: Colors
+                                                                    .white),
+                                                      )),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(height: 5),
+                                            Align(
+                                              alignment: Alignment.centerRight,
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  DateBelowMessage(
+                                                      date: snapshot.data[index]
+                                                          .createdAt),
+                                                  SizedBox(width: 10),
+                                                  IsReadWidget(
+                                                    isRead: snapshot
+                                                        .data[index].isRead,
+                                                    isSent: snapshot
+                                                        .data[index].isSent,
+                                                  )
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ));
+                                  } else {
+                                    return SwipeableCell(
+                                      onSwipeEnd: () {
+                                        FocusScope.of(context).unfocus();
+                                      },
+                                      backgroundIcon: Icon(CupertinoIcons
+                                          .arrowshape_turn_up_left),
+                                      child: ListTile(
+                                          onLongPress: (){
+                                            print("long pressed");
+                                          },
+                                          autofocus: false,
+                                          title: Column(
                                             children: [
-
-                                              SizedBox(height: 20),
-                                              Builder(builder: (ctx) {
-                                                      if (snapshot.data[index]
-                                                                  .messagePicture ==
-                                                              "" ||
-                                                          snapshot.data[index]
-                                                                  .messagePicture ==
-                                                              null)
-                                                        return SizedBox();
-                                                      return InkWell(
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              CupertinoPageRoute(
-                                                                  builder: (context) => FullScreenImage(
-                                                                      url: snapshot
-                                                                          .data[
-                                                                              index]
-                                                                          .messagePicture)));
-                                                        },
-                                                        child: Container(
-                                                          decoration: BoxDecoration(
-                                                              color: Colors.grey[
-                                                                  200],
-                                                              borderRadius:
-                                                                  BorderRadius.all(
-                                                                      Radius.circular(
-                                                                          10.0)),
-                                                              image: DecorationImage(
-                                                                  image: CachedNetworkImageProvider(
-                                                                      snapshot
-                                                                          .data[
-                                                                              index]
-                                                                          .messagePicture),
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .center)),
-                                                          height: 150,
-                                                        ),
-                                                      );
-                                                    }),
-
-                                              
+                                              ChatImageMessage(
+                                                  messagePicture: snapshot
+                                                      .data[index]
+                                                      .messagePicture),
+                                              SizedBox(height: 5),
                                               ChatBubble(
                                                 elevation: 0,
+                                                alignment: Alignment.topLeft,
+                                                backGroundColor:
+                                                    Colors.grey[300],
                                                 shadowColor: Colors.white,
-                                                alignment: Alignment.topRight,
-                                                margin: EdgeInsets.only(top: 5),
                                                 clipper: ChatBubbleClipper5(
-                                                    type: BubbleType.sendBubble),
+                                                    type: BubbleType
+                                                        .receiverBubble),
                                                 child: Column(
                                                   children: [
                                                     Container(
@@ -261,217 +279,101 @@ class _ChatPageState extends State<ChatPage>
                                                               0.7,
                                                         ),
                                                         child: Text(
-                                                          snapshot.data[index]
-                                                              .message,
-                                                          style: GoogleFonts
-                                                              .montserrat(
-                                                                  color: Colors
-                                                                      .white),
-                                                        )),
-                                                    SizedBox(height: 10),
-
-                                                    
+                                                            snapshot.data[index]
+                                                                .message,
+                                                            style: GoogleFonts
+                                                                .montserrat(
+                                                                    color: Colors
+                                                                        .black))),
                                                   ],
                                                 ),
                                               ),
                                               SizedBox(height: 5),
                                               Align(
-                                                alignment: Alignment.centerRight,
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    Text(
-                                                      Jiffy(snapshot
-                                                          .data[index].createdAt).yMMMMd == Jiffy(DateTime.now()).yMMMMd ?
-                                                          Jiffy(snapshot
-                                                          .data[index].createdAt).format("HH:mm") : Jiffy(snapshot
-                                                          .data[index].createdAt).format("do MMMM, HH:mm"),
-                                                      style:
-                                                          GoogleFonts.montserrat(
-                                                              fontSize: 11),
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    IsReadWidget(
-                                                      isRead: snapshot
-                                                          .data[index].isRead,
-                                                      isSent: snapshot
-                                                          .data[index].isSent,
-                                                    )
-                                                  ],
-                                                ),
-                                              )
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: DateBelowMessage(
+                                                    date: snapshot
+                                                        .data[index].createdAt,
+                                                  ))
                                             ],
-                                          ));
-                                        } else {
-                                          return Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 20),
-                                            child: ListTile(
-                                              autofocus: false,
-                                                leading: CircleAvatar(
-                                                  backgroundColor: Colors.white,
-                                                  foregroundColor: Colors.white,
-                                                  radius: 20,
-                                                  backgroundImage:
-                                                      CachedNetworkImageProvider(
-                                                          this
-                                                              .widget
-                                                              .room
-                                                              .receiver
-                                                              .photoUrl),
-                                                ),
-                                                title: Column(
-                                                  children: [
-                                                    Builder(builder: (ctx) {
-                                                            if (snapshot
-                                                                        .data[
-                                                                            index]
-                                                                        .messagePicture ==
-                                                                    "" ||
-                                                                snapshot
-                                                                        .data[
-                                                                            index]
-                                                                        .messagePicture ==
-                                                                    null)
-                                                              return SizedBox();
-                                                            return InkWell(
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                    context,
-                                                                    CupertinoPageRoute(
-                                                                        builder: (context) => FullScreenImage(
-                                                                            url: snapshot
-                                                                                .data[index]
-                                                                                .messagePicture)));
-                                                              },
-                                                              child: Container(
-                                                                decoration: BoxDecoration(
-                                                                    color: Colors
-                                                                            .grey[
-                                                                        200],
-                                                                    borderRadius:
-                                                                        BorderRadius.all(
-                                                                            Radius.circular(
-                                                                                10.0)),
-                                                                    image: DecorationImage(
-                                                                        image: CachedNetworkImageProvider(snapshot
-                                                                            .data[
-                                                                                index]
-                                                                            .messagePicture),
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                        alignment:
-                                                                            Alignment
-                                                                                .center)),
-                                                                height: 150,
-                                                              ),
-                                                            );
-                                                          }),
+                                          )),
+                                    );
+                                  }
+                                }),
+                          );
+                        })),
+                MessageInput(
+                  image: this.pictureToPreview,
+                  textEditingController: this.textEditingController,
+                  message: messageToSend,
+                  focusNode: this.focusNode,
+                  animationDuration: Duration(milliseconds: 300),
+                  onAttachmentCiclked: () async {
+                    final status = await Permission.photos.status;
+                    print(status);
+                    if(status.isDenied){
+                      showDialog(context: context, builder: (BuildContext ctx){
+                                     return CupertinoAlertDialog(
+                                        title: Text("Accès à la biblioteque et photos"),
+                                        content: Center(child: Text("Vous avez refusé la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),),
+                                        actions: [
+                                          CupertinoDialogAction(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Continuer', style: TextStyle(color:Colors.red),),
+                                          ),
 
-                                                          SizedBox(height: 5),
-                                                    ChatBubble(
-                                                      elevation: 0,
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                      backGroundColor:
-                                                          Colors.grey[300],
-                                                      shadowColor: Colors.white,
-                                                      clipper: ChatBubbleClipper5(
-                                                          type: BubbleType
-                                                              .receiverBubble),
-                                                      child: Column(
-                                                        children: [
-                                                          Container(
-                                                              constraints:
-                                                                  BoxConstraints(
-                                                                maxWidth: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.7,
-                                                              ),
-                                                              child: Text(
-                                                                  snapshot
-                                                                      .data[index]
-                                                                      .message,
-                                                                  style: GoogleFonts
-                                                                      .montserrat(
-                                                                          color: Colors
-                                                                              .black))),
-                                                          SizedBox(height: 10),
+                                          CupertinoDialogAction(
+                                            onPressed: () {
+                                              openAppSettings();
+                                            },
+                                            isDefaultAction: true,
+                                            child: const Text('Paramètres'),
+                                          )
+                                        ],
+                                      );
+                                   });
+                    }else{
+                      getImage().then((file) async {
+                      FlutterNativeImage.compressImage(file.path, quality: 35)
+                          .then((compressed) {
+                        this.pictureToPreview.sink.add(compressed);
+                      });
+                    });
+                    }
+                  
+                  },
 
-                                                          
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(height: 5),
-                                                    Align(
-                                                        alignment:
-                                                            Alignment.centerLeft,
-                                                        child: Text(
-                                                          Jiffy(snapshot
-                                                          .data[index].createdAt).yMMMMd == Jiffy(DateTime.now()).yMMMMd ?
-                                                          Jiffy(snapshot
-                                                          .data[index].createdAt).format("HH:mm") : Jiffy(snapshot
-                                                          .data[index].createdAt).format("do MMMM, HH:mm"),
-                                                          style: GoogleFonts
-                                                              .montserrat(
-                                                                  fontSize: 11),
-                                                        ))
-                                                  ],
-                                                )),
-                                          );
-                                        }
-                                      }),
-                                );
-                              })),
-
-                      MessageInput(
-                        image: this.pictureToPreview,
-                        textEditingController: this.textEditingController,
-                        message: messageToSend,
-                        focusNode: this.focusNode,
-                        animationDuration: Duration(milliseconds: 300),
-                        onAttachmentCiclked: () {
-                          getImage().then((file) async {
-                            FlutterNativeImage.compressImage(file.path, quality: 35).then((compressed){
-                              this.pictureToPreview.sink.add(compressed);
-                            });
-                          });
-                        },
-                        onSendingClicked: () async {
-                          this.textEditingController.text = "";
-                          Message message = Message(
-                              createdAt: DateTime.now().toIso8601String(),
-                              message: this.messageToSend.value,
-                              isRead: false,
-                              isSent: false,
-                              userId: databaseService.user.value.id,
-                              messagePicture: pictureToPreview.value != null
-                                  ? await storage.uploadPictureFile(
-                                      databaseService.user.value.id,
-                                      "messages/" + Uuid().v1(),
-                                      this.pictureToPreview.value, "message")
-                                  : "",
-                              roomId: this.widget.room.id,
-                              receiverPushToken:
-                                  this.widget.room.receiver.notificationToken);
-                          databaseService.updateSingleRoom(
-                              this.widget.room.id, message);
-                          this.messageToSend.sink.add(null);
-                          this.pictureToPreview.sink.add(null);
-                          await this.sendMessage(databaseService.client, message);
-                          await databaseService.loadrooms();
-                        },
-                      )
-                    ])
-                  ],
+                  onSendingClicked: () async {
+                    this.textEditingController.text = "";
+                    Message message = Message(
+                        createdAt: DateTime.now().toIso8601String(),
+                        message: this.messageToSend.value,
+                        isRead: false,
+                        isSent: false,
+                        userId: databaseService.user.value.id,
+                        messagePicture: pictureToPreview.value != null
+                            ? await storage.uploadPictureFile(
+                                databaseService.user.value.id,
+                                "messages/" + Uuid().v1(),
+                                this.pictureToPreview.value,
+                                "message")
+                            : "",
+                        roomId: this.widget.room.id,
+                        receiverPushToken:
+                            this.widget.room.receiver.notificationToken, client: databaseService.client);
+                    databaseService.updateSingleRoom(
+                        this.widget.room.id, message);
+                    this.messageToSend.sink.add(null);
+                    this.pictureToPreview.sink.add(null);
+                    await message.send();
+                  },
                 )
-            ),
-          ));
-
+              ])
+            ],
+          ),
+        ));
   }
 }

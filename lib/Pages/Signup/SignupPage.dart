@@ -208,6 +208,7 @@ class _SignupPageState extends State<SignupPage> {
           height: 54,
           onTapRight: () {}),
       body: ListView(
+        key: Key("signupList"),
         shrinkWrap: true,
         children: [
           Container(
@@ -269,6 +270,7 @@ class _SignupPageState extends State<SignupPage> {
                   stream: signupBloc.lastName$,
                   builder: (context, snapshot) {
                     return TextField(
+                      key: Key("last_name_textfield"),
                         onChanged: signupBloc.lastName.add,
                         decoration: InputDecoration(
                           errorText: snapshot.error,
@@ -295,6 +297,7 @@ class _SignupPageState extends State<SignupPage> {
                   stream: signupBloc.firstName$,
                   builder: (context, snapshot) {
                     return TextField(
+                        key: Key("first_name_textfield"),
                         onChanged: signupBloc.firstName.add,
                         decoration: InputDecoration(
                           errorText: snapshot.error,
@@ -321,6 +324,7 @@ class _SignupPageState extends State<SignupPage> {
                   stream: signupBloc.email$,
                   builder: (context, snapshot) {
                     return TextField(
+                      key: Key("email_textfield"),
                         onChanged: signupBloc.email.add,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
@@ -348,6 +352,7 @@ class _SignupPageState extends State<SignupPage> {
                   stream: signupBloc.dateOfBirth$,
                   builder: (context, AsyncSnapshot<DateTime> snapshot) {
                     return ListTile(
+                      key: Key("choose_date_button"),
                       autofocus: false,
                       onTap: () async {
                         DateTime date = await showCupertinoModalBottomSheet(
@@ -386,12 +391,13 @@ class _SignupPageState extends State<SignupPage> {
                   stream: signupBloc.adress$,
                   builder: (context, AsyncSnapshot<Adress> snapshot) {
                     return ListTile(
+                      key: Key("search_adress_button"),
                       autofocus: false,
                       onTap: () async {
                         this.adress = await showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
-                          builder: (context) => HomeSearchPage(isReturn: true, isNotAuth: false,),
+                          builder: (context) => HomeSearchPage(isReturn: true),
                         );
 
                         signupBloc.adress.add(this.adress);
@@ -421,6 +427,7 @@ class _SignupPageState extends State<SignupPage> {
                     stream: signupBloc.acceptedPolicies$,
                     builder: (context, snapshot) {
                       return CircularCheckBox(
+                          key: Key("checkboxTerms"),
                           activeColor: Colors.green,
                           value: snapshot.data != null
                               ? snapshot.data
@@ -489,6 +496,7 @@ class _SignupPageState extends State<SignupPage> {
                   stream: signupBloc.isAllFilled$,
                   builder: (context, AsyncSnapshot<bool> snapshot) {
                     return StreamButton(
+                      key: Key("signup_button"),
                         buttonColor:
                             snapshot.data != null && snapshot.data != false
                                 ? Colors.black

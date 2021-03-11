@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:kookers/Services/NotificiationService.dart';
+import 'package:kookers/Services/PermissionHandler.dart';
 import 'package:kookers/TabHome/TabHome.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 
 
@@ -25,9 +25,11 @@ class _NotificationPageState extends State<NotificationPage> {
 
   StreamButtonController _streamButtonController = StreamButtonController();
 
+
+  final permissionhandler = PermissionHandler();
+
   @override
   Widget build(BuildContext context) {
-    final notificationService = Provider.of<NotificationService>(context, listen: false);
   return Scaffold(
         body: SafeArea(
         child: Container(
@@ -49,36 +51,23 @@ class _NotificationPageState extends State<NotificationPage> {
                             loadingText: "Traitement en cours",
                             successText: "Terminé",
                             controller: _streamButtonController, onClick: () async {
-                                notificationService.askPermission().then((permission) {
-                                  if (permission.authorizationStatus ==
-                                                AuthorizationStatus.authorized ||
-                                            permission.authorizationStatus ==
-                                                AuthorizationStatus.provisional) {
-                                                  Navigator.push(
-                                                context,
-                                                CupertinoPageRoute(
-                                                    builder: (context) =>
-                                                        TabHome(user:  this.widget.user,)));
-                                                  
-                                    }else{
-                                      Navigator.push(
-                                                context,
-                                                CupertinoPageRoute(
-                                                    builder: (context) =>
-                                                        TabHome(user: this.widget.user)));
-                                    }
-                                });
+                                final permission  = await permissionhandler.requestNotificationPermission();
+                                if (permission.isGranted) {
+                                      Get.to(TabHome(user:  this.widget.user));        
+                                 }else if(permission.isDenied){
+                                   Get.to(TabHome(user:  this.widget.user));                      
+                                 }
                               }
                             ),
 
                             SizedBox(height:10),
-                            InkWell(onTap: (){
-                                            Navigator.push(
-                                                context,
-                                                CupertinoPageRoute(
-                                                    builder: (context) =>
-                                                        TabHome(user: this.widget.user,)));
-                            },child: Center(child: Text("Plus tard.", style: GoogleFonts.montserrat(fontSize: 18, color: Colors.grey),))),
+
+                            InkWell(
+                              onTap: (){
+                                    Get.to(TabHome(user:  this.widget.user));
+                            },child: Center(
+                              key:  Key("delay_accept_notification"),
+                              child: Text("Plus tard", style: GoogleFonts.montserrat(fontSize: 18, color: Colors.grey),))),
                             SizedBox(height:10),
          ],),
       ),

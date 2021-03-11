@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kookers/Pages/BeforeSign/BeforeSignAdress.dart';
 import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
 import 'package:kookers/Pages/Home/FoodIemChild.dart';
 import 'package:kookers/Pages/Home/FoodItem.dart';
@@ -11,16 +12,20 @@ import 'package:kookers/Pages/Home/HomePublish.dart';
 import 'package:kookers/Pages/Home/HomeSearchPage.dart';
 import 'package:kookers/Pages/Home/HomeSettings.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/ErrorBarService.dart';
+import 'package:kookers/Services/PublicationProvider.dart';
 import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:shimmer/shimmer.dart';
 
 // ignore: must_be_immutable
 class HomeTopBar extends PreferredSize {
   final double height;
-  HomeTopBar({Key key, this.height});
+  final BehaviorSubject<int> percentage;
+  HomeTopBar({Key key, this.height, @required this.percentage});
 
   @override
   Size get preferredSize => Size.fromHeight(height);
@@ -35,6 +40,15 @@ class HomeTopBar extends PreferredSize {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            StreamBuilder<int>(
+              stream: this.percentage,
+              builder: (context, snapshot) {
+                if(snapshot.data == null) return SizedBox();
+                if(snapshot.data == 0) return SizedBox();
+                if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
+                return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
+              }
+            ),
             Row(
               children: [
                 Container(
@@ -85,11 +99,19 @@ class HomeTopBar extends PreferredSize {
                   child: ListTile(
                     autofocus: false,
                     onTap: () {
-                      showCupertinoModalBottomSheet(
+                      if(databaseService.user.value == null){
+                        showCupertinoModalBottomSheet(
                         expand: true,
                         context: context,
-                        builder: (context) => HomeSearchPage(isReturn: false, isNotAuth: false),
+                        builder: (context) => BeforeAdress(isReturn: true),
                       );
+                      }else{
+                        showCupertinoModalBottomSheet(
+                        expand: true,
+                        context: context,
+                        builder: (context) => HomeSearchPage(isReturn: false),
+                      );
+                      }
                     },
                     title: StreamBuilder<UserDef>(
                         initialData: null,
@@ -155,6 +177,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
+  BehaviorSubject<int> percentage = BehaviorSubject<int>.seeded(0);
+
 
   @override
   void initState() {
@@ -169,6 +193,12 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
   }
 
   @override
+  void dispose() { 
+    this.percentage.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     super.build(context);
     final databaseService =
@@ -176,12 +206,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
     return Scaffold(
       appBar: HomeTopBar(
-        height: 116,
+        percentage: this.percentage,
+        height: 121,
       ),
 
       floatingActionButton: FloatingActionButton(
+        key: Key("publish_button"),
         backgroundColor: Color(0xFFF95F5F),
-        onPressed: () {
+        onPressed: () async {
           if(this.widget.user == null) {
                   showCupertinoModalBottomSheet(
                           expand: false,
@@ -195,11 +227,33 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                   builder: (context) => GuidelinesToSell(),
                 );
             }else{
-              showCupertinoModalBottomSheet(
+             Publication publication = await showCupertinoModalBottomSheet(
                   expand: true,
                   context: context,
                   builder: (context) => HomePublish(),
-                );
+              );
+
+              if(publication != null){
+                publication.uploadToServer(this.percentage).then((value)  async {
+                this.percentage.add(100);
+                NotificationPanelService.showSuccess(context, "Votre plat a été publié");
+                this.percentage.add(0);
+              }).catchError((onError) {
+                  NotificationPanelService.showError(context, "Une erreur s'est produite lors de la publication de votre plat, nouvel essai dans 10 secondes");
+                  this.percentage.add(0);
+                  Future.delayed(Duration(seconds: 10), (){
+                    publication.uploadToServer(this.percentage).then((value) async {
+                      this.percentage.add(100);
+                      NotificationPanelService.showSuccess(context, "Votre plat a été publié");
+                      this.percentage.add(0);
+                    }).catchError((onError) {
+                      NotificationPanelService.showError(context, "Une erreur s'est produite lors de la publication de votre plat, Veuillez reesayer plus tard");
+                      this.percentage.add(0);
+                    });
+                  });
+                });
+              }
+              
             }
           }
         },
