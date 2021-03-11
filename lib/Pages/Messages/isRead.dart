@@ -17,7 +17,7 @@ class IsReadWidget extends StatelessWidget {
       }else if(this.isSent == true && this.isRead == true) {
         return Icon(Icons.done_all, size: 17);
       }else{
-        return SizedBox();
+        return Icon(Icons.timelapse_rounded, size: 17);
       }
     });
   }

@@ -32,12 +32,14 @@ class _HomeSearchPageState extends State<HomeSearchPage>
   TextEditingController textController = TextEditingController();
 
   void autoCompleteSearch(String value) async {
+    return Future.delayed(Duration(milliseconds: 700), () async {
     var result = await googlePlace.autocomplete.get(value);
-    if (result != null && result.predictions != null && mounted) {
-      setState(() {
-        predictions = result.predictions;
-      });
-    }
+      if (result != null && result.predictions != null && mounted) {
+        setState(() {
+          predictions = result.predictions;
+        });
+      }
+    });
   }
 
   @override
@@ -172,6 +174,7 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                 height: 45,
                 width: MediaQuery.of(context).size.width,
                 child: TextField(
+                  key: Key("search_text"),
                   controller: textController,
                   onChanged: (value) {
                     if (value.isNotEmpty) {
@@ -206,10 +209,13 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                   visible: (this.textController?.value?.text?.isNotEmpty),
                   child: Expanded(
                       child: ListView.builder(
+                        key: Key("adressListView"),
                           dragStartBehavior: DragStartBehavior.down,
                           itemCount: predictions.length,
                           itemBuilder: (ctx, index) {
+
                             return ListTile(
+                              key: Key("adress$index"),
                               autofocus: false,
                               onTap: () async {
                                 googlePlace.details

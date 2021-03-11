@@ -66,6 +66,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                   initialData: bloc.acceptMask.value,
                   builder: (context, snapshot) {
                     return CircularCheckBox(
+                        key: Key("firstTerm"),
                         activeColor: Colors.green,
                         value: snapshot.data ?? false,
                         onChanged: bloc.acceptMask.add
@@ -84,6 +85,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                   initialData: bloc.acceptGloves.value,
                   builder: (context, snapshot) {
                     return CircularCheckBox(
+                      key: Key("secondTerm"),
                         activeColor: Colors.green,
                         value: snapshot.data ?? false,
                         onChanged: bloc.acceptGloves.add
@@ -105,6 +107,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                   initialData: bloc.acceptBeenVerified.value,
                   builder: (context, snapshot) {
                     return CircularCheckBox(
+                        key: Key("thirdTerm"),
                         activeColor: Colors.green,
                         value: snapshot.data ?? false,
                         onChanged: bloc.acceptBeenVerified.add
@@ -121,7 +124,9 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                StreamBuilder<bool>(
                 stream: bloc.isAllFilled$,
                 builder: (context, AsyncSnapshot<bool> snapshot) {
-                  return StreamButton(buttonColor: (snapshot.data != null && snapshot.data != false) ? Colors.black : Colors.grey,
+                  return StreamButton(
+                    key: Key("SellingAcceptButton"),
+                    buttonColor: (snapshot.data != null && snapshot.data != false) ? Colors.black : Colors.grey,
                                      buttonText: "Accepter",
                                      errorText: "Erreur, Veuiller ressayer",
                                      loadingText: "Traitement en cours",

@@ -26,6 +26,12 @@ class NotificationService {
   }
 
 
+  Future<NotificationSettings> checkPermissions() async {
+    NotificationSettings settings = await messaging.getNotificationSettings(); 
+    return settings;
+  }
+
+
   Future<String> notificationID() async {
     final token = await FirebaseMessaging.instance.getToken();
     return token;

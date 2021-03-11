@@ -13,10 +13,10 @@ import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
 import 'package:kookers/Pages/Verification/VerificationPage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
-import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 import 'package:package_info/package_info.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 
 import 'package:provider/provider.dart';
@@ -240,15 +240,39 @@ String capitalizeFirstOnly(String string){
                 bottom: 0,
                 left: 205,
                 child: InkWell(
-                  onTap: () {
-                    this.getImage().then((file) async {
-                      File _file = await FlutterNativeImage.compressImage(file.path, quality: 35);
-                      storageService.uploadPictureFile(databaseService.user.value.id, "photoUrl", _file, "profilImage").then((url) => {
-                        this.updateUserImage(databaseService.client, firebaseUser.uid, url, databaseService)
-                      });
-                    }).catchError((error){
-                        NotificationPanelService.showError(context, "Vous avez refusez la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone.");
-                    });
+                  onTap: () async {
+                    final status = await Permission.photos.status;
+                    if(status.isDenied){
+                          showDialog(context: context, builder: (BuildContext ctx){
+                                     return CupertinoAlertDialog(
+                                        title: Text("Accès à la biblioteque et photos"),
+                                        content: Center(child: Text("Vous avez refusé la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),),
+                                        actions: [
+                                          CupertinoDialogAction(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Continuer', style: TextStyle(color:Colors.red),),
+                                          ),
+
+                                          CupertinoDialogAction(
+                                            onPressed: () {
+                                              openAppSettings();
+                                            },
+                                            isDefaultAction: true,
+                                            child: const Text('Paramètres'),
+                                          )
+                                        ],
+                                      );
+                                   });
+                    }else{
+                      this.getImage().then((file) async {
+                          File _file = await FlutterNativeImage.compressImage(file.path, quality: 35);
+                          storageService.uploadPictureFile(databaseService.user.value.id, "photoUrl", _file, "profilImage").then((url) => {
+                            this.updateUserImage(databaseService.client, firebaseUser.uid, url, databaseService)
+                          });
+                        });
+                    }
                   },
                   child: Container(
                       padding: EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),

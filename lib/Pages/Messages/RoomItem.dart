@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
@@ -82,12 +83,13 @@ class Message {
   bool isSent;
   bool isRead;
   String receiverPushToken;
+  GraphQLClient client;
 
   Message(
       {@required this.userId,
       @required this.message,
       @required this.createdAt,
-      this.messagePicture, this.isRead, this.isSent, this.receiverPushToken, this.roomId});
+      this.messagePicture, this.isRead, this.isSent, this.receiverPushToken, this.roomId, this.client});
 
   static List<Message> fromJSON(List<Object> map) {
 
@@ -119,6 +121,32 @@ class Message {
     data["receiver_push_token"] = this.receiverPushToken;
     data["roomId"] = this.roomId;
     return data;
+  }
+
+  Future<void> send() async{
+    return this.sendMessage().then((value){
+      this.isSent = true;
+    }).catchError((onError) {
+      Future.delayed(Duration(seconds: 15), (){
+        this.sendMessage().then((value){
+          this.isSent = true;
+        });
+      });
+    });
+  }
+
+    Future<void> sendMessage() async {
+    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+      mutation SendMEssage($message: MessageInput){
+            sendMessage(message: $message)
+        }
+    """), variables: <String, dynamic>{
+      "message": this.toJSON(),
+    });
+
+    return await this.client
+        .mutate(_options)
+        .then((value) => value.data["sendMessage"]);
   }
 }
 

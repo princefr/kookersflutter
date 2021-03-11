@@ -1,16 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Blocs/PhoneCodeBloc.dart';
+import 'package:kookers/Pages/Notifications/NotificationPage.dart';
 import 'package:kookers/Pages/Signup/SignupPage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/ErrorBarService.dart';
+import 'package:kookers/Services/PermissionHandler.dart';
 import 'package:kookers/TabHome/TabHome.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class PhoneAuthCodePage extends StatefulWidget {
   final String verificationId;
@@ -24,107 +26,7 @@ class PhoneAuthCodePage extends StatefulWidget {
 class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
   
   final myController = TextEditingController();
-
-  Future<UserDef> checkUserExist(String uid, GraphQLClient client) async {
-    final QueryOptions _options = QueryOptions(documentNode: gql(r"""
-          query GetIfUSerExist($uid: String!) {
-              usersExist(firebase_uid: $uid){
-              _id
-              email
-              first_name
-              last_name
-              is_seller
-              phonenumber
-              customerId
-              country
-              currency
-              default_source
-              default_iban
-              stripe_account
-              settings {
-                  food_preferences
-                  food_price_ranges
-                  distance_from_seller
-                  updatedAt
-              }
-
-              stripeAccount {
-                charges_enabled
-                payouts_enabled
-                requirements {
-                      currently_due
-                      eventually_due
-                      past_due
-                      pending_verification
-                      disabled_reason
-                      current_deadline
-                }
-              }
-
-              balance {
-                current_balance
-                pending_balance
-                currency
-              }
-
-              transactions {
-                    id
-                    object
-                    amount
-                    available_on
-                    created
-                    currency
-                    description
-                    fee
-                    net
-                    reporting_category
-                    type
-                    status
-              }
-
-              all_cards {
-                id
-                brand
-                country
-                customer
-                cvc_check
-                exp_month
-                exp_year
-                fingerprint
-                funding
-                last4
-              }
-
-              ibans {
-                    id
-                    object
-                    account_holder_name
-                    account_holder_type
-                    bank_name
-                    country
-                    currency
-                    last4
-              }
-
-              createdAt
-              photoUrl
-              updatedAt
-              adresses {title, location {latitude, longitude}, is_chosed}
-              fcmToken
-              }
-          }
-      """), variables: <String, String>{
-      "uid": uid,
-    });
-
-    return await client.query(_options).then((kooker) {
-      if(kooker.data["usersExist"] != null) {
-        final kookersUser = UserDef.fromJson(kooker.data["usersExist"]);
-        return kookersUser;
-      }
-      return null;
-    });
-  }
+  final permissionHandler = PermissionHandler();
 
 
   @override
@@ -139,8 +41,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
-    final authentificationService =
-                        Provider.of<AuthentificationService>(context, listen: false);
+    final authentificationService = Provider.of<AuthentificationService>(context, listen: false);
     
 
       return Scaffold(
@@ -201,7 +102,6 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
 
 
               StreamBuilder<String>(
-                  
                       stream: bloc.code,
                       builder: (ctx, snapshot) {
                         return StreamButton(buttonColor: snapshot.data != null ? Colors.black : Colors.grey,
@@ -215,10 +115,10 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                               _streamButtonController.isLoading();
                               databaseService.adress.add(null);
                               authentificationService.signInWithVerificationID(widget.verificationId, bloc.code.value).then((connected) async {
-                                this.checkUserExist(connected.user.uid, databaseService.client).then((user) async {
+                                databaseService.firebaseUser = connected.user;
+                                databaseService.loadUserData().then((user) async {
                                   if(user == null) {
                                               await _streamButtonController.isSuccess();
-                                              
                                                 Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
@@ -229,11 +129,14 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                     } else{
                                       databaseService.user.add(user);
                                       await _streamButtonController.isSuccess();
-                                      Navigator.push(
-                                                context,
-                                                CupertinoPageRoute(
-                                                    builder: (context) =>
-                                                        TabHome(user: connected.user,)));
+                                      if (user.notificationPermission == true) {
+                                            print("go to tabhome");
+                                              Get.to(TabHome(user:  connected.user,));        
+                                            }else{
+                                              print("go to notification");
+                                              Get.to(NotificationPage(user: connected.user));
+                                            }
+
                                     }
                                 }).catchError((onError) async {
                                   NotificationPanelService.showError(context, "Veuillez verifier votre connexion à internet et reessayer.");

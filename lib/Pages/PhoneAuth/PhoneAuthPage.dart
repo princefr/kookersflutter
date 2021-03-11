@@ -22,7 +22,19 @@ class PhoneAuthPage extends StatefulWidget {
 class _PhoneAuthCodeState extends State<PhoneAuthPage> {
   @override
   void initState() {
+    this.phoneAuthBloc.listen();
     super.initState();
+  }
+
+
+  PhoneAuthBloc phoneAuthBloc = PhoneAuthBloc();
+
+
+
+  @override
+  void dispose() { 
+    this.phoneAuthBloc.dispose();
+    super.dispose();
   }
 
   bool isValidPhoneNumber(String string) {
@@ -46,10 +58,10 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    final phoneAuthBloc = Provider.of<PhoneAuthBloc>(context, listen: false);
+    
     final authentificationService =
         Provider.of<AuthentificationService>(context, listen: false);
-    phoneAuthBloc.listen();
+    
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -82,7 +94,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                 child: ListTile(
                   autofocus: false,
                   leading: StreamBuilder<Object>(
-                      stream: phoneAuthBloc.phoneCode$,
+                      stream: this.phoneAuthBloc.phoneCode$,
                       builder: (context, snapshot) {
                         return CountryCodePicker(
                             onChanged: (CountryCode code) {
@@ -91,10 +103,10 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                                           code.code.toUpperCase())
                                       .currencyCode
                                       .toString();
-                              phoneAuthBloc.inuserCurrency
+                              this.phoneAuthBloc.inuserCurrency
                                   .add(currency.toLowerCase());
-                              phoneAuthBloc.inuserCountry.add(code.code);
-                              phoneAuthBloc.phoneCode.add(code.dialCode);
+                              this.phoneAuthBloc.inuserCountry.add(code.code);
+                              this.phoneAuthBloc.phoneCode.add(code.dialCode);
                             },
                             initialSelection: '+33',
                             favorite: ['+33', 'GB'],
@@ -104,12 +116,12 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                             padding: const EdgeInsets.all(5.0));
                       }),
                   title: StreamBuilder<String>(
-                      stream: phoneAuthBloc.phoneNumber$,
+                      stream: this.phoneAuthBloc.phoneNumber$,
                       builder: (context, AsyncSnapshot<String> snapshot) {
                         return TextField(
                           key: Key("phone_number"),
                           keyboardType: TextInputType.phone,
-                          onChanged: phoneAuthBloc.phoneNumber.add,
+                          onChanged: this.phoneAuthBloc.phoneNumber.add,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Numéro de téléphone',
@@ -133,14 +145,16 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
             Expanded(
               child: SizedBox(),
             ),
-            StreamBuilder(
-                stream: phoneAuthBloc.isAllFilled$,
-                builder: (ctx, AsyncSnapshot<bool> snapshot) {
+
+
+
+            StreamBuilder<String>(
+                stream: this.phoneAuthBloc.phoneAndCode,
+                builder: (ctx, AsyncSnapshot<String> snapshot) {
                   return StreamButton(
                       key: Key("phoneValidationButton"),
                       buttonColor:
                           snapshot.data != null ? Colors.black : Colors.grey,
-                      
                       buttonText: "Envoyer le sms",
                       errorText:
                           "Une erreur s'est produite, veuillez reesayer!",
@@ -148,25 +162,30 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                       successText: "Sms envoyé",
                       controller: _streamButtonController,
                       onClick: () async {
-                        print("clicked");
+                        print("ive been tapped");
+                        print(snapshot.data);
+                        print(this.phoneAuthBloc.phoneAndCode.listen((event) {print(event);}));
+                        print(this.phoneAuthBloc.phoneNumber.value);
                         if (snapshot.data != null) {
                           _streamButtonController.isLoading();
-                          String phone = await phoneAuthBloc.validate();
-                          authentificationService.verifyPhone(
-                            phone: phone,
-                            codeisSent: (verificationId) async {
-                              await _streamButtonController.isSuccess();
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          PhoneAuthCodePage(
-                                              verificationId:
-                                                  verificationId)));
-                            },
-                            error: (e) async {
-                              await _streamButtonController.isError();
-                            }).catchError((err) => err);
+                          String phone = await this.phoneAuthBloc.validate();
+                          authentificationService
+                              .verifyPhone(
+                                  phone: phone,
+                                  codeisSent: (verificationId) async {
+                                    await _streamButtonController.isSuccess();
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                PhoneAuthCodePage(
+                                                    verificationId:
+                                                        verificationId)));
+                                  },
+                                  error: (e) async {
+                                    await _streamButtonController.isError();
+                                  })
+                              .catchError((err) => err);
                         }
                       });
                 }),

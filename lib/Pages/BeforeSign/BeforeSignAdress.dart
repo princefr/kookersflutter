@@ -28,12 +28,14 @@ class _BeforeAdressState extends State<BeforeAdress>
   TextEditingController textController = TextEditingController();
 
   void autoCompleteSearch(String value) async {
+    return Future.delayed(Duration(milliseconds: 700), () async {
     var result = await googlePlace.autocomplete.get(value);
-    if (result != null && result.predictions != null && mounted) {
-      setState(() {
-        predictions = result.predictions;
-      });
-    }
+      if (result != null && result.predictions != null && mounted) {
+        setState(() {
+          predictions = result.predictions;
+        });
+      }
+    });
   }
 
   @override

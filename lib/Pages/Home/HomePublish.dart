@@ -8,17 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kookers/Pages/Home/HomeSearchPage.dart';
 import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
-import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/PublicationProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/InfoDialog.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -47,64 +46,127 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
   @override
   Widget build(BuildContext context) {
         super.build(context);
-        return Container(
-          child: StreamBuilder<File>(
-            initialData: this.widget.file.value,
-            stream: this.widget.stream,
-            builder: (context, snapshot) {
-              return Container(
-                  width: 120,
-                  height: 110,
-                  child: Stack(children: [
-                    Container(
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            shape: BoxShape.rectangle,
-                            image: snapshot.data == null ? null : DecorationImage(image: Image.file(snapshot.data).image, fit: BoxFit.cover),
-                            borderRadius: BorderRadius.circular(15.0))),
-                            
-                    Positioned(
-                      bottom: 0,
-                      left: 75,
-                      child: InkWell(
-                        onTap: () {
-                          if(snapshot.data == null){
-                              this.getImage().then((file) async{
-                                if(file != null){
-                                    FlutterNativeImage.compressImage(file.path, quality: 35).then((compressed) {
-                                      this.widget.file.add(compressed);
-                                    }).catchError((onError){
-                                      print(onError);
-                                    });
-                                }
-                               
-                            }).catchError((error){
-                              NotificationPanelService.showError(context, "Vous avez refusez la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone.");
-                            });
-                          }else{
-                            this.widget.file.sink.add(null);
-                          }
-                        },
-                        child: Container(
-                            padding:
-                                EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
-                            decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 255, 43, 84),
-                                borderRadius: BorderRadius.circular(13.0)),
-                            child: Icon(
-                              snapshot.data == null
-                                  ? Icons.add
-                                  : CupertinoIcons.multiply,
-                              color: Colors.white,
-                              size: 20.0,
-                            )),
-                      ),
-                    )
-                  ]),
-                );
-            }
+        return InkWell(
+          onTap: () async {
+                            if(this.widget.file.value == null){
+                              final status = await Permission.photos.status;
+                              if(status.isDenied){
+                                showDialog(context: context, builder: (BuildContext ctx){
+                                     return CupertinoAlertDialog(
+                                        title: Text("Accès à la biblioteque et photos"),
+                                        content: Center(child: Text("Vous avez refusez la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),),
+                                        actions: [
+                                          CupertinoDialogAction(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Fermer', style: TextStyle(color:Colors.red),),
+                                          ),
+
+                                          CupertinoDialogAction(
+                                            onPressed: () {
+                                              openAppSettings();
+                                            },
+                                            isDefaultAction: true,
+                                            child: const Text('Paramètres'),
+                                          )
+                                        ],
+                                      );
+                                   });
+                              }else{
+                                this.getImage().then((file) async{
+                                  if(file != null){
+                                      FlutterNativeImage.compressImage(file.path, quality: 35).then((compressed) {
+                                        this.widget.file.add(compressed);
+                                      });
+                                  }
+                                 
+                              });
+                              }
+                                
+                            }
+          },
+                  child: Container(
+            child: StreamBuilder<File>(
+              initialData: this.widget.file.value,
+              stream: this.widget.stream,
+              builder: (context, snapshot) {
+                return Container(
+                    width: 120,
+                    height: 110,
+                    child: Stack(children: [
+                      Container(
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              shape: BoxShape.rectangle,
+                              image: snapshot.data == null ? null : DecorationImage(image: Image.file(snapshot.data).image, fit: BoxFit.cover),
+                              borderRadius: BorderRadius.circular(15.0))),
+                              
+                      Positioned(
+                        bottom: 0,
+                        left: 75,
+                        child: InkWell(
+                          onTap: () async {
+                            if(snapshot.data == null){
+                                final status = await Permission.photos.status;
+                              if(status.isDenied){
+                                showDialog(context: context, builder: (BuildContext ctx){
+                                     return CupertinoAlertDialog(
+                                        title: Text("Accès à la biblioteque et photos"),
+                                        content: Center(child: Text("Vous avez refusez la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),),
+                                        actions: [
+                                          CupertinoDialogAction(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Fermer', style: TextStyle(color:Colors.red),),
+                                          ),
+
+                                          CupertinoDialogAction(
+                                            onPressed: () {
+                                              openAppSettings();
+                                            },
+                                            isDefaultAction: true,
+                                            child: const Text('Paramètres'),
+                                          )
+                                        ],
+                                      );
+                                   });
+                              }else{
+                                this.getImage().then((file) async{
+                                  if(file != null){
+                                      FlutterNativeImage.compressImage(file.path, quality: 35).then((compressed) {
+                                        this.widget.file.add(compressed);
+                                      });
+                                  }
+                                 
+                              });
+                              }
+                            }else{
+                              this.widget.file.sink.add(null);
+                            }
+                          },
+                          child: Container(
+                              padding:
+                                  EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
+                              decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 255, 43, 84),
+                                  borderRadius: BorderRadius.circular(13.0)),
+                              child: Icon(
+                                snapshot.data == null
+                                    ? Icons.add
+                                    : CupertinoIcons.multiply,
+                                color: Colors.white,
+                                size: 20.0,
+                              )),
+                        ),
+                      )
+                    ]),
+                  );
+              }
+            ),
           ),
         );
        
@@ -157,23 +219,6 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
     super.dispose();
   }
 
-    Future<void> uploadPublication(GraphQLClient client, DatabaseProviderService database, Publication pub) {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
-              mutation CreatePub($publication: PublicationInput!) {
-                  createPublication(publication: $publication){
-                _id
-                description
-                type
-                food_preferences
-              }
-              }
-          """), variables: <String, dynamic>{
-            "publication": pub.toJson()
-        });
-
-        return client.mutate(_options).then((result) => result.data["createPublication"]);
-  }
-
   StreamButtonController _streamButtonController = StreamButtonController();
 
 
@@ -213,7 +258,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                 child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
-                                children: [Photo(file: pubprovider.file0, stream: pubprovider.file0$,), Photo(file: pubprovider.file1, stream: pubprovider.file1$,), Photo(file: pubprovider.file2, stream: pubprovider.file2$,)],
+                                children: [Photo(file: pubprovider.file0, stream: pubprovider.file0$, key: Key("photo0"),), Photo(file: pubprovider.file1, stream: pubprovider.file1$, key: Key("photo1")), Photo(file: pubprovider.file2, stream: pubprovider.file2$, key: Key("photo2"))],
                               ),
                             )),
                             
@@ -237,6 +282,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                         ConnectionState.waiting)
                                       return CircularProgressIndicator();
                                     return ChipsChoice<String>.multiple(
+                                      key: Key("chips_choice"),
                                       spinnerColor: Color(0xFFF95F5F),
                                       choiceStyle: C2ChoiceStyle(
                                         borderRadius: BorderRadius.circular(10),
@@ -279,6 +325,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                               stream: pubprovider.name$,
                               builder: (context, snapshot) {
                                 return TextField(
+                                  key: Key("plate_name"),
                                   onChanged: pubprovider.name.add,
                                   decoration: InputDecoration(
                                     hintText: "Renseigner le nom du plat",
@@ -311,6 +358,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                               stream: pubprovider.description$,
                               builder: (context, snapshot) {
                                 return TextField(
+                                  key: Key("plate_description"),
                                   onChanged: pubprovider.description.add,
                                     decoration: InputDecoration(
                                   hintText: "Renseigner la description",
@@ -349,6 +397,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                       stream: pubprovider.priceall$,
                                       builder: (context, snapshot) {
                                        return TextField(
+                                         key: Key("plate_price"),
                                          keyboardType: TextInputType.number,
                                          onChanged: pubprovider.priceall.add,
                                          decoration: InputDecoration(
@@ -487,14 +536,16 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                   controller: _streamButtonController, onClick: () async {
                                     if(snapshot.data != null) {
                                       _streamButtonController.isLoading();
-                                    pubprovider.validate(firebaseUser, storageService, databaseService, this.type).then((publication){
-                                      this.uploadPublication(databaseService.client, databaseService, publication).then((value){
-                                        _streamButtonController.isSuccess().then((value) async {
-                                          await databaseService.loadSellerPublications();
-                                          Navigator.pop(context);
-                                        });
-                                      }).catchError((error) => _streamButtonController.isError());
-                                    }).catchError((onError) => _streamButtonController.isError());
+                                    final publication = await pubprovider.validate(firebaseUser, storageService, databaseService, this.type);
+                                    await _streamButtonController.isSuccess();
+                                    Navigator.pop(context, publication);
+
+                                    // this.uploadPublication(databaseService.client, databaseService, publication).then((value){
+                                    //     _streamButtonController.isSuccess().then((value) async {
+                                    //       await databaseService.loadSellerPublications();
+                                    //       Navigator.pop(context);
+                                    //     });
+                                    //   }).catchError((error) => _streamButtonController.isError());
                                   }
                                   });
                               }

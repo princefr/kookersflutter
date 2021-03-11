@@ -195,11 +195,12 @@ class UserDef {
  List<BankAccount> ibans;
  List<CardModel> allCards;
  bool isSeller;
+ bool notificationPermission;
 
 
  UserDef({this.id, this.email, this.firstName, this.lastName, this.phonenumber, this.fcmToken, this.settings, this.adresses,
   this.photoUrl, this.customerId, this.createdAt, this.updatedAt, this.defaultSource, this.country, this.currency,
-   this.stripeaccountId, this.defaultIban, this.stripeAccount, this.transactions, this.balance, this.ibans, this.allCards, this.isSeller});
+   this.stripeaccountId, this.defaultIban, this.stripeAccount, this.transactions, this.balance, this.ibans, this.allCards, this.isSeller, this.notificationPermission});
  
   static UserDef fromJson(Map<String, dynamic> map) => UserDef (
   id: map["_id"],
@@ -224,7 +225,8 @@ class UserDef {
   balance: Balance.fromJson(map["balance"]),
   ibans: BankAccount.fromJsonToList(map["ibans"]),
   allCards: CardModel.fromJsonTolist(map["all_cards"]),
-  isSeller: map["is_seller"]
+  isSeller: map["is_seller"],
+  notificationPermission: map["notificationPermission"]
 );
 }
 
@@ -1380,6 +1382,7 @@ Future<List<Order>>  loadbuyerOrders() {
               default_source
               default_iban
               stripe_account
+              notificationPermission
               settings {
                   food_preferences
                   food_price_ranges

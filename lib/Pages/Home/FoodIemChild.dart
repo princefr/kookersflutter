@@ -44,6 +44,7 @@ class ChooseDatePage extends StatelessWidget {
             SizedBox(height: 30),
             Expanded(
               child: CupertinoDatePicker(
+                key: Key("date_picker"),
                   use24hFormat: true,
                   mode: this.datemode,
                   minimumDate: datemode == CupertinoDatePickerMode.date ? null : DateTime.now().add(Duration(hours: 3)) ,
@@ -53,7 +54,9 @@ class ChooseDatePage extends StatelessWidget {
                   }),
             ),
             SizedBox(height: 20),
+
             TextButton(
+                key: Key("date_validation"),
                 onPressed: () {
                   Navigator.pop(context, this.date);
                 },

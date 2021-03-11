@@ -7,8 +7,6 @@ import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:graphql/client.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kookers/Pages/Messages/MessageInput.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
@@ -20,6 +18,7 @@ import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/TopBar.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
@@ -36,19 +35,9 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  Future<void> sendMessage(GraphQLClient client, Message message) async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
-      mutation SendMEssage($message: MessageInput){
-            sendMessage(message: $message)
-        }
-    """), variables: <String, dynamic>{
-      "message": message.toJSON(),
-    });
 
-    return await client
-        .mutate(_options)
-        .then((value) => value.data["sendMessage"]);
-  }
+
+
 
   StreamSubscription<void> streamNewMessage;
   StreamSubscription<dynamic> streamHasRead;
@@ -320,14 +309,43 @@ class _ChatPageState extends State<ChatPage> {
                   message: messageToSend,
                   focusNode: this.focusNode,
                   animationDuration: Duration(milliseconds: 300),
-                  onAttachmentCiclked: () {
-                    getImage().then((file) async {
+                  onAttachmentCiclked: () async {
+                    final status = await Permission.photos.status;
+                    print(status);
+                    if(status.isDenied){
+                      showDialog(context: context, builder: (BuildContext ctx){
+                                     return CupertinoAlertDialog(
+                                        title: Text("Accès à la biblioteque et photos"),
+                                        content: Center(child: Text("Vous avez refusé la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),),
+                                        actions: [
+                                          CupertinoDialogAction(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: const Text('Continuer', style: TextStyle(color:Colors.red),),
+                                          ),
+
+                                          CupertinoDialogAction(
+                                            onPressed: () {
+                                              openAppSettings();
+                                            },
+                                            isDefaultAction: true,
+                                            child: const Text('Paramètres'),
+                                          )
+                                        ],
+                                      );
+                                   });
+                    }else{
+                      getImage().then((file) async {
                       FlutterNativeImage.compressImage(file.path, quality: 35)
                           .then((compressed) {
                         this.pictureToPreview.sink.add(compressed);
                       });
                     });
+                    }
+                  
                   },
+
                   onSendingClicked: () async {
                     this.textEditingController.text = "";
                     Message message = Message(
@@ -345,13 +363,12 @@ class _ChatPageState extends State<ChatPage> {
                             : "",
                         roomId: this.widget.room.id,
                         receiverPushToken:
-                            this.widget.room.receiver.notificationToken);
+                            this.widget.room.receiver.notificationToken, client: databaseService.client);
                     databaseService.updateSingleRoom(
                         this.widget.room.id, message);
                     this.messageToSend.sink.add(null);
                     this.pictureToPreview.sink.add(null);
-                    await this.sendMessage(databaseService.client, message);
-                    await databaseService.loadrooms();
+                    await message.send();
                   },
                 )
               ])
