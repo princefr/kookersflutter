@@ -1463,7 +1463,7 @@ Future<List<Order>>  loadbuyerOrders() {
 
 
       return client.query(_options).then((kooker) {
-        if(kooker.data["usersExist"] != null){
+        if(kooker.data["usersExist"] != null) {
                   final kookersUser = UserDef.fromJson(kooker.data["usersExist"]);
                   this.user.add(kookersUser);
                   return kookersUser;
