@@ -1382,7 +1382,7 @@ Future<List<Order>>  loadbuyerOrders() {
               default_source
               default_iban
               stripe_account
-              
+
               notificationPermission
 
               settings {

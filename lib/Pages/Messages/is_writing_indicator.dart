@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 
-
-
 class IsWritinngIndicator extends StatelessWidget {
   const IsWritinngIndicator({Key key}) : super(key: key);
 

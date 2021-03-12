@@ -37,7 +37,7 @@ dependencies:
   intl: ^0.16.1
   graphql: ^3.0.0
   stripe_payment: ^1.0.9
-  google_fonts: ^1.1.1
+  google_fonts: ^1.1.2
   modal_bottom_sheet: ^1.0.0+1
   chips_choice: ^2.0.1
   enum_to_string: ^1.0.14
@@ -80,8 +80,7 @@ dependencies:
   webview_flutter: ^1.0.7
   flutter_native_image: ^0.0.5+3
   get: ^3.25.4
-  permission_handler: ^5.1.0
-  mockito: ^4.1.4
+  permission_handler: ^5.1.0+2
 
 
 

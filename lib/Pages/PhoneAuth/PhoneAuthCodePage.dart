@@ -116,6 +116,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                               databaseService.adress.add(null);
                               authentificationService.signInWithVerificationID(widget.verificationId, bloc.code.value).then((connected) async {
                                 databaseService.firebaseUser = connected.user;
+                                print(connected.user.uid);
                                 databaseService.loadUserData().then((user) async {
                                   if(user == null) {
                                               await _streamButtonController.isSuccess();
@@ -137,6 +138,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
 
                                     }
                                 }).catchError((onError) async {
+                                  print(onError);
                                   NotificationPanelService.showError(context, "Veuillez verifier votre connexion à internet et reessayer.");
                                   await _streamButtonController.isError();
                                 });
