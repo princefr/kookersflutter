@@ -384,10 +384,33 @@ String capitalizeFirstOnly(String string){
           }, buttonText: "Règles de la communauté"),
 
           SettingsItem(onTap: () async {
-             await authentificationService.signOut();
-             databaseService.user.add(null);
-             databaseService.adress.add(null);
-             Get.offAll(OnBoardingPager());
+
+                showDialog(context: context, builder: (BuildContext ctx){
+                return CupertinoAlertDialog(
+                  title: Text("Se deconnecter"),
+                  content: Center(child: Text("Souhaitez vous vraiment vous deconnecter de kookers ? "),),
+                  actions: [
+                    CupertinoDialogAction(
+                      isDefaultAction: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Continuer'),
+                    ),
+
+                    CupertinoDialogAction(
+                      onPressed: () async {
+                        await authentificationService.signOut();
+                        databaseService.user.add(null);
+                        databaseService.adress.add(null);
+                        Get.offAll(OnBoardingPager());
+                      },
+                      
+                      child: const Text('Deconnexion', style: TextStyle(color:Colors.red)),
+                    )
+                  ],
+                );
+              });
 
             
           }, buttonText: "Se deconnecter"),

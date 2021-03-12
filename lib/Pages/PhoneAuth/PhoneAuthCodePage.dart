@@ -130,10 +130,8 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                       databaseService.user.add(user);
                                       await _streamButtonController.isSuccess();
                                       if (user.notificationPermission == true) {
-                                            print("go to tabhome");
                                               Get.to(TabHome(user:  connected.user,));        
                                             }else{
-                                              print("go to notification");
                                               Get.to(NotificationPage(user: connected.user));
                                             }
 
