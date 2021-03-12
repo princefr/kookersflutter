@@ -49,18 +49,28 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Nous souhaitons pouvoir ajouter des informations à votre calendrier (exemple quand vous etes vendeurs, les commandes des clients à venir seront ajouter directement à votre calendrier)</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Nous utilisons cette permission pour pouvoir vous permettre de prendre des photos lorsque vous publier des plats ou lorsque vous ajoutez une photo de profil</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Nous souhaitons utiliser cette permission pour pouvoir inviter, ou partager quand vous l'aurez decider les plats kookers à vos proches</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Nous utilisons cette permission pour pouvoir vous authentifié locale lorsque vous effectuez des actions nécésittant l'authentification locale</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Nous utilisons la geolocalisation pour pouvoir vous connecter à des gourmands ou à des chefs amateur autour de vous mais aussi pouvoir vous proposer de visualiser intuitivement la localisation de votre commande lorsqu'elle est en cours de livraison</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Nous utilisons la geolocalisation pour pouvoir vous connecter à des gourmands ou à des chefs amateur autour de vous</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Nous utilisons la geolocalisation pour pouvoir vous connecter à des gourmands ou à des chefs amateur autour de vous mais aussi pouvoir vous proposer de visualiser intuitivement la localisation de votre commande lorsqu'elle est en cours de livraison</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Nous utilisons la geolocalisation pour pouvoir vous connecter à des gourmands ou à des chefs amateur autour de vous</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Nous utlisons le microphone pour vous permettre d'envoyer des messages vocaux dans la méssagerie</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Nous utilisons cette permission pour pouvoir vous permettre d'ajouter des photos lorsque vous publier des plats ou lorsque vous ajoutez une photo de profil</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>Nous souhaitons pouvoir utiliser cette fonctionnalité pour pouvoir vous rappeler quand une commande approche de sa date d'écheance</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
