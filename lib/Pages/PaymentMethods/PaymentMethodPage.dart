@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_actions/external/platform_check/platform_check.dart';
@@ -11,7 +12,8 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
 class PaymentMethodPage extends StatefulWidget {
-  PaymentMethodPage({Key key}) : super(key: key);
+  final User user;
+  PaymentMethodPage({Key key, @required this.user}) : super(key: key);
 
   @override
   _PaymentMethodPageState createState() => _PaymentMethodPageState();
@@ -50,7 +52,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                       databaseService.addattachPaymentToCustomer(paymentMethod.id).then((value) {
                         databaseService.updatedDefaultSource(paymentMethod.id).then((value){
                           databaseService.user.value.defaultSource = paymentMethod.id;
-                          databaseService.loadUserData();
+                          databaseService.loadUserData(this.widget.user.uid);
                         });
                       });
                     }).catchError((onError){
@@ -59,7 +61,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                   }),
                 body: SmartRefresher(
                   onRefresh: () async {
-                                  await databaseService.loadUserData();
+                                  await databaseService.loadUserData(this.widget.user.uid);
                                   this._refreshController.refreshCompleted();
                               },
                             controller: this._refreshController,
@@ -76,7 +78,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                       children: snapshot.data.allCards.map((e) => CardItem(card: e, isDefault: databaseService.user.value.defaultSource == e.id ? true : false, onCheckBoxClicked: () {
                       databaseService.user.value.defaultSource = e.id;
                       databaseService.updatedDefaultSource(e.id);
-                      databaseService.loadUserData();
+                      databaseService.loadUserData(this.widget.user.uid);
                           },)).toList(),
                         );
                   }

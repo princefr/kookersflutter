@@ -114,11 +114,10 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                             if(snapshot.data != null) {
                               _streamButtonController.isLoading();
                               databaseService.adress.add(null);
-                              authentificationService.signInWithVerificationID(widget.verificationId, bloc.code.value).then((connected) async {
-                                databaseService.firebaseUser = connected.user;
-                                databaseService.loadUserData().then((user) async {
+                              authentificationService.signInWithVerificationID(widget.verificationId, bloc.code.value).then((connected) {
+                                databaseService.loadUserData(connected.user.uid).then((user) async {
                                   if(user == null) {
-                                              await _streamButtonController.isSuccess();
+                                              _streamButtonController.isSuccess();
                                                 Navigator.push(
                                                 context,
                                                 CupertinoPageRoute(
@@ -128,7 +127,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                                                 .user)));
                                     } else{
                                       databaseService.user.add(user);
-                                      await _streamButtonController.isSuccess();
+                                      _streamButtonController.isSuccess();
                                       if (user.notificationPermission == true) {
                                               Get.to(TabHome(user:  connected.user,));        
                                             }else{
@@ -137,6 +136,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
 
                                     }
                                 }).catchError((onError) async {
+                                  print(onError);
                                   NotificationPanelService.showError(context, "Veuillez verifier votre connexion à internet et reessayer.");
                                   await _streamButtonController.isError();
                                 });

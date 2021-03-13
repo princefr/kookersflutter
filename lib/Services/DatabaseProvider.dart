@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:dart_geohash/dart_geohash.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
@@ -607,8 +606,6 @@ class DatabaseProviderService {
   Stream<UserDef> get user$ => user.stream.asBroadcastStream();
   BehaviorSubject<Adress> adress = new BehaviorSubject<Adress>();
 
-  User firebaseUser;
-
 
   void dispose(){
     this.user.add(null);
@@ -969,7 +966,7 @@ class DatabaseProviderService {
         }
         );
 
-    return client.mutate(_options).then((result) => BankAccount.fromJson(result.data["createBankAccountOnConnect"]));
+    return client.mutate(_options).then((result) => BankAccount.fromJson(result.data["createBankAccountOnConnect"])).catchError((onError) => throw onError);
   }
 
 
@@ -1028,30 +1025,6 @@ class DatabaseProviderService {
 }
 
 
-
-
-
-
-
-  Future<void> createBankAccountOnConnect(String accountNumber) async {
-    final MutationOptions _options  = MutationOptions(
-      documentNode: gql(r"""
-        mutation CreateBankAccountOnConnect($account_id: String!, $country: String!, $currency: String!, $account_number: String!){
-              createBankAccountOnConnect(account_id: $account_id, country: $country, currency:  $currency, account_number: $account_number){
-                id
-              }
-          }
-      """),
-      variables:  <String, String> {
-        "account_id": this.user.value.stripeaccountId,
-        "country": this.user.value.country,
-        "currency": this.user.value.currency,
-        "account_number": accountNumber
-      }
-    );
-
-    return await client.mutate(_options).then((value) => value.data["createBankAccountOnConnect"]);
-}
 
 
   Future<void> cleanNotificationSeller(String orderId) async {
@@ -1364,7 +1337,9 @@ Future<List<Order>>  loadbuyerOrders() {
       });
   }
 
-  Future<UserDef> loadUserData() {
+  Future<UserDef> loadUserData(String uid) {
+    print("this is my uid");
+    print(uid);
   final QueryOptions _options = QueryOptions(
     fetchPolicy: FetchPolicy.cacheAndNetwork,
     documentNode: gql(r"""
@@ -1382,7 +1357,7 @@ Future<List<Order>>  loadbuyerOrders() {
               default_source
               default_iban
               stripe_account
-              
+
               notificationPermission
 
               settings {
@@ -1458,7 +1433,7 @@ Future<List<Order>>  loadbuyerOrders() {
                 }
             }
         """), variables: <String, String>{
-        "uid": this.firebaseUser.uid
+        "uid": uid
       });
 
       

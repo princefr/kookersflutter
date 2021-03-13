@@ -12,7 +12,8 @@ import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class HomeSettings extends StatefulWidget {
-  HomeSettings({Key key}) : super(key: key);
+  final User user;
+  HomeSettings({Key key, @required this.user}) : super(key: key);
 
   @override
   _HomeSettingsState createState() => _HomeSettingsState();
@@ -152,7 +153,6 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
   Widget build(BuildContext context) {
     super.build(context);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
-      final firebaseUser = context.watch<User>();
 
       return StreamBuilder(
         stream: databaseService.user$,
@@ -310,7 +310,7 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                       successText: "Paramètres sauvegardés",
                       controller: this._streamButtonController, onClick: () async {
                         this._streamButtonController.isLoading();
-                        this.updateSettings(databaseService.client, firebaseUser.uid, snapshot.data.settings, databaseService).then((value) async {
+                        this.updateSettings(databaseService.client, this.widget.user.uid, snapshot.data.settings, databaseService).then((value) async {
                           db.Location location = databaseService.user == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
                           int distance  = databaseService.user == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
                         await databaseService.loadPublication(location, distance);

@@ -27,7 +27,7 @@ import 'package:provider/provider.dart';
 
 class SignupPage extends StatefulWidget {
   final User user;
-  SignupPage({Key key, this.user}) : super(key: key);
+  SignupPage({Key key, @required this.user}) : super(key: key);
 
   @override
   _SignupPageState createState() => _SignupPageState();
@@ -397,7 +397,7 @@ class _SignupPageState extends State<SignupPage> {
                         this.adress = await showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
-                          builder: (context) => HomeSearchPage(isReturn: true),
+                          builder: (context) => HomeSearchPage(isReturn: true, user: null),
                         );
 
                         signupBloc.adress.add(this.adress);

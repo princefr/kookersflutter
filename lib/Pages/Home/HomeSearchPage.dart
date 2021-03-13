@@ -14,7 +14,8 @@ import 'package:provider/provider.dart';
 class HomeSearchPage extends StatefulWidget {
   db.Adress adress;
   bool isReturn;
-  HomeSearchPage({Key key, this.adress, @required this.isReturn})
+  final User user;
+  HomeSearchPage({Key key, this.adress, @required this.isReturn, @required this.user})
       : super(key: key);
 
   @override
@@ -160,7 +161,6 @@ class _HomeSearchPageState extends State<HomeSearchPage>
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
 
-    final firebaseUser = context.watch<User>();
 
     return Scaffold(
       appBar: TopBarBackCross(height: 54, title: "Choisir une adresse"),
@@ -240,7 +240,7 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                                       this
                                           .updateUserAdresses(
                                               databaseService.client,
-                                              firebaseUser.uid,
+                                              this.widget.user.uid,
                                               databaseService
                                                   .user.value.adresses,
                                               databaseService)
@@ -294,7 +294,7 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                                         this
                                             .updateUserAdresses(
                                                 databaseService.client,
-                                                firebaseUser.uid,
+                                                this.widget.user.uid,
                                                 databaseService
                                                     .user.value.adresses,
                                                 databaseService)

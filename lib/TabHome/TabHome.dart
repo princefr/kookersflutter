@@ -19,7 +19,6 @@ import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/NotificiationService.dart';
 import 'package:kookers/TabHome/BottomBar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:rxdart/subjects.dart';
@@ -97,8 +96,9 @@ class _TabHomeState extends State<TabHome>
 
 
     Future.delayed(Duration.zero, () async {
-      final notificationIsGranted = await Permission.notification.status;
-      if(notificationIsGranted.isGranted){
+      final notifService = Provider.of<NotificationService>(context, listen: false);
+      final permission = await notifService.checkPermissions();
+      if(permission.authorizationStatus == AuthorizationStatus.authorized){
       if (await FlutterAppBadger.isAppBadgeSupported()) FlutterAppBadger.removeBadge();
             this.onMessage.onData((event) async {
       final databaseService =
@@ -109,7 +109,7 @@ class _TabHomeState extends State<TabHome>
             .firstWhere((element) => element.id == event.data["roomId"]);
         NotificationPanelService().showNewMessagePanel(context, event, room);
       } else if (event.data["side"] == "order_seller") {
-        if (event.data["type"] == "order_done") databaseService.loadUserData();
+        if (event.data["type"] == "order_done") databaseService.loadUserData(this.widget.user.uid);
         await databaseService.loadSellerOrders();
         OrderVendor order = databaseService.sellerOrders.value
             .firstWhere((element) => element.id == event.data["orderId"]);
@@ -180,7 +180,7 @@ class _TabHomeState extends State<TabHome>
               OrdersPage(),
               VendorPage(),
               RoomsPage(),
-              Settings()
+              Settings(user: this.widget.user)
             ],
           ),
         ),

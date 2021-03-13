@@ -5,7 +5,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
@@ -21,7 +20,6 @@ import 'package:kookers/TabHome/TabHome.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 // keytool -list -v -keystore "/Users/part/key.jks" -alias alias
@@ -30,29 +28,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 // delete shared data on ios
 
 
-Future<void> isFirstTime() async {
-  final prefs = await SharedPreferences.getInstance();
-  if (prefs.getBool('first_run') ?? true) {
-    FlutterSecureStorage storage = FlutterSecureStorage();
-    await storage.deleteAll();
-    prefs.setBool('first_run', false);
-    await FirebaseAuth.instance.signOut();
-    return null;
-  }
-  return null;
-}
-
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-}
-
-
 void main({bool testing: false}) async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   if(testing) FirebaseAuth.instance.signOut();
   if(!testing) FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
 
@@ -116,9 +97,8 @@ class AuthentificationnWrapper extends StatelessWidget {
       builder: (BuildContext ctx, AsyncSnapshot<User> snapshotc){
         if(snapshotc.connectionState == ConnectionState.waiting) return SplashScreen();
         if(snapshotc.data == null) return OnBoardingPager();
-        databaseService.firebaseUser = snapshotc.data;
         return FutureBuilder<Object>(
-          future: Future.delayed(Duration(seconds: 0), () => databaseService.loadUserData()),
+          future: Future.delayed(Duration(seconds: 0), () => databaseService.loadUserData(snapshotc.data.uid)),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting) return SplashScreen();
             if(snapshot.data == null) return OnBoardingPager();

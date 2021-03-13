@@ -13,7 +13,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class AddIbanPage extends StatefulWidget {
   final User user;
-  AddIbanPage({Key key, this.user}) : super(key: key);
+  AddIbanPage({Key key, @required this.user}) : super(key: key);
 
   @override
   _AddIbanPageState createState() => _AddIbanPageState();
@@ -40,7 +40,6 @@ class _AddIbanPageState extends State<AddIbanPage> {
   Widget build(BuildContext context) {
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
-
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -118,10 +117,11 @@ class _AddIbanPageState extends State<AddIbanPage> {
                               databaseService
                                   .createBankAccount(snapshot.data)
                                   .then((bankaccount) async {
-                                  await databaseService.loadUserData();
-                                _streamButtonController.isSuccess();
+                                  await databaseService.loadUserData(this.widget.user.uid);
+                                  _streamButtonController.isSuccess();
                                 Navigator.pop(context);
                               }).catchError((onError) {
+                                print(onError);
                                 _streamButtonController.isError();
                               });
                             });
@@ -134,7 +134,8 @@ class _AddIbanPageState extends State<AddIbanPage> {
 }
 
 class IbanPage extends StatefulWidget {
-  const IbanPage({Key key}) : super(key: key);
+  final User user;
+  const IbanPage({Key key, @required this.user}) : super(key: key);
 
   @override
   _IbanPageState createState() => _IbanPageState();
@@ -160,7 +161,7 @@ class _IbanPageState extends State<IbanPage> {
             showCupertinoModalBottomSheet(
               expand: false,
               context: context,
-              builder: (context) => AddIbanPage(),
+              builder: (context) => AddIbanPage(user: this.widget.user,),
             );
           }),
       body: SafeArea(
@@ -175,7 +176,7 @@ class _IbanPageState extends State<IbanPage> {
               if (snapshot.data.ibans.isEmpty)
                 return SmartRefresher(
                     onRefresh: () async {
-                      await databaseService.loadUserData();
+                      await databaseService.loadUserData(this.widget.user.uid);
                       _refreshController.refreshCompleted();
                     },
                     controller: this._refreshController,
@@ -184,7 +185,7 @@ class _IbanPageState extends State<IbanPage> {
                     child: EmptyViewElse(text: "Vous n'avez pas d'iban."));
               return SmartRefresher(
                 onRefresh: () async {
-                  await databaseService.loadUserData();
+                  await databaseService.loadUserData(this.widget.user.uid);
                   _refreshController.refreshCompleted();
                 },
                 controller: this._refreshController,

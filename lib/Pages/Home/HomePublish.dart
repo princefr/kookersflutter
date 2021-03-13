@@ -174,7 +174,8 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
 }
 
 class HomePublish extends StatefulWidget  {
-  HomePublish({Key key}) : super(key: key);
+  final User user;
+  HomePublish({Key key, @required this.user}) : super(key: key);
 
   
 
@@ -226,7 +227,6 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
   Widget build(BuildContext context) {
     super.build(context);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
-    final firebaseUser = context.watch<User>();
     final storageService = Provider.of<StorageService>(context, listen: false);
       
       return Scaffold(
@@ -434,7 +434,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                               onTap: (){showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
-                          builder: (context) => HomeSearchPage(isReturn: false),
+                          builder: (context) => HomeSearchPage(isReturn: false, user: this.widget.user),
                         );},
                               leading: Icon(CupertinoIcons.home),
                               title: StreamBuilder(
@@ -536,7 +536,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                   controller: _streamButtonController, onClick: () async {
                                     if(snapshot.data != null) {
                                       _streamButtonController.isLoading();
-                                    final publication = await pubprovider.validate(firebaseUser, storageService, databaseService, this.type);
+                                    final publication = await pubprovider.validate(this.widget.user, storageService, databaseService, this.type);
                                     await _streamButtonController.isSuccess();
                                     Navigator.pop(context, publication);
 

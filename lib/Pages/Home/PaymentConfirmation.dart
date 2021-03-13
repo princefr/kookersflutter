@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,8 +14,9 @@ import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
 class PaymentConfirmation extends StatefulWidget {
+  final User user;
   final OrderInput order;
-  PaymentConfirmation({Key key, @required this.order}) : super(key: key);
+  PaymentConfirmation({Key key, @required this.order, @required this.user}) : super(key: key);
 
   @override
   _PaymentConfirmationState createState() => _PaymentConfirmationState();
@@ -171,7 +173,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                   trailing: Icon(CupertinoIcons.plus),
                                   title: Text("Ajouter un moyen de paiement"),
                                   onTap: () {
-                                      Get.to(PaymentMethodPage());
+                                      Get.to(PaymentMethodPage(user: this.widget.user,));
                                   },
                                 );
 
@@ -191,7 +193,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                         context,
                                         CupertinoPageRoute(
                                             builder: (context) =>
-                                                PaymentMethodPage()));
+                                                PaymentMethodPage(user: this.widget.user)));
                                   },
                                   leading: SvgPicture.asset(
                                     'assets/payments_logo/${cardChosed.brand}.svg',
