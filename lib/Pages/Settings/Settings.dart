@@ -77,7 +77,8 @@ class SettingsItem extends StatelessWidget {
 }
 
 class Settings extends StatefulWidget {
-  Settings({Key key}) : super(key: key);
+  final User user;
+  Settings({Key key, @required this.user}) : super(key: key);
 
   @override
   _SettingsState createState() => _SettingsState();
@@ -203,7 +204,6 @@ String capitalizeFirstOnly(String string){
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final firebaseUser = context.watch<User>();
     final storageService = Provider.of<StorageService>(context, listen: false);
     final authentificationService = Provider.of<AuthentificationService>(context, listen: false);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
@@ -269,7 +269,7 @@ String capitalizeFirstOnly(String string){
                       this.getImage().then((file) async {
                           File _file = await FlutterNativeImage.compressImage(file.path, quality: 35);
                           storageService.uploadPictureFile(databaseService.user.value.id, "photoUrl", _file, "profilImage").then((url) => {
-                            this.updateUserImage(databaseService.client, firebaseUser.uid, url, databaseService)
+                            this.updateUserImage(databaseService.client, this.widget.user.uid, url, databaseService)
                           });
                         });
                     }
@@ -309,7 +309,7 @@ String capitalizeFirstOnly(String string){
             icon: Icons.credit_card_sharp,
               buttonText: "Méthodes de paiements",
               onTap: () => Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => PaymentMethodPage()))),
+                  CupertinoPageRoute(builder: (context) => PaymentMethodPage(user: this.widget.user)))),
 
               Align(
           alignment: Alignment.centerLeft,
@@ -327,7 +327,7 @@ String capitalizeFirstOnly(String string){
             icon: Icons.account_balance_wallet_sharp,
               buttonText: "Portefeuille",
               onTap: () => Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => BalancePage()))),
+                  CupertinoPageRoute(builder: (context) => BalancePage(user: this.widget.user)))),
 
           Align(
           alignment: Alignment.centerLeft,
@@ -346,7 +346,7 @@ String capitalizeFirstOnly(String string){
             icon: Icons.account_balance,
               buttonText: "Comptes bancaires",
               onTap: () => Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => IbanPage()))),
+                  CupertinoPageRoute(builder: (context) => IbanPage(user: this.widget.user)))),
 
                     Align(
         alignment: Alignment.centerLeft,
@@ -363,7 +363,7 @@ String capitalizeFirstOnly(String string){
           SettingsItem(
               onTap: () {
                 Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => VerificationPage()));
+                  CupertinoPageRoute(builder: (context) => VerificationPage(user: this.widget.user)));
                 
               }, buttonText: "Vérification d'identité"),
 

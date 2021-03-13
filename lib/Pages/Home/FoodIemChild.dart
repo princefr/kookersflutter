@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
@@ -152,7 +153,8 @@ class _StepperState extends State<Stepper> {
 
 class FoodItemChild extends StatefulWidget {
   final PublicationHome publication;
-  FoodItemChild({Key key, @required this.publication}) : super(key: key);
+  final User user;
+  FoodItemChild({Key key, @required this.publication, @required this.user}) : super(key: key);
 
   @override
   _FoodItemChildState createState() => _FoodItemChildState();
@@ -385,7 +387,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                               onTap: (){showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
-                          builder: (context) => HomeSearchPage(isReturn: false),
+                          builder: (context) => HomeSearchPage(isReturn: false, user: this.widget.user),
                         );},
                               leading: Icon(CupertinoIcons.home),
                               title: StreamBuilder(
@@ -441,7 +443,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                                 showCupertinoModalBottomSheet(
                                             expand: true,
                                             context: context,
-                                            builder: (context) => PaymentConfirmation(order: order),
+                                            builder: (context) => PaymentConfirmation(order: order, user: this.widget.user),
                                         );
                         }
                       }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -134,7 +135,8 @@ class Balance {
 }
 
 class BalancePage extends StatefulWidget {
-  BalancePage({Key key}) : super(key: key);
+  final User user;
+  BalancePage({Key key, @required this.user}) : super(key: key);
 
   @override
   _BalancePageState createState() => _BalancePageState();
@@ -147,7 +149,7 @@ class _BalancePageState extends State<BalancePage> {
   void refreshData(context) async {
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
-    await databaseService.loadUserData();
+    await databaseService.loadUserData(this.widget.user.uid);
     Future.delayed(Duration(microseconds: 300)).then((value) {
       _refreshController.refreshCompleted();
     });
@@ -301,7 +303,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                           controller: _streamButtonController, onClick: snapshot.data.balance.totalBalance == 0 ? null :  () async {
                                             _streamButtonController.isLoading();
                                             databaseService.makePayout(snapshot.data.balance).then((value) async {
-                                              await databaseService.loadUserData();
+                                              await databaseService.loadUserData(this.widget.user.uid);
                                               _streamButtonController.isSuccess();
                                             }).catchError((onError){
 

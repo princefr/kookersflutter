@@ -25,7 +25,8 @@ import 'package:shimmer/shimmer.dart';
 class HomeTopBar extends PreferredSize {
   final double height;
   final BehaviorSubject<int> percentage;
-  HomeTopBar({Key key, this.height, @required this.percentage});
+  final User user;
+  HomeTopBar({Key key, this.height, @required this.percentage, @required this.user});
 
   @override
   Size get preferredSize => Size.fromHeight(height);
@@ -83,7 +84,7 @@ class HomeTopBar extends PreferredSize {
                         showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
-                          builder: (context) => HomeSettings(),
+                          builder: (context) => HomeSettings(user: this.user,),
                         );
                       }
                     },
@@ -109,7 +110,7 @@ class HomeTopBar extends PreferredSize {
                         showCupertinoModalBottomSheet(
                         expand: true,
                         context: context,
-                        builder: (context) => HomeSearchPage(isReturn: false),
+                        builder: (context) => HomeSearchPage(isReturn: false, user: this.user,),
                       );
                       }
                     },
@@ -206,6 +207,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
 
     return Scaffold(
       appBar: HomeTopBar(
+        user: this.widget.user,
         percentage: this.percentage,
         height: 121,
       ),
@@ -230,7 +232,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
              Publication publication = await showCupertinoModalBottomSheet(
                   expand: true,
                   context: context,
-                  builder: (context) => HomePublish(),
+                  builder: (context) => HomePublish(user: this.widget.user),
               );
 
               if(publication != null){
@@ -315,7 +317,7 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                               context,
                               MaterialPageRoute(
                                   builder: (context) => FoodItemChild(
-                                      publication: snapshot.data[index])));
+                                      publication: snapshot.data[index], user: this.widget.user,)));
                         });
                   },
                 ),

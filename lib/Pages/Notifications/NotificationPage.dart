@@ -3,11 +3,12 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kookers/Services/NotificiationService.dart';
 import 'package:kookers/Services/PermissionHandler.dart';
 import 'package:kookers/TabHome/TabHome.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:lottie/lottie.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -30,6 +31,11 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final notifService =
+        Provider.of<NotificationService>(context, listen: false);
+
+
   return Scaffold(
         body: SafeArea(
         child: Container(
@@ -43,7 +49,7 @@ class _NotificationPageState extends State<NotificationPage> {
               child: Text("Nous souhaiterions pouvoir vous envoyer des notifications pour vous prévénir de ce qui se passe sur kookers.", style: GoogleFonts.montserrat()),
             )),
 
-            Expanded(child: SizedBox(),),
+            Expanded(child: SizedBox()),
 
             StreamButton(buttonColor: Colors.black,
                             buttonText: "Activer les notifications",
@@ -51,12 +57,9 @@ class _NotificationPageState extends State<NotificationPage> {
                             loadingText: "Traitement en cours",
                             successText: "Terminé",
                             controller: _streamButtonController, onClick: () async {
-                                final permission  = await permissionhandler.requestNotificationPermission();
-                                if (permission.isGranted) {
-                                      Get.to(TabHome(user:  this.widget.user));        
-                                 }else if(permission.isDenied){
-                                   Get.to(TabHome(user:  this.widget.user));                      
-                                 }
+                              notifService.askPermission().then((settings) {
+                                Get.to(TabHome(user:  this.widget.user));   
+                              });
                               }
                             ),
 
