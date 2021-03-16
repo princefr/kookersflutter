@@ -9,6 +9,7 @@ import 'package:kookers/Services/DatabaseProvider.dart' as db;
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/TopBar.dart';
 import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
 
 // ignore: must_be_immutable
 class HomeSearchPage extends StatefulWidget {
@@ -31,26 +32,30 @@ class _HomeSearchPageState extends State<HomeSearchPage>
   List<AutocompletePrediction> predictions = [];
   DetailsResult detailresult;
   TextEditingController textController = TextEditingController();
+  final searchOnChange = new BehaviorSubject<String>();
 
   void autoCompleteSearch(String value) async {
-    return Future.delayed(Duration(milliseconds: 700), () async {
-    var result = await googlePlace.autocomplete.get(value);
-      if (result != null && result.predictions != null && mounted) {
-        setState(() {
-          predictions = result.predictions;
-        });
-      }
-    });
+    this.searchOnChange.add(value);
   }
 
   @override
   void initState() {
     googlePlace = GooglePlace("AIzaSyDMv0rYwxFoTb2dZA73i_Bz1xIEy4jeUNw");
+    this.searchOnChange.debounceTime(Duration(seconds: 1)).listen((searchTerms) {
+      googlePlace.autocomplete.get(searchTerms).then((result) =>  {
+        if (result != null && result.predictions != null && mounted) {
+          setState(() {
+            predictions = result.predictions;
+          })
+      }
+      });
+    });
     super.initState();
   }
 
   @override
   void dispose() {
+    this.searchOnChange.close();
     textController.dispose();
     super.dispose();
   }
