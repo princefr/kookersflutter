@@ -1,6 +1,6 @@
 # kookers_flutter
 
-[![alt text](https://github.com/princefr/kookers_flutter/blob/master/flutter_01.png)
+[![alt text](https://github.com/princefr/kookers_flutter/blob/master/flutter_01.png =250x)
 [![alt text](https://github.com/princefr/kookers_flutter/blob/master/flutter_02.png)
 [![alt text](https://github.com/princefr/kookers_flutter/blob/master/flutter_03.png)
 
