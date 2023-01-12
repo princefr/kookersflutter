@@ -4,9 +4,9 @@
 
 <table>
   <tr>
-    <td>First Screen Page</td>
-     <td>Holiday Mention</td>
-     <td>Present day in purple and selected day in pink</td>
+    <td>Screenshot 1</td>
+     <td>Screenshot 2</td>
+     <td>Screenshot 3</td>
   </tr>
   <tr>
     <td><img src="flutter_01.png" width=270 height=480></td>
