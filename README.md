@@ -1,8 +1,19 @@
 # kookers_flutter
 
-[![alt text](https://github.com/princefr/kookers_flutter/blob/master/flutter_01.png =250x)
-[![alt text](https://github.com/princefr/kookers_flutter/blob/master/flutter_02.png)
-[![alt text](https://github.com/princefr/kookers_flutter/blob/master/flutter_03.png)
+#### Flutter App Screenshots
+
+<table>
+  <tr>
+    <td>First Screen Page</td>
+     <td>Holiday Mention</td>
+     <td>Present day in purple and selected day in pink</td>
+  </tr>
+  <tr>
+    <td><img src="flutter_01.png" width=270 height=480></td>
+    <td><img src="flutter_02.png" width=270 height=480></td>
+    <td><img src="flutter_03.png" width=270 height=480></td>
+  </tr>
+ </table>
 
 [![Codemagic build status](https://api.codemagic.io/apps/6010e3a5cb2f38e8e8145a72/6010e3a5cb2f38e8e8145a71/status_badge.svg)](https://codemagic.io/apps/6010e3a5cb2f38e8e8145a72/6010e3a5cb2f38e8e8145a71/latest_build)
 
