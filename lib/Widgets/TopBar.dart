@@ -7,14 +7,14 @@ import 'package:get/get.dart';
 
 class TopBarTwoWithChat extends PreferredSize {
   final String title;
-  final double height;
-  final bool isRightIcon;
-  final IconData rightIcon;
-  final Function onTapRight;
-  const TopBarTwoWithChat({Key key, @required this.title, this.isRightIcon, this.rightIcon, this.onTapRight, this.height});
+  final double? height;
+  final bool? isRightIcon;
+  final IconData? rightIcon;
+  final Function? onTapRight;
+  const TopBarTwoWithChat({Key? key, required this.title, this.isRightIcon, this.rightIcon, this.onTapRight, this.height}) : super(key: key, child: const SizedBox(), preferredSize: const Size.fromHeight(56));
 
   @override
-  Size get preferredSize => Size.fromHeight(height);
+  Size get preferredSize => Size.fromHeight(height ?? 56);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class TopBarTwoWithChat extends PreferredSize {
           autofocus: false,
           leading: InkWell(onTap: () => Navigator.pop(context), child: Icon(CupertinoIcons.chevron_back)),
           title: Text(this.title, style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
-          trailing: Visibility(visible: this.isRightIcon, child: InkWell(onTap: this.onTapRight, child: Icon(this.rightIcon)),
+          trailing: Visibility(visible: this.isRightIcon ?? false, child: InkWell(onTap: this.onTapRight as GestureTapCallback?, child: Icon(this.rightIcon ?? CupertinoIcons.ellipsis)),
         ),
       )
       ),
@@ -35,13 +35,13 @@ class TopBarTwoWithChat extends PreferredSize {
 
 class TopBarWitRightTitle extends PreferredSize {
   final String title;
-  final double height;
-  final Function onTapRight;
-  final String rightText;
-  const TopBarWitRightTitle({Key key, @required this.title,  this.onTapRight, this.height, this.rightText});
+  final double? height;
+  final Function? onTapRight;
+  final String? rightText;
+  const TopBarWitRightTitle({Key? key, required this.title,  this.onTapRight, this.height, this.rightText}) : super(key: key, child: const SizedBox(), preferredSize: const Size.fromHeight(56));
 
   @override
-  Size get preferredSize => Size.fromHeight(height);
+  Size get preferredSize => Size.fromHeight(height ?? 56);
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class TopBarWitRightTitle extends PreferredSize {
             Get.back();
           }, child: Icon(CupertinoIcons.multiply, color: Colors.black,),),
           title: Text(this.title, style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
-          trailing: InkWell(onTap: this.onTapRight, child: Text(this.rightText, style: GoogleFonts.montserrat(fontSize: 17),)),
+          trailing: InkWell(onTap: this.onTapRight as GestureTapCallback?, child: Text(this.rightText ?? "", style: GoogleFonts.montserrat(fontSize: 17),)),
       )
       ),
     );
@@ -64,11 +64,11 @@ class TopBarWitRightTitle extends PreferredSize {
 
 class TopBarBackCross extends PreferredSize {
   final String title;
-  final double height;
-  const TopBarBackCross({Key key, @required this.title,  this.height});
+  final double? height;
+  const TopBarBackCross({Key? key, required this.title,  this.height}) : super(key: key, child: const SizedBox(), preferredSize: const Size.fromHeight(56));
 
   @override
-  Size get preferredSize => Size.fromHeight(height);
+  Size get preferredSize => Size.fromHeight(height ?? 56);
 
   @override
   Widget build(BuildContext context) {
@@ -89,14 +89,14 @@ class TopBarBackCross extends PreferredSize {
 
 class TopBarWitBackNav extends PreferredSize {
   final String title;
-  final double height;
-  final bool isRightIcon;
-  final IconData rightIcon;
-  final Function onTapRight;
-  const TopBarWitBackNav({Key key, @required this.title, this.isRightIcon, this.rightIcon, this.onTapRight, this.height});
+  final double? height;
+  final bool? isRightIcon;
+  final IconData? rightIcon;
+  final Function? onTapRight;
+  const TopBarWitBackNav({Key? key, required this.title, this.isRightIcon, this.rightIcon, this.onTapRight, this.height}) : super(key: key, child: const SizedBox(), preferredSize: const Size.fromHeight(56));
 
   @override
-  Size get preferredSize => Size.fromHeight(height);
+  Size get preferredSize => Size.fromHeight(height ?? 56);
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +107,7 @@ class TopBarWitBackNav extends PreferredSize {
           autofocus: false,
           leading: InkWell(onTap: () => Navigator.pop(context), child: Icon(CupertinoIcons.chevron_back)),
           title: Text(this.title, style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black)),
-          trailing: Visibility(visible: this.isRightIcon, child: InkWell(onTap: this.onTapRight, child: Icon(this.rightIcon)),
+          trailing: Visibility(visible: this.isRightIcon ?? false, child: InkWell(onTap: this.onTapRight as GestureTapCallback?, child: Icon(this.rightIcon ?? CupertinoIcons.ellipsis)),
         ),
       )
       ),
@@ -118,15 +118,15 @@ class TopBarWitBackNav extends PreferredSize {
 
 class TopBarChat extends PreferredSize {
   final String displayname;
-  final bool isRightIcon;
-  final IconData rightIcon;
-  final Function onTapRight;
-  final imageUrl;
-  final double height;
-  const TopBarChat({Key key, @required this.displayname, this.isRightIcon, this.rightIcon, this.onTapRight, this.height, this.imageUrl});
+  final bool? isRightIcon;
+  final IconData? rightIcon;
+  final Function? onTapRight;
+  final String? imageUrl;
+  final double? height;
+  const TopBarChat({Key? key, required this.displayname, this.isRightIcon, this.rightIcon, this.onTapRight, this.height, this.imageUrl}) : super(key: key, child: const SizedBox(), preferredSize: const Size.fromHeight(56));
 
   @override
-  Size get preferredSize => Size.fromHeight(height);
+  Size get preferredSize => Size.fromHeight(height ?? 56);
 
   @override
   Widget build(BuildContext context) {
@@ -141,12 +141,12 @@ class TopBarChat extends PreferredSize {
               backgroundColor: Colors.white,
               foregroundColor: Colors.white,
                 radius: 20,
-                backgroundImage: CachedNetworkImageProvider(this.imageUrl),
+                backgroundImage: this.imageUrl != null ? CachedNetworkImageProvider(this.imageUrl!) : null,
             ),
             SizedBox(width: 10),
             Text(this.displayname, style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w400, color: Colors.black))
           ],),
-          trailing: Visibility(visible: this.isRightIcon, child: InkWell(onTap: this.onTapRight, child: Icon(this.rightIcon)),
+          trailing: Visibility(visible: this.isRightIcon ?? false, child: InkWell(onTap: this.onTapRight as GestureTapCallback?, child: Icon(this.rightIcon ?? CupertinoIcons.ellipsis)),
         ),
       )
       ),

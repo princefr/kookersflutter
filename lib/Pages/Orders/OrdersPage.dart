@@ -10,7 +10,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 
 class OrdersPage extends StatefulWidget {
-  OrdersPage({Key key}) : super(key: key);
+  OrdersPage({Key? key}) : super(key: key);
 
   @override
   _OrdersPageState createState() => _OrdersPageState();
@@ -62,9 +62,9 @@ class _OrdersPageState extends State<OrdersPage>
                             itemBuilder: (ctx, index) {
                               return OrderItemShimmer();
                             }),
-                        baseColor: Colors.grey[200],
-                        highlightColor: Colors.grey[300]);
-                  if (snapshot.data.isEmpty)
+                        baseColor: Colors.grey[200] ?? Colors.grey,
+                        highlightColor: Colors.grey[300] ?? Colors.grey);
+                  if (snapshot.data?.isEmpty ?? true)
                     return SmartRefresher(
                         enablePullDown: true,
                         controller: this._refreshController,
@@ -90,9 +90,9 @@ class _OrdersPageState extends State<OrdersPage>
                     },
                     child: ListView.builder(
                         
-                        itemCount: snapshot.data.length,
+                        itemCount: snapshot.data?.length ?? 0,
                         itemBuilder: (context, index) {
-                          return OrderItem(order: snapshot.data[index]);
+                          return OrderItem(order: snapshot.data![index]);
                         }),
                   );
                 }),

@@ -2,39 +2,29 @@
 
 
 
-
-
-import 'package:kookers/Mixins/GuideLinesValidation.dart';
+import 'package:kookers/Core/BaseValidationBloc.dart';
+import 'package:kookers/Core/ValidationTransformers.dart';
 import 'package:rxdart/rxdart.dart';
 
-class GuidelineBloc with GuidelinesValidation {
+class GuidelineBloc with ValidationBlocMixin {
+  late final ValidationField<bool> acceptMask;
+  late final ValidationField<bool> acceptGloves;
+  late final ValidationField<bool> acceptBeenVerified;
 
-
-  GuidelineBloc();
-
-
-
-  void dispose() {
-    this.acceptMask.close();
-    this.acceptGloves.close();
-    this.acceptBeenVerified.close();
+  GuidelineBloc() {
+    acceptMask = createValidationField(ValidationTransformers.policiesAccepted, false);
+    acceptGloves = createValidationField(ValidationTransformers.policiesAccepted1, false);
+    acceptBeenVerified = createValidationField(ValidationTransformers.policiesAccepted2, false);
   }
-  
 
-
-  BehaviorSubject<bool> acceptMask = new BehaviorSubject<bool>.seeded(false);
-  Stream<bool> get acceptMask$ => acceptMask.stream.transform(policiesAccepted);
+  // Getters for compatibility
+  Stream<bool> get acceptMask$ => acceptMask.stream;
   Sink<bool> get inacceptMask => acceptMask.sink;
 
-
-  BehaviorSubject<bool> acceptGloves = new BehaviorSubject<bool>.seeded(false);
-  Stream<bool> get acceptGloves$ => acceptGloves.stream.transform(policiesAccepted1);
+  Stream<bool> get acceptGloves$ => acceptGloves.stream;
   Sink<bool> get inacceptGloves => acceptGloves.sink;
 
-
-
-  BehaviorSubject<bool> acceptBeenVerified = new BehaviorSubject<bool>.seeded(false);
-  Stream<bool> get acceptBeenVerified$ => acceptBeenVerified.stream.transform(policiesAccepted2);
+  Stream<bool> get acceptBeenVerified$ => acceptBeenVerified.stream;
   Sink<bool> get inacceptBeenVerified => acceptBeenVerified.sink;
 
 

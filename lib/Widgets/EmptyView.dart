@@ -7,7 +7,7 @@ import 'package:lottie/lottie.dart';
 
 class EmptyViewElse extends StatelessWidget {
   final String text;
-  const EmptyViewElse({Key key,@required this.text}) : super(key: key);
+  const EmptyViewElse({Key? key, required this.text}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class EmptyViewElse extends StatelessWidget {
 
 class EmptyView extends StatelessWidget {
   
-  const EmptyView({Key key}) : super(key: key);
+  const EmptyView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

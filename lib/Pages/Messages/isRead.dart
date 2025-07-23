@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 
 class IsReadWidget extends StatelessWidget {
-  const IsReadWidget({Key key, @required this.isRead, @required this.isSent}) : super(key: key);
+  const IsReadWidget({Key? key, required this.isRead, required this.isSent}) : super(key: key);
   final bool  isRead;
   final bool isSent;
 

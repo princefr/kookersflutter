@@ -6,7 +6,7 @@ import 'package:kookers/Pages/Onboarding/OnboardingModel.dart';
 
 
 class OnboardingPage extends StatelessWidget {
-  final OnboardingModel data; // model
+  final OnboardingModel? data; // model
   const OnboardingPage({this.data}); // load page
 
 
@@ -29,7 +29,7 @@ class OnboardingPage extends StatelessWidget {
                       height: 40,
                     ),
                     Center(
-                      child:Image(height: 340, width: 310, image: AssetImage(data.placeHolder))
+                      child:Image(height: 340, width: 310, image: AssetImage(data?.placeHolder ?? ''))
                     ),
                   ],
                   ),
@@ -45,7 +45,7 @@ class OnboardingPage extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         left: 24.0, right: 24.0, top: 12.0, bottom: 12.0),
                     child: Text(
-                      data.title,
+                      data?.title ?? '',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.montserrat(
                           fontSize: 36,
@@ -57,14 +57,14 @@ class OnboardingPage extends StatelessWidget {
                     padding: const EdgeInsets.only(
                         left: 24.0, right: 24.0, top: 12.0, bottom: 12.0),
                     child: Text(
-                      data.description,
+                      data?.description ?? '',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.montserrat(
                           fontSize: 17,
                           color: Colors.grey,
                           fontWeight: FontWeight.w400),
                     ),
-                  ),
+                  )
                   ],
                 ),
               ),

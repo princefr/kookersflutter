@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kookers/Models/Location.dart';
 import 'package:kookers/Pages/BeforeSign/BeforeSignAdress.dart';
 import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
 import 'package:kookers/Pages/Home/FoodIemChild.dart';
@@ -20,16 +21,17 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:kookers/Widgets/Shared/ShimmerCard.dart';
 
 // ignore: must_be_immutable
 class HomeTopBar extends PreferredSize {
-  final double height;
+  final double? height;
   final BehaviorSubject<int> percentage;
   final User user;
-  HomeTopBar({Key key, this.height, @required this.percentage, @required this.user});
+  HomeTopBar({Key? key, this.height, required this.percentage, required this.user}) : super(key: key, child: const SizedBox(), preferredSize: const Size.fromHeight(121));
 
   @override
-  Size get preferredSize => Size.fromHeight(height);
+  Size get preferredSize => Size.fromHeight(height ?? 121);
 
   Widget build(BuildContext context) {
     final databaseService =
@@ -126,8 +128,8 @@ class HomeTopBar extends PreferredSize {
                                 child: Shimmer.fromColors(
                                     enabled: true,
                                     child: Container(color: Colors.white),
-                                    baseColor: Colors.grey[200],
-                                    highlightColor: Colors.grey[300]));
+                                    baseColor: Colors.grey[200]!,
+                                    highlightColor: Colors.grey[300]!));
                           if(snapshot.data == null) {
                             return StreamBuilder<Adress>(
                               stream: databaseService.adress,
@@ -135,17 +137,17 @@ class HomeTopBar extends PreferredSize {
                                 if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                                 if(snapshot.data == null) return SizedBox();
                                 return Text(
-                                snapshot.data.title,
+                                snapshot.data?.title ?? "",
                               style: GoogleFonts.montserrat(fontSize: 17),
                               overflow: TextOverflow.ellipsis);
                               }
                             );
                           }
                           return Text(
-                              snapshot.data.adresses
+                              snapshot.data!.adresses!
                                   .where((element) => element.isChosed == true)
                                   .first
-                                  .title,
+                                  .title ?? "",
                               style: GoogleFonts.montserrat(fontSize: 17),
                               overflow: TextOverflow.ellipsis);
                         }),
@@ -165,7 +167,7 @@ class HomeTopBar extends PreferredSize {
 
 class HomePage extends StatefulWidget {
   final User user;
-  HomePage({Key key, @required this.user}) : super(key: key);
+  HomePage({Key? key, required this.user}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -186,9 +188,11 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
     Future.delayed(Duration.zero, (){
         final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
-        Location location = databaseService.user.value == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
-        int distance  = databaseService.user.value == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
-      databaseService.loadPublication(location, distance);
+        Location? location = databaseService.user.value == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed == true).location;
+        int distance = databaseService.user.value.settings?.distanceFromSeller ?? 45;
+        if(location != null) {
+          databaseService.loadPublication(location, distance);
+        }
     });
     super.initState();
   }
@@ -255,74 +259,10 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin<
                   });
                 });
               }
-              
             }
           }
         },
-        child: Icon(CupertinoIcons.pencil, size: 34.0, color: Colors.white),
-      ),
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: StreamBuilder<List<PublicationHome>>(
-            stream: databaseService.publications$,
-            initialData: [],
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting)
-                return Shimmer.fromColors(
-                    child: ListView.builder(
-                        itemCount: 10,
-                        itemBuilder: (ctx, index) {
-                          return FoodItemShimmer();
-                        }),
-                    baseColor: Colors.grey[200],
-                    highlightColor: Colors.grey[300]);
-              if (snapshot.hasError) return Text("i've a bad felling");
-              if (snapshot.data.isEmpty)
-                return SmartRefresher(
-                    enablePullDown: true,
-                    enablePullUp: false,
-                    controller: this._refreshController,
-                    onRefresh: () {
-                      Location location = databaseService.user.value == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
-                      int distance  = databaseService.user.value == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
-                      databaseService.loadPublication(location, distance).then((value) {
-                        Future.delayed(Duration(milliseconds: 500))
-                            .then((value) {
-                          _refreshController.refreshCompleted();
-                        });
-                      });
-                    },
-                    child: EmptyViewElse(text: "Aucune vente à proximité"));
-
-              return SmartRefresher(
-                enablePullDown: true,
-                enablePullUp: false,
-                controller: this._refreshController,
-                onRefresh: () {
-                  Location location = databaseService.user.value == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
-                  int distance  = databaseService.user.value == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
-                  databaseService.loadPublication(location, distance).then((value) {
-                    Future.delayed(Duration(milliseconds: 500)).then((value) {
-                      _refreshController.refreshCompleted();
-                    });
-                  });
-                },
-                child: ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (ctx, index) {
-                    return FoodItem(
-                        publication: snapshot.data[index],
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => FoodItemChild(
-                                      publication: snapshot.data[index], user: this.widget.user,)));
-                        });
-                  },
-                ),
-              );
-            }),
+        child: Icon(Icons.add),
       ),
     );
   }

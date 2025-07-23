@@ -1,15 +1,16 @@
-import 'package:flutter/material.dart';
-import 'package:kookers/Mixins/SignupValidation.dart';
+
+import 'package:kookers/Core/BaseValidationBloc.dart';
+import 'package:kookers/Core/ValidationTransformers.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:rxdart/rxdart.dart';
 
 
 
 class DateOfBirth {
-  String iso;
-  int day;
-  int month;
-  int year;
+  String? iso;
+  int? day;
+  int? month;
+  int? year;
 
   DateOfBirth({this.day, this.month, this.year, this.iso});
 
@@ -29,65 +30,70 @@ class SignupInformations {
   String email;
   Adress adress;
   bool policiesAcccepted;
-  DateOfBirth birthDate;
+  DateOfBirth? birthDate;
   
 
-  SignupInformations({@required this.adress, @required this.email, @required this.firstName, @required this.lastName, @required this.policiesAcccepted, this.birthDate});
+  SignupInformations({required this.adress, required this.email, required this.firstName, required this.lastName, required this.policiesAcccepted, this.birthDate});
 
 
 }
 
 
 
-class SignupBloc with SignupValidation {
+class SignupBloc with ValidationBlocMixin {
+  late final ValidationField<String> lastName;
+  late final ValidationField<String> firstName;
+  late final ValidationField<String> email;
+  late final ValidationField<Adress> adress;
+  late final ValidationField<DateTime> dateOfBirth;
+  late final ValidationField<bool> acceptedPolicies;
 
-  SignupBloc();
-
-
-  void dispose(){
-    this.lastName.close();
-    this.firstName.close();
-    this.email.close();
-    this.adress.close();
-    this.dateOfBirth.close();
-    this.acceptedPolicies.close();
+  SignupBloc() {
+    lastName = createValidationField(ValidationTransformers.validateLastName);
+    firstName = createValidationField(ValidationTransformers.validateFirstName);
+    email = createValidationField(ValidationTransformers.validateEmail);
+    adress = createValidationField(ValidationTransformers.validateAdress);
+    dateOfBirth = createValidationField(ValidationTransformers.validatebirthDate);
+    acceptedPolicies = createValidationField(ValidationTransformers.validatePoliciesAccepted, false);
   }
 
-  BehaviorSubject<String> lastName = new BehaviorSubject<String>();
-  Stream<String> get lastName$ => lastName.stream.transform(validateLastName);
+  // Getters for compatibility
+  Stream<String> get lastName$ => lastName.stream;
   Sink<String> get inlastName => lastName.sink;
 
-
-  BehaviorSubject<String> firstName = new BehaviorSubject<String>();
-  Stream<String> get firstName$ => firstName.stream.transform(validateFirstName);
+  Stream<String> get firstName$ => firstName.stream;
   Sink<String> get infirstName => firstName.sink;
 
-
-  BehaviorSubject<String> email = new BehaviorSubject<String>();
-  Stream<String> get email$ => email.stream.transform(validateEmail);
+  Stream<String> get email$ => email.stream;
   Sink<String> get inemail => email.sink;
 
-
-  BehaviorSubject<Adress> adress = new BehaviorSubject<Adress>();
-  Stream<Adress> get adress$ => adress.stream.transform(validateAdress);
+  Stream<Adress> get adress$ => adress.stream;
   Sink<Adress> get inadress => adress.sink;
 
-
-  BehaviorSubject<DateTime> dateOfBirth = new BehaviorSubject<DateTime>();
-  Stream<DateTime> get dateOfBirth$ => dateOfBirth.stream.transform(validatebirthDate);
+  Stream<DateTime> get dateOfBirth$ => dateOfBirth.stream;
   Sink<DateTime> get indateOfBirth => dateOfBirth.sink;
 
-
-  BehaviorSubject<bool> acceptedPolicies = new BehaviorSubject<bool>.seeded(false);
-  Stream<bool> get acceptedPolicies$ => acceptedPolicies.stream.transform(validatePoliciesAccepted);
+  Stream<bool> get acceptedPolicies$ => acceptedPolicies.stream;
   Sink<bool> get inacceptedPolicies => acceptedPolicies.sink;
 
   Stream<bool> get isAllFilled$ => CombineLatestStream([lastName$, firstName$, email$, acceptedPolicies$, adress$ ,  dateOfBirth$], (values) => true).asBroadcastStream();
 
 
   SignupInformations validate() {
-    DateOfBirth birthDate = DateOfBirth(day: this.dateOfBirth.value.day, month: this.dateOfBirth.value.month, year: this.dateOfBirth.value.year, iso: this.dateOfBirth.value.toIso8601String());
-    return SignupInformations(adress: this.adress.value, email: this.email.value, firstName: this.firstName.value, lastName: this.lastName.value, policiesAcccepted: this.acceptedPolicies.value, birthDate: birthDate);
+    DateOfBirth birthDate = DateOfBirth(
+      day: this.dateOfBirth.value.day, 
+      month: this.dateOfBirth.value.month, 
+      year: this.dateOfBirth.value.year, 
+      iso: this.dateOfBirth.value.toIso8601String()
+    );
+    return SignupInformations(
+      adress: this.adress.value, 
+      email: this.email.value, 
+      firstName: this.firstName.value, 
+      lastName: this.lastName.value, 
+      policiesAcccepted: this.acceptedPolicies.value, 
+      birthDate: birthDate
+    );
   }
 
   

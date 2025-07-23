@@ -13,7 +13,7 @@ import 'package:rxdart/subjects.dart';
 
 class RatePlate extends StatefulWidget {
   final Order order;
-  RatePlate({Key key, @required this.order}) : super(key: key);
+  RatePlate({Key? key, required this.order}) : super(key: key);
 
   @override
   _RatePlateState createState() => _RatePlateState();
@@ -23,8 +23,7 @@ class _RatePlateState extends State<RatePlate> {
 
 Future<void> rateFood(GraphQLClient client, RatingInput rating) async {
   
-  final MutationOptions _options  = MutationOptions(
-        documentNode: gql(r"""
+  final MutationOptions _options  = MutationOptions(document: gql(r"""
           mutation CreatRating($rating: RatingInput!){
                 createRating(rating: $rating){
                   orderId
@@ -36,7 +35,7 @@ Future<void> rateFood(GraphQLClient client, RatingInput rating) async {
         }
       );
 
-    return await client.mutate(_options).then((result) => result.data["createRating"]);
+    return await client.mutate(_options).then((result) => result.data?["createRating"]);
 }
 
 
@@ -81,7 +80,7 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
                         child: CircleAvatar(
                             radius: 60,
                             backgroundImage: CachedNetworkImageProvider(
-                                this.widget.order.publication.imagesUrls[0]),
+                                (this.widget.order.publication?.imagesUrls?.isNotEmpty == true ? this.widget.order.publication!.imagesUrls![0] : '') as String),
                           ),
                       ),
 
@@ -147,7 +146,7 @@ BehaviorSubject<String> comment = BehaviorSubject<String>();
                                      successText: "Plat noté",
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
-                                        RatingInput rating = RatingInput(comment: comment.value, createdAt: DateTime.now().toIso8601String() , orderId: this.widget.order.id, publicationId: this.widget.order.publication.id, rate: initialRate.value.toString(), whoRate: databaseService.user.value.id);
+                                        RatingInput rating = RatingInput(comment: comment.value ?? '', createdAt: DateTime.now().toIso8601String() , orderId: this.widget.order.id ?? '', publicationId: this.widget.order.publication?.id ?? '', rate: initialRate.value.toString(), whoRate: databaseService.user.value?.id ?? '');
                                         this.rateFood(databaseService.client, rating).then((value){
                                           _streamButtonController.isSuccess().then((value) async {
                                             databaseService.loadbuyerOrders();

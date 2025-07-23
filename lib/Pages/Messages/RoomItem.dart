@@ -11,11 +11,11 @@ import 'package:provider/provider.dart';
 class Receiver {
   String firstName;
   String lastName;
-  String phonenumber;
-  String photoUrl;
-  String notificationToken;
+  String? phonenumber;
+  String? photoUrl;
+  String? notificationToken;
   Receiver(
-      {@required this.firstName, @required this.lastName, this.phonenumber, this.photoUrl, this.notificationToken});
+      {required this.firstName, required this.lastName, this.phonenumber, this.photoUrl, this.notificationToken});
 }
 
 
@@ -24,19 +24,19 @@ class Receiver {
 class Room {
   String id;
   String updatedAt;
-  String createdAt;
+  String? createdAt;
   int notificationCountUser_1;
   Receiver receiver;
-  String lastMessage;
+  String? lastMessage;
   List<Message> messages;
   
   Room(
-      {@required this.id,
-      @required this.updatedAt,
+      {required this.id,
+      required this.updatedAt,
       this.createdAt,
-      @required this.notificationCountUser_1,
-      @required this.receiver,
-      @required this.messages, this.lastMessage});
+      required this.notificationCountUser_1,
+      required this.receiver,
+      required this.messages, this.lastMessage});
 
 
       static Room fromJson(Map<String, dynamic> map, String currentUser){
@@ -67,7 +67,7 @@ class Room {
   static List<Room> fromJsonToList(List<Object> map, String currentUser) {
         List<Room> allpublications = [];
         map.forEach((element) {
-          final x = Room.fromJson(element, currentUser);
+          final x = Room.fromJson(element as Map<String, dynamic>, currentUser);
           allpublications.add(x);
         });
         return allpublications;
@@ -77,18 +77,18 @@ class Room {
 class Message {
   String userId;
   String message;
-  String roomId;
-  String createdAt;
-  String messagePicture;
-  bool isSent;
-  bool isRead;
-  String receiverPushToken;
-  GraphQLClient client;
+  String? roomId;
+  String? createdAt;
+  String? messagePicture;
+  bool? isSent;
+  bool? isRead;
+  String? receiverPushToken;
+  GraphQLClient? client;
 
   Message(
-      {@required this.userId,
-      @required this.message,
-      @required this.createdAt,
+      {required this.userId,
+      required this.message,
+      required this.createdAt,
       this.messagePicture, this.isRead, this.isSent, this.receiverPushToken, this.roomId, this.client});
 
   static List<Message> fromJSON(List<Object> map) {
@@ -136,7 +136,7 @@ class Message {
   }
 
     Future<void> sendMessage() async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+    final MutationOptions _options = MutationOptions(document: gql(r"""
       mutation SendMEssage($message: MessageInput){
             sendMessage(message: $message)
         }
@@ -145,15 +145,15 @@ class Message {
     });
 
     return await this.client
-        .mutate(_options)
-        .then((value) => value.data["sendMessage"]);
+        ?.mutate(_options)
+        ?.then((value) => value.data?["sendMessage"]);
   }
 }
 
 
 
 class RoomItemShimmer extends StatelessWidget {
-  const RoomItemShimmer({Key key}) : super(key: key);
+  const RoomItemShimmer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -229,8 +229,8 @@ class RoomItemShimmer extends StatelessWidget {
 
 class RoomItem extends StatelessWidget {
   final Room room;
-  final int index;
-  const RoomItem({Key key, @required this.room, this.index}) : super(key: key);
+  final int? index;
+  const RoomItem({Key? key, required this.room, this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -248,7 +248,7 @@ class RoomItem extends StatelessWidget {
               style: GoogleFonts.montserrat(fontSize: 16),
             ),
             subtitle: Text(
-              this.room.lastMessage,
+              this.room.lastMessage ?? '',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: 14),
@@ -257,14 +257,14 @@ class RoomItem extends StatelessWidget {
               backgroundColor: Colors.white,
                     foregroundColor: Colors.white,
               radius: 30,
-              backgroundImage: CachedNetworkImageProvider(this.room.receiver.photoUrl),
+              backgroundImage: this.room.receiver.photoUrl != null ? CachedNetworkImageProvider(this.room.receiver.photoUrl!) : null,
             ),
             trailing: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  Jiffy(this.room.updatedAt).yMMMMd == Jiffy(DateTime.now()).yMMMMd ? Jiffy(this.room.updatedAt).format("HH:mm") : Jiffy(this.room.updatedAt).format("do MMMM"),
+                  Jiffy.parse(this.room.updatedAt).yMMMMd == Jiffy.parseFromDateTime(DateTime.now()).yMMMMd ? Jiffy.parse(this.room.updatedAt).format(pattern: "HH:mm") : Jiffy.parse(this.room.updatedAt).format(pattern: "do MMMM"),
                   style: TextStyle(fontSize: 12),
                 ),
                 room.notificationCountUser_1 > 0

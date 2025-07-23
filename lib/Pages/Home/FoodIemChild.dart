@@ -23,9 +23,9 @@ import 'package:rxdart/rxdart.dart';
 // ignore: must_be_immutable
 class ChooseDatePage extends StatelessWidget {
   CupertinoDatePickerMode datemode;
-  ChooseDatePage({Key key, @required this.datemode}) : super(key: key);
+  ChooseDatePage({Key? key, required this.datemode}) : super(key: key);
 
-  DateTime date;
+  DateTime date = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class ChooseDatePage extends StatelessWidget {
 
 class Stepper extends StatefulWidget {
   final BehaviorSubject<int> quantity;
-  Stepper({Key key, this.quantity}) : super(key: key);
+    Stepper({Key? key, required this.quantity}) : super(key: key);
   @override
   _StepperState createState() => _StepperState();
 }
@@ -94,7 +94,7 @@ class _StepperState extends State<Stepper> {
 
   void downNumber() {
     setState(() {
-      if (this.widget.quantity.value != 0 && this.widget.quantity.value != null) {
+      if (this.widget.quantity.value != 0) {
         this.widget.quantity.add(this.widget.quantity.value - 1);
       }
     });
@@ -154,7 +154,7 @@ class _StepperState extends State<Stepper> {
 class FoodItemChild extends StatefulWidget {
   final PublicationHome publication;
   final User user;
-  FoodItemChild({Key key, @required this.publication, @required this.user}) : super(key: key);
+  FoodItemChild({Key? key, required this.publication, required this.user}) : super(key: key);
 
   @override
   _FoodItemChildState createState() => _FoodItemChildState();
@@ -200,8 +200,8 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
   OrderProvider orderProvider =  OrderProvider();
   BehaviorSubject<int> serviceFees = BehaviorSubject<int>.seeded(15);
-  Stream<double> get feePaid => CombineLatestStream([orderProvider.quantity$, serviceFees.stream], (values) => percentage2(values[0], int.parse(this.widget.publication.pricePerAll), int.parse(values[0]))).asBroadcastStream();
-  Stream<double> get total => CombineLatestStream([orderProvider.quantity$, feePaid], (values) => values[0] * int.parse(this.widget.publication.pricePerAll) + values[1]).asBroadcastStream();
+  Stream<double> get feePaid => CombineLatestStream([orderProvider.quantity$, serviceFees.stream], (values) => percentage2(values[0], int.parse(this.widget.publication.pricePerAll ?? '0'), (values[0] as int))).asBroadcastStream();
+  Stream<double> get total => CombineLatestStream([orderProvider.quantity$, feePaid], (values) => (values[0] as int) * int.parse(this.widget.publication.pricePerAll ?? '0') + (values[1] as double)).asBroadcastStream();
 
 
 
@@ -221,7 +221,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
       return Scaffold(
         appBar: TopBarWitBackNav(
-            title: this.widget.publication.title,
+            title: this.widget.publication.title ?? '',
             isRightIcon: false,
             height: 54,
             rightIcon: CupertinoIcons.heart),
@@ -230,7 +230,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
           shrinkWrap: true,
           children: [
           CarouselSlider(
-              items: this.widget.publication.photoUrls.map((e) {
+              items: this.widget.publication.photoUrls?.map((e) {
                 return InkWell(
                   onTap: () {
                     Navigator.push(
@@ -247,7 +247,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                     ),
                   ),
                 );
-              }).toList(),
+              }).toList() ?? [],
               options: CarouselOptions(
                 height: 300.0,
                 aspectRatio: 16 / 9,
@@ -260,7 +260,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
               Expanded(
                   child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(this.widget.publication.pricePerAll + " " + CurrencyService.getCurrencySymbol(this.widget.publication.currency),
+                child: Text((this.widget.publication.pricePerAll ?? '') + " " + CurrencyService.getCurrencySymbol(this.widget.publication.currency ?? 'EUR'),
                     style: GoogleFonts.montserrat(
                         fontSize: 26, color: Colors.grey)),
               )),
@@ -282,7 +282,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                                   child: Row(children: [
                                     Icon(CupertinoIcons.star_fill, size: 13, color: Colors.yellow[900]),
                                     SizedBox(width: 5),
-                                    Text(this.widget.publication.getRating().toStringAsFixed(2) + " " + "(" + this.widget.publication.rating.ratingCount.toString() + ")", style: GoogleFonts.montserrat(fontSize: 17),)
+                                                                                                                                                Text(this.widget.publication.getRating().toStringAsFixed(2) + " " + "(" + (this.widget.publication.rating?.ratingCount?.toString() ?? '0') + ")", style: GoogleFonts.montserrat(fontSize: 17),)
                                   ],),
                                 ),
                                 Expanded(child: SizedBox()),
@@ -292,7 +292,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
           Padding(
             padding: const EdgeInsets.all(15.0),
-            child: Text(this.widget.publication.description),
+            child: Text(this.widget.publication.description ?? ''),
           ),
           Container(
             height: 40,
@@ -300,14 +300,13 @@ class _FoodItemChildState extends State<FoodItemChild> {
               if (this
                   .widget
                   .publication
-                  .preferences.length > 0) {
+                  .preferences?.length != null && this.widget.publication.preferences!.length > 0) {
                 return ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: this
                         .widget
                         .publication
-                        .preferences
-                        .length,
+                        .preferences?.length ?? 0,
                     itemBuilder: (ctx, index) {
                       return Padding(
                         padding:
@@ -317,8 +316,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                             label: Text(this
                                 .widget
                                 .publication
-                                .preferences[index])),
-                      );
+                                .preferences?[index] ?? '')));
                     });
               } else {
                 return Padding(
@@ -355,7 +353,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                     orderProvider.deliveryDate.add(date);
                   },
                   leading: Icon(CupertinoIcons.calendar),
-                  title: Text(Jiffy(snapshot.data).format("do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat()),
+                  title: Text(snapshot.data != null ? Jiffy.parseFromDateTime(snapshot.data!).format(pattern: "do MMMM yyyy [ À ] HH:mm") : 'Choisir une date', style: GoogleFonts.montserrat()),
                 );
               }),
 
@@ -391,12 +389,12 @@ class _FoodItemChildState extends State<FoodItemChild> {
                         );},
                               leading: Icon(CupertinoIcons.home),
                               title: StreamBuilder(
-                                initialData: null,
+                                initialData: UserDef(),
                                 stream: databaseService.user$,
                                 builder: (context, AsyncSnapshot<UserDef> snapshot) {
                                   if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
-                                  if(snapshot.data == null) return Text(databaseService.adress.value.title, style: GoogleFonts.montserrat(fontSize: 17));
-                                  return Text(snapshot.data.adresses.where((element) => element.isChosed == true).first.title, style: GoogleFonts.montserrat(fontSize: 17));
+                                  if(snapshot.data == null) return Text(databaseService.adress.value.title ?? '', style: GoogleFonts.montserrat(fontSize: 17));
+                                  return Text(snapshot.data?.adresses?.where((element) => element.isChosed == true).first.title ?? '', style: GoogleFonts.montserrat(fontSize: 17));
                                 }
                               ),
                               trailing: Icon(CupertinoIcons.chevron_down),
@@ -411,14 +409,14 @@ class _FoodItemChildState extends State<FoodItemChild> {
               backgroundColor: Colors.white,
               foregroundColor: Colors.white,
               backgroundImage:
-                  CachedNetworkImageProvider(this.widget.publication.seller.photoUrl),
+                  CachedNetworkImageProvider(this.widget.publication.seller?.photoUrl ?? ''),
             ),
             title: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                  this.widget.publication.seller.firstName +
+                  (this.widget.publication.seller?.firstName ?? '') +
                       " " +
-                      this.widget.publication.seller.lastName,
+                      (this.widget.publication.seller?.lastName ?? ''),
                   style: GoogleFonts.montserrat()),
             ),
           ),
@@ -428,7 +426,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
               stream: orderProvider.quantity$,
               builder: (context, AsyncSnapshot<int> snapshot) {
                 return StreamButton(
-                    buttonColor: snapshot.data == null ? Colors.grey : snapshot.data > 0 ? Colors.black : Colors.grey,
+                    buttonColor: snapshot.data == null ? Colors.grey : snapshot.data! > 0 ? Colors.black : Colors.grey,
                     buttonText: "Continuer",
                     errorText: "Une erreur s'est produite",
                     loadingText: "Achat en cours",
@@ -461,7 +459,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                             showCupertinoModalBottomSheet(
                   expand: false,
                   context: context,
-                  builder: (context) => ReportPage(publicatonId: this.widget.publication.id, seller: this.widget.publication.seller.id,),
+                  builder: (context) => ReportPage(publicatonId: this.widget.publication.id ?? '', seller: this.widget.publication.seller?.id ?? ''),
                 );      
                 }
               },),

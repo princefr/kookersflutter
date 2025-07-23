@@ -6,10 +6,10 @@ import 'package:rxdart/subjects.dart';
 
 
 class MessageInput extends StatefulWidget {
-  const MessageInput({Key key, this.keyboardType = TextInputType.multiline, this.disableAttachments = false, this.animationDuration, this.attachmentIconColor, this.maxHeight = 130, this.message, this.focusNode, this.onSubmitted, this.autofocus = false, this.onAttachmentCiclked, this.onSendingClicked, this.textEditingController, this.image}) : super(key: key);
+  const MessageInput({Key? key, this.keyboardType = TextInputType.multiline, this.disableAttachments = false, this.animationDuration, this.attachmentIconColor, this.maxHeight = 130, this.message, this.focusNode, this.onSubmitted, this.autofocus = false, this.onAttachmentCiclked, this.onSendingClicked, this.textEditingController, this.image}) : super(key: key);
 
-  final BehaviorSubject<String> message;
-  final BehaviorSubject<File> image;
+  final BehaviorSubject<String>? message;
+  final BehaviorSubject<File>? image;
 
   final double maxHeight;
 
@@ -22,26 +22,26 @@ class MessageInput extends StatefulWidget {
 
 
   /// The duration of the send button animation
-  final Duration animationDuration;
+  final Duration? animationDuration;
 
   /// Color used for attachment icon.
-  final Color attachmentIconColor;
+  final Color? attachmentIconColor;
 
   /// focus node
-  final FocusNode focusNode;
+  final FocusNode? focusNode;
 
 
 /// If set true TextField will be active by default. Default is false.
   final bool autofocus;
 
 
-  final TextEditingController textEditingController;
+  final TextEditingController? textEditingController;
 
 
-  final Function(String) onSubmitted;
+  final Function(String)? onSubmitted;
 
-  final void Function() onAttachmentCiclked;
-  final void Function() onSendingClicked;
+  final void Function()? onAttachmentCiclked;
+  final void Function()? onSendingClicked;
 
 
   @override
@@ -53,8 +53,8 @@ class _MessageInputState extends State<MessageInput> {
 
 @override
   void dispose() {
-    this.widget.focusNode.dispose();
-    this.widget.textEditingController.dispose();
+    this.widget.focusNode?.dispose();
+    this.widget.textEditingController?.dispose();
     super.dispose();
   }
 
@@ -67,7 +67,7 @@ class _MessageInputState extends State<MessageInput> {
           curve: Curves.easeIn,
           duration: Duration(milliseconds: 600),
           child: StreamBuilder<Object>(
-            stream: this.widget.image.stream,
+            stream: this.widget.image?.stream,
             builder: (context, snapshot) {
               if(snapshot.hasData) {
                 return Stack(
@@ -77,7 +77,7 @@ class _MessageInputState extends State<MessageInput> {
                       child: Container(
                           decoration: BoxDecoration(color: Colors.grey[200],    
                           borderRadius: BorderRadius.all(Radius.circular(10.0)) ,
-                          image: DecorationImage(image: Image.file(snapshot.data).image, fit: BoxFit.cover, alignment: Alignment.center)
+                          image: DecorationImage(image: Image.file(snapshot.data as File).image, fit: BoxFit.cover, alignment: Alignment.center)
                             ),
                         height: 150,
                       ),
@@ -88,7 +88,8 @@ class _MessageInputState extends State<MessageInput> {
                 right: 30,
                 child: InkWell(
                   onTap: () {
-                    this.widget.image.sink.add(null);
+                    // Clear image by closing and recreating stream
+                    this.widget.image?.close();
                   },
                   child: Container(
                       padding: EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
@@ -115,25 +116,25 @@ class _MessageInputState extends State<MessageInput> {
           contentPadding: EdgeInsets.symmetric(horizontal: 15),
           leading: InkWell(onTap: this.widget.onAttachmentCiclked, child: Icon(CupertinoIcons.plus, color: Colors.black, size: 30)),
           trailing: StreamBuilder<String>(
-            stream: this.widget.message.stream,
+            stream: this.widget.message?.stream,
             builder: (context, snapshot) {
-              return InkWell(onTap: (snapshot.data != null && snapshot.data.isNotEmpty) ? this.widget.onSendingClicked : null, child: Icon(CupertinoIcons.arrow_up_circle_fill, color: (snapshot.data != null && snapshot.data.isNotEmpty) ? Colors.black : Colors.grey, size: 30));
+              return InkWell(onTap: (snapshot.data != null && snapshot.data!.isNotEmpty) ? this.widget.onSendingClicked : null, child: Icon(CupertinoIcons.arrow_up_circle_fill, color: (snapshot.data != null && snapshot.data!.isNotEmpty) ? Colors.black : Colors.grey, size: 30));
             }
           ),
           title: LimitedBox(
             maxHeight: widget.maxHeight,
             child: StreamBuilder<String>(
-              stream: this.widget.message.stream,
+              stream: this.widget.message?.stream,
               builder: (context, AsyncSnapshot<String> snapshot) {
                 return TextField(
                   key: Key('messageInputText'),
                   minLines: null,
                   maxLines: null,
                   controller: this.widget.textEditingController,
-                  onSubmitted: (snapshot.data != null && snapshot.data.isNotEmpty) ? this.widget.onSubmitted : null,
+                  onSubmitted: (snapshot.data != null && snapshot.data!.isNotEmpty) ? this.widget.onSubmitted : null,
                   focusNode: this.widget.focusNode,
                   keyboardType: widget.keyboardType,
-                  onChanged: this.widget.message.add,
+                  onChanged: this.widget.message?.add,
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                                   filled: true,

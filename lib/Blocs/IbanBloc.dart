@@ -1,26 +1,19 @@
-import 'package:kookers/Mixins/IbanValidation.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:kookers/Core/BaseValidationBloc.dart';
+import 'package:kookers/Core/ValidationTransformers.dart';
 
-class IbanBloc with IbanValidation {
+class IbanBloc with ValidationBlocMixin {
+  late final ValidationField<String> iban;
 
-
-  BehaviorSubject<String> iban = new BehaviorSubject<String>();
-  Stream<String> get iban$ => iban.stream.transform(validateIban);
-  Sink<String> get inBan => iban.sink;
-
-
-  IbanBloc();
-
-
-
-  String validate(){
-    return this.iban.value;
+  IbanBloc() {
+    iban = createValidationField(ValidationTransformers.validateIban);
   }
 
+  // Getters for compatibility
+  Stream<String> get iban$ => iban.stream;
+  Sink<String> get inBan => iban.sink;
 
-  
-  void dispose() { 
-    this.iban.close();
+  String validate() {
+    return this.iban.value;
   }
 
   

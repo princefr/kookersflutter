@@ -15,7 +15,7 @@ class ButtonVerification extends StatelessWidget {
   final Function onTap;
   final ButtonVerificationState status;
   
-  const ButtonVerification({Key key, this.color, @required this.text, @required this.leftIcon, @required this.onTap, @required this.status}) : super(key: key);
+  const ButtonVerification({Key? key, this.color, required this.text, required this.leftIcon, required this.onTap, required this.status}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,6 @@ class ButtonVerification extends StatelessWidget {
                         switch (this.status) {
                           case ButtonVerificationState.Missing:
                               return Icon(CupertinoIcons.chevron_forward, color: Colors.black, size: 24.0);
-                            break;
                           case ButtonVerificationState.VerificationInProgress:
                               return Icon(CupertinoIcons.clock, color: Colors.black, size: 24.0);
                           case ButtonVerificationState.Verified: 

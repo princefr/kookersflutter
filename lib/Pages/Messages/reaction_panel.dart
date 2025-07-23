@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 
 class ReactionPanel extends StatefulWidget {
-  ReactionPanel({Key key}) : super(key: key);
+  ReactionPanel({Key? key}) : super(key: key);
 
   @override
   _ReactionPanelState createState() => _ReactionPanelState();

@@ -5,7 +5,7 @@ import 'package:kookers/Pages/Messages/FullScreenImage.dart';
 
 class ChatImageMessage extends StatelessWidget {
   final String messagePicture;
-  const ChatImageMessage({Key key, @required this.messagePicture}) : super(key: key);
+  const ChatImageMessage({Key? key, required this.messagePicture}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

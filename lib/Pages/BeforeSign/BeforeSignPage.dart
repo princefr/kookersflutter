@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 
 class BeforeSignPage extends StatefulWidget {
   final String from;
-  BeforeSignPage({Key key, @required this.from}) : super(key: key);
+  BeforeSignPage({Key? key, required this.from}) : super(key: key);
 
   @override
   _BeforeSignPageState createState() => _BeforeSignPageState();
@@ -52,7 +52,7 @@ class _BeforeSignPageState extends State<BeforeSignPage> {
                                         'assets/logo/logo_white.svg',
                                         height: 30,
                                         width: 30,
-                                        color: Colors.black,
+                                        colorFilter: ColorFilter.mode(Colors.black, BlendMode.srcIn),
                                       ),
                         ),
 

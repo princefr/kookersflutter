@@ -1,22 +1,18 @@
 
-import 'package:kookers/Mixins/PhoneCodeValidation.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:kookers/Core/BaseValidationBloc.dart';
 
-class PhoneCodeBloc with PhoneCodeValidation {
+class PhoneCodeBloc with ValidationBlocMixin {
+  late final ValidationFieldSimple<String> code;
 
+  PhoneCodeBloc() {
+    code = createSimpleField<String>();
+  }
 
-  BehaviorSubject<String> code = new BehaviorSubject<String>();
+  // Getters for compatibility
   Stream<String> get code$ => code.stream;
   Sink<String> get inCode => code.sink;
 
-
-  void dispose(){
-    this.code.close();
-  }
-
-
-
-  String validate(){
+  String validate() {
     return this.code.value;
   }
 

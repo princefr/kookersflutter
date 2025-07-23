@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 
 class VerificationPage extends StatefulWidget {
   final User user;
-  VerificationPage({Key key, @required this.user}) : super(key: key);
+  VerificationPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _VerificationPageState createState() => _VerificationPageState();

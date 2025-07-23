@@ -1,4 +1,4 @@
-import 'package:currency_pickers/utils/utils.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
@@ -13,7 +13,7 @@ import 'package:provider/provider.dart';
 // https://github.com/FirebaseExtended/flutterfire/issues/4651 phonne issue.
 
 class PhoneAuthPage extends StatefulWidget {
-  PhoneAuthPage({Key key}) : super(key: key);
+  PhoneAuthPage({Key? key}) : super(key: key);
 
   @override
   _PhoneAuthCodeState createState() => _PhoneAuthCodeState();
@@ -98,15 +98,10 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                       builder: (context, snapshot) {
                         return CountryCodePicker(
                             onChanged: (CountryCode code) {
-                              String currency =
-                                  CurrencyPickerUtils.getCountryByIsoCode(
-                                          code.code.toUpperCase())
-                                      .currencyCode
-                                      .toString();
-                              this.phoneAuthBloc.inuserCurrency
-                                  .add(currency.toLowerCase());
-                              this.phoneAuthBloc.inuserCountry.add(code.code);
-                              this.phoneAuthBloc.phoneCode.add(code.dialCode);
+                              this.phoneAuthBloc.inuserCurrency.sink
+                                  .add(code.code?.toLowerCase() ?? '');
+                              this.phoneAuthBloc.inuserCountry.add(code.code ?? '');
+                              this.phoneAuthBloc.phoneCode.add(code.dialCode ?? '');
                             },
                             initialSelection: '+33',
                             favorite: ['+33', 'GB'],
@@ -121,12 +116,12 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                         return TextField(
                           key: Key("phone_number"),
                           keyboardType: TextInputType.phone,
-                          onChanged: this.phoneAuthBloc.phoneNumber.add,
+                          onChanged: this.phoneAuthBloc.phoneNumber.sink.add,
                           decoration: InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Numéro de téléphone',
                               focusedBorder: InputBorder.none,
-                              errorText: snapshot.error,
+                              errorText: snapshot.error as String?,
                               contentPadding: EdgeInsets.only(
                                   left: 15, bottom: 11, top: 11, right: 15)),
                         );
@@ -169,22 +164,30 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                         if (snapshot.data != null) {
                           _streamButtonController.isLoading();
                           String phone = await this.phoneAuthBloc.validate();
-                          authentificationService
-                              .verifyPhone(
+                                                        authentificationService
+                                  .verifyPhone(
                                   phone: phone,
-                                  codeisSent: (verificationId) async {
-                                    await _streamButtonController.isSuccess();
+                                  codeAutoRetrievalTimeout: (String verificationId) {},
+                                  codeTimeOut: (String verificationId) {},
+                                  codeisSent: (String verificationId, int? resendToken) {},
+                                  error: (FirebaseAuthException e) {},
+                                  timeout: const Duration(seconds: 60),
+                                  codeSent: (String verificationId, int? forceResendingToken) {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 PhoneAuthCodePage(
                                                     verificationId:
-                                                        verificationId)));
+                                                    verificationId)));
                                   },
-                                  error: (e) async {
+                                  verificationCompleted: (PhoneAuthCredential credential) async {
+                                    await _streamButtonController.isSuccess();
+                                  },
+                                  verificationFailed: (FirebaseAuthException e) async {
                                     await _streamButtonController.isError();
-                                  })
+                                  }
+                              )
                               .catchError((err) => err);
                         }
                       });

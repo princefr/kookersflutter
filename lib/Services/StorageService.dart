@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 class StorageService {
   final firebase_storage.FirebaseStorage storage;
 
-  StorageService({this.storage});
+  StorageService({required this.storage});
 
   Future<String> uploadPicture(String uid, String pictureName, String data) async {
     firebase_storage.Reference ref = storage

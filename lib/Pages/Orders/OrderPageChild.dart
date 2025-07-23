@@ -23,14 +23,14 @@ import 'package:rxdart/rxdart.dart';
 
 class OrderPageChild extends StatefulWidget {
   final Order order;
-  OrderPageChild({Key key, @required this.order}) : super(key: key);
+  OrderPageChild({Key? key, required this.order}) : super(key: key);
 
   @override
   _OrderPageChildState createState() => _OrderPageChildState();
 }
 
 class _OrderPageChildState extends State<OrderPageChild> {
-  StreamSubscription<Order> orderSubscription;
+  StreamSubscription<Order>? orderSubscription;
   // ignore: close_sinks
   BehaviorSubject<Order> order = new BehaviorSubject<Order>();
 
@@ -38,7 +38,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
     return ((percent/ 100) * total);
   }
 
-  StreamSubscription<int> get notificationIncoming => this.order.where((event) => event.notificationBuyer > 0).map((event) => event.notificationBuyer).listen((event) => event);
+  StreamSubscription<int?> get notificationIncoming => this.order.where((event) => (event.notificationBuyer ?? 0) > 0).map((event) => event.notificationBuyer).listen((event) => event);
 
   @override
   void initState() {
@@ -46,9 +46,9 @@ class _OrderPageChildState extends State<OrderPageChild> {
       final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
       this.orderSubscription =
-          databaseService.getOrderBuyer(this.widget.order.id, this.order);
+          databaseService.getOrderBuyer(this.widget.order.id ?? '', this.order);
           notificationIncoming.onData((data) {
-            databaseService.cleanNotificationBuyer(this.widget.order.id).then((value) => databaseService.loadbuyerOrders());
+            databaseService.cleanNotificationBuyer(this.widget.order.id ?? '').then((value) => databaseService.loadbuyerOrders());
           });
           
     });
@@ -57,7 +57,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
 
   @override
   void dispose() {
-    this.orderSubscription.cancel();
+    this.orderSubscription?.cancel();
     this.notificationIncoming.cancel();
     this.order.close();
     super.dispose();
@@ -74,7 +74,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
 
   Future<Map<String, dynamic>> cancelOrder(
       GraphQLClient client, Order order) async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+    final MutationOptions _options = MutationOptions(document: gql(r"""
         mutation CancelOrder($order: OrderInputBuyer!){
               cancelOrder(order: $order){
                 _id
@@ -84,12 +84,12 @@ class _OrderPageChildState extends State<OrderPageChild> {
 
     return await client
         .mutate(_options)
-        .then((result) => result.data["cancelOrder"]);
+        .then((result) => result.data?["cancelOrder"]);
   }
 
   Future<Map<String, dynamic>> doneOrder(
       GraphQLClient client, Order order) async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+    final MutationOptions _options = MutationOptions(document: gql(r"""
         mutation ValidateOrder($order: OrderInputBuyer!){
               validateOrder(order: $order){
                 _id
@@ -99,12 +99,12 @@ class _OrderPageChildState extends State<OrderPageChild> {
 
     return await client
         .mutate(_options)
-        .then((result) => result.data["validateOrder"]);
+        .then((result) => result.data?["validateOrder"]);
   }
 
   Future<Room> createRoom(
       GraphQLClient client, String user1, String user2) async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+    final MutationOptions _options = MutationOptions(document: gql(r"""
             mutation CreateChatRoom($user1: String!, $user2: String!, $uid: String!){
                   createChatRoom(user1:$user1 , user2: $user2, uid: $uid){
                               _id
@@ -137,7 +137,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
 
     return client
         .mutate(_options)
-        .then((result) => Room.fromJson(result.data["createChatRoom"], user2));
+        .then((result) => Room.fromJson(result.data?["createChatRoom"], user2));
   }
 
   String subscribeToOrderUpdate = r"""
@@ -159,7 +159,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
 
     return Scaffold(
       appBar: TopBarWitBackNav(
-          title: "ref:" + " " +this.widget.order.shortId,
+          title: "ref:" + " " + (this.widget.order.shortId ?? ''),
           rightIcon: CupertinoIcons.exclamationmark_circle_fill,
           isRightIcon: true,
           height: 54,
@@ -168,8 +168,8 @@ class _OrderPageChildState extends State<OrderPageChild> {
               expand: false,
               context: context,
               builder: (context) => ReportPage(
-                  publicatonId: this.widget.order.publication.id,
-                  seller: this.widget.order.seller.id),
+                  publicatonId: this.widget.order.publication?.id ?? '',
+                  seller: this.widget.order.seller?.id ?? ''),
             );
           }),
       body: Container(
@@ -186,7 +186,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting)
                   return Text("nope");
-                return StatusChip(state: snapshot.data.orderState);
+                return StatusChip(state: snapshot.data!.orderState ?? OrderState.NOT_ACCEPTED);
               }),
                     ],
                   ),
@@ -198,22 +198,22 @@ class _OrderPageChildState extends State<OrderPageChild> {
               ListTile(
                 autofocus: false,
                 leading: Icon(CupertinoIcons.location),
-                title: Text(this.widget.order.adress.title, style: GoogleFonts.montserrat()),
+                title: Text(this.widget.order.adress?.title ?? '', style: GoogleFonts.montserrat()),
                 
               ),
 
               ListTile(
                 autofocus: false,
                 leading: Text("x" + this.widget.order.quantity.toString(), style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),
-                title: Text(this.widget.order.publication.title, style: GoogleFonts.montserrat()),
-                trailing: Text(this.widget.order.totalPrice + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
+                title: Text(this.widget.order.publication?.title ?? '', style: GoogleFonts.montserrat()),
+                trailing: Text((this.widget.order.totalPrice ?? '') + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency ?? '') , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
               ListTile(
                 autofocus: false,
                 leading: Icon(CupertinoIcons.exclamationmark_circle),
                 title: Text("Frais de service", style: GoogleFonts.montserrat()),
-                trailing: Text(this.widget.order.fees + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
+                trailing: Text((this.widget.order.fees ?? '') + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency ?? '') , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
               Padding(
@@ -233,13 +233,13 @@ class _OrderPageChildState extends State<OrderPageChild> {
             ListTile(
               autofocus: false,
         leading: Icon(CupertinoIcons.calendar),
-        title: Text(Jiffy(this.widget.order.deliveryDay).format("do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat(),),
+        title: Text(Jiffy.parse(this.widget.order.deliveryDay ?? '').format(pattern: "do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat(),),
             ),
 
               ListTile(
                 autofocus: false,
                 leading: Text("Total Payé: ", style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold)),
-                trailing: Text(this.widget.order.totalWithFees + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency), style: GoogleFonts.montserrat(fontSize: 24, color: Colors.green)),
+                trailing: Text((this.widget.order.totalWithFees ?? '') + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency ?? ''), style: GoogleFonts.montserrat(fontSize: 24, color: Colors.green)),
               ),
 
               Divider(),
@@ -250,8 +250,8 @@ class _OrderPageChildState extends State<OrderPageChild> {
             this
                 .createRoom(
                     databaseService.client,
-                    this.widget.order.sellerId,
-                    databaseService.user.value.id)
+                    this.widget.order.sellerId ?? '',
+                    databaseService.user.value?.id ?? '')
                 .then((result) async {
               await databaseService.loadrooms();
               Navigator.push(
@@ -259,20 +259,20 @@ class _OrderPageChildState extends State<OrderPageChild> {
                   CupertinoPageRoute(
                       builder: (context) => ChatPage(
                           room: result,
-                          uid: databaseService.user.value.id)));
+                          uid: databaseService.user.value?.id ?? '')));
             });
           },
           leading: CircleAvatar(
             backgroundColor: Colors.white,
             foregroundColor: Colors.white,
             radius: 15,
-            backgroundImage: CachedNetworkImageProvider(
-                this.widget.order.seller.photoUrl),
+            backgroundImage: this.widget.order.seller?.photoUrl != null ? CachedNetworkImageProvider(
+                this.widget.order.seller!.photoUrl!) : null,
           ),
           trailing: Icon(CupertinoIcons.chat_bubble),
-          title: Text(this.widget.order.seller.firstName +
+          title: Text((this.widget.order.seller?.firstName ?? '') +
               " " +
-              this.widget.order.seller.lastName)),
+              (this.widget.order.seller?.lastName ?? ''))),
 
 
             SizedBox(height: 100),
@@ -290,7 +290,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
                 if (snapshot.hasError) return Text("i've a bad felling");
                 if (snapshot.data == null)
                   return Text("its empty out there");
-                switch (snapshot.data.orderState) {
+                switch (snapshot.data!.orderState) {
                   case OrderState.ACCEPTED:
                     return Container(
                         child: Column(children: [
@@ -334,7 +334,6 @@ class _OrderPageChildState extends State<OrderPageChild> {
                             });
                           }),
                     ]));
-                    break;
                   case OrderState.CANCELLED:
                     return Center(
                       child: Text("La commande a été annulé",
@@ -342,7 +341,6 @@ class _OrderPageChildState extends State<OrderPageChild> {
                               fontSize: 17
                             )),
                     );
-                    break;
                   case OrderState.DONE:
                     return TextButton(
                         onPressed: () {
@@ -357,8 +355,6 @@ class _OrderPageChildState extends State<OrderPageChild> {
                             text: "Noter le plat",
                             color: Colors.black,
                             textcolor: Colors.white));
-
-                    break;
                   case OrderState.NOT_ACCEPTED:
                     return Column(
                       children: [
@@ -392,7 +388,6 @@ class _OrderPageChildState extends State<OrderPageChild> {
                             }),
                       ],
                     );
-                    break;
                   case OrderState.RATED:
                     return Center(
                       child: Text("La commande est livrée",
@@ -400,7 +395,6 @@ class _OrderPageChildState extends State<OrderPageChild> {
                               fontSize: 17
                             )),
                     );
-                    break;
                   case OrderState.REFUSED:
                     return Center(
                       child: Text("La commande a été annulé",
@@ -408,7 +402,8 @@ class _OrderPageChildState extends State<OrderPageChild> {
                               fontSize: 17
                             )),
                     );
-                    break;
+                  default:
+                    return SizedBox();
                 }
               },
             );

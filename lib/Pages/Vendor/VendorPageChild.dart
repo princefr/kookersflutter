@@ -305,13 +305,10 @@ final MutationOptions _options  = MutationOptions(
                     switch (snapshot.data.orderState) {
                       case "ACCEPTED":
                           return Center(child: Text("Le plat a été accepté", style: GoogleFonts.montserrat(fontSize: 17),));
-                        break;
                       case "CANCELLED":
                           return Center(child: Text("le plat a été annulé par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));
-                        break;
                       case "DONE":
                         return Center(child: Text("plat recu par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));
-                        break;
 
                       case "NOT_ACCEPTED":
                         return Container(child: Column(children: [
@@ -354,16 +351,11 @@ final MutationOptions _options  = MutationOptions(
                           }),
 
                         ]));
-                        
-                        break;
                       case "RATED":
                         return Center(child: Text("le plat est livré et noté", style: GoogleFonts.montserrat(fontSize: 17)));
-                        break;
 
                       case "REFUSED":
                         return Center(child: Text("Vous avez refusé la commande.", style: GoogleFonts.montserrat(fontSize: 17)));
-                        
-                        break;
 
                         
                         

@@ -5,7 +5,7 @@ import 'dart:async';
 mixin PhoneNumberValidation {
 
   static bool isValidPhoneNumber(String string) {
-      if (string.isEmpty || string == null) {
+      if (string.isEmpty) {
             return false;
       }
 

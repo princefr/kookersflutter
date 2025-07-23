@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 
 class AuthentificationService {
   final FirebaseAuth firebaseAuth;
-  AuthentificationService({this.firebaseAuth});
+  AuthentificationService({required this.firebaseAuth});
 
-  Stream<User> get authStateChanges => firebaseAuth.authStateChanges();
+  Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
 
-  Future<User> userConnected() async {
+  Future<User?> userConnected() async {
     return firebaseAuth.currentUser;
   }
 
@@ -21,10 +21,11 @@ class AuthentificationService {
 
   }
 
-  Future<Null> verifyPhone({String phone,
-   ValueSetter<PhoneAuthCredential> verificationComplted,
-   ValueSetter<FirebaseAuthException> error,
-   ValueSetter<String> codeisSent, ValueSetter<String> codeTimeOut}) async {
+  Future<void> verifyPhone({required String phone,
+   required ValueSetter<PhoneAuthCredential> verificationComplted,
+   required ValueSetter<FirebaseAuthException> error,
+   required ValueSetter<String> codeisSent, 
+   required ValueSetter<String> codeTimeOut}) async {
 
     await firebaseAuth.verifyPhoneNumber(phoneNumber: phone,
     timeout: const Duration(seconds: 60),
@@ -34,7 +35,7 @@ class AuthentificationService {
      verificationFailed: (FirebaseAuthException e) {
         error(e);
      },
-     codeSent: (String verificationId, int resendToken) {
+     codeSent: (String verificationId, int? resendToken) {
       codeisSent(verificationId);
 
      },

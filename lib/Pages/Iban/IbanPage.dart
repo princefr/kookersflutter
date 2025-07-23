@@ -13,7 +13,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class AddIbanPage extends StatefulWidget {
   final User user;
-  AddIbanPage({Key key, @required this.user}) : super(key: key);
+  AddIbanPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _AddIbanPageState createState() => _AddIbanPageState();
@@ -111,11 +111,11 @@ class _AddIbanPageState extends State<AddIbanPage> {
                       successText: "Iban ajouté",
                       controller: _streamButtonController,
                       onClick: snapshot.data == null
-                          ? null
+                          ? () {}
                           : () async {
                               _streamButtonController.isLoading();
                               databaseService
-                                  .createBankAccount(snapshot.data)
+                                  .createBankAccount(snapshot.data ?? '')
                                   .then((bankaccount) async {
                                   await databaseService.loadUserData(this.widget.user.uid);
                                   _streamButtonController.isSuccess();
@@ -135,7 +135,7 @@ class _AddIbanPageState extends State<AddIbanPage> {
 
 class IbanPage extends StatefulWidget {
   final User user;
-  const IbanPage({Key key, @required this.user}) : super(key: key);
+  const IbanPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _IbanPageState createState() => _IbanPageState();
@@ -163,7 +163,7 @@ class _IbanPageState extends State<IbanPage> {
               context: context,
               builder: (context) => AddIbanPage(user: this.widget.user,),
             );
-          }),
+          } as GestureTapCallback?),
       body: SafeArea(
         child: StreamBuilder<UserDef>(
             stream: databaseService.user$,
@@ -173,7 +173,7 @@ class _IbanPageState extends State<IbanPage> {
                     backgroundColor: Colors.black,
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
               if (snapshot.hasError) return Text("i've a bad felling");
-              if (snapshot.data.ibans.isEmpty)
+              if (snapshot.data?.ibans?.isEmpty ?? true)
                 return SmartRefresher(
                     onRefresh: () async {
                       await databaseService.loadUserData(this.widget.user.uid);
@@ -192,23 +192,23 @@ class _IbanPageState extends State<IbanPage> {
                 enablePullDown: true,
                 enablePullUp: false,
                 child: ListView.builder(
-                    itemCount: snapshot.data.ibans.length,
+                    itemCount: snapshot.data?.ibans?.length ?? 0,
                     itemBuilder: (ctx, index) {
                       return ListTile(
                         autofocus: false,
                         onTap: () {
-                          databaseService
-                              .updateIbanDeposit(snapshot.data.ibans[index].id);
+                                                        databaseService
+                                  .updateIbanDeposit(snapshot.data!.ibans![index].id ?? '');
                           setState(() {
                             databaseService.user.value.defaultIban =
-                                snapshot.data.ibans[index].id;
+                                snapshot.data!.ibans![index].id;
                           });
                         },
                         title: Text(
-                            "*************" + " " + snapshot.data.ibans[index].last4),
+                            "*************" + " " + (snapshot.data!.ibans![index].last4 ?? '')),
                         trailing: Visibility(
                             visible: databaseService.user.value.defaultIban ==
-                                    snapshot.data.ibans[index].id
+                                    snapshot.data!.ibans![index].id
                                 ? true
                                 : false,
                             child: Icon(CupertinoIcons.checkmark_circle,

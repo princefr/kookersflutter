@@ -18,23 +18,23 @@ enum OrderState {
     CANCELLED}
 
 class Publication {
-  String id;
+  String? id;
   String title;
-  String description;
-  List<Object> imagesUrls;
-  List<String> preferences;
+  String? description;
+  List<Object>? imagesUrls;
+  List<String>? preferences;
   
-  Publication({@required this.title, this.description, this.imagesUrls, this.id, this.preferences});
+  Publication({required this.title, this.description, this.imagesUrls, this.id, this.preferences});
 
 }
 
 
 class Seller {
-  String id;
-  String firstName;
-  String lastName;
-  String photoUrl;
-  String fcmToken;
+  String? id;
+  String? firstName;
+  String? lastName;
+  String? photoUrl;
+  String? fcmToken;
   Seller({this.firstName, this.lastName, this.photoUrl, this.fcmToken, this.id});
 
   static Seller fromJson(Map<String, dynamic> map) => Seller(
@@ -51,24 +51,24 @@ class Seller {
 
 
 class Order {
-        String id;
-        String productId;
-        String stripeTransactionId;
-        String deliveryDay;
-        String totalPrice;
-        String quantity;
-        String sellerId;
-        String currency;
-        OrderState orderState;
-        Publication publication;
-        int notificationBuyer;
-        String totalWithFees;
-        String fees;
-        Seller seller;
-        Adress adress;
-        String createdAt;
-        String updatedAt;
-        String shortId;
+        String? id;
+        String? productId;
+        String? stripeTransactionId;
+        String? deliveryDay;
+        String? totalPrice;
+        String? quantity;
+        String? sellerId;
+        String? currency;
+        OrderState? orderState;
+        Publication? publication;
+        int? notificationBuyer;
+        String? totalWithFees;
+        String? fees;
+        Seller? seller;
+        Adress? adress;
+        String? createdAt;
+        String? updatedAt;
+        String? shortId;
         Order({this.productId, this.stripeTransactionId, this.orderState, this.publication, this.deliveryDay,
          this.seller, this.currency, this.id, this.quantity, this.sellerId, this.totalPrice, this.notificationBuyer, this.totalWithFees, this.fees, this.adress, this.createdAt, this.updatedAt, this.shortId});
 
@@ -76,7 +76,7 @@ class Order {
           productId: map["productId"],
           stripeTransactionId: map["stripeTransactionId"],
           deliveryDay: map["deliveryDay"],
-          orderState: EnumToString.fromString(OrderState.values, map["orderState"]),
+          orderState: EnumToString.fromString(OrderState.values, map["orderState"]) ?? OrderState.NOT_ACCEPTED,
           publication: Publication(title: map["publication"]["title"], description: map["publication"]["description"], imagesUrls: map["publication"]["photoUrls"], id: map["publication"]["_id"], preferences: List<String>.from(map["publication"]["food_preferences"])),
           seller: Seller.fromJson(map["seller"]),
           id: map["_id"],
@@ -99,8 +99,8 @@ class Order {
           data["id"] = this.id;
           data["productId"] = this.productId;
           data["stripeTransactionId"] = this.stripeTransactionId;
-          data["quantity"] = int.parse(this.quantity);
-          data["sellerId"] = this.seller.id;
+          data["quantity"] = int.parse(this.quantity ?? '0');
+          data["sellerId"] = this.seller?.id ?? '';
 
           return data;
         }
@@ -108,7 +108,7 @@ class Order {
          static List<Order> fromJsonToList(List<Object> map) {
             List<Order> allpublications = [];
             map.forEach((element) {
-              final x = Order.fromJson(element);
+              final x = Order.fromJson(element as Map<String, dynamic>);
               allpublications.add(x);
             });
             return allpublications;
@@ -118,7 +118,7 @@ class Order {
 
 
 class OrderItemShimmer extends StatelessWidget {
-  const OrderItemShimmer({Key key}) : super(key: key);
+  const OrderItemShimmer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -172,8 +172,8 @@ class OrderItemShimmer extends StatelessWidget {
 
 class OrderItem extends StatelessWidget {
   final Order order;
-  final Function(Order) onOrderTap;
-  OrderItem({Key key, @required this.order, this.onOrderTap}) : super(key: key);
+  final Function(Order)? onOrderTap;
+  OrderItem({Key? key, required this.order, this.onOrderTap}) : super(key: key);
 
   
 
@@ -181,27 +181,27 @@ class OrderItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: this.order.notificationBuyer > 0 ? Colors.red[100]: Colors.white,
+      color: (this.order.notificationBuyer ?? 0) > 0 ? Colors.red[100]: Colors.white,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
         child: InkWell(
             onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => OrderPageChild(order: this.order))),
             child: ListTile(
               autofocus: false,
-            leading: Image(height: 350, width: 100, fit: BoxFit.cover, image: CachedNetworkImageProvider(order.publication.imagesUrls[0])),
+            leading: Image(height: 350, width: 100, fit: BoxFit.cover, image: CachedNetworkImageProvider((order.publication?.imagesUrls?.isNotEmpty == true ? order.publication!.imagesUrls![0] : '') as String)),
             title: Align(
               alignment: Alignment.centerLeft,
                 child: Column(
                 mainAxisAlignment:  MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(this.order.publication.title),
-                  Text(this.order.productId, style: GoogleFonts.montserrat(fontSize: 13)),
-                  StatusChip(state: this.order.orderState)
+                  Text(this.order.publication?.title ?? ''),
+                  Text(this.order.productId ?? '', style: GoogleFonts.montserrat(fontSize: 13)),
+                  StatusChip(state: this.order.orderState ?? OrderState.NOT_ACCEPTED)
                 ]
               ),
             ),
-            trailing: Text(this.order.totalWithFees + " " + CurrencyService.getCurrencySymbol(this.order.currency), style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, color: Colors.grey),),
+            trailing: Text((this.order.totalWithFees ?? '') + " " + CurrencyService.getCurrencySymbol(this.order.currency ?? ''), style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, color: Colors.grey),),
           ),
         ),
       )

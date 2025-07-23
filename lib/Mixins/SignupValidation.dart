@@ -11,28 +11,24 @@ mixin SignupValidation {
 
 
   final validateFirstName = StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
-  if(value != null) {
       if(value.isNotEmpty){
       sink.add(value);
     } else{
       sink.addError("Veuillez renseigner votre prénom");
     }
-  }
   });
 
     final validateLastName = StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
-      if(value != null) {
           if(value.isNotEmpty){
           sink.add(value);
         } else{
           sink.addError("Veuillez renseigner votre nom");
         }
-      }
     });
 
 
     final validateEmail = StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
-      if(value != null && isEmailValid(value))  {
+      if(isEmailValid(value))  {
           sink.add(value);
       }else{
         sink.addError("Veuillez renseigner votre email");
@@ -41,32 +37,24 @@ mixin SignupValidation {
 
 
     final validatePoliciesAccepted = StreamTransformer<bool, bool>.fromHandlers(handleData: (value, sink) {
-      if(value != null) {
           if(value){
           sink.add(value);
         } else{
           sink.addError("Veuillez accepter nos politiques pour continuer");
         }
-      }
     });
 
 
     final validateAdress = StreamTransformer<Adress, Adress>.fromHandlers(handleData: (value, sink) {
-      if(value != null) {
-          if(value.title.isNotEmpty){
+          if(value.title?.isNotEmpty == true){
           sink.add(value);
         } else{
           sink.addError("Veuillez renseigner votre adresse");
         }
-      }
     });
 
     final validatebirthDate = StreamTransformer<DateTime, DateTime>.fromHandlers(handleData: (value, sink) {
-      if(value != null) {
         sink.add(value);
-      }else{
-        sink.addError("Veuillez renseigner votre date de naissance");
-      }
     });
 
 

@@ -17,7 +17,7 @@ class OnBoardingPager extends StatefulWidget {
 
 
 class _OnboardingPagerState extends State<OnBoardingPager> {
-  PageController _pageController;
+  PageController _pageController = PageController(initialPage: 0);
   int currentPageValue = 0;
   int previousPageValue = 0;
   double _moveBar = 0.0;

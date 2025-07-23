@@ -6,6 +6,11 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:kookers/Env/Environment.dart';
 import 'package:kookers/GraphQlHelpers/ClientProvider.dart';
+import 'package:kookers/Models/Address.dart';
+import 'package:kookers/Models/Balance.dart';
+import 'package:kookers/Models/Location.dart';
+import 'package:kookers/Models/PaymentModels.dart';
+import 'package:kookers/Models/User.dart';
 import 'package:kookers/Pages/Balance/BalancePage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
@@ -17,24 +22,20 @@ import 'package:http/http.dart';
 import 'package:http_parser/http_parser.dart';
 
 
-class Location {
-  double latitude;
-  double longitude;
-  Location({this.latitude, this.longitude});
-}
+// Location moved to Models/Location.dart
 
 
 class RatingPublication{
-    double ratingTotal;
-    int ratingCount;
+    double? ratingTotal;
+    int? ratingCount;
     RatingPublication({this.ratingCount, this.ratingTotal});
 }
 
 class Adress {
-  String title;
-  Location location;
-  bool isChosed;
-  static List<Adress> allAdress;
+  String? title;
+  Location? location;
+  bool? isChosed;
+  static List<Adress>? allAdress;
   Adress({this.title,  this.location, this.isChosed});
 
 
@@ -63,17 +64,17 @@ class Adress {
     final adress = Map<String, dynamic>();
     adress["title"] = this.title;
     adress["is_chosed"] = this.isChosed;
-    adress["location"] = {"latitude": this.location.latitude, "longitude": this.location.longitude};
+    adress["location"] = {"latitude": this.location?.latitude, "longitude": this.location?.longitude};
     return adress;
 
   }
 
   void toogle(){
-    this.isChosed = !this.isChosed;
+    this.isChosed = !(this.isChosed ?? false);
   }
 
   static List<Map<String, Object>> toJson(List<Adress> allAdress) {
-    return allAdress.map((e) => {"title": e.title, "is_chosed": e.isChosed, "location": {"longitude": e.location.longitude, "latitude": e.location.latitude}}).toList();
+    return allAdress.map((e) => {"title": e.title, "is_chosed": e.isChosed, "location": {"longitude": e.location?.longitude, "latitude": e.location?.latitude}}).toList();
   }
 }
 
@@ -81,11 +82,11 @@ class Adress {
 
 
 class UserSettings {
-  int distanceFromSeller;
-  List<String> foodPreference;
-  List<String> foodPriceRange;
-  String createdAt;
-  String updatedAt;
+  int? distanceFromSeller;
+  List<String>? foodPreference;
+  List<String>? foodPriceRange;
+  String? createdAt;
+  String? updatedAt;
   UserSettings({this.distanceFromSeller, this.foodPreference, this.foodPriceRange, this.createdAt, this.updatedAt});
   
   static UserSettings fromJson(Map<String, dynamic> map) => UserSettings(
@@ -108,14 +109,14 @@ class UserSettings {
 }
 
 class StripeRequirements {
-       List<String> currentlyDue;
-       List<String> eventuallyDue;
-       List<String> pastDue;
-       List<String> pendingVerification;
-       String disabledReason;
-       int currentDeadline;
-       ButtonVerificationState idStatus;
-       ButtonVerificationState residenceProof;
+       List<String>? currentlyDue;
+       List<String>? eventuallyDue;
+       List<String>? pastDue;
+       List<String>? pendingVerification;
+       String? disabledReason;
+       int? currentDeadline;
+       ButtonVerificationState? idStatus;
+       ButtonVerificationState? residenceProof;
        StripeRequirements({this.currentlyDue, this.eventuallyDue, this.pastDue, this.pendingVerification,this.disabledReason, this.currentDeadline, this.idStatus, this.residenceProof});
 
        static StripeRequirements fromJson(Map<String, dynamic> map) => StripeRequirements(
@@ -160,9 +161,9 @@ class StripeRequirements {
 
 
 class StripeAccount{
-  bool chargesEnabled;
-  bool payoutsEnabled;
-  StripeRequirements stripeRequirements;
+  bool? chargesEnabled;
+  bool? payoutsEnabled;
+  StripeRequirements? stripeRequirements;
   StripeAccount({this.chargesEnabled, this.payoutsEnabled, this.stripeRequirements});
 }
 
@@ -170,31 +171,31 @@ class StripeAccount{
 
 
 class UserDef {
- String id;
- String email;
- String firstName;
- String lastName;
- String phonenumber;
- String fcmToken;
- UserSettings settings;
- List<Adress> adresses;
- String photoUrl;
- String customerId;
- String currentAdress;
- String createdAt;
- String updatedAt;
- String defaultSource;
- String country;
- String currency;
- String defaultIban;
- String stripeaccountId;
- StripeAccount stripeAccount;
- List<Transaction> transactions;
- Balance balance;
- List<BankAccount> ibans;
- List<CardModel> allCards;
- bool isSeller;
- bool notificationPermission;
+ String? id;
+ String? email;
+ String? firstName;
+ String? lastName;
+ String? phonenumber;
+ String? fcmToken;
+ UserSettings? settings;
+ List<Adress>? adresses;
+ String? photoUrl;
+ String? customerId;
+ String? currentAdress;
+ String? createdAt;
+ String? updatedAt;
+ String? defaultSource;
+ String? country;
+ String? currency;
+ String? defaultIban;
+ String? stripeaccountId;
+ StripeAccount? stripeAccount;
+ List<Transaction>? transactions;
+ Balance? balance;
+ List<BankAccount>? ibans;
+ List<CardModel>? allCards;
+ bool? isSeller;
+ bool? notificationPermission;
 
 
  UserDef({this.id, this.email, this.firstName, this.lastName, this.phonenumber, this.fcmToken, this.settings, this.adresses,
@@ -233,12 +234,12 @@ class UserDef {
 
 
 class SellerDef {
-  String id;
-  String email;
-  String firstName;
-  String lastName;
-  String fcmToken;
-  String photoUrl;
+  String? id;
+  String? email;
+  String? firstName;
+  String? lastName;
+  String? fcmToken;
+  String? photoUrl;
   SellerDef({this.id, this.firstName, this.email, this.lastName, this.fcmToken, this.photoUrl});
   static SellerDef fromJson(Map<String, dynamic> map) => SellerDef(
     id: map["_id"],
@@ -252,11 +253,11 @@ class SellerDef {
 
 
 class BuyerVendor{
-  String id;
-  String firstName;
-  String lastName;
-  String photoUrl;
-  String fcmToken;
+  String? id;
+  String? firstName;
+  String? lastName;
+  String? photoUrl;
+  String? fcmToken;
   
   BuyerVendor({this.id, this.firstName, this.lastName, this.photoUrl, this.fcmToken});
   static BuyerVendor fromJson(Map<String, dynamic> data) => BuyerVendor(
@@ -272,7 +273,7 @@ class BuyerVendor{
 
 
 class OrderVendor {
-  String id;
+  String? id;
   String productId;
   String quantity;
   String totalPrice;
@@ -283,19 +284,19 @@ class OrderVendor {
   String sellerStAccountid;
   String paymentMethodAssociated;
   String currency;
-  int  notificationSeller;
-  PublicationVendor publication;
-  String stripeTransactionId;
-  BuyerVendor buyer;
-  Adress adress;
-  String createdAt;
-  String updatedAt;
-  String shortId;
-  String fees;
-  String totalWithFees;
+  int?  notificationSeller;
+  PublicationVendor? publication;
+  String? stripeTransactionId;
+  BuyerVendor? buyer;
+  Adress? adress;
+  String? createdAt;
+  String? updatedAt;
+  String? shortId;
+  String? fees;
+  String? totalWithFees;
 
-  OrderVendor({@required this.productId, @required this.quantity, @required this.totalPrice,
-   @required this.buyerID, @required this.orderState, @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency,
+  OrderVendor({required this.productId, required this.quantity, required this.totalPrice,
+   required this.buyerID, required this.orderState, required this.sellerId, required this.deliveryDay, required this.sellerStAccountid, required this.paymentMethodAssociated, required this.currency,
     this.publication, this.buyer, this.id, this.stripeTransactionId,  this.notificationSeller, this.adress, this.createdAt, this.updatedAt, this.shortId, this.fees, this.totalWithFees});
 
   static OrderVendor fromJson(Map<String, dynamic> data) => OrderVendor(
@@ -354,19 +355,19 @@ class OrderVendor {
 
 
 class PublicationVendor {
-  String id;
-  String title;
-  String description;
-  String type;
-  String pricePerAll;
-  List<Object> photoUrls;
-  Adress adress;
-  bool isOpen;
-  List<String> preferences;
-  String createdAt;
-  RatingPublication rating;
-  String currency;
-  String shortId;
+  String? id;
+  String? title;
+  String? description;
+  String? type;
+  String? pricePerAll;
+  List<Object>? photoUrls;
+  Adress? adress;
+  bool? isOpen;
+  List<String>? preferences;
+  String? createdAt;
+  RatingPublication? rating;
+  String? currency;
+  String? shortId;
 
   PublicationVendor({this.id, this.title, this.description, this.type, this.pricePerAll, this.photoUrls, this.adress, this.isOpen, this.preferences, this.createdAt, this.rating, this.currency, this.shortId});
   
@@ -399,27 +400,29 @@ class PublicationVendor {
 
 
 class PublicationHome {
-  String id;
-  String title;
-  String description;
-  String type;
-  String pricePerAll;
-  List<Object> photoUrls;
-  Adress adress;
-  SellerDef seller;
-  List<String> preferences;
-  RatingPublication rating;
-  String currency;
-  int likeCount;
-  bool liked;
+  String? id;
+  String? title;
+  String? description;
+  String? type;
+  String? pricePerAll;
+  List<String>? photoUrls;
+  Adress? adress;
+  SellerDef? seller;
+  List<String>? preferences;
+  RatingPublication? rating;
+  String? currency;
+  int? likeCount;
+  bool? liked;
 
   
 
   PublicationHome({this.id, this.title, this.description, this.type, this.pricePerAll,  this.photoUrls, this.adress, this.seller, this.preferences, this.rating, this.currency, this.likeCount, this.liked});
 
   double getRating(){
-    if((this.rating.ratingTotal / this.rating.ratingCount).isNaN) return 0;
-    return (this.rating.ratingTotal / this.rating.ratingCount);
+    if(this.rating?.ratingTotal == null || this.rating?.ratingCount == null || this.rating!.ratingCount == 0) return 0;
+    final result = this.rating!.ratingTotal! / this.rating!.ratingCount!;
+    if(result.isNaN) return 0;
+    return result;
   }
   
 
@@ -429,7 +432,7 @@ class PublicationHome {
     description : map["description"],
     type: map["type"],
     pricePerAll: map["price_all"].toString(),
-    photoUrls: map["photoUrls"] as List<Object>,
+    photoUrls: List<String>.from(map["photoUrls"]),
     adress: Adress(isChosed: false, location: Location(latitude: map["adress"]["location"]["latitude"], longitude: map["adress"]["location"]["longitude"]), title: ""),
     seller: SellerDef.fromJson(map["seller"]),
     preferences: List<String>.from(map["food_preferences"]),
@@ -458,20 +461,20 @@ class OrderInput {
   int quantity;
   String totalPrice;
   String buyerID;
-  String fees;
-  String totalWithFees;
+  String? fees;
+  String? totalWithFees;
   String deliveryDay;
   String orderState;
   String sellerId;
   String sellerStAccountid;
   String paymentMethodAssociated;
   String currency;
-  String title;
+  String? title;
   Adress adress;
 
 
-  OrderInput({@required this.productId, @required this.quantity, @required this.totalPrice, @required this.buyerID, @required this.orderState,
-   @required this.sellerId, @required this.deliveryDay, @required this.sellerStAccountid, @required this.paymentMethodAssociated, @required this.currency, this.fees, this.totalWithFees, this.title, @required this.adress});
+  OrderInput({required this.productId, required this.quantity, required this.totalPrice, required this.buyerID, required this.orderState,
+   required this.sellerId, required this.deliveryDay, required this.sellerStAccountid, required this.paymentMethodAssociated, required this.currency, this.fees, this.totalWithFees, this.title, required this.adress});
 
 
    Map<String, dynamic> toJson(UserDef user) {
@@ -497,19 +500,19 @@ class OrderInput {
 
 
 class  Transaction {
-    String id;
-    String object;
-    int amount;
-    int availableOn;
-    int created;
-    String currency;
-    String description;
-    int fee;
-    int net;
-    String reportingCategory;
-    String type;
-    String status;
-    String currencySymbol;
+    String? id;
+    String? object;
+    int? amount;
+    int? availableOn;
+    int? created;
+    String? currency;
+    String? description;
+    int? fee;
+    int? net;
+    String? reportingCategory;
+    String? type;
+    String? status;
+    String? currencySymbol;
 
 
 
@@ -547,14 +550,14 @@ class  Transaction {
 
 
 class BankAccount {
-    String id;
-    String object;
-    String accountHolderName;
-    String accountHolderType;
-    String bankName;
-    String country;
-    String currency;
-    String last4;
+    String? id;
+    String? object;
+    String? accountHolderName;
+    String? accountHolderType;
+    String? bankName;
+    String? country;
+    String? currency;
+    String? last4;
 
     BankAccount({this.accountHolderName, this.accountHolderType, this.bankName, this.country, this.currency, this.id, this.last4, this.object});
     static BankAccount fromJson(Map<String, dynamic> map) => BankAccount(
@@ -580,13 +583,13 @@ class BankAccount {
 
 
 class Payout {
-    String id;
-    String object;
-    int arrivalDate;
-    double amount;
-    String type;
-    String status;
-    String description;
+    String? id;
+    String? object;
+    int? arrivalDate;
+    double? amount;
+    String? type;
+    String? status;
+    String? description;
 
     Payout({this.id, this.object, this.arrivalDate, this.amount, this.type, this.description, this.status});
     static Payout fromJson(Map<String, dynamic> map) => Payout(
@@ -608,12 +611,8 @@ class DatabaseProviderService {
 
 
   void dispose(){
-    this.user.add(null);
     this.publications.close();
     this.sellerPublications.close();
-    this.sellerOrders.add(null);
-    this.buyerOrders.add(null);
-    this.rooms.add(null);
     this.adress.close();
   }
 
@@ -687,11 +686,12 @@ class DatabaseProviderService {
     return this.rooms.stream.map((event) => event.firstWhere((Room element) => element.id == roomId)).listen((event) => messagesInRoom.sink.add(event.messages));
   }
   //Stream<Message> getLastMessage(String roomId) => this.rooms.stream.map((event) => event.firstWhere((element) => element.id == roomId).messages.first);
-  Stream<Message> get unreadMessage => this.messagesInRoom.map((event) => event.firstWhere((message) => message.userId != this.user.value.id && message.isRead == false, orElse: () => null));
+  Stream<Message?> get unreadMessage => this.messagesInRoom.map((event) => event.firstWhere((message) => message.userId != this.user.value.id && message.isRead == false, orElse: () => null));
 
 
   void updateSingleRoom(String roomId, Message message) {
-    this.rooms.value.singleWhere((element) => element.id == roomId).messages.insert(0, message);
+    final room = this.rooms.value.singleWhere((element) => element.id == roomId);
+    room.messages.insert(0, message);
     this.rooms.sink.add(this.rooms.value);
   }
 
@@ -713,7 +713,7 @@ class DatabaseProviderService {
             }
         """),
         variables:  <String, String> {
-          "userId": this.user.value.id,
+          "userId": this.user.value?.id ?? "",
           "source": source,
         }
       );
@@ -730,7 +730,7 @@ class DatabaseProviderService {
             }
         """),
         variables:  <String, String> {
-          "userId": this.user.value.id,
+          "userId": this.user.value?.id ?? "",
           "iban": iban,
         }
       );
@@ -747,7 +747,7 @@ class DatabaseProviderService {
             }
         """),
         variables:  <String, String> {
-          "userId": this.user.value.id,
+          "userId": this.user.value?.id ?? "",
           "token": token,
         }
       );
@@ -878,7 +878,7 @@ class DatabaseProviderService {
                         }
                     }
                   '''), variables: <String, String>{
-          'uid': this.user.value.id
+          'uid': this.user.value?.id ?? ""
         });
 
         return this.client.query(_options).then((result) {
@@ -1108,7 +1108,7 @@ Future<List<Order>>  loadbuyerOrders() {
                         }
                     }
                   '''), variables: <String, String>{
-          'uid': this.user.value.id
+          'uid': this.user.value?.id ?? ""
         });
 
         return client.query(_options).then((result) {
@@ -1175,7 +1175,7 @@ Future<List<Order>>  loadbuyerOrders() {
                             }
                         }
                       '''), variables: <String, String>{
-          'uid': this.user.value.id
+          'uid': this.user.value?.id ?? ""
         });
 
         return client.query(_options).then((result) {
@@ -1219,7 +1219,7 @@ Future<List<Order>>  loadbuyerOrders() {
                       }
                   }
               '''), variables: <String, String>{
-          'uid': this.user.value.id
+          'uid': this.user.value?.id ?? ""
         });
 
         return client.query(_options).then((result) {
@@ -1479,7 +1479,7 @@ Future<List<Order>>  loadbuyerOrders() {
           """),
           variables:  <String, String> {
             "likeId": postId,
-            "userId": this.user.value.id
+            "userId": this.user.value?.id ?? ""
           }
         );
         return await client.mutate(_options).then((value) => value.data["setLike"]);
@@ -1494,7 +1494,7 @@ Future<List<Order>>  loadbuyerOrders() {
           """),
           variables:  <String, String> {
             "likeId": postId,
-            "userId": this.user.value.id
+            "userId": this.user.value?.id ?? ""
           }
         );
         return await client.mutate(_options).then((value) => value.data["setDisklike"]);
@@ -1546,7 +1546,7 @@ Future<List<Order>>  loadbuyerOrders() {
         """), variables: <String, String>{
         "greather": geohashes[0],
         "lesser": geohashes[1],
-        "userId": this.user.value == null ? null : this.user.value.id
+        "userId": this.user.value?.id
       });
 
       return client.query(_options).then((publicationsObject) {

@@ -15,7 +15,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 
 class TransationItemShimmer extends StatelessWidget {
-  const TransationItemShimmer({Key key}) : super(key: key);
+  const TransationItemShimmer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +23,11 @@ class TransationItemShimmer extends StatelessWidget {
       autofocus: false,
       leading: Container(
           decoration: BoxDecoration(
-            color: Colors.grey[200],
+            color: Colors.grey[200] ?? Colors.grey,
           ),
           child: Icon(
             CupertinoIcons.arrow_down_circle_fill,
-            color: Colors.green[200],
+            color: Colors.green[200] ?? Colors.green,
             size: 30,
           )),
       title: Column(
@@ -36,7 +36,7 @@ class TransationItemShimmer extends StatelessWidget {
           children: [
             Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.grey[200] ?? Colors.grey,
                 ),
                 child: Text("transaction.type",
                     style: GoogleFonts.montserrat(fontSize: 15))),
@@ -44,7 +44,7 @@ class TransationItemShimmer extends StatelessWidget {
                     SizedBox(height: 10),
             Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.grey[200] ?? Colors.grey,
                 ),
                 child: Text("transaction.id",
                     style: GoogleFonts.montserrat(fontSize: 12))),
@@ -55,14 +55,14 @@ class TransationItemShimmer extends StatelessWidget {
           children: [
             Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.grey[200] ?? Colors.grey,
                 ),
                 child:
                     Text("17 €", style: GoogleFonts.montserrat(fontSize: 17))),
                     SizedBox(height: 10),
             Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.grey[200] ?? Colors.grey,
                 ),
                 child: Text("11/06/2021",
                     style: GoogleFonts.montserrat(fontSize: 12)))
@@ -73,7 +73,7 @@ class TransationItemShimmer extends StatelessWidget {
 
 class TransationItem extends StatelessWidget {
   final Transaction transaction;
-  const TransationItem({Key key, this.transaction}) : super(key: key);
+  const TransationItem({Key? key, required this.transaction}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +82,7 @@ class TransationItem extends StatelessWidget {
       leading: this.transaction.type == "payment"
           ? Icon(
               CupertinoIcons.arrow_down_circle_fill,
-              color: Colors.green[200],
+              color: Colors.green[200] ?? Colors.green,
               size: 30,
             )
           : Icon(
@@ -94,19 +94,19 @@ class TransationItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(StripeServices.getSigle(transaction.type), style: GoogleFonts.montserrat(fontSize: 15)),
-            Text(transaction.id, style: GoogleFonts.montserrat(fontSize: 12)),
+            Text(StripeServices.getSigle(transaction.type ?? ''), style: GoogleFonts.montserrat(fontSize: 15)),
+            Text(transaction.id ?? '', style: GoogleFonts.montserrat(fontSize: 12)),
           ]),
       trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              (this.transaction.net / 100).toString() +
-                   " " + CurrencyService.getCurrencySymbol(this.transaction.currency),
+              ((this.transaction.net ?? 0) / 100).toString() +
+                   " " + CurrencyService.getCurrencySymbol(this.transaction.currency ?? "EUR"),
               style: GoogleFonts.montserrat(fontSize: 17),
             ),
-            Text(Jiffy.unix(this.transaction.created).yMd,
+            Text(Jiffy.parseFromMillisecondsSinceEpoch((this.transaction.created ?? 0) * 1000).yMd,
                 style: GoogleFonts.montserrat(fontSize: 12))
           ]),
     );
@@ -120,10 +120,10 @@ class Balance {
   String currency;
 
   Balance(
-      {this.currency,
-      this.currentBalance,
-      this.pendingBalance,
-      this.totalBalance});
+      {required this.currency,
+      required this.currentBalance,
+      required this.pendingBalance,
+      required this.totalBalance});
 
   static Balance fromJson(Map<String, dynamic> map) => Balance(
       currency: map["currency"],
@@ -136,7 +136,7 @@ class Balance {
 
 class BalancePage extends StatefulWidget {
   final User user;
-  BalancePage({Key key, @required this.user}) : super(key: key);
+  BalancePage({Key? key, required this.user}) : super(key: key);
 
   @override
   _BalancePageState createState() => _BalancePageState();
@@ -213,7 +213,7 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                   child: Center(
                             child: Container(
                               decoration: BoxDecoration(
-                  color: Colors.grey[200],
+                  color: Colors.grey[200] ?? Colors.grey,
                 ),
                                 padding: EdgeInsets.symmetric(horizontal: 40),
                                 child: Text(
@@ -223,8 +223,8 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                       fontWeight: FontWeight.w500),
                                 )),
                           ),
-                                  baseColor: Colors.grey[200],
-                                  highlightColor: Colors.grey[300]);
+                                  baseColor: Colors.grey[200] ?? Colors.grey,
+                                  highlightColor: Colors.grey[300] ?? Colors.grey);
                           }
 
                           
@@ -234,14 +234,14 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                     child: Container(
                                         padding: EdgeInsets.symmetric(horizontal: 40),
                                         child: Text(
-                                          snapshot.data.balance.totalBalance.toString() + " " + CurrencyService.getCurrencySymbol(snapshot.data.currency),
+                                          snapshot.data?.balance?.totalBalance?.toString() ?? "0" + " " + CurrencyService.getCurrencySymbol(snapshot.data?.currency ?? "EUR"),
                                           style: GoogleFonts.montserrat(
                                               fontSize: 40,
                                               fontWeight: FontWeight.w500),
                                         )),
                                   ),
 
-                                  Chip(label: Text("Somme en attente: " + " " + (snapshot.data.balance.pendingBalance > 0 ? (snapshot.data.balance.pendingBalance / 100) : 0).toString() + " " + CurrencyService.getCurrencySymbol(snapshot.data.currency), style: GoogleFonts.montserrat()))
+                                  Chip(label: Text("Somme en attente: " + " " + ((snapshot.data?.balance?.pendingBalance ?? 0) > 0 ? ((snapshot.data?.balance?.pendingBalance ?? 0) / 100) : 0).toString() + " " + CurrencyService.getCurrencySymbol(snapshot.data?.currency ?? "EUR"), style: GoogleFonts.montserrat()))
                             ],
                           );
                             }
@@ -273,14 +273,14 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                                       itemBuilder: (ctx, index) {
                                         return TransationItemShimmer();
                                       }),
-                                  baseColor: Colors.grey[200],
-                                  highlightColor: Colors.grey[300]);
-                            if(snapshot.data.transactions.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de transactions");
+                                  baseColor: Colors.grey[200] ?? Colors.grey,
+                                  highlightColor: Colors.grey[300] ?? Colors.grey);
+                            if(snapshot.data?.transactions?.isEmpty ?? true) return EmptyViewElse(text: "Vous n'avez pas de transactions");
                                   
                             return ListView(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
-                                children: snapshot.data.transactions
+                                children: (snapshot.data?.transactions ?? [])
                                     .map((e) => TransationItem(transaction: e))
                                     .toList());
                           }),
@@ -295,14 +295,14 @@ final StreamButtonController _streamButtonController = StreamButtonController();
                   builder: (context, snapshot) {
                     if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                     if(snapshot.hasError) return SizedBox();
-                    return StreamButton(buttonColor: snapshot.data.balance.totalBalance > 0 ? Color(0xFFF95F5F) : Colors.grey,
+                    return StreamButton(buttonColor: (snapshot.data?.balance?.totalBalance ?? 0) > 0 ? Color(0xFFF95F5F) : Colors.grey,
                                          buttonText: "Retirer sur mon compte",
                                          errorText: "Une erreur s'est produite, veuillez reessayer",
                                          loadingText: "Retrait  en cours",
                                          successText: "Retrait effectué",
-                                          controller: _streamButtonController, onClick: snapshot.data.balance.totalBalance == 0 ? null :  () async {
+                                          controller: _streamButtonController, onClick: (snapshot.data?.balance?.totalBalance ?? 0) == 0 ? () {} : () async {
                                             _streamButtonController.isLoading();
-                                            databaseService.makePayout(snapshot.data.balance).then((value) async {
+                                            databaseService.makePayout(snapshot.data!.balance!).then((value) async {
                                               await databaseService.loadUserData(this.widget.user.uid);
                                               _streamButtonController.isSuccess();
                                             }).catchError((onError){

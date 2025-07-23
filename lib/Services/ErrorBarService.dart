@@ -17,7 +17,7 @@ import 'package:kookers/Services/DatabaseProvider.dart';
 class MessageToDisplay{
   String title;
   String body;
-  MessageToDisplay({this.title, this.body});
+  MessageToDisplay({required this.title, required this.body});
 }
 
 
@@ -26,16 +26,12 @@ class NotificationPanelService {
     switch (type) {
       case "new_order":
           return MessageToDisplay(body: "Vous avez une nouvelle commande.", title: "Commande");
-      break;
       case "order_cancelled":
           return MessageToDisplay(body: "Une commande a été annulé.", title: "Annnulation");
-        break;
       case "order_done":
           return MessageToDisplay(body: "Une commande vient de se terminer.", title: "Commande Terminée");
-        break;
       case "order_rated":
           return MessageToDisplay(body: "Vous avez recu une nouvelle note pour une de vos commandes.", title: "Notation");
-        break;
       default: return MessageToDisplay(body: "Vous avez une nouvelle commande.", title: "Commande");
     }
   }
@@ -49,10 +45,8 @@ class NotificationPanelService {
       switch (type) {
         case "order_accepted":
             return MessageToDisplay(body: "Votre commande a été accepté par le chef.", title: "Acceptation commande");
-        break;
         case "order_refused":
             return MessageToDisplay(body: "Le chef a malheuresement annulé votre commande.", title: "Annulation commande");
-          break;
         default:
         return MessageToDisplay(body: "Votre commande a été accepté par le chef.", title: "Acceptation commande");
       }
@@ -60,7 +54,7 @@ class NotificationPanelService {
 
 
   void showNewMessagePanel(BuildContext context, RemoteMessage event, Room room){
-      Get.snackbar(event.data["senderName"], event.notification.body, icon: Padding(
+      Get.snackbar(event.data["senderName"], event.notification?.body ?? "", icon: Padding(
         padding: const EdgeInsets.all(6.0),
         child: CircleAvatar(
                 backgroundColor: Colors.white,

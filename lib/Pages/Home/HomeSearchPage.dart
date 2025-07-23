@@ -1,9 +1,9 @@
-import 'package:circular_check_box/circular_check_box.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_place/google_place.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:kookers/Models/Location.dart' as models;
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Services/DatabaseProvider.dart' as db;
 import 'package:kookers/Services/DatabaseProvider.dart';
@@ -12,10 +12,10 @@ import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
 class HomeSearchPage extends StatefulWidget {
-  db.Adress adress;
+  db.Adress? adress;
   bool isReturn;
   final User user;
-  HomeSearchPage({Key key, this.adress, @required this.isReturn, @required this.user})
+  HomeSearchPage({Key? key, this.adress, required this.isReturn, required this.user})
       : super(key: key);
 
   @override
@@ -27,27 +27,10 @@ class _HomeSearchPageState extends State<HomeSearchPage>
   @override
   bool get wantKeepAlive => true;
 
-  GooglePlace googlePlace;
-  List<AutocompletePrediction> predictions = [];
-  DetailsResult detailresult;
+  
   TextEditingController textController = TextEditingController();
 
-  void autoCompleteSearch(String value) async {
-    return Future.delayed(Duration(milliseconds: 700), () async {
-    var result = await googlePlace.autocomplete.get(value);
-      if (result != null && result.predictions != null && mounted) {
-        setState(() {
-          predictions = result.predictions;
-        });
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    googlePlace = GooglePlace("AIzaSyDMv0rYwxFoTb2dZA73i_Bz1xIEy4jeUNw");
-    super.initState();
-  }
+  
 
   @override
   void dispose() {
@@ -57,7 +40,7 @@ class _HomeSearchPageState extends State<HomeSearchPage>
 
   Future<void> updateUserAdresses(GraphQLClient client, String uid,
       List<db.Adress> adresses, DatabaseProviderService database) async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+    final MutationOptions _options = MutationOptions(document: gql(r"""
               mutation UpdateUserAdresses($userID: String!, $adresses: [AdressInput]!) {
                 updateUserAdresses(userID: $userID, adresses: $adresses){
               _id
@@ -150,7 +133,7 @@ class _HomeSearchPageState extends State<HomeSearchPage>
     });
 
     return client.mutate(_options).then((kooker) {
-      final kookersUser = UserDef.fromJson(kooker.data["updateUserAdresses"]);
+      final kookersUser = UserDef.fromJson(kooker.data?["updateUserAdresses"]);
       database.user.add(kookersUser);
     });
   }
@@ -176,14 +159,49 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                 child: TextField(
                   key: Key("search_text"),
                   controller: textController,
-                  onChanged: (value) {
+                  onChanged: (value) async {
                     if (value.isNotEmpty) {
-                      autoCompleteSearch(value);
-                    } else {
-                      if (predictions.length > 0 && mounted) {
-                        setState(() {
-                          predictions = [];
-                        });
+                      try {
+                        List<Location> locations = await locationFromAddress(value);
+                        if (locations.isNotEmpty) {
+                          final c = db.Adress(
+                              isChosed: true,
+                              location: models.Location(
+                                  latitude: locations.first.latitude,
+                                  longitude: locations.first.longitude),
+                              title: value);
+                          setState(() {
+                            this.widget.adress = c;
+                            if (this.widget.isReturn == false) {
+                              databaseService.user.value.adresses
+                                  .forEach((e) => e.isChosed = false);
+                              databaseService.user.value.adresses.add(c);
+                              textController.text = "";
+                              this
+                                  .updateUserAdresses(
+                                      databaseService.client,
+                                      this.widget.user.uid,
+                                      databaseService.user.value.adresses,
+                                      databaseService)
+                                  .then((value) {
+                                databaseService
+                                    .loadPublication(
+                                        databaseService.user.value.adresses
+                                            .firstWhere(
+                                                (element) => element.isChosed == true)
+                                            .location,
+                                        databaseService.user.value.settings
+                                            .distanceFromSeller)
+                                    .then((value) => Navigator.pop(context));
+                              });
+                            } else {
+                              textController.text = "";
+                              Navigator.pop(context, c);
+                            }
+                          });
+                        }
+                      } catch (e) {
+                        print(e);
                       }
                     }
                   },
@@ -205,38 +223,25 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                 ),
               ),
               Divider(),
-              Visibility(
-                  visible: (this.textController?.value?.text?.isNotEmpty),
-                  child: Expanded(
-                      child: ListView.builder(
-                        key: Key("adressListView"),
-                          dragStartBehavior: DragStartBehavior.down,
-                          itemCount: predictions.length,
-                          itemBuilder: (ctx, index) {
-
-                            return ListTile(
-                              key: Key("adress$index"),
-                              autofocus: false,
-                              onTap: () async {
-                                googlePlace.details
-                                    .get(predictions[index].placeId)
-                                    .then((value) {
-                                  final c = db.Adress(
-                                      isChosed: true,
-                                      location: db.Location(
-                                          latitude: value
-                                              .result.geometry.location.lat,
-                                          longitude: value
-                                              .result.geometry.location.lng),
-                                      title: predictions[index].description);
-                                  setState(() {
-                                    this.widget.adress = c;
-                                    if (this.widget.isReturn == false) {
+              if (this.textController.text.isEmpty) 
+                Expanded(
+                  child: StreamBuilder(
+                      stream: databaseService.user$,
+                      initialData: databaseService.user.value,
+                      builder: (context, AsyncSnapshot<UserDef> snapshot) {
+                        if (snapshot.data == null) return SizedBox();
+                        return ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: snapshot.data?.adresses?.length ?? 0,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                  autofocus: false,
+                                  onTap: () {
+                                    setState(() {
                                       databaseService.user.value.adresses
                                           .forEach((e) => e.isChosed = false);
-                                      databaseService.user.value.adresses
-                                          .add(c);
-                                      textController.text = "";
+                                      snapshot.data?.adresses?[index].isChosed =
+                                          true;
                                       this
                                           .updateUserAdresses(
                                               databaseService.client,
@@ -250,87 +255,35 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                                                 databaseService
                                                     .user.value.adresses
                                                     .firstWhere((element) =>
-                                                        element.isChosed)
+                                                        element.isChosed == true)
                                                     .location,
                                                 databaseService
-                                                    .user
-                                                    .value
-                                                    .settings
+                                                    .user.value.settings
                                                     .distanceFromSeller)
                                             .then((value) =>
                                                 Navigator.pop(context));
                                       });
-                                    } else {
-                                      textController.text = "";
-                                      Navigator.pop(context, c);
-                                    }
-                                  });
-                                });
-                              },
-                              leading: Icon(CupertinoIcons.location),
-                              title: Text(predictions[index].description),
-                            );
-                          }))),
-              Visibility(
-                  visible: (this.textController?.value?.text?.isEmpty),
-                  child: Expanded(
-                    child: StreamBuilder(
-                        stream: databaseService.user$,
-                        initialData: databaseService.user.value,
-                        builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                          if (snapshot.data == null) return SizedBox();
-                          return ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: snapshot.data.adresses.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return ListTile(
-                                    autofocus: false,
-                                    onTap: () {
-                                      setState(() {
-                                        snapshot.data.adresses
-                                            .forEach((e) => e.isChosed = false);
-                                        snapshot.data.adresses[index].isChosed =
-                                            true;
-                                        this
-                                            .updateUserAdresses(
-                                                databaseService.client,
-                                                this.widget.user.uid,
-                                                databaseService
-                                                    .user.value.adresses,
-                                                databaseService)
-                                            .then((value) {
-                                          databaseService
-                                              .loadPublication(
-                                                  databaseService
-                                                      .user.value.adresses
-                                                      .firstWhere((element) =>
-                                                          element.isChosed)
-                                                      .location,
-                                                  databaseService
-                                                      .user
-                                                      .value
-                                                      .settings
-                                                      .distanceFromSeller)
-                                              .then((value) =>
-                                                  Navigator.pop(context));
+                                    });
+                                  },
+                                  title: Text(
+                                      snapshot.data?.adresses?[index].title ?? ''),
+                                  trailing: Checkbox(
+                                      activeColor: Colors.green,
+                                      value: snapshot
+                                          .data?.adresses?[index].isChosed ?? false,
+                                      onChanged: (bool? x) {
+                                        setState(() {
+                                          snapshot.data?.adresses?[index].isChosed =
+                                              x ?? false;
                                         });
-                                      });
-                                    },
-                                    trailing: CircularCheckBox(
-                                        activeColor: Colors.green,
-                                        tristate: true,
-                                        value: snapshot
-                                            .data.adresses[index].isChosed,
-                                        onChanged: (bool x) {}),
-                                    title: Text(
-                                        snapshot.data.adresses[index].title));
-                              });
-                        }),
-                  ))
+                                      })
+                              );
+                            });
+                      })
+                ),
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }

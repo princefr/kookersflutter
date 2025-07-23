@@ -6,6 +6,7 @@ import 'package:kookers/Pages/Notifications/NotificationPage.dart';
 import 'package:kookers/Pages/Signup/SignupPage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/DatabaseProvider.dart' as db;
 import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/PermissionHandler.dart';
 import 'package:kookers/TabHome/TabHome.dart';
@@ -17,7 +18,7 @@ import 'package:get/get.dart';
 class PhoneAuthCodePage extends StatefulWidget {
   final String verificationId;
 
-  PhoneAuthCodePage({Key key, this.verificationId}) : super(key: key);
+  PhoneAuthCodePage({Key? key, required this.verificationId}) : super(key: key);
 
   @override
   _PhoneAuthCodePageState createState() => _PhoneAuthCodePageState();
@@ -78,7 +79,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                     builder: (context, snapshot) {
                       return TextField(
                         key:  Key("PhoneCodeTestField"),
-                          onChanged: bloc.code.add,
+                          onChanged: bloc.code.sink.add,
                           decoration: InputDecoration(
                             hintText: 'Renseignez votre code',
                             fillColor: Colors.grey[200],
@@ -102,7 +103,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
 
 
               StreamBuilder<String>(
-                      stream: bloc.code,
+                      stream: bloc.code.stream,
                       builder: (ctx, snapshot) {
                         return StreamButton(buttonColor: snapshot.data != null ? Colors.black : Colors.grey,
                           key: Key("phoneCodeButton"),
@@ -113,9 +114,9 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                           controller: _streamButtonController, onClick: () async {
                             if(snapshot.data != null) {
                               _streamButtonController.isLoading();
-                              databaseService.adress.add(null);
+                              databaseService.adress.add(db.Adress());
                               authentificationService.signInWithVerificationID(widget.verificationId, bloc.code.value).then((connected) {
-                                databaseService.loadUserData(connected.user.uid).then((user) async {
+                                databaseService.loadUserData(connected.user!.uid).then((user) async {
                                   if(user == null) {
                                               _streamButtonController.isSuccess();
                                                 Navigator.push(
@@ -124,14 +125,14 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                                                     builder: (context) =>
                                                         SignupPage(
                                                             user: connected
-                                                                .user)));
+                                                                .user!)));
                                     } else{
                                       databaseService.user.add(user);
                                       _streamButtonController.isSuccess();
                                       if (user.notificationPermission == true) {
-                                              Get.to(TabHome(user:  connected.user,));        
+                                              Get.to(TabHome(user:  connected.user!,));        
                                             }else{
-                                              Get.to(NotificationPage(user: connected.user));
+                                              Get.to(NotificationPage(user: connected.user!));
                                             }
 
                                     }

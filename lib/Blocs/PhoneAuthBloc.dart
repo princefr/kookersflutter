@@ -1,64 +1,57 @@
 
 
 
-
-import 'package:kookers/Mixins/PhoneNumberValidation.dart';
+import 'package:kookers/Core/BaseValidationBloc.dart';
+import 'package:kookers/Core/ValidationTransformers.dart';
 import 'package:rxdart/rxdart.dart';
 
-class PhoneAuthBloc with PhoneNumberValidation {
+class PhoneAuthBloc with ValidationBlocMixin {
+  late final ValidationFieldSimple<String> phoneCode;
+  late final ValidationField<String> phoneNumber;
+  late final ValidationField<String> userCountry;
+  late final ValidationField<String> userCurrency;
+  late final ValidationFieldSimple<String> both;
+  var telephone = "";
 
-  void dispose(){
-    this.phoneCode.close();
-    this.phoneNumber.close();
-    this.userCountry.close();
-    this.userCurrency.close();
-    this.both.close();
+  PhoneAuthBloc() {
+    phoneCode = createSimpleField("+33");
+    phoneNumber = createValidationField(ValidationTransformers.phoneIsFilled);
+    userCountry = createValidationField(ValidationTransformers.phoneIsFilled, "FR");
+    userCurrency = createValidationField(ValidationTransformers.phoneIsFilled, "eur");
+    both = createSimpleField<String>();
   }
 
-  
-  BehaviorSubject<String> phoneCode = new BehaviorSubject<String>.seeded("+33");
+  // Getters for compatibility
   Stream<String> get phoneCode$ => phoneCode.stream;
   Sink<String> get inphoneCode => phoneCode.sink;
 
-
-  
-  BehaviorSubject<String> phoneNumber = new BehaviorSubject<String>();
-  Stream<String> get phoneNumber$ => phoneNumber.stream.transform(phoneIsFilled);
+  Stream<String> get phoneNumber$ => phoneNumber.stream;
   Sink<String> get inphoneNumber => phoneNumber.sink;
 
-
-  
-  BehaviorSubject<String> userCountry = new BehaviorSubject<String>.seeded("FR");
-  Stream<String> get userCountry$ => userCountry.stream.transform(phoneIsFilled);
+  Stream<String> get userCountry$ => userCountry.stream;
   Sink<String> get inuserCountry => userCountry.sink;
 
-
-  
-  BehaviorSubject<String> userCurrency = new BehaviorSubject<String>.seeded("eur");
-  Stream<String> get useruserCurrency$ => userCurrency.stream.transform(phoneIsFilled);
+  Stream<String> get useruserCurrency$ => userCurrency.stream;
   Sink<String> get inuserCurrency => userCurrency.sink;
 
 
-  
-  BehaviorSubject<String> both = new BehaviorSubject<String>();
-  var telephone = "";
 
 
+  Stream<String> get phoneAndCode => CombineLatestStream<String, String>(
+    [phoneCode$, phoneNumber$], 
+    (values) => values[0] + values[1]
+  ).transform(ValidationTransformers.validatePhoneNumber).asBroadcastStream();
 
-
-  Stream<String> get phoneAndCode => CombineLatestStream<String , String>([phoneCode$, phoneNumber$], (values) => values[0] + values[1]).transform(validatePhoneNumber).asBroadcastStream();
-
-void listen() {
-  phoneAndCode.listen((event) {this.telephone = event; });
-}
-
-
+  void listen() {
+    phoneAndCode.listen((event) {
+      this.telephone = event;
+    });
+  }
 
   Stream<bool> get isAllFilled$ => CombineLatestStream([phoneNumber$, phoneAndCode], (values) => true);
 
-
   Future<String> validate() async {
-      return this.telephone;
+    return this.telephone;
   }
 
 

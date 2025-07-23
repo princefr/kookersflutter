@@ -19,7 +19,7 @@ enum ReportType {
 class ReportPage extends StatefulWidget {
   final String publicatonId;
   final String seller;
-  ReportPage({Key key,@required this.publicatonId,@required this.seller}) : super(key: key);
+  ReportPage({Key? key, required this.publicatonId, required this.seller}) : super(key: key);
 
   @override
   _ReportPageState createState() => _ReportPageState();
@@ -29,7 +29,7 @@ class _ReportPageState extends State<ReportPage> {
 
 
   Future<void> createReport(GraphQLClient client, ReportInput report) async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+    final MutationOptions _options = MutationOptions(document: gql(r"""
           mutation CreateReport($report: ReportInput!) {
             createReport(report: $report){
               _id
@@ -54,16 +54,12 @@ class _ReportPageState extends State<ReportPage> {
     switch (enumstring) {
       case ReportType.ARNAQUE:
         return "Arnaque";
-        break;
     case ReportType.NOTINTERRESTED:
         return "Pas interessé";
-    break;
     case ReportType.COPYFRAUD:
         return "Autres";
-    break;
     case ReportType.SPAM:
         return "Spam";
-    break;
       default:
       return "Arnaque";
     }
@@ -119,9 +115,9 @@ class _ReportPageState extends State<ReportPage> {
                             child: Text(getEnum(ReportType.SPAM), style: GoogleFonts.montserrat()),
                             value: 3,
                           ),
-                      ], onChanged: (int value) {
+                      ], onChanged: (int? value) {
                         setState(() {
-                          this._value = value;
+                          this._value = value ?? 0;
                         });
                         },
                     ),
@@ -182,7 +178,7 @@ class _ReportPageState extends State<ReportPage> {
                                      successText: "Post signalé",
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
-                                        ReportInput report  = ReportInput(description: this.comment.value, userReported: this.widget.seller,  userReporting: databaseService.user.value.id,  type: EnumToString.convertToString(ReportType.values[this._value], camelCase: true));
+                                        ReportInput report  = ReportInput(description: this.comment.value ?? '', userReported: this.widget.seller,  userReporting: databaseService.user.value.id,  type: EnumToString.convertToString(ReportType.values[this._value], camelCase: true));
                                         createReport(databaseService.client, report).then((result){
                                           _streamButtonController.isSuccess().then((value){
                                             Navigator.pop(context);

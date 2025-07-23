@@ -5,10 +5,11 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 
 
+
 class WebViewPage extends StatefulWidget {
   final String title;
   final String url;
-  WebViewPage({Key key,@required this.url, @required this.title}) : super(key: key);
+  WebViewPage({Key? key, required this.url, required this.title}) : super(key: key);
 
   @override
   _WebViewPageState createState() => _WebViewPageState();

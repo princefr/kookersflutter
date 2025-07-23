@@ -6,11 +6,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 
 class CardModel {
-   final String id;
-   final String brand;
-   final int expMonth;
-   final int expYear;
-   final String last4;
+   final String? id;
+   final String? brand;
+   final int? expMonth;
+   final int? expYear;
+   final String? last4;
 
     CardModel({this.id, this.brand, this.expMonth, this.expYear, this.last4});
 
@@ -25,7 +25,7 @@ class CardModel {
     static List<CardModel> fromJsonTolist(List<Object> map){
       List<CardModel> allsources = [];
       map.forEach((element) {
-        final source = CardModel.fromJson(element);
+        final source = CardModel.fromJson(element as Map<String, dynamic>);
         allsources.add(source);
       });
 
@@ -36,9 +36,9 @@ class CardModel {
 
 class CardItem extends StatelessWidget {
   final CardModel card;
-  final bool isDefault;
-  final Function onCheckBoxClicked;
-  const CardItem({Key key, @required this.card, this.isDefault, this.onCheckBoxClicked}) : super(key: key);
+  final bool? isDefault;
+  final Function? onCheckBoxClicked;
+  const CardItem({Key? key, required this.card, this.isDefault, this.onCheckBoxClicked}) : super(key: key);
 
   
 
@@ -48,13 +48,13 @@ class CardItem extends StatelessWidget {
       height: 54,
       child: ListTile(
         autofocus: false,
-        onTap: onCheckBoxClicked,
+        onTap: onCheckBoxClicked as GestureTapCallback?,
         leading: SvgPicture.asset(
             'assets/payments_logo/${card.brand}.svg',
             height: 30,
           ),
-        title: Text("****" + " " +card.last4),
-        trailing: Visibility(visible: this.isDefault, child: Icon(CupertinoIcons.checkmark_circle, color: Colors.green)),
+        title: Text("****" + " " + (card.last4 ?? '')),
+        trailing: Visibility(visible: this.isDefault ?? false, child: Icon(CupertinoIcons.checkmark_circle, color: Colors.green)),
        
       ),
     );

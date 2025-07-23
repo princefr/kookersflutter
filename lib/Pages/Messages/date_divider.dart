@@ -6,33 +6,33 @@ class MessageDateDivider extends StatelessWidget {
   final String datetime;
   final bool uppercase;
   const MessageDateDivider(
-      {Key key, @required this.datetime, @required this.uppercase})
+      {Key? key, required this.datetime, required this.uppercase})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final createdAt = Jiffy(this.datetime);
+    final createdAt = Jiffy.parse(this.datetime);
     final now = DateTime.now();
 
     String dayInfo;
 
-    if (Jiffy(createdAt).isSame(now, Units.DAY)) {
+    if (createdAt.isSame(Jiffy.parseFromDateTime(now), unit: Unit.day)) {
       dayInfo = "Aujourd'hui";
-    } else if (Jiffy(createdAt)
-        .isSame(now.subtract(Duration(days: 1)), Units.DAY)) {
+    } else if (createdAt
+        .isSame(Jiffy.parseFromDateTime(now.subtract(Duration(days: 1))), unit: Unit.day)) {
       dayInfo = 'Hier';
-    } else if (Jiffy(createdAt).isAfter(
-      now.subtract(Duration(days: 7)),
-      Units.DAY,
+    } else if (createdAt.isAfter(
+      Jiffy.parseFromDateTime(now.subtract(Duration(days: 7))),
+      unit: Unit.day,
     )) {
-      dayInfo = createdAt.format('EEEE');
-    } else if (Jiffy(createdAt).isAfter(
-      Jiffy(now).subtract(years: 1),
-      Units.DAY,
+      dayInfo = createdAt.format(pattern: 'EEEE');
+    } else if (createdAt.isAfter(
+      Jiffy.parseFromDateTime(now).subtract(years: 1),
+      unit: Unit.day,
     )) {
-      dayInfo = createdAt.format('MMMM d');
+      dayInfo = createdAt.format(pattern: 'MMMM d');
     }else{
-      dayInfo = createdAt.format('MMMM d');
+      dayInfo = createdAt.format(pattern: 'MMMM d');
     }
 
     if (uppercase) dayInfo = dayInfo.toUpperCase();

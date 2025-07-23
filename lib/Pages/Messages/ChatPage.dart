@@ -25,9 +25,9 @@ import 'package:uuid/uuid.dart';
 
 class ChatPage extends StatefulWidget {
   final Room room;
-  final int index;
+  final int? index;
   final uid;
-  ChatPage({Key key, @required this.room, this.index, this.uid})
+  ChatPage({Key? key, required this.room, this.index, this.uid})
       : super(key: key);
 
   @override
@@ -39,9 +39,9 @@ class _ChatPageState extends State<ChatPage> {
 
 
 
-  StreamSubscription<void> streamNewMessage;
-  StreamSubscription<dynamic> streamHasRead;
-  StreamSubscription<void> streamIsWriting;
+  StreamSubscription<void>? streamNewMessage;
+  StreamSubscription<dynamic>? streamHasRead;
+  StreamSubscription<void>? streamIsWriting;
 
   final TextEditingController textEditingController = TextEditingController();
   final FocusNode focusNode = FocusNode();
@@ -52,13 +52,18 @@ class _ChatPageState extends State<ChatPage> {
   // ignore: close_sinks
   final BehaviorSubject<List<Message>> messages =
       BehaviorSubject<List<Message>>();
-  StreamSubscription<Room> roomSubscription;
+  StreamSubscription<Room>? roomSubscription;
 
-  StreamSubscription<Message> get unreadMessage => messages
-      .map((event) => event.lastWhere(
-          (message) =>
-              (message.userId != this.widget.uid && message.isRead == false),
-          orElse: () => null))
+  StreamSubscription<Message?> get unreadMessage => messages
+      .map((event) {
+        try {
+          return event.lastWhere(
+              (message) =>
+                  (message.userId != this.widget.uid && message.isRead == false));
+        } catch (e) {
+          return null;
+        }
+      })
       .listen((event) => event);
 
   // ignore: unused_field
@@ -78,17 +83,17 @@ class _ChatPageState extends State<ChatPage> {
           databaseService.messageReadStream(this.widget.room.id);
       this.streamIsWriting =
           databaseService.userIsWritingStream(this.widget.room.id);
-      this.unreadMessage.onData((data) {
+      this.unreadMessage?.onData((data) {
         if (data != null) {
           databaseService.setIschatAreRead(this.widget.room.id);
           databaseService.loadrooms();
         }
       });
-      this.streamHasRead.onData((data) {
+      this.streamHasRead?.onData((data) {
         databaseService.loadrooms();
       });
 
-      this.streamNewMessage.onData((data) {
+      this.streamNewMessage?.onData((data) {
         databaseService.loadrooms();
       });
     });
@@ -98,15 +103,15 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   void dispose() {
-    this.streamNewMessage.cancel();
-    this.streamHasRead.cancel();
-    this.streamIsWriting.cancel();
+    this.streamNewMessage?.cancel();
+    this.streamHasRead?.cancel();
+    this.streamIsWriting?.cancel();
     this.messages.close();
     this.unreadMessage.cancel();
     this._active = false;
     this._controller.dispose();
     this.messageToSend.close();
-    this.roomSubscription.cancel();
+    this.roomSubscription?.cancel();
     super.dispose();
   }
 
@@ -123,11 +128,11 @@ class _ChatPageState extends State<ChatPage> {
   BehaviorSubject<String> pictureToSend = BehaviorSubject<String>();
 
   // ignore: close_sinks
-  BehaviorSubject<File> pictureToPreview = BehaviorSubject<File>();
+  BehaviorSubject<File?> pictureToPreview = BehaviorSubject<File?>();
 
-  Future<File> getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    return File(pickedFile.path);
+  Future<File?> getImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    return pickedFile != null ? File(pickedFile.path) : null;
   }
 
   @override
@@ -138,11 +143,11 @@ class _ChatPageState extends State<ChatPage> {
 
     return Scaffold(
         appBar: TopBarChat(
-            displayname: this.widget.room.receiver.firstName +
+            displayname: (this.widget.room.receiver?.firstName ?? "") +
                 " " +
-                this.widget.room.receiver.lastName,
+                (this.widget.room.receiver?.lastName ?? ""),
             rightIcon: CupertinoIcons.exclamationmark_circle_fill,
-            imageUrl: this.widget.room.receiver.photoUrl,
+            imageUrl: this.widget.room.receiver?.photoUrl,
             height: 54,
             isRightIcon: false,
             onTapRight: () {}),
@@ -165,7 +170,7 @@ class _ChatPageState extends State<ChatPage> {
                               "Une erreur s'est produite",
                               style: GoogleFonts.montserrat(),
                             );
-                          if (snapshot.data.isEmpty)
+                          if (snapshot.data?.isEmpty ?? true)
                             return EmptyViewElse(
                                 text: "Vous n'avez aucun messages");
                           return Scrollbar(
@@ -173,20 +178,20 @@ class _ChatPageState extends State<ChatPage> {
                                 reverse: true,
                                 shrinkWrap: true,
                                 controller: _controller,
-                                itemCount: snapshot.data.length,
+                                itemCount: snapshot.data?.length ?? 0,
                                 itemBuilder: (context, index) {
-                                  if (snapshot.data[index].userId ==
-                                      databaseService.user.value.id) {
+                                  if (snapshot.data![index].userId ==
+                                      databaseService.user.value?.id) {
                                     return ListTile(
                                         autofocus: false,
                                         title: Column(
                                           children: [
                                             ChatImageMessage(
                                                 messagePicture: snapshot
-                                                    .data[index]
-                                                    .messagePicture),
+                                                    .data![index]
+                                                    .messagePicture ?? ''),
                                             SizedBox(height: 5),
-                                            ChatBubble(
+                                            new ChatBubble(
                                               elevation: 0,
                                               shadowColor: Colors.white,
                                               alignment: Alignment.topRight,
@@ -205,8 +210,8 @@ class _ChatPageState extends State<ChatPage> {
                                                             0.7,
                                                       ),
                                                       child: Text(
-                                                        snapshot.data[index]
-                                                            .message,
+                                                        snapshot.data![index]
+                                                            .message ?? "",
                                                         style: GoogleFonts
                                                             .montserrat(
                                                                 color: Colors
@@ -225,14 +230,14 @@ class _ChatPageState extends State<ChatPage> {
                                                     MainAxisAlignment.end,
                                                 children: [
                                                   DateBelowMessage(
-                                                      date: snapshot.data[index]
-                                                          .createdAt),
+                                                      date: snapshot.data![index]
+                                                          .createdAt ?? ''),
                                                   SizedBox(width: 10),
                                                   IsReadWidget(
                                                     isRead: snapshot
-                                                        .data[index].isRead,
+                                                        .data![index].isRead ?? false,
                                                     isSent: snapshot
-                                                        .data[index].isSent,
+                                                        .data![index].isSent ?? false,
                                                   )
                                                 ],
                                               ),
@@ -255,10 +260,10 @@ class _ChatPageState extends State<ChatPage> {
                                             children: [
                                               ChatImageMessage(
                                                   messagePicture: snapshot
-                                                      .data[index]
-                                                      .messagePicture),
+                                                      .data![index]
+                                                      .messagePicture ?? ''),
                                               SizedBox(height: 5),
-                                              ChatBubble(
+                                              new ChatBubble(
                                                 elevation: 0,
                                                 alignment: Alignment.topLeft,
                                                 backGroundColor:
@@ -279,8 +284,8 @@ class _ChatPageState extends State<ChatPage> {
                                                               0.7,
                                                         ),
                                                         child: Text(
-                                                            snapshot.data[index]
-                                                                .message,
+                                                            snapshot.data![index]
+                                                                .message ?? "",
                                                             style: GoogleFonts
                                                                 .montserrat(
                                                                     color: Colors
@@ -294,7 +299,7 @@ class _ChatPageState extends State<ChatPage> {
                                                       Alignment.centerLeft,
                                                   child: DateBelowMessage(
                                                     date: snapshot
-                                                        .data[index].createdAt,
+                                                        .data![index].createdAt ?? '',
                                                   ))
                                             ],
                                           )),
@@ -304,7 +309,7 @@ class _ChatPageState extends State<ChatPage> {
                           );
                         })),
                 MessageInput(
-                  image: this.pictureToPreview,
+                  image: this.pictureToPreview as BehaviorSubject<File>?,
                   textEditingController: this.textEditingController,
                   message: messageToSend,
                   focusNode: this.focusNode,
@@ -337,11 +342,13 @@ class _ChatPageState extends State<ChatPage> {
                                    });
                     }else{
                       getImage().then((file) async {
-                      FlutterNativeImage.compressImage(file.path, quality: 35)
-                          .then((compressed) {
-                        this.pictureToPreview.sink.add(compressed);
+                        if(file != null) {
+                          FlutterNativeImage.compressImage(file.path, quality: 35)
+                              .then((compressed) {
+                            this.pictureToPreview.sink.add(compressed);
+                          });
+                        }
                       });
-                    });
                     }
                   
                   },
@@ -353,20 +360,20 @@ class _ChatPageState extends State<ChatPage> {
                         message: this.messageToSend.value,
                         isRead: false,
                         isSent: false,
-                        userId: databaseService.user.value.id,
-                        messagePicture: pictureToPreview.value != null
+                        userId: databaseService.user.value?.id ?? '',
+                        messagePicture: (pictureToPreview.value != null && this.pictureToPreview.value != null)
                             ? await storage.uploadPictureFile(
-                                databaseService.user.value.id,
+                                databaseService.user.value?.id ?? "",
                                 "messages/" + Uuid().v1(),
-                                this.pictureToPreview.value,
+                                this.pictureToPreview.value!,
                                 "message")
                             : "",
                         roomId: this.widget.room.id,
                         receiverPushToken:
-                            this.widget.room.receiver.notificationToken, client: databaseService.client);
+                            this.widget.room.receiver?.notificationToken, client: databaseService.client);
                     databaseService.updateSingleRoom(
                         this.widget.room.id, message);
-                    this.messageToSend.sink.add(null);
+                    this.messageToSend.sink.add("");
                     this.pictureToPreview.sink.add(null);
                     await message.send();
                   },

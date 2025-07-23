@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class InfoDialog extends StatelessWidget {
   final String infoText;
-  const InfoDialog({Key key, @required this.infoText}) : super(key: key);
+  const InfoDialog({Key? key, required this.infoText}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

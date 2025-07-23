@@ -3,10 +3,10 @@
 
 
 class ReportInput {
-  String type;
-  String userReported;
-  String userReporting;
-  String description;
+  String? type;
+  String? userReported;
+  String? userReporting;
+  String? description;
 
   ReportInput({this.description, this.type,  this.userReported, this.userReporting});
 

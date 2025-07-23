@@ -8,7 +8,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 
 class RoomsPage extends StatefulWidget {
-  RoomsPage({Key key}) : super(key: key);
+  RoomsPage({Key? key}) : super(key: key);
 
   @override
   _RoomsPageState createState() => _RoomsPageState();
@@ -51,10 +51,10 @@ class _RoomsPageState extends State<RoomsPage>
                           itemBuilder: (ctx, index) {
                             return RoomItemShimmer();
                           }),
-                      baseColor: Colors.grey[200],
-                      highlightColor: Colors.grey[300]);
+                      baseColor: Colors.grey[200]!,
+                      highlightColor: Colors.grey[300]!);
                 if (snapshot.hasError) return Text("i've a bad felling");
-                if (snapshot.data.isEmpty)
+                if (snapshot.data?.isEmpty ?? true)
                   return SmartRefresher(
                       enablePullDown: true,
                       enablePullUp: false,
@@ -82,10 +82,10 @@ class _RoomsPageState extends State<RoomsPage>
                   },
                   child: ListView.builder(
                       
-                      itemCount: snapshot.data.length,
+                      itemCount: snapshot.data?.length ?? 0,
                       itemBuilder: (context, index) {
                         return RoomItem(
-                          room: snapshot.data[index],
+                          room: snapshot.data![index],
                           index: index,
                         );
                       }),

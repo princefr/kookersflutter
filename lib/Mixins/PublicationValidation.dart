@@ -7,11 +7,7 @@ mixin PublicationValidation {
 
 
   final verifyFile = StreamTransformer<File, File>.fromHandlers(handleData: (value, sink) {
-    if(value != null){
-      sink.add(value);
-    } else{
-      sink.addError("Veuillez renseigner un nom de plat");
-    }
+    sink.add(value);
   });
 
   final validateName = StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
@@ -23,32 +19,26 @@ mixin PublicationValidation {
   });
 
   final validateDescription = StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
-  if(value != null) {
-      if(value.isNotEmpty){
+    if(value.isNotEmpty){
       sink.add(value);
     } else{
       sink.addError("Veuillez renseigner une description");
     }
-  }
   });
 
   final validatePrice = StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
-    if(value != null) {
-      if(value.isNotEmpty){
+    if(value.isNotEmpty){
       sink.add(value);
     } else{
       sink.addError("Veuillez renseigner le prix du plat");
     }
-    }
   });
 
   final validatePricePerPortion = StreamTransformer<String, String>.fromHandlers(handleData: (value, sink) {
-    if(value != null) {
-          if(value.isNotEmpty){
+    if(value.isNotEmpty){
       sink.add(value);
     } else{
       sink.addError("Veuillez renseigner prix par portion");
-    }
     }
   });
 

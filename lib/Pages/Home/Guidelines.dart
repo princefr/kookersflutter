@@ -1,4 +1,4 @@
-import 'package:circular_check_box/circular_check_box.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Blocs/GuidelinesBloc.dart';
@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 class GuidelinesToSell extends StatefulWidget {
 
   
-  GuidelinesToSell({Key key}) : super(key: key);
+  GuidelinesToSell({Key? key}) : super(key: key);
 
   @override
   _GuidelinesToSellState createState() => _GuidelinesToSellState();
@@ -65,14 +65,13 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                   stream: bloc.acceptMask$,
                   initialData: bloc.acceptMask.value,
                   builder: (context, snapshot) {
-                    return CircularCheckBox(
+                    return Checkbox(
                         key: Key("firstTerm"),
                         activeColor: Colors.green,
                         value: snapshot.data ?? false,
-                        onChanged: bloc.acceptMask.add
+                        onChanged: (value) => bloc.acceptMask.sink.add(value ?? false)
                           );
-                  }
-                ),// jhjhj
+                  }),// jhjhj
                     title: Text("Vous acceptez de devoir porter des gants et une charlotte lorsque vous cuisinez par les membres de la communauté.", style: GoogleFonts.montserrat(fontSize: 13),),
               ),
 
@@ -81,18 +80,17 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
               ListTile(
                 autofocus: false,
                 leading: StreamBuilder<bool>(
-                  stream: bloc.acceptGloves,
+                  stream: bloc.acceptGloves.stream,
                   initialData: bloc.acceptGloves.value,
                   builder: (context, snapshot) {
-                    return CircularCheckBox(
+                    return Checkbox(
                       key: Key("secondTerm"),
                         activeColor: Colors.green,
                         value: snapshot.data ?? false,
-                        onChanged: bloc.acceptGloves.add
+                        onChanged: (value) => bloc.acceptGloves.sink.add(value ?? false)
                           
                           );
-                  }
-                ),
+                  }),
                     title: Text("Vous acceptez de porter un masque lorsque vous cuisinez pour protéger la santé des autres utilisateurs. ", style: GoogleFonts.montserrat(fontSize: 13),),
               ),
 
@@ -106,15 +104,14 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                   stream: bloc.acceptBeenVerified$,
                   initialData: bloc.acceptBeenVerified.value,
                   builder: (context, snapshot) {
-                    return CircularCheckBox(
+                    return Checkbox(
                         key: Key("thirdTerm"),
                         activeColor: Colors.green,
                         value: snapshot.data ?? false,
-                        onChanged: bloc.acceptBeenVerified.add
+                        onChanged: (value) => bloc.acceptBeenVerified.sink.add(value ?? false)
                           
                           );
-                  }
-                ),
+                  }),
                     title: Text("Vous acceptez de faire attention à l'hygiène de votre  cuisine , des instruments que vous utilisez , à la chaîne du froid et du chaud lorsque vous cuisinez pour les membres de la communauté.", style: GoogleFonts.montserrat(fontSize: 13),),
               ),
 

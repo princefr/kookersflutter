@@ -13,7 +13,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PaymentMethodPage extends StatefulWidget {
   final User user;
-  PaymentMethodPage({Key key, @required this.user}) : super(key: key);
+  PaymentMethodPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _PaymentMethodPageState createState() => _PaymentMethodPageState();
@@ -41,20 +41,24 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
   @override
   Widget build(BuildContext context) {
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
-      return WillPopScope(
-        onWillPop: () async {
-          if(PlatformCheck.isAndroid) return false;
-          return true;
+      return PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) async {
+          if (didPop) return;
+          if(PlatformCheck.isAndroid) return;
+          Navigator.pop(context);
         },
               child: Scaffold(
           appBar: TopBarWitBackNav(title: "Methodes de paiements", height: 54, rightIcon: CupertinoIcons.plus, isRightIcon: true, onTapRight: (){
                     stripeService.registrarCardWithForm().then((paymentMethod) {
-                      databaseService.addattachPaymentToCustomer(paymentMethod.id).then((value) {
-                        databaseService.updatedDefaultSource(paymentMethod.id).then((value){
-                          databaseService.user.value.defaultSource = paymentMethod.id;
-                          databaseService.loadUserData(this.widget.user.uid);
+                      if (paymentMethod != null) {
+                        databaseService.addattachPaymentToCustomer(paymentMethod.id!).then((value) {
+                          databaseService.updatedDefaultSource(paymentMethod.id!).then((value){
+                            databaseService.user.value.defaultSource = paymentMethod.id;
+                            databaseService.loadUserData(this.widget.user.uid);
+                          });
                         });
-                      });
+                      }
                     }).catchError((onError){
                       print(onError);
                     });
@@ -72,10 +76,10 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                   builder: (context, AsyncSnapshot<UserDef> snapshot) {
                       if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
                       if(snapshot.hasError) return Text("i've a bad felling");
-                      if(snapshot.data.allCards.isEmpty) return EmptyViewElse(text: "Vous n'avez pas de cartes.");
+                      if(snapshot.data?.allCards?.isEmpty ?? true) return EmptyViewElse(text: "Vous n'avez pas de cartes.");
                     return ListView(
                       shrinkWrap: true,
-                      children: snapshot.data.allCards.map((e) => CardItem(card: e, isDefault: databaseService.user.value.defaultSource == e.id ? true : false, onCheckBoxClicked: () {
+                      children: (snapshot.data?.allCards ?? []).map((e) => CardItem(card: e, isDefault: databaseService.user.value.defaultSource == e.id ? true : false, onCheckBoxClicked: () {
                       databaseService.user.value.defaultSource = e.id;
                       databaseService.updatedDefaultSource(e.id);
                       databaseService.loadUserData(this.widget.user.uid);

@@ -63,7 +63,7 @@ class StreamButton extends StatefulWidget {
   final String loadingText;
   final Color buttonColor;
   
-  StreamButton({Key key, @required this.buttonText, @required this.controller,@required this.onClick, @required this.successText,@required this.errorText, @required this.loadingText, @required this.buttonColor}) : super(key: key);
+  StreamButton({Key? key, required this.buttonText, required this.controller, required this.onClick, required this.successText, required this.errorText, required this.loadingText, required this.buttonColor}) : super(key: key);
 
   @override
   _StreamButtonState createState() => _StreamButtonState();
@@ -104,7 +104,6 @@ class _StreamButtonState extends State<StreamButton> {
                 switch (state) {
                   case StreamButtonState.Normal:
                     return TextButton(onPressed: this.widget.onClick, child: KookersButton(text: this.widget.buttonText, color: this.widget.buttonColor, textcolor: Colors.white));
-                    break;
                   case StreamButtonState.Loading:
                       return Center(
                         child: ListTile(
@@ -114,7 +113,6 @@ class _StreamButtonState extends State<StreamButton> {
                           title: Text(this.widget.loadingText, style: GoogleFonts.montserrat(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
                         ),
                       );
-                    break;
                   case StreamButtonState.Error:
                       return ListTile(
                         autofocus: false,
@@ -122,7 +120,6 @@ class _StreamButtonState extends State<StreamButton> {
                         trailing: Container(height:55, width: 55,child: Lottie.asset('assets/lottie/lf30_editor_g0zf4bru.json', width: 45, height: 45, fit: BoxFit.fill, repeat: false)),
                         title: Text(this.widget.errorText, style: GoogleFonts.montserrat(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
                       );
-                    break;
                   case StreamButtonState.Success:
                       return ListTile(
                         autofocus: false,
@@ -130,7 +127,6 @@ class _StreamButtonState extends State<StreamButton> {
                         trailing: Container(height:55, width: 55,child: Lottie.asset('assets/lottie/lf30_editor_m8symrlg.json', width: 45, height: 45, fit: BoxFit.fill, repeat: false)),
                         title: Text(this.widget.successText, style: GoogleFonts.montserrat(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)),
                       );
-                    break;
                   default:
                     return TextButton(onPressed: this.widget.onClick, child: KookersButton(text: this.widget.buttonText, color: Colors.black, textcolor: Colors.white));
                 }

@@ -27,7 +27,7 @@ import 'package:provider/provider.dart';
 
 class SignupPage extends StatefulWidget {
   final User user;
-  SignupPage({Key key, @required this.user}) : super(key: key);
+  SignupPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _SignupPageState createState() => _SignupPageState();
@@ -52,7 +52,7 @@ class _SignupPageState extends State<SignupPage> {
       String currency,
       String country,
       DateOfBirth dateofbirth) async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+    final MutationOptions _options = MutationOptions(document: gql(r"""
           mutation CreateAnUser($first_name: String!, $last_name: String!, $email: String!, $phonenumber: String!, $fcmToken: String!, $display_name: String!,
           $createdAt: String, $updatedAt: String, $photoUrl: String!, $firebaseUID: String!, $adresses: [AdressInput], $country: String!, $currency: String!, $birth_date: BirthDate!) {
             createUser(user: {first_name: $first_name, last_name: $last_name, email: $email, phonenumber: $phonenumber, fcmToken: $fcmToken, display_name: $display_name,
@@ -158,8 +158,8 @@ class _SignupPageState extends State<SignupPage> {
           "title": adress.title,
           "is_chosed": true,
           "location": {
-            "longitude": adress.location.longitude,
-            "latitude": adress.location.latitude,
+            "longitude": adress.location?.longitude,
+            "latitude": adress.location?.latitude,
           },
         }
       ],
@@ -175,9 +175,9 @@ class _SignupPageState extends State<SignupPage> {
 
   final picker = ImagePicker();
 
-  Future<File> getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    return File(pickedFile.path);
+  Future<File?> getImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    return pickedFile != null ? File(pickedFile.path) : null;
   }
 
   StreamButtonController _streamButtonController = StreamButtonController();
@@ -271,9 +271,9 @@ class _SignupPageState extends State<SignupPage> {
                   builder: (context, snapshot) {
                     return TextField(
                       key: Key("last_name_textfield"),
-                        onChanged: signupBloc.lastName.add,
+                        onChanged: signupBloc.lastName.sink.add,
                         decoration: InputDecoration(
-                          errorText: snapshot.error,
+                          errorText: snapshot.error as String?,
                           contentPadding: EdgeInsets.only(
                               left: 15, bottom: 11, top: 11, right: 15),
                           prefixIcon: Icon(
@@ -298,9 +298,9 @@ class _SignupPageState extends State<SignupPage> {
                   builder: (context, snapshot) {
                     return TextField(
                         key: Key("first_name_textfield"),
-                        onChanged: signupBloc.firstName.add,
+                        onChanged: signupBloc.firstName.sink.add,
                         decoration: InputDecoration(
-                          errorText: snapshot.error,
+                          errorText: snapshot.error as String?,
                           contentPadding: EdgeInsets.only(
                               left: 15, bottom: 11, top: 11, right: 15),
                           prefixIcon: Icon(
@@ -325,10 +325,10 @@ class _SignupPageState extends State<SignupPage> {
                   builder: (context, snapshot) {
                     return TextField(
                       key: Key("email_textfield"),
-                        onChanged: signupBloc.email.add,
+                        onChanged: signupBloc.email.sink.add,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                          errorText: snapshot.error,
+                          errorText: snapshot.error as String?,
                           contentPadding: EdgeInsets.only(
                               left: 15, bottom: 11, top: 11, right: 15),
                           prefixIcon: Icon(
@@ -362,7 +362,7 @@ class _SignupPageState extends State<SignupPage> {
                               datemode: CupertinoDatePickerMode.date),
                         );
 
-                        signupBloc.dateOfBirth.add(date);
+                        signupBloc.dateOfBirth.add(date!);
                       },
                       leading: Icon(CupertinoIcons.calendar),
                       title: Text("Date de naissance"),
@@ -400,7 +400,7 @@ class _SignupPageState extends State<SignupPage> {
                           builder: (context) => HomeSearchPage(isReturn: true, user: null),
                         );
 
-                        signupBloc.adress.add(this.adress);
+                        signupBloc.adress.sink.add(this.adress);
 
                         setState(() {
                           this.adressString = this.adress.title;
@@ -519,7 +519,7 @@ class _SignupPageState extends State<SignupPage> {
                                     infos.firstName,
                                     infos.lastName,
                                     infos.email,
-                                    this.widget.user.phoneNumber,
+                                    this.widget.user.phoneNumber ?? '',
                                     notifID,
                                     this.photoUrl,
                                     infos.adress,

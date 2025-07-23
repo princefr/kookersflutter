@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 
 class NotificationPage extends StatefulWidget {
   final User user;
-  NotificationPage({Key key, @required this.user}) : super(key: key);
+  NotificationPage({Key? key, required this.user}) : super(key: key);
 
   @override
   _NotificationPageState createState() => _NotificationPageState();

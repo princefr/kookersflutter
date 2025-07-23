@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 class AnalyticsService { 
   FirebaseAnalytics analytics;  
-  AnalyticsService({@required analytics});
+  AnalyticsService({required this.analytics});
 
 
 

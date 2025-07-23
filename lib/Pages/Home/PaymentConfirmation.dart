@@ -16,7 +16,7 @@ import 'package:get/get.dart';
 class PaymentConfirmation extends StatefulWidget {
   final User user;
   final OrderInput order;
-  PaymentConfirmation({Key key, @required this.order, @required this.user}) : super(key: key);
+  PaymentConfirmation({Key? key, required this.order, required this.user}) : super(key: key);
 
   @override
   _PaymentConfirmationState createState() => _PaymentConfirmationState();
@@ -78,15 +78,15 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                             databaseService.user.value.adresses
                                 .where((element) => element.isChosed == true)
                                 .first
-                                .title,
+                                .title ?? '',
                             style: GoogleFonts.montserrat()),
                       ),
                       ListTile(
                         autofocus: false,
                         leading: Icon(CupertinoIcons.calendar),
                         title: Text(
-                            Jiffy(this.widget.order.deliveryDay)
-                                .format("do MMMM yyyy [ À ] HH:mm"),
+                            Jiffy.parse(this.widget.order.deliveryDay ?? '')
+                                .format(pattern: "do MMMM yyyy [ À ] HH:mm"),
                             style: GoogleFonts.montserrat()),
                       ),
                       ListTile(
@@ -95,13 +95,13 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                             "x" + this.widget.order.quantity.toString(),
                             style: GoogleFonts.montserrat(
                                 fontSize: 20, color: Colors.green)),
-                        title: Text(this.widget.order.title,
+                        title: Text(this.widget.order.title ?? '',
                             style: GoogleFonts.montserrat()),
                         trailing: Text(
-                            this.widget.order.totalPrice +
+                            (this.widget.order.totalPrice) +
                                 " " +
                                 CurrencyService.getCurrencySymbol(
-                                    this.widget.order.currency),
+                                    this.widget.order.currency ?? 'EUR'),
                             style: GoogleFonts.montserrat(fontSize: 20)),
                       ),
                       ListTile(
@@ -110,10 +110,10 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                         title: Text("Frais de service",
                             style: GoogleFonts.montserrat()),
                         trailing: Text(
-                            this.widget.order.fees +
+                            (this.widget.order.fees ?? '') +
                                 " " +
                                 CurrencyService.getCurrencySymbol(
-                                    this.widget.order.currency),
+                                    this.widget.order.currency ?? 'EUR'),
                             style: GoogleFonts.montserrat(fontSize: 20)),
                       ),
                       Padding(
@@ -135,10 +135,10 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                         trailing: Text(
-                            this.widget.order.totalWithFees +
+                            (this.widget.order.totalWithFees ?? '') +
                                 " " +
                                 CurrencyService.getCurrencySymbol(
-                                    this.widget.order.currency),
+                                    this.widget.order.currency ?? 'EUR'),
                             style: GoogleFonts.montserrat(
                                 fontSize: 20, color: Colors.green)),
                       ),
@@ -166,7 +166,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                     backgroundColor: Colors.black,
                                     valueColor: AlwaysStoppedAnimation<Color>(
                                         Colors.white));
-                              if (snapshot.data.allCards.isEmpty)
+                              if (snapshot.data?.allCards?.isEmpty ?? true)
                                 return ListTile(
                                   autofocus: false,
                                   leading: Icon(CupertinoIcons.creditcard),
@@ -177,7 +177,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                   },
                                 );
 
-                              CardModel cardChosed = snapshot.data.allCards
+                              CardModel cardChosed = snapshot.data!.allCards!
                                   .firstWhere((element) =>
                                       element.id ==
                                       databaseService.user.value.defaultSource);
@@ -196,10 +196,10 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                                 PaymentMethodPage(user: this.widget.user)));
                                   },
                                   leading: SvgPicture.asset(
-                                    'assets/payments_logo/${cardChosed.brand}.svg',
+                                    'assets/payments_logo/${cardChosed.brand ?? 'base'}.svg',
                                     height: 30,
                                   ),
-                                  title: Text(cardChosed.last4));
+                                  title: Text(cardChosed.last4 ?? ''));
                             }),
                       ),
 
@@ -211,7 +211,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                           buttonColor: Colors.black,
                           buttonText: "Payer" +
                               " " +
-                              this.widget.order.totalWithFees +
+                              (this.widget.order.totalWithFees ?? '') +
                               "€",
                           errorText: "Une erreur s'est produite",
                           loadingText: "Achat en cours",

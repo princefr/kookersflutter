@@ -30,7 +30,7 @@ class Publication {
   String uid;
   StorageService storage;
 
-  Publication({this.photoUrls, @required this.type, @required this.foodPreferences, @required this.adress, @required this.name, @required this.description, @required this.pricePerPerson,  @required this.sellerId, @required this.geohash, @required this.currency, this.pictureToUpload, this.client, this.uid, @required this.storage});
+  Publication({this.photoUrls, required this.type, required this.foodPreferences, required this.adress, required this.name, required this.description, required this.pricePerPerson,  required this.sellerId, required this.geohash, required this.currency, this.pictureToUpload, this.client, this.uid, required this.storage});
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

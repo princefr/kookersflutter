@@ -5,7 +5,7 @@ import 'package:chips_choice/chips_choice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,9 +24,9 @@ import 'package:rxdart/rxdart.dart';
 enum SettingType { Plates, Desserts }
 
 class Photo extends StatefulWidget {
-  final BehaviorSubject<File> file;
-  final Stream<File> stream;
-  Photo({Key key,@required this.file, @required this.stream}) : super(key: key);
+  final BehaviorSubject<File?> file;
+  final Stream<File?> stream;
+  Photo({Key? key, required this.file, required this.stream}) : super(key: key);
 
   @override
   _PhotoState createState() => _PhotoState();
@@ -38,9 +38,13 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
 
   final picker = ImagePicker();
 
-  Future<File> getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    return File(pickedFile.path);
+  Future<File?> getImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      return File(pickedFile.path);
+    } else {
+      return null;
+    }
   }
 
   @override
@@ -87,7 +91,7 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
                             }
           },
                   child: Container(
-            child: StreamBuilder<File>(
+            child: StreamBuilder<File?>(
               initialData: this.widget.file.value,
               stream: this.widget.stream,
               builder: (context, snapshot) {
@@ -101,7 +105,7 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
                           decoration: BoxDecoration(
                               color: Colors.grey[300],
                               shape: BoxShape.rectangle,
-                              image: snapshot.data == null ? null : DecorationImage(image: Image.file(snapshot.data).image, fit: BoxFit.cover),
+                              image: snapshot.data == null ? null : DecorationImage(image: Image.file(snapshot.data!).image, fit: BoxFit.cover),
                               borderRadius: BorderRadius.circular(15.0))),
                               
                       Positioned(
@@ -175,7 +179,7 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
 
 class HomePublish extends StatefulWidget  {
   final User user;
-  HomePublish({Key key, @required this.user}) : super(key: key);
+  HomePublish({Key? key, required this.user}) : super(key: key);
 
   
 
@@ -198,11 +202,11 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
 
   BehaviorSubject<int> fees = BehaviorSubject<int>.seeded(15);
 
-  Stream<double> get feePaid => CombineLatestStream([pubprovider.priceall, fees], (values) => percentage(values[1], int.parse(values[0]))).asBroadcastStream();
-  Stream<double> get moneyReceived => CombineLatestStream([pubprovider.priceall$, feePaid], (values) => double.parse(values[0]) - values[1]).asBroadcastStream();
+  Stream<double> get feePaid => CombineLatestStream([pubprovider.priceall, fees], (values) => percentage(values[1] as int, int.parse(values[0] as String))).asBroadcastStream();
+  Stream<double> get moneyReceived => CombineLatestStream([pubprovider.priceall$, feePaid], (values) => double.parse(values[0] as String) - (values[1] as double)).asBroadcastStream();
 
 
-  SettingType type;
+  SettingType type = SettingType.Plates;
 
     
 
@@ -284,14 +288,8 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                     return ChipsChoice<String>.multiple(
                                       key: Key("chips_choice"),
                                       spinnerColor: Color(0xFFF95F5F),
-                                      choiceStyle: C2ChoiceStyle(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      choiceActiveStyle: C2ChoiceStyle(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Color(0xFFF95F5F)
-                                      ),
-                                      value: snapshot.data,
+                                      wrapped: true,
+                                      value: snapshot.data as List<String>,
                                       onChanged: (val) => setState(() => pubprovider.pricePrefs.add(val)),
                                       
                                       choiceItems: C2Choice.listFrom<String,
@@ -331,7 +329,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                     hintText: "Renseigner le nom du plat",
                                     fillColor: Colors.grey[200],
                                     filled: true,
-                                    errorText: snapshot.error,
+                                    errorText: snapshot.error as String?,
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: BorderSide(
@@ -364,7 +362,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                   hintText: "Renseigner la description",
                                   fillColor: Colors.grey[200],
                                   filled: true,
-                                  errorText: snapshot.error,
+                                  errorText: snapshot.error?.toString(),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                     borderSide: BorderSide(
@@ -404,7 +402,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                          hintText: "Prix du plat",
                                          fillColor: Colors.grey[200],
                                          filled: true,
-                                         errorText: snapshot.error,
+                                         errorText: snapshot.error?.toString(),
                                          border: OutlineInputBorder(
                                            borderRadius: BorderRadius.circular(10),
                                            borderSide: BorderSide(
@@ -442,7 +440,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                 stream: databaseService.user$,
                                 builder: (context, AsyncSnapshot<UserDef> snapshot) {
                                   // if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
-                                  return Text(snapshot.data.adresses.where((element) => element.isChosed == true).first.title, style: GoogleFonts.montserrat(fontSize: 17));
+                                  return Text(snapshot.data?.adresses?.where((element) => element.isChosed == true).first.title ?? '', style: GoogleFonts.montserrat(fontSize: 17));
                                 }
                               ),
                               trailing: Icon(CupertinoIcons.chevron_down),
@@ -481,7 +479,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                         builder: (context, snapshot) {
                                           if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                                           if(snapshot.data == null) return SizedBox();
-                                          return Text(snapshot.data.toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(databaseService.user.value.currency), style: GoogleFonts.montserrat());
+                                          return Text((snapshot.data ?? 0.0).toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(databaseService.user.value.currency ?? 'EUR'), style: GoogleFonts.montserrat());
                                         }
                                       )
 
@@ -508,7 +506,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                     builder: (context, snapshot) {
                                       if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                                       if(snapshot.data == null) return SizedBox();
-                                      return Text(snapshot.data.toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(databaseService.user.value.currency) , style: GoogleFonts.montserrat());
+                                      return Text((snapshot.data ?? 0.0).toStringAsFixed(2) + " " + CurrencyService.getCurrencySymbol(databaseService.user.value.currency ?? 'EUR') , style: GoogleFonts.montserrat());
                                     }
                                   )
 

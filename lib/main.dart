@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
 import 'package:kookers/Pages/Onboarding/OnboardingPager.dart';
@@ -28,10 +28,10 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 // delete shared data on ios
 
 
-void main({bool testing: false}) async {
+void main({bool testing = false}) async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  if(testing) FirebaseAuth.instance.signOut();
+  if(testing) await FirebaseAuth.instance.signOut();
   if(!testing) FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MyApp());
@@ -47,7 +47,10 @@ class MyApp extends StatelessWidget {
           child: MultiProvider(
         providers: [
           Provider<AuthentificationService>(create: (_) => AuthentificationService(firebaseAuth: FirebaseAuth.instance)),
-          StreamProvider(create: (context) => context.read<AuthentificationService>().authStateChanges),
+          StreamProvider<User?>(
+            create: (context) => context.read<AuthentificationService>().authStateChanges,
+            initialData: null,
+          ),
           Provider<NotificationService>(create: (_) => NotificationService(messaging: FirebaseMessaging.instance)),
           Provider<StorageService>(create: (_) => StorageService(storage: firebase_storage.FirebaseStorage.instance)),
           Provider< DatabaseProviderService>(create: (_) =>  DatabaseProviderService()),
@@ -63,14 +66,13 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate
             ],
             supportedLocales: [
               const Locale('en'),
               const Locale('zh'),
             ],
-            localeResolutionCallback: (Locale locale, Iterable<Locale> supportedLocales) {
-              return locale;
+            localeResolutionCallback: (Locale? locale, Iterable<Locale> supportedLocales) {
+              return locale ?? const Locale('en');
             },
         color: Colors.white,
         title: 'Kookers',
@@ -83,7 +85,7 @@ class MyApp extends StatelessWidget {
 
 
 class AuthentificationnWrapper extends StatelessWidget {
-  AuthentificationnWrapper({Key key}): super(key: key);
+  AuthentificationnWrapper({Key? key}): super(key: key);
 
   
   @override
@@ -91,18 +93,18 @@ class AuthentificationnWrapper extends StatelessWidget {
     final authentificationService =  Provider.of<AuthentificationService>(context, listen: false);
     final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
 
-    return FutureBuilder<User>(
+    return FutureBuilder<User?>(
       future: Future.delayed(Duration(seconds: 3), () => authentificationService.userConnected()),
       initialData: null,
-      builder: (BuildContext ctx, AsyncSnapshot<User> snapshotc){
+      builder: (BuildContext ctx, AsyncSnapshot<User?> snapshotc){
         if(snapshotc.connectionState == ConnectionState.waiting) return SplashScreen();
         if(snapshotc.data == null) return OnBoardingPager();
         return FutureBuilder<Object>(
-          future: Future.delayed(Duration(seconds: 0), () => databaseService.loadUserData(snapshotc.data.uid)),
+          future: Future.delayed(Duration(seconds: 0), () => databaseService.loadUserData(snapshotc.data!.uid)),
           builder: (context, snapshot) {
             if(snapshot.connectionState == ConnectionState.waiting) return SplashScreen();
             if(snapshot.data == null) return OnBoardingPager();
-            return TabHome(user: snapshotc.data);
+            return TabHome(user: snapshotc.data!);
           }
         );
       },
@@ -112,7 +114,7 @@ class AuthentificationnWrapper extends StatelessWidget {
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override

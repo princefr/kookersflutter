@@ -15,20 +15,21 @@ import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
-import 'package:package_info/package_info.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:get/get.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SettingsItemWithLeftIcon extends StatelessWidget {
   final Function onTap;
   final String buttonText;
   final IconData icon;
   const SettingsItemWithLeftIcon(
-      {Key key, @required this.onTap, @required this.buttonText, @required this.icon})
+      {Key? key, required this.onTap, required this.buttonText, required this.icon})
       : super(key: key);
 
   @override
@@ -39,7 +40,7 @@ class SettingsItemWithLeftIcon extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: ListTile(
-          onTap: this.onTap,
+          onTap: this.onTap as GestureTapCallback?,
           autofocus: false,
           leading: Icon(this.icon),
           title: Text(this.buttonText,
@@ -54,7 +55,7 @@ class SettingsItemWithLeftIcon extends StatelessWidget {
 class SettingsItem extends StatelessWidget {
   final Function onTap;
   final String buttonText;
-  const SettingsItem({Key key, @required this.onTap, @required this.buttonText})
+  const SettingsItem({Key? key, required this.onTap, required this.buttonText})
       : super(key: key);
 
   @override
@@ -65,7 +66,7 @@ class SettingsItem extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         child: ListTile(
-          onTap: this.onTap,
+          onTap: this.onTap as GestureTapCallback?,
           autofocus: false,
           title: Text(this.buttonText,
               style: GoogleFonts.montserrat(fontSize: 16)),
@@ -78,7 +79,7 @@ class SettingsItem extends StatelessWidget {
 
 class Settings extends StatefulWidget {
   final User user;
-  Settings({Key key, @required this.user}) : super(key: key);
+  Settings({Key? key, required this.user}) : super(key: key);
 
   @override
   _SettingsState createState() => _SettingsState();
@@ -97,13 +98,13 @@ String capitalizeFirstOnly(String string){
 
   final picker = ImagePicker();
 
-  Future<File> getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    return File(pickedFile.path);
+  Future<File?> getImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    return pickedFile != null ? File(pickedFile.path) : null;
   }
 
   Future<void> updateUserImage(GraphQLClient client, String uid, String imageUrl, DatabaseProviderService database) {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+    final MutationOptions _options = MutationOptions(document: gql(r"""
               mutation UpdateUserImage($userID: String!, $imageUrl: String!) {
                   updateUserImage(userID: $userID, imageUrl: $imageUrl){
               _id
@@ -230,7 +231,7 @@ String capitalizeFirstOnly(String string){
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.white,
                     radius: 65,
-                  backgroundImage: CachedNetworkImageProvider(snapshot.data.photoUrl,),
+                  backgroundImage: CachedNetworkImageProvider(snapshot.data?.photoUrl ?? ''),
                 );
                   }
                 ),
@@ -268,7 +269,7 @@ String capitalizeFirstOnly(String string){
                     }else{
                       this.getImage().then((file) async {
                           File _file = await FlutterNativeImage.compressImage(file.path, quality: 35);
-                          storageService.uploadPictureFile(databaseService.user.value.id, "photoUrl", _file, "profilImage").then((url) => {
+                          storageService.uploadPictureFile(databaseService.user.value?.id ?? '', "photoUrl", _file, "profilImage").then((url) => {
                             this.updateUserImage(databaseService.client, this.widget.user.uid, url, databaseService)
                           });
                         });
@@ -296,7 +297,7 @@ String capitalizeFirstOnly(String string){
                 builder: (context, snapshot) {
                   if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
                   if(snapshot.data == null) return SizedBox();
-                  return Text(snapshot.data.lastName.toUpperCase() + " " + capitalizeFirstOnly(snapshot.data.firstName),
+                  return Text((snapshot.data?.lastName ?? '').toUpperCase() + " " + capitalizeFirstOnly(snapshot.data?.firstName ?? ''),
                       style: GoogleFonts.montserrat(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -401,8 +402,8 @@ String capitalizeFirstOnly(String string){
                     CupertinoDialogAction(
                       onPressed: () async {
                         await authentificationService.signOut();
-                        databaseService.user.add(null);
-                        databaseService.adress.add(null);
+                        databaseService.user.add(UserDef());
+                        databaseService.adress.add(Adress());
                         Get.offAll(OnBoardingPager());
                       },
                       
@@ -418,7 +419,7 @@ String capitalizeFirstOnly(String string){
 
           SizedBox(height: 30,),
 
-          FutureBuilder<PackageInfo>(
+          FutureBuilder(
             future: PackageInfo.fromPlatform(),
             builder: (ctx, snapshot) {
               if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();

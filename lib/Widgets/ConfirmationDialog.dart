@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 class ConfirmationDialog extends StatelessWidget {
   final String infoText;
   final Function onAcceptTap;
-  const ConfirmationDialog({Key key, @required this.infoText, this.onAcceptTap}) : super(key: key);
+  const ConfirmationDialog({Key? key, required this.infoText, this.onAcceptTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:kookers/Models/Location.dart' as models;
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/DatabaseProvider.dart' as db;
 import 'package:kookers/Widgets/StreamButton.dart';
@@ -13,7 +14,7 @@ import 'package:provider/provider.dart';
 // ignore: must_be_immutable
 class HomeSettings extends StatefulWidget {
   final User user;
-  HomeSettings({Key key, @required this.user}) : super(key: key);
+  HomeSettings({Key? key, required this.user}) : super(key: key);
 
   @override
   _HomeSettingsState createState() => _HomeSettingsState();
@@ -49,7 +50,7 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
   double _currentSliderValue = 20;
 
     Future<void> updateSettings(GraphQLClient client, String uid, UserSettings settings, DatabaseProviderService database) async {
-    final MutationOptions _options = MutationOptions(documentNode: gql(r"""
+    final MutationOptions _options = MutationOptions(document: gql(r"""
               mutation UpdateSettings($userID: String!, $settings: UserSettingsInput!) {
                   updateSettings(userID: $userID, settings: $settings){
               _id
@@ -142,7 +143,7 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
         });
 
         return client.mutate(_options).then((kooker) {
-                  final kookersUser = UserDef.fromJson(kooker.data["updateSettings"]);
+                  final kookersUser = UserDef.fromJson(kooker.data?["updateSettings"]);
                   database.user.add(kookersUser);
       });
   }
@@ -194,15 +195,9 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                   alignment: Alignment.centerLeft,
                   child: ChipsChoice<String>.multiple(
                     spinnerColor: Color(0xFFF95F5F),
-                    choiceStyle: C2ChoiceStyle(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    choiceActiveStyle: C2ChoiceStyle(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Color(0xFFF95F5F)
-                    ),
-                    value: snapshot.data.settings.foodPriceRange,
-                    onChanged: (val) => setState(() => snapshot.data.settings.foodPriceRange = val),
+                    wrapped: true,
+                    value: snapshot.data?.settings?.foodPriceRange ?? [],
+                    onChanged: (val) => setState(() => snapshot.data!.settings!.foodPriceRange = val),
                     choiceItems: C2Choice.listFrom<String, String>(
                       source: this.pricRanges,
                       value: (i, v) => v,
@@ -222,15 +217,11 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
 
                 ChipsChoice<String>.multiple(
                   spinnerColor: Color(0xFFF95F5F),
-                  choiceStyle: C2ChoiceStyle(
+                  choiceStyle: C2ChipStyle.outlined(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  choiceActiveStyle: C2ChoiceStyle(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Color(0xFFF95F5F)
-                  ),
-                  value: snapshot.data.settings.foodPreference,
-                  onChanged: (val) => setState(() => snapshot.data.settings.foodPreference = val),
+                  value: snapshot.data?.settings?.foodPreference ?? [],
+                  onChanged: (val) => setState(() => snapshot.data!.settings!.foodPreference = val),
                   choiceItems: C2Choice.listFrom<String, String>(
                     source: this.foodpreferences,
                     value: (i, v) => v,
@@ -270,13 +261,13 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                             overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
                           ),
                           child: Slider(
-                            value: snapshot.data.settings.distanceFromSeller.round().toDouble(),
+                            value: (snapshot.data?.settings?.distanceFromSeller ?? 0).round().toDouble(),
                             min: 0,
                             max: 45,
                             label: _currentSliderValue.round().toString(),
                             onChanged: (double value) {
                               setState(() {
-                                snapshot.data.settings.distanceFromSeller = value.round().toInt();
+                                snapshot.data!.settings!.distanceFromSeller = value.round().toInt();
                               });
                             },
                           )),
@@ -284,7 +275,7 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
 
                         Padding(
                           padding: const EdgeInsets.all(15.0),
-                          child: Text(snapshot.data.settings.distanceFromSeller.round().toInt().toString(), style: GoogleFonts.montserrat(fontSize:20),),
+                          child: Text((snapshot.data?.settings?.distanceFromSeller ?? 0).round().toInt().toString(), style: GoogleFonts.montserrat(fontSize:20),),
                         )
                   ],
                 ),
@@ -310,9 +301,9 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                       successText: "Paramètres sauvegardés",
                       controller: this._streamButtonController, onClick: () async {
                         this._streamButtonController.isLoading();
-                        this.updateSettings(databaseService.client, this.widget.user.uid, snapshot.data.settings, databaseService).then((value) async {
-                          db.Location location = databaseService.user == null ? databaseService.adress.value.location : databaseService.user.value.adresses.firstWhere((element) => element.isChosed).location;
-                          int distance  = databaseService.user == null ? 45 : databaseService.user.value.settings.distanceFromSeller;
+                        this.updateSettings(databaseService.client, this.widget.user.uid, snapshot.data!.settings!, databaseService).then((value) async {
+                          models.Location location = databaseService.adress.value.location;
+                          int distance = databaseService.user.value.settings?.distanceFromSeller ?? 45;
                         await databaseService.loadPublication(location, distance);
                         await this._streamButtonController.isSuccess();
                         Navigator.pop(context);
