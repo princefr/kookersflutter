@@ -40,8 +40,7 @@ class TransationItemShimmer extends StatelessWidget {
                 ),
                 child: Text("transaction.type",
                     style: GoogleFonts.montserrat(fontSize: 15))),
-
-                    SizedBox(height: 10),
+            SizedBox(height: 10),
             Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200] ?? Colors.grey,
@@ -59,7 +58,7 @@ class TransationItemShimmer extends StatelessWidget {
                 ),
                 child:
                     Text("17 €", style: GoogleFonts.montserrat(fontSize: 17))),
-                    SizedBox(height: 10),
+            SizedBox(height: 10),
             Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200] ?? Colors.grey,
@@ -94,8 +93,10 @@ class TransationItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text(StripeServices.getSigle(transaction.type ?? ''), style: GoogleFonts.montserrat(fontSize: 15)),
-            Text(transaction.id ?? '', style: GoogleFonts.montserrat(fontSize: 12)),
+            Text(StripeServices.getSigle(transaction.type ?? ''),
+                style: GoogleFonts.montserrat(fontSize: 15)),
+            Text(transaction.id ?? '',
+                style: GoogleFonts.montserrat(fontSize: 12)),
           ]),
       trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -103,10 +104,15 @@ class TransationItem extends StatelessWidget {
           children: [
             Text(
               ((this.transaction.net ?? 0) / 100).toString() +
-                   " " + CurrencyService.getCurrencySymbol(this.transaction.currency ?? "EUR"),
+                  " " +
+                  CurrencyService.getCurrencySymbol(
+                      this.transaction.currency ?? "EUR"),
               style: GoogleFonts.montserrat(fontSize: 17),
             ),
-            Text(Jiffy.parseFromMillisecondsSinceEpoch((this.transaction.created ?? 0) * 1000).yMd,
+            Text(
+                Jiffy.parseFromMillisecondsSinceEpoch(
+                        (this.transaction.created ?? 0) * 1000)
+                    .yMd,
                 style: GoogleFonts.montserrat(fontSize: 12))
           ]),
     );
@@ -155,171 +161,191 @@ class _BalancePageState extends State<BalancePage> {
     });
   }
 
-
-
-
-
-
   @override
-  void dispose() { 
+  void dispose() {
     super.dispose();
   }
 
-
-final StreamButtonController _streamButtonController = StreamButtonController();
-
-
+  final StreamButtonController _streamButtonController =
+      StreamButtonController();
 
   @override
   Widget build(BuildContext context) {
-    final databaseService = Provider.of<DatabaseProviderService>(context, listen: false);
+    final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: false);
 
-      return Scaffold(
-          appBar: TopBarWitBackNav(
-              title: "Portefeuille",
-              rightIcon: CupertinoIcons.exclamationmark_circle_fill,
-              isRightIcon: false,
-              height: 54,
-              onTapRight: () {}),
-          body: SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: SmartRefresher(
-                    controller: this._refreshController,
-                    onRefresh: () {
-                      refreshData(context);
-                    },
-                    child: ListView(
-                      children: [
-                      Divider(),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Center(
-                            child: Text(
-                                "Votre portefeuille représente la somme de vos montants disponibles et de vos montants en attente. Après une vente réussie, il peut s'écouler 7 jours avant que vous ne puissiez retirer votre argent.",
-                                style: GoogleFonts.montserrat(
-                                    decoration: TextDecoration.none,
-                                    color: Colors.black,
-                                    fontSize: 10))),
-                      ),
-                      SizedBox(height: 50),
-
-                      StreamBuilder<UserDef>(
-                            stream: databaseService.user$,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
+    return Scaffold(
+        appBar: TopBarWitBackNav(
+            title: "Portefeuille",
+            rightIcon: CupertinoIcons.exclamationmark_circle_fill,
+            isRightIcon: false,
+            height: 54,
+            onTapRight: () {}),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: SmartRefresher(
+                  controller: this._refreshController,
+                  onRefresh: () {
+                    refreshData(context);
+                  },
+                  child: ListView(children: [
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                          child: Text(
+                              "Votre portefeuille représente la somme de vos montants disponibles et de vos montants en attente. Après une vente réussie, il peut s'écouler 7 jours avant que vous ne puissiez retirer votre argent.",
+                              style: GoogleFonts.montserrat(
+                                  decoration: TextDecoration.none,
+                                  color: Colors.black,
+                                  fontSize: 10))),
+                    ),
+                    SizedBox(height: 50),
+                    StreamBuilder<UserDef>(
+                        stream: databaseService.user$,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return Shimmer.fromColors(
-                                  child: Center(
-                            child: Container(
-                              decoration: BoxDecoration(
-                  color: Colors.grey[200] ?? Colors.grey,
-                ),
-                                padding: EdgeInsets.symmetric(horizontal: 40),
-                                child: Text(
-                                  "100 €",
-                                  style: GoogleFonts.montserrat(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.w500),
-                                )),
-                          ),
-                                  baseColor: Colors.grey[200] ?? Colors.grey,
-                                  highlightColor: Colors.grey[300] ?? Colors.grey);
+                                child: Center(
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[200] ?? Colors.grey,
+                                      ),
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 40),
+                                      child: Text(
+                                        "100 €",
+                                        style: GoogleFonts.montserrat(
+                                            fontSize: 40,
+                                            fontWeight: FontWeight.w500),
+                                      )),
+                                ),
+                                baseColor: Colors.grey[200] ?? Colors.grey,
+                                highlightColor:
+                                    Colors.grey[300] ?? Colors.grey);
                           }
 
-                          
                           return Column(
                             children: [
                               Center(
-                                    child: Container(
-                                        padding: EdgeInsets.symmetric(horizontal: 40),
-                                        child: Text(
-                                          snapshot.data?.balance?.totalBalance?.toString() ?? "0" + " " + CurrencyService.getCurrencySymbol(snapshot.data?.currency ?? "EUR"),
-                                          style: GoogleFonts.montserrat(
-                                              fontSize: 40,
-                                              fontWeight: FontWeight.w500),
-                                        )),
-                                  ),
-
-                                  Chip(label: Text("Somme en attente: " + " " + ((snapshot.data?.balance?.pendingBalance ?? 0) > 0 ? ((snapshot.data?.balance?.pendingBalance ?? 0) / 100) : 0).toString() + " " + CurrencyService.getCurrencySymbol(snapshot.data?.currency ?? "EUR"), style: GoogleFonts.montserrat()))
+                                child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 40),
+                                    child: Text(
+                                      snapshot.data?.balance?.currentBalance
+                                              .toString() ??
+                                          "0" +
+                                              " " +
+                                              CurrencyService.getCurrencySymbol(
+                                                  snapshot.data?.currency ??
+                                                      "EUR"),
+                                      style: GoogleFonts.montserrat(
+                                          fontSize: 40,
+                                          fontWeight: FontWeight.w500),
+                                    )),
+                              ),
+                              Chip(
+                                  label: Text(
+                                      "Somme en attente: " +
+                                          " " +
+                                          ((snapshot.data?.balance
+                                                              ?.pendingBalance ??
+                                                          0) >
+                                                      0
+                                                  ? ((snapshot.data?.balance
+                                                              ?.pendingBalance ??
+                                                          0) /
+                                                      100)
+                                                  : 0)
+                                              .toString() +
+                                          " " +
+                                          CurrencyService.getCurrencySymbol(
+                                              snapshot.data?.currency ?? "EUR"),
+                                      style: GoogleFonts.montserrat()))
                             ],
                           );
-                            }
-                          ),
-                        
-
-
-
-                      SizedBox(height: 40),
-
-                      Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Text("Transactions",
-                            style: GoogleFonts.montserrat(fontSize: 18)),
-                      ),
-
-                      SizedBox(height: 5),
-                      Divider(),
-                      StreamBuilder<UserDef>(
-                          stream: databaseService.user$,
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting)
-                              return Shimmer.fromColors(
-                                  child: ListView.builder(
+                        }),
+                    SizedBox(height: 40),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text("Transactions",
+                          style: GoogleFonts.montserrat(fontSize: 18)),
+                    ),
+                    SizedBox(height: 5),
+                    Divider(),
+                    StreamBuilder<UserDef>(
+                        stream: databaseService.user$,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting)
+                            return Shimmer.fromColors(
+                                child: ListView.builder(
                                     physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                      itemCount: 10,
-                                      itemBuilder: (ctx, index) {
-                                        return TransationItemShimmer();
-                                      }),
-                                  baseColor: Colors.grey[200] ?? Colors.grey,
-                                  highlightColor: Colors.grey[300] ?? Colors.grey);
-                            if(snapshot.data?.transactions?.isEmpty ?? true) return EmptyViewElse(text: "Vous n'avez pas de transactions");
-                                  
-                            return ListView(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                children: (snapshot.data?.transactions ?? [])
-                                    .map((e) => TransationItem(transaction: e))
-                                    .toList());
-                          }),
-                    ]),
-                  ),
+                                    shrinkWrap: true,
+                                    itemCount: 10,
+                                    itemBuilder: (ctx, index) {
+                                      return TransationItemShimmer();
+                                    }),
+                                baseColor: Colors.grey[200] ?? Colors.grey,
+                                highlightColor:
+                                    Colors.grey[300] ?? Colors.grey);
+                          if (snapshot.data?.transactions?.isEmpty ?? true)
+                            return EmptyViewElse(
+                                text: "Vous n'avez pas de transactions");
+
+                          return ListView(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              children: (snapshot.data?.transactions ?? [])
+                                  .map((e) => TransationItem(transaction: e))
+                                  .toList());
+                        }),
+                  ]),
                 ),
-
-                
-
-                StreamBuilder<UserDef>(
+              ),
+              StreamBuilder<UserDef>(
                   stream: databaseService.user$,
                   builder: (context, snapshot) {
-                    if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
-                    if(snapshot.hasError) return SizedBox();
-                    return StreamButton(buttonColor: (snapshot.data?.balance?.totalBalance ?? 0) > 0 ? Color(0xFFF95F5F) : Colors.grey,
-                                         buttonText: "Retirer sur mon compte",
-                                         errorText: "Une erreur s'est produite, veuillez reessayer",
-                                         loadingText: "Retrait  en cours",
-                                         successText: "Retrait effectué",
-                                          controller: _streamButtonController, onClick: (snapshot.data?.balance?.totalBalance ?? 0) == 0 ? () {} : () async {
-                                            _streamButtonController.isLoading();
-                                            databaseService.makePayout(snapshot.data!.balance!).then((value) async {
-                                              await databaseService.loadUserData(this.widget.user.uid);
-                                              _streamButtonController.isSuccess();
-                                            }).catchError((onError){
-
-                                              NotificationPanelService.showError(context, StripeServices.getErrorFromString(onError["exception"]["raw"]["code"]));
-                                               // print(onError["exception"]["raw"]["code"]);
-                                              _streamButtonController.isError();
-                                            });
-                                                  
-                                            
-                                            
-                                          });
-                  }
-                )
-              ],
-            ),
-          ));
-
+                    if (snapshot.connectionState == ConnectionState.waiting)
+                      return SizedBox();
+                    if (snapshot.hasError) return SizedBox();
+                    return StreamButton(
+                        buttonColor:
+                            (snapshot.data?.balance?.totalBalance ?? 0) > 0
+                                ? Color(0xFFF95F5F)
+                                : Colors.grey,
+                        buttonText: "Retirer sur mon compte",
+                        errorText:
+                            "Une erreur s'est produite, veuillez reessayer",
+                        loadingText: "Retrait  en cours",
+                        successText: "Retrait effectué",
+                        controller: _streamButtonController,
+                        onClick: (snapshot.data?.balance?.totalBalance ?? 0) ==
+                                0
+                            ? () {}
+                            : () async {
+                                _streamButtonController.isLoading();
+                                databaseService
+                                    .makePayout(snapshot.data!.balance!)
+                                    .then((value) async {
+                                  await databaseService
+                                      .loadUserData(this.widget.user.uid);
+                                  _streamButtonController.isSuccess();
+                                }).catchError((onError) {
+                                  NotificationPanelService.showError(
+                                      context,
+                                      StripeServices.getErrorFromString(
+                                          onError["exception"]["raw"]["code"]));
+                                  // print(onError["exception"]["raw"]["code"]);
+                                  _streamButtonController.isError();
+                                });
+                              });
+                  })
+            ],
+          ),
+        ));
   }
 }

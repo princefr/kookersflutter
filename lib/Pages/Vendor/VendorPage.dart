@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Vendor/OrderItemSeller.dart';
 import 'package:kookers/Pages/Vendor/PublicationItemVendor.dart';
@@ -14,7 +14,7 @@ import 'package:rxdart/subjects.dart';
 import 'package:shimmer/shimmer.dart';
 
 class VendorPubView extends StatefulWidget {
-  VendorPubView({Key key}) : super(key: key);
+  VendorPubView({Key? key = null}) : super(key: key);
 
   @override
   _VendorPubViewState createState() => _VendorPubViewState();
@@ -44,20 +44,23 @@ class _VendorPubViewState extends State<VendorPubView>
                           itemBuilder: (ctx, index) {
                             return PublicationItemVendorShimmer();
                           }),
-                      baseColor: Colors.grey[200],
-                      highlightColor: Colors.grey[300]);
-                if(snapshot.hasError) return Text("i've a bad felling");
-                if(snapshot.data.isEmpty) return SmartRefresher(
-                  enablePullDown: true,
-                    controller: this._refreshController,
-                    onRefresh: () {
-                      databaseService.loadSellerPublications().then((value) {
-                        Future.delayed(Duration(milliseconds: 500))
-                            .then((value) {
-                          _refreshController.refreshCompleted();
+                      baseColor: Colors.grey[200]!,
+                      highlightColor: Colors.grey[300]!);
+                if (snapshot.hasError) return Text("i've a bad felling");
+                if (snapshot.data?.isEmpty ?? true)
+                  return SmartRefresher(
+                      enablePullDown: true,
+                      controller: this._refreshController,
+                      onRefresh: () {
+                        databaseService.loadSellerPublications().then((value) {
+                          Future.delayed(Duration(milliseconds: 500))
+                              .then((value) {
+                            _refreshController.refreshCompleted();
+                          });
                         });
-                      });
-                    },child: EmptyViewElse(text: "Vous n'avez aucun plat publié."));
+                      },
+                      child: EmptyViewElse(
+                          text: "Vous n'avez aucun plat publié."));
                 return SmartRefresher(
                     enablePullDown: true,
                     controller: this._refreshController,
@@ -71,7 +74,7 @@ class _VendorPubViewState extends State<VendorPubView>
                     },
                     child: ListView(
                       shrinkWrap: true,
-                      children: snapshot.data
+                      children: snapshot.data!
                           .map((e) => PublicationItemVendor(publication: e))
                           .toList(),
                     ));
@@ -84,7 +87,7 @@ class _VendorPubViewState extends State<VendorPubView>
 }
 
 class VendorSellView extends StatefulWidget {
-  VendorSellView({Key key}) : super(key: key);
+  VendorSellView({Key? key = null}) : super(key: key);
 
   @override
   _VendorSellViewState createState() => _VendorSellViewState();
@@ -100,7 +103,7 @@ class _VendorSellViewState extends State<VendorSellView>
     super.build(context);
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: true);
-        
+
     return Container(
       child: StreamBuilder<List<OrderVendor>>(
           initialData: databaseService.sellerOrders.value,
@@ -113,20 +116,21 @@ class _VendorSellViewState extends State<VendorSellView>
                       itemBuilder: (ctx, index) {
                         return OrderItemSellerShimmer();
                       }),
-                  baseColor: Colors.grey[200],
-                  highlightColor: Colors.grey[300]);
-            if(snapshot.hasError) return Text("i've a bad felling");
-                              if(snapshot.data.isEmpty) return SmartRefresher(
-                                controller: this._refreshController,
-                                enablePullDown: true,
-                                onRefresh: () {
-                                  databaseService.loadSellerOrders().then((value) {
-                                    Future.delayed(Duration(milliseconds: 500)).then((value) {
-                                      _refreshController.refreshCompleted();
-                                    });
-                                  });
-                                },
-                                child: EmptyViewElse(text: "Vous n'avez aucune commande."));
+                  baseColor: Colors.grey[200]!,
+                  highlightColor: Colors.grey[300]!);
+            if (snapshot.hasError) return Text("i've a bad felling");
+            if (snapshot.data?.isEmpty ?? true)
+              return SmartRefresher(
+                  controller: this._refreshController,
+                  enablePullDown: true,
+                  onRefresh: () {
+                    databaseService.loadSellerOrders().then((value) {
+                      Future.delayed(Duration(milliseconds: 500)).then((value) {
+                        _refreshController.refreshCompleted();
+                      });
+                    });
+                  },
+                  child: EmptyViewElse(text: "Vous n'avez aucune commande."));
             return SmartRefresher(
               enablePullDown: true,
               onRefresh: () {
@@ -139,7 +143,7 @@ class _VendorSellViewState extends State<VendorSellView>
               controller: this._refreshController,
               child: ListView(
                 shrinkWrap: true,
-                children: snapshot.data
+                children: snapshot.data!
                     .map((e) => OrderItemSeller(vendor: e))
                     .toList(),
               ),
@@ -153,7 +157,7 @@ class _VendorSellViewState extends State<VendorSellView>
 }
 
 class VendorPage extends StatefulWidget {
-  VendorPage({Key key}) : super(key: key);
+  VendorPage({Key? key = null}) : super(key: key);
 
   @override
   _VendorPageState createState() => _VendorPageState();
@@ -165,21 +169,18 @@ class _VendorPageState extends State<VendorPage>
   final BehaviorSubject<int> initialLabel = BehaviorSubject<int>.seeded(0);
   PageController _controller = PageController(initialPage: 0);
 
-
-
   @override
-  void dispose() { 
+  void dispose() {
     super.dispose();
   }
 
-
   @override
-  void initState() { 
-    Future.delayed(Duration.zero, (){
-          final databaseService =
+  void initState() {
+    Future.delayed(Duration.zero, () {
+      final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
-          databaseService.loadSellerPublications();
-          databaseService.loadSellerOrders();
+      databaseService.loadSellerPublications();
+      databaseService.loadSellerOrders();
     });
     super.initState();
   }
@@ -192,15 +193,16 @@ class _VendorPageState extends State<VendorPage>
       PageTitle(title: "Ventes"),
       Divider(),
       SizedBox(height: 20),
-
       StreamBuilder<int>(
           initialData: this.initialLabel.value,
           stream: this.initialLabel.stream,
           builder: (context, AsyncSnapshot<int> snapshot) {
-            if(snapshot.connectionState == ConnectionState.waiting) return LinearProgressIndicator(backgroundColor: Colors.black, valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
+            if (snapshot.connectionState == ConnectionState.waiting)
+              return LinearProgressIndicator(
+                  backgroundColor: Colors.black,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
             if (snapshot.hasError) return Text("i've a bad felling");
-            if (!snapshot.hasData)
-                        return Text("its empty out there");
+            if (!snapshot.hasData) return Text("its empty out there");
             return ToggleSwitch(
               inactiveBgColor: Colors.grey[300],
               activeBgColor: Color(0xFFF95F5F),
@@ -213,11 +215,9 @@ class _VendorPageState extends State<VendorPage>
               },
             );
           }),
-
       SizedBox(height: 20),
       Expanded(
         child: PageView(
-          
           physics: NeverScrollableScrollPhysics(),
           controller: this._controller,
           children: [VendorPubView(), VendorSellView()],

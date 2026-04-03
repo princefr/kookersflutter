@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
-
 class CircleDotWidget extends StatelessWidget {
   final bool isActive;
   final Color color;
   final Color borderColor;
 
-  const CircleDotWidget({this.isActive, this.color, this.borderColor});
+  const CircleDotWidget(
+      {this.isActive = false,
+      this.color = Colors.transparent,
+      this.borderColor = Colors.transparent});
 
   @override
   Widget build(BuildContext context) {

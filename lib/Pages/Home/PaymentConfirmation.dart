@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:kookers/Pages/PaymentMethods/CreditCardItem.dart';
+import 'package:kookers/Models/PaymentModels.dart';
 import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
 import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
@@ -16,7 +16,8 @@ import 'package:get/get.dart';
 class PaymentConfirmation extends StatefulWidget {
   final User user;
   final OrderInput order;
-  PaymentConfirmation({Key? key, required this.order, required this.user}) : super(key: key);
+  PaymentConfirmation({Key? key, required this.order, required this.user})
+      : super(key: key);
 
   @override
   _PaymentConfirmationState createState() => _PaymentConfirmationState();
@@ -58,8 +59,6 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                       width: 80),
                 ),
                 SizedBox(height: 20),
-
-
                 Flexible(
                   child: ListView(
                     shrinkWrap: true,
@@ -69,23 +68,24 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                             child: Text("Récapitulatif",
                                 style: GoogleFonts.montserrat(fontSize: 22))),
                       ),
-                      
                       SizedBox(height: 30),
                       ListTile(
                         autofocus: false,
                         leading: Icon(CupertinoIcons.location_solid),
                         title: Text(
                             databaseService.user.value.adresses
-                                .where((element) => element.isChosed == true)
-                                .first
-                                .title ?? '',
+                                    ?.where(
+                                        (element) => element.isChosed == true)
+                                    .first
+                                    .title ??
+                                '',
                             style: GoogleFonts.montserrat()),
                       ),
                       ListTile(
                         autofocus: false,
                         leading: Icon(CupertinoIcons.calendar),
                         title: Text(
-                            Jiffy.parse(this.widget.order.deliveryDay ?? '')
+                            Jiffy.parse(this.widget.order.deliveryDay)
                                 .format(pattern: "do MMMM yyyy [ À ] HH:mm"),
                             style: GoogleFonts.montserrat()),
                       ),
@@ -101,7 +101,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                             (this.widget.order.totalPrice) +
                                 " " +
                                 CurrencyService.getCurrencySymbol(
-                                    this.widget.order.currency ?? 'EUR'),
+                                    this.widget.order.currency),
                             style: GoogleFonts.montserrat(fontSize: 20)),
                       ),
                       ListTile(
@@ -113,7 +113,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                             (this.widget.order.fees ?? '') +
                                 " " +
                                 CurrencyService.getCurrencySymbol(
-                                    this.widget.order.currency ?? 'EUR'),
+                                    this.widget.order.currency),
                             style: GoogleFonts.montserrat(fontSize: 20)),
                       ),
                       Padding(
@@ -138,7 +138,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                             (this.widget.order.totalWithFees ?? '') +
                                 " " +
                                 CurrencyService.getCurrencySymbol(
-                                    this.widget.order.currency ?? 'EUR'),
+                                    this.widget.order.currency),
                             style: GoogleFonts.montserrat(
                                 fontSize: 20, color: Colors.green)),
                       ),
@@ -173,7 +173,9 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                   trailing: Icon(CupertinoIcons.plus),
                                   title: Text("Ajouter un moyen de paiement"),
                                   onTap: () {
-                                      Get.to(PaymentMethodPage(user: this.widget.user,));
+                                    Get.to(PaymentMethodPage(
+                                      user: this.widget.user,
+                                    ));
                                   },
                                 );
 
@@ -183,7 +185,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                       databaseService.user.value.defaultSource);
 
                               return ListTile(
-                                autofocus: false,
+                                  autofocus: false,
                                   trailing: Icon(
                                     CupertinoIcons.check_mark_circled,
                                     color: Colors.green,
@@ -193,7 +195,8 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                         context,
                                         CupertinoPageRoute(
                                             builder: (context) =>
-                                                PaymentMethodPage(user: this.widget.user)));
+                                                PaymentMethodPage(
+                                                    user: this.widget.user)));
                                   },
                                   leading: SvgPicture.asset(
                                     'assets/payments_logo/${cardChosed.brand ?? 'base'}.svg',
@@ -202,11 +205,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                   title: Text(cardChosed.last4 ?? ''));
                             }),
                       ),
-
-
                       SizedBox(height: 45),
-                      
-
                       StreamButton(
                           buttonColor: Colors.black,
                           buttonText: "Payer" +

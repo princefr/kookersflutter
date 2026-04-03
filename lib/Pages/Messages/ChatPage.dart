@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
-import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,10 +33,6 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-
-
-
-
   StreamSubscription<void>? streamNewMessage;
   StreamSubscription<dynamic>? streamHasRead;
   StreamSubscription<void>? streamIsWriting;
@@ -54,17 +48,14 @@ class _ChatPageState extends State<ChatPage> {
       BehaviorSubject<List<Message>>();
   StreamSubscription<Room>? roomSubscription;
 
-  StreamSubscription<Message?> get unreadMessage => messages
-      .map((event) {
+  StreamSubscription<Message?> get unreadMessage => messages.map((event) {
         try {
-          return event.lastWhere(
-              (message) =>
-                  (message.userId != this.widget.uid && message.isRead == false));
+          return event.lastWhere((message) =>
+              (message.userId != this.widget.uid && message.isRead == false));
         } catch (e) {
           return null;
         }
-      })
-      .listen((event) => event);
+      }).listen((event) => event);
 
   // ignore: unused_field
   bool _active = false;
@@ -83,7 +74,7 @@ class _ChatPageState extends State<ChatPage> {
           databaseService.messageReadStream(this.widget.room.id);
       this.streamIsWriting =
           databaseService.userIsWritingStream(this.widget.room.id);
-      this.unreadMessage?.onData((data) {
+      this.unreadMessage.onData((data) {
         if (data != null) {
           databaseService.setIschatAreRead(this.widget.room.id);
           databaseService.loadrooms();
@@ -118,7 +109,6 @@ class _ChatPageState extends State<ChatPage> {
   void onFocusChange() {
     if (focusNode.hasFocus) {
       // Hide sticker when keyboard appear
-
     }
   }
 
@@ -143,11 +133,11 @@ class _ChatPageState extends State<ChatPage> {
 
     return Scaffold(
         appBar: TopBarChat(
-            displayname: (this.widget.room.receiver?.firstName ?? "") +
+            displayname: (this.widget.room.receiver.firstName) +
                 " " +
-                (this.widget.room.receiver?.lastName ?? ""),
+                (this.widget.room.receiver.lastName),
             rightIcon: CupertinoIcons.exclamationmark_circle_fill,
-            imageUrl: this.widget.room.receiver?.photoUrl,
+            imageUrl: this.widget.room.receiver.photoUrl,
             height: 54,
             isRightIcon: false,
             onTapRight: () {}),
@@ -181,15 +171,16 @@ class _ChatPageState extends State<ChatPage> {
                                 itemCount: snapshot.data?.length ?? 0,
                                 itemBuilder: (context, index) {
                                   if (snapshot.data![index].userId ==
-                                      databaseService.user.value?.id) {
+                                      databaseService.user.value.id) {
                                     return ListTile(
                                         autofocus: false,
                                         title: Column(
                                           children: [
                                             ChatImageMessage(
                                                 messagePicture: snapshot
-                                                    .data![index]
-                                                    .messagePicture ?? ''),
+                                                        .data![index]
+                                                        .messagePicture ??
+                                                    ''),
                                             SizedBox(height: 5),
                                             new ChatBubble(
                                               elevation: 0,
@@ -211,7 +202,7 @@ class _ChatPageState extends State<ChatPage> {
                                                       ),
                                                       child: Text(
                                                         snapshot.data![index]
-                                                            .message ?? "",
+                                                            .message,
                                                         style: GoogleFonts
                                                             .montserrat(
                                                                 color: Colors
@@ -230,14 +221,20 @@ class _ChatPageState extends State<ChatPage> {
                                                     MainAxisAlignment.end,
                                                 children: [
                                                   DateBelowMessage(
-                                                      date: snapshot.data![index]
-                                                          .createdAt ?? ''),
+                                                      date: snapshot
+                                                              .data![index]
+                                                              .createdAt ??
+                                                          ''),
                                                   SizedBox(width: 10),
                                                   IsReadWidget(
                                                     isRead: snapshot
-                                                        .data![index].isRead ?? false,
+                                                            .data![index]
+                                                            .isRead ??
+                                                        false,
                                                     isSent: snapshot
-                                                        .data![index].isSent ?? false,
+                                                            .data![index]
+                                                            .isSent ??
+                                                        false,
                                                   )
                                                 ],
                                               ),
@@ -252,7 +249,7 @@ class _ChatPageState extends State<ChatPage> {
                                       backgroundIcon: Icon(CupertinoIcons
                                           .arrowshape_turn_up_left),
                                       child: ListTile(
-                                          onLongPress: (){
+                                          onLongPress: () {
                                             print("long pressed");
                                           },
                                           autofocus: false,
@@ -260,8 +257,9 @@ class _ChatPageState extends State<ChatPage> {
                                             children: [
                                               ChatImageMessage(
                                                   messagePicture: snapshot
-                                                      .data![index]
-                                                      .messagePicture ?? ''),
+                                                          .data![index]
+                                                          .messagePicture ??
+                                                      ''),
                                               SizedBox(height: 5),
                                               new ChatBubble(
                                                 elevation: 0,
@@ -284,8 +282,9 @@ class _ChatPageState extends State<ChatPage> {
                                                               0.7,
                                                         ),
                                                         child: Text(
-                                                            snapshot.data![index]
-                                                                .message ?? "",
+                                                            snapshot
+                                                                .data![index]
+                                                                .message,
                                                             style: GoogleFonts
                                                                 .montserrat(
                                                                     color: Colors
@@ -298,8 +297,9 @@ class _ChatPageState extends State<ChatPage> {
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   child: DateBelowMessage(
-                                                    date: snapshot
-                                                        .data![index].createdAt ?? '',
+                                                    date: snapshot.data![index]
+                                                            .createdAt ??
+                                                        '',
                                                   ))
                                             ],
                                           )),
@@ -317,42 +317,48 @@ class _ChatPageState extends State<ChatPage> {
                   onAttachmentCiclked: () async {
                     final status = await Permission.photos.status;
                     print(status);
-                    if(status.isDenied){
-                      showDialog(context: context, builder: (BuildContext ctx){
-                                     return CupertinoAlertDialog(
-                                        title: Text("Accès à la biblioteque et photos"),
-                                        content: Center(child: Text("Vous avez refusé la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),),
-                                        actions: [
-                                          CupertinoDialogAction(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: const Text('Continuer', style: TextStyle(color:Colors.red),),
-                                          ),
-
-                                          CupertinoDialogAction(
-                                            onPressed: () {
-                                              openAppSettings();
-                                            },
-                                            isDefaultAction: true,
-                                            child: const Text('Paramètres'),
-                                          )
-                                        ],
-                                      );
-                                   });
-                    }else{
+                    if (status.isDenied) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext ctx) {
+                            return CupertinoAlertDialog(
+                              title: Text("Accès à la biblioteque et photos"),
+                              content: Center(
+                                child: Text(
+                                    "Vous avez refusé la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),
+                              ),
+                              actions: [
+                                CupertinoDialogAction(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Continuer',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                                CupertinoDialogAction(
+                                  onPressed: () {
+                                    openAppSettings();
+                                  },
+                                  isDefaultAction: true,
+                                  child: const Text('Paramètres'),
+                                )
+                              ],
+                            );
+                          });
+                    } else {
                       getImage().then((file) async {
-                        if(file != null) {
-                          FlutterNativeImage.compressImage(file.path, quality: 35)
+                        if (file != null) {
+                          FlutterNativeImage.compressImage(file.path,
+                                  quality: 35)
                               .then((compressed) {
                             this.pictureToPreview.sink.add(compressed);
                           });
                         }
                       });
                     }
-                  
                   },
-
                   onSendingClicked: () async {
                     this.textEditingController.text = "";
                     Message message = Message(
@@ -360,17 +366,19 @@ class _ChatPageState extends State<ChatPage> {
                         message: this.messageToSend.value,
                         isRead: false,
                         isSent: false,
-                        userId: databaseService.user.value?.id ?? '',
-                        messagePicture: (pictureToPreview.value != null && this.pictureToPreview.value != null)
+                        userId: databaseService.user.value.id ?? '',
+                        messagePicture: (pictureToPreview.value != null &&
+                                this.pictureToPreview.value != null)
                             ? await storage.uploadPictureFile(
-                                databaseService.user.value?.id ?? "",
+                                databaseService.user.value.id ?? "",
                                 "messages/" + Uuid().v1(),
                                 this.pictureToPreview.value!,
                                 "message")
                             : "",
                         roomId: this.widget.room.id,
                         receiverPushToken:
-                            this.widget.room.receiver?.notificationToken, client: databaseService.client);
+                            this.widget.room.receiver.notificationToken,
+                        client: databaseService.client);
                     databaseService.updateSingleRoom(
                         this.widget.room.id, message);
                     this.messageToSend.sink.add("");

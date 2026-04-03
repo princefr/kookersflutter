@@ -22,7 +22,7 @@ import 'package:rxdart/rxdart.dart';
 
 class VendorPageChild extends StatefulWidget {
   final OrderVendor vendor;
-  VendorPageChild({Key key, this.vendor}) : super(key: key);
+  VendorPageChild({Key? key, required this.vendor}) : super(key: key);
 
   @override
   _VendorPageChildState createState() => _VendorPageChildState();
@@ -31,18 +31,18 @@ class VendorPageChild extends StatefulWidget {
 class _VendorPageChildState extends State<VendorPageChild> {
 
 
-  StreamSubscription<OrderVendor> orderSubscription;
+  late StreamSubscription<OrderVendor> orderSubscription;
   // ignore: close_sinks
   BehaviorSubject<OrderVendor>  order = new BehaviorSubject<OrderVendor>();
-  StreamSubscription<int> get notificationIncoming => this.order.where((event) => event.notificationSeller > 0).map((event) => event.notificationSeller).listen((event) => event);
+  StreamSubscription<int?> get notificationIncoming => this.order.where((event) => (event.notificationSeller ?? 0) > 0).map((event) => event.notificationSeller).listen((event) => event);
 
 
   double percentage(percent, total) {
         return (percent / 100) * total;
   }
 
-  double fees;
-  double total;
+  late double fees;
+  late double total;
 
 
   @override
@@ -52,9 +52,9 @@ class _VendorPageChildState extends State<VendorPageChild> {
         Future.delayed(Duration.zero, (){
         final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
-          this.orderSubscription = databaseService.getOrderSeller(this.widget.vendor.id, this.order);
+          this.orderSubscription = databaseService.getOrderSeller(this.widget.vendor.id ?? "", this.order);
           notificationIncoming.onData((data) {
-              databaseService.cleanNotificationSeller(this.widget.vendor.id).then((value) => databaseService.loadSellerOrders());
+              databaseService.cleanNotificationSeller(this.widget.vendor.id ?? "").then((value) => databaseService.loadSellerOrders());
           });
     });
     super.initState();
@@ -72,7 +72,7 @@ class _VendorPageChildState extends State<VendorPageChild> {
 
   Future<Room> createRoom(GraphQLClient client, String user1, String user2) async {
     final MutationOptions _options  = MutationOptions(
-          documentNode: gql(r"""
+          document: gql(r"""
             mutation CreateChatRoom($user1: String!, $user2: String!, $uid: String!){
                   createChatRoom(user1:$user1 , user2: $user2, uid: $uid){
                               _id
@@ -97,20 +97,20 @@ class _VendorPageChildState extends State<VendorPageChild> {
                 }
               }
           """),
-          variables:  <String, String> {
+          variables: <String, dynamic> {
             "user1": user1,
             "user2": user2,
             "uid": user2
           }
         );
 
-        return client.mutate(_options).then((result) => Room.fromJson(result.data["createChatRoom"], user2));
+        return client.mutate(_options).then((result) => Room.fromJson(result.data!["createChatRoom"], user2));
 }
 
 
 Future<void> refuseOrder(GraphQLClient client, OrderVendor order) async {
 final MutationOptions _options  = MutationOptions(
-      documentNode: gql(r"""
+      document: gql(r"""
         mutation RefuseOrder($order: OrderInput!){
               refuseOrder(order: $order){
                 _id,
@@ -123,13 +123,13 @@ final MutationOptions _options  = MutationOptions(
       }
     );
 
-    return await client.mutate(_options).then((result) => result.data["refuseOrder"]);
+    return await client.mutate(_options).then((result) => result.data!["refuseOrder"]);
 }
 
 
 Future<void> acceptOrder(GraphQLClient client, OrderVendor order) async {
 final MutationOptions _options  = MutationOptions(
-      documentNode: gql(r"""
+      document: gql(r"""
         mutation AcceptOrder($order: OrderInput!){
               acceptOrder(order: $order){
                 _id,
@@ -142,7 +142,7 @@ final MutationOptions _options  = MutationOptions(
       }
     );
 
-    return await client.mutate(_options).then((result) => result.data["refuseOrder"]);
+    return await client.mutate(_options).then((result) => result.data!["refuseOrder"]);
 }
 
 
@@ -158,7 +158,7 @@ final MutationOptions _options  = MutationOptions(
     
       return Scaffold(
         appBar: TopBarWitBackNav(
-                          title: "ref:" + this.widget.vendor.shortId,
+                          title: "ref:" + (this.widget.vendor.shortId ?? ""),
                           rightIcon: CupertinoIcons.chat_bubble,
                           isRightIcon: false,
                           height: 54
@@ -179,7 +179,7 @@ final MutationOptions _options  = MutationOptions(
                           stream: this.order.stream,
                           builder: (context, snapshot) {
                             if(snapshot.connectionState == ConnectionState.waiting) return Text("nope");
-                            return StatusChip(state: EnumToString.fromString(OrderState.values, snapshot.data.orderState));
+                            return StatusChip(state: EnumToString.fromString(OrderState.values, snapshot.data?.orderState ?? "") ?? OrderState.NOT_ACCEPTED);
                           }
                         ),
                   ],
@@ -205,14 +205,14 @@ final MutationOptions _options  = MutationOptions(
               ListTile(
                 autofocus: false,
                 leading: Icon(CupertinoIcons.location),
-                title: Text(this.widget.vendor.adress.title, style: GoogleFonts.montserrat()),
+                title: Text(this.widget.vendor.adress?.title ?? "", style: GoogleFonts.montserrat()),
                 
               ),
 
               ListTile(
                 autofocus: false,
                 leading: Text("x" + this.widget.vendor.quantity.toString(), style: GoogleFonts.montserrat(fontSize: 20, color: Colors.green)),
-                title: Text(this.widget.vendor.publication.title, style: GoogleFonts.montserrat()),
+                title: Text(this.widget.vendor.publication?.title ?? "", style: GoogleFonts.montserrat()),
                 trailing: Text(this.widget.vendor.totalPrice + " " + CurrencyService.getCurrencySymbol(this.widget.vendor.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
@@ -240,7 +240,7 @@ final MutationOptions _options  = MutationOptions(
             ListTile(
               autofocus: false,
         leading: Icon(CupertinoIcons.calendar),
-        title: Text(Jiffy(this.widget.vendor.deliveryDay).format("do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat(),),
+        title: Text(Jiffy.parse(this.widget.vendor.deliveryDay).format(pattern: "do MMMM yyyy [ À ] HH:mm"), style: GoogleFonts.montserrat(),),
             ),
 
               ListTile(
@@ -260,14 +260,14 @@ final MutationOptions _options  = MutationOptions(
                             setState((){
                               this.isLoading = true;
                             });
-                            this.createRoom(databaseService.client, this.widget.vendor.buyerID, databaseService.user.value.id).then((result) async {
+                            this.createRoom(databaseService.client, this.widget.vendor.buyerID, databaseService.user.value.id ?? "").then((result) async {
                               await databaseService.loadrooms();
                               setState(() {
                                 this.isLoading = false;
                               });
                               Navigator.push(context,
                             CupertinoPageRoute(
-                              builder: (context) => ChatPage(room: result, uid: databaseService.user.value.id)));
+                              builder: (context) => ChatPage(room: result, uid: databaseService.user.value.id ?? "")));
                             }).catchError((onError) {
                               setState(() {
                                 this.isLoading = false;
@@ -279,10 +279,10 @@ final MutationOptions _options  = MutationOptions(
                   foregroundColor: Colors.white,
                   radius: 25,
                 backgroundImage:
-                    CachedNetworkImageProvider(this.widget.vendor.buyer.photoUrl),
+                    CachedNetworkImageProvider(this.widget.vendor.buyer?.photoUrl ?? ""),
               ),
 
-              title: Text(this.widget.vendor.buyer.firstName + " " + this.widget.vendor.buyer.lastName),
+              title: Text((this.widget.vendor.buyer?.firstName ?? "") + " " + (this.widget.vendor.buyer?.lastName ?? "")),
               trailing: Icon(CupertinoIcons.chat_bubble),
 
               ),
@@ -302,7 +302,7 @@ final MutationOptions _options  = MutationOptions(
                                 if (snapshot.data == null)
                                   return Text("its empty out there");
 
-                    switch (snapshot.data.orderState) {
+                    switch (snapshot.data?.orderState) {
                       case "ACCEPTED":
                           return Center(child: Text("Le plat a été accepté", style: GoogleFonts.montserrat(fontSize: 17),));
                       case "CANCELLED":

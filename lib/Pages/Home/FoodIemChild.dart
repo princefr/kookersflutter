@@ -433,7 +433,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                     successText: "Plat acheté",
                     controller: _streamButtonController,
                     onClick: () async {
-                      if(databaseService.user.value == null){
+                      if(databaseService.user.value.id == null){
                         NotificationPanelService.showError(context, "Veuillez vous connecter pour commander");
                       }else{
                         if(snapshot.data != null){
@@ -453,7 +453,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
 
               InkWell(child:Center(child: Text("Signaler", style: GoogleFonts.montserrat(color: Colors.red, fontSize: 18))), onTap: (){
-                if(databaseService.user.value == null){
+                if(databaseService.user.value.id == null){
                   NotificationPanelService.showError(context, "Veuillez vous connecter pour signaler ce plat");
                 }else{
                             showCupertinoModalBottomSheet(

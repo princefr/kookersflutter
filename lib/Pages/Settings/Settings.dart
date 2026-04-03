@@ -29,7 +29,10 @@ class SettingsItemWithLeftIcon extends StatelessWidget {
   final String buttonText;
   final IconData icon;
   const SettingsItemWithLeftIcon(
-      {Key? key, required this.onTap, required this.buttonText, required this.icon})
+      {Key? key,
+      required this.onTap,
+      required this.buttonText,
+      required this.icon})
       : super(key: key);
 
   @override
@@ -85,16 +88,14 @@ class Settings extends StatefulWidget {
   _SettingsState createState() => _SettingsState();
 }
 
-class _SettingsState extends State<Settings> with AutomaticKeepAliveClientMixin<Settings> {
-  
+class _SettingsState extends State<Settings>
+    with AutomaticKeepAliveClientMixin<Settings> {
   @override
   bool get wantKeepAlive => true;
 
-String capitalizeFirstOnly(String string){
-  return string.characters.first.toUpperCase() + string.substring(1);
-}
-
-
+  String capitalizeFirstOnly(String string) {
+    return string.characters.first.toUpperCase() + string.substring(1);
+  }
 
   final picker = ImagePicker();
 
@@ -103,8 +104,10 @@ String capitalizeFirstOnly(String string){
     return pickedFile != null ? File(pickedFile.path) : null;
   }
 
-  Future<void> updateUserImage(GraphQLClient client, String uid, String imageUrl, DatabaseProviderService database) {
-    final MutationOptions _options = MutationOptions(document: gql(r"""
+  Future<void> updateUserImage(GraphQLClient client, String uid,
+      String imageUrl, DatabaseProviderService database) {
+    final MutationOptions _options = MutationOptions(
+        document: gql(r"""
               mutation UpdateUserImage($userID: String!, $imageUrl: String!) {
                   updateUserImage(userID: $userID, imageUrl: $imageUrl){
               _id
@@ -191,92 +194,110 @@ String capitalizeFirstOnly(String string){
               fcmToken
                   }
               }
-          """), variables: <String, String>{
-          "userID": uid,
-          "imageUrl": imageUrl
-        });
+          """),
+        variables: <String, String>{"userID": uid, "imageUrl": imageUrl});
 
-        return client.mutate(_options).then((kooker) {
-                  final kookersUser = UserDef.fromJson(kooker.data["updateUserImage"]);
-                  database.user.add(kookersUser);
-      });
+    return client.mutate(_options).then((kooker) {
+      final kookersUser = UserDef.fromJson(kooker.data?["updateUserImage"]);
+      database.user.add(kookersUser);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final storageService = Provider.of<StorageService>(context, listen: false);
-    final authentificationService = Provider.of<AuthentificationService>(context, listen: false);
-    final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
+    final authentificationService =
+        Provider.of<AuthentificationService>(context, listen: false);
+    final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: true);
 
     return Scaffold(
       backgroundColor: Colors.white,
-          body: Container(
-        child: ListView(
-          children: [
+      body: Container(
+        child: ListView(children: [
           PageTitle(title: "Paramètres"),
           SizedBox(height: 20),
-
           Container(
             height: 130,
             margin: EdgeInsets.symmetric(vertical: 10.0),
             child: Stack(children: [
               Center(
                 child: StreamBuilder(
-                  stream: databaseService.user$,
-                  builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                    if(snapshot.connectionState == ConnectionState.waiting) return CircularProgressIndicator();
-                    if(snapshot.data == null) return SizedBox();
-                    return CircleAvatar(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.white,
-                    radius: 65,
-                  backgroundImage: CachedNetworkImageProvider(snapshot.data?.photoUrl ?? ''),
-                );
-                  }
-                ),
+                    stream: databaseService.user$,
+                    builder: (context, AsyncSnapshot<UserDef> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        return CircularProgressIndicator();
+                      if (snapshot.data == null) return SizedBox();
+                      return CircleAvatar(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.white,
+                        radius: 65,
+                        backgroundImage: CachedNetworkImageProvider(
+                            snapshot.data?.photoUrl ?? ''),
+                      );
+                    }),
               ),
-
               Positioned(
                 bottom: 0,
                 left: 205,
                 child: InkWell(
                   onTap: () async {
                     final status = await Permission.photos.status;
-                    if(status.isDenied){
-                          showDialog(context: context, builder: (BuildContext ctx){
-                                     return CupertinoAlertDialog(
-                                        title: Text("Accès à la biblioteque et photos"),
-                                        content: Center(child: Text("Vous avez refusé la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),),
-                                        actions: [
-                                          CupertinoDialogAction(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: const Text('Continuer', style: TextStyle(color:Colors.red),),
-                                          ),
-
-                                          CupertinoDialogAction(
-                                            onPressed: () {
-                                              openAppSettings();
-                                            },
-                                            isDefaultAction: true,
-                                            child: const Text('Paramètres'),
-                                          )
-                                        ],
-                                      );
-                                   });
-                    }else{
-                      this.getImage().then((file) async {
-                          File _file = await FlutterNativeImage.compressImage(file.path, quality: 35);
-                          storageService.uploadPictureFile(databaseService.user.value?.id ?? '', "photoUrl", _file, "profilImage").then((url) => {
-                            this.updateUserImage(databaseService.client, this.widget.user.uid, url, databaseService)
+                    if (status.isDenied) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext ctx) {
+                            return CupertinoAlertDialog(
+                              title: Text("Accès à la biblioteque et photos"),
+                              content: Center(
+                                child: Text(
+                                    "Vous avez refusé la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),
+                              ),
+                              actions: [
+                                CupertinoDialogAction(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Continuer',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                                CupertinoDialogAction(
+                                  onPressed: () {
+                                    openAppSettings();
+                                  },
+                                  isDefaultAction: true,
+                                  child: const Text('Paramètres'),
+                                )
+                              ],
+                            );
                           });
-                        });
+                    } else {
+                      this.getImage().then((file) async {
+                        File _file = await FlutterNativeImage.compressImage(
+                            file?.path ?? "",
+                            quality: 35);
+                        storageService
+                            .uploadPictureFile(
+                                databaseService.user.value.id ?? '',
+                                "photoUrl",
+                                _file,
+                                "profilImage")
+                            .then((url) => {
+                                  this.updateUserImage(
+                                      databaseService.client,
+                                      this.widget.user.uid,
+                                      url,
+                                      databaseService)
+                                });
+                      });
                     }
                   },
                   child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 7.0, horizontal: 7),
                       decoration: BoxDecoration(
                           color: Color.fromARGB(255, 255, 43, 84),
                           borderRadius: BorderRadius.circular(15.0)),
@@ -289,153 +310,166 @@ String capitalizeFirstOnly(String string){
               )
             ]),
           ),
-          
           SizedBox(height: 20),
           Center(
               child: StreamBuilder<UserDef>(
-                stream: databaseService.user$,
-                builder: (context, snapshot) {
-                  if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
-                  if(snapshot.data == null) return SizedBox();
-                  return Text((snapshot.data?.lastName ?? '').toUpperCase() + " " + capitalizeFirstOnly(snapshot.data?.firstName ?? ''),
-                      style: GoogleFonts.montserrat(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87));
-                }
-              )),
+                  stream: databaseService.user$,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting)
+                      return SizedBox();
+                    if (snapshot.data == null) return SizedBox();
+                    return Text(
+                        (snapshot.data?.lastName ?? '').toUpperCase() +
+                            " " +
+                            capitalizeFirstOnly(snapshot.data?.firstName ?? ''),
+                        style: GoogleFonts.montserrat(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87));
+                  })),
           SizedBox(height: 15),
           Divider(),
           SettingsItemWithLeftIcon(
-            icon: Icons.credit_card_sharp,
+              icon: Icons.credit_card_sharp,
               buttonText: "Méthodes de paiements",
-              onTap: () => Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => PaymentMethodPage(user: this.widget.user)))),
-
-              Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
-            child: Text(
-                "Regroupe toutes les cartes de crédit ajoutées et utilisées pour payer dans l’application kookers.",
-                style: GoogleFonts.montserrat(
-                    decoration: TextDecoration.none,
-                    color: Colors.black,
-                    fontSize: 10)),
-          )),
-
-          SettingsItemWithLeftIcon(
-            icon: Icons.account_balance_wallet_sharp,
-              buttonText: "Portefeuille",
-              onTap: () => Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => BalancePage(user: this.widget.user)))),
-
+              onTap: () => Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) =>
+                          PaymentMethodPage(user: this.widget.user)))),
           Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
-            child: Text(
-                "Regroupe le montant de votre portefeuille et les transactions qui y sont associées. Quand vous vendez sur kookers l’argent arrive d’abord dans votre portefeuille avant de pouvoir être retirer sur un compte en banque.",
-                style: GoogleFonts.montserrat(
-                    decoration: TextDecoration.none,
-                    color: Colors.black,
-                    fontSize: 10)),
-          )),
-
-
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+                child: Text(
+                    "Regroupe toutes les cartes de crédit ajoutées et utilisées pour payer dans l’application kookers.",
+                    style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.none,
+                        color: Colors.black,
+                        fontSize: 10)),
+              )),
           SettingsItemWithLeftIcon(
-            icon: Icons.account_balance,
+              icon: Icons.account_balance_wallet_sharp,
+              buttonText: "Portefeuille",
+              onTap: () => Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) =>
+                          BalancePage(user: this.widget.user)))),
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+                child: Text(
+                    "Regroupe le montant de votre portefeuille et les transactions qui y sont associées. Quand vous vendez sur kookers l’argent arrive d’abord dans votre portefeuille avant de pouvoir être retirer sur un compte en banque.",
+                    style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.none,
+                        color: Colors.black,
+                        fontSize: 10)),
+              )),
+          SettingsItemWithLeftIcon(
+              icon: Icons.account_balance,
               buttonText: "Comptes bancaires",
-              onTap: () => Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => IbanPage(user: this.widget.user)))),
-
-                    Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
-          child: Text(
-              "Regroupe tous les comptes bancaires utilisés pour retirer l’argent de votre portefeuille. Vos ibans sont uniquement utilisés à cet effet, retirer l’argent de votre portefeuille.",
-              style: GoogleFonts.montserrat(
-                  decoration: TextDecoration.none,
-                  color: Colors.black,
-                  fontSize: 10)),
-        )),
-
+              onTap: () => Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) => IbanPage(user: this.widget.user)))),
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+                child: Text(
+                    "Regroupe tous les comptes bancaires utilisés pour retirer l’argent de votre portefeuille. Vos ibans sont uniquement utilisés à cet effet, retirer l’argent de votre portefeuille.",
+                    style: GoogleFonts.montserrat(
+                        decoration: TextDecoration.none,
+                        color: Colors.black,
+                        fontSize: 10)),
+              )),
           SettingsItem(
               onTap: () {
-                Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => VerificationPage(user: this.widget.user)));
-                
-              }, buttonText: "Vérification d'identité"),
-
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) =>
+                            VerificationPage(user: this.widget.user)));
+              },
+              buttonText: "Vérification d'identité"),
           SettingsItem(
               onTap: () {
-                launch("https://getkookers.com/terms");
-                
-              }, buttonText: "Conditions générale d'utilisation"),
-          SettingsItem(onTap: () {
-              launch("http://getkookers.com/privacy");
-          }, buttonText: "Politique de confidentialité"),
-          SettingsItem(onTap: () {
-            launch("http://getkookers.com/privacy");
-          }, buttonText: "Gestion des cookies"),
-
-          SettingsItem(onTap: () {
-            launch("https://getkookers.com/guidelines");
-          }, buttonText: "Règles de la communauté"),
-
-          SettingsItem(onTap: () async {
-
-                showDialog(context: context, builder: (BuildContext ctx){
-                return CupertinoAlertDialog(
-                  title: Text("Se deconnecter"),
-                  content: Center(child: Text("Souhaitez vous vraiment vous deconnecter de kookers ? "),),
-                  actions: [
-                    CupertinoDialogAction(
-                      isDefaultAction: true,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Continuer'),
-                    ),
-
-                    CupertinoDialogAction(
-                      onPressed: () async {
-                        await authentificationService.signOut();
-                        databaseService.user.add(UserDef());
-                        databaseService.adress.add(Adress());
-                        Get.offAll(OnBoardingPager());
-                      },
-                      
-                      child: const Text('Deconnexion', style: TextStyle(color:Colors.red)),
-                    )
-                  ],
-                );
-              });
-
-            
-          }, buttonText: "Se deconnecter"),
-
-
-          SizedBox(height: 30,),
-
-          FutureBuilder(
-            future: PackageInfo.fromPlatform(),
-            builder: (ctx, snapshot) {
-              if(snapshot.connectionState == ConnectionState.waiting) return SizedBox();
-              if(snapshot.data == null) return SizedBox();
-              return Center(child: Text("Version:" + " " + snapshot.data.version, style: GoogleFonts.montserrat()));
-            }
+                launchUrl(Uri.parse("https://getkookers.com/terms"));
+              },
+              buttonText: "Conditions générale d'utilisation"),
+          SettingsItem(
+              onTap: () {
+                launchUrl(Uri.parse("http://getkookers.com/privacy"));
+              },
+              buttonText: "Politique de confidentialité"),
+          SettingsItem(
+              onTap: () {
+                launchUrl(Uri.parse("http://getkookers.com/privacy"));
+              },
+              buttonText: "Gestion des cookies"),
+          SettingsItem(
+              onTap: () {
+                launchUrl(Uri.parse("https://getkookers.com/guidelines"));
+              },
+              buttonText: "Règles de la communauté"),
+          SettingsItem(
+              onTap: () async {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext ctx) {
+                      return CupertinoAlertDialog(
+                        title: Text("Se deconnecter"),
+                        content: Center(
+                          child: Text(
+                              "Souhaitez vous vraiment vous deconnecter de kookers ? "),
+                        ),
+                        actions: [
+                          CupertinoDialogAction(
+                            isDefaultAction: true,
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Continuer'),
+                          ),
+                          CupertinoDialogAction(
+                            onPressed: () async {
+                              await authentificationService.signOut();
+                              databaseService.user.add(UserDef());
+                              databaseService.adress.add(Adress());
+                              Get.offAll(OnBoardingPager());
+                            },
+                            child: const Text('Deconnexion',
+                                style: TextStyle(color: Colors.red)),
+                          )
+                        ],
+                      );
+                    });
+              },
+              buttonText: "Se deconnecter"),
+          SizedBox(
+            height: 30,
           ),
-
-          SizedBox(height: 20,),
+          FutureBuilder<PackageInfo>(
+              future: PackageInfo.fromPlatform(),
+              builder: (ctx, AsyncSnapshot<PackageInfo> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting)
+                  return SizedBox();
+                if (snapshot.data == null) return SizedBox();
+                return Center(
+                    child: Text(
+                        "Version:" + " " + (snapshot.data?.version ?? ""),
+                        style: GoogleFonts.montserrat()));
+              }),
+          SizedBox(
+            height: 20,
+          ),
         ]),
       ),
     );
-
-
   }
-
-
-  
 }

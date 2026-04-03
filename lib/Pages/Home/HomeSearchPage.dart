@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +14,8 @@ class HomeSearchPage extends StatefulWidget {
   db.Adress? adress;
   bool isReturn;
   final User user;
-  HomeSearchPage({Key? key, this.adress, required this.isReturn, required this.user})
+  HomeSearchPage(
+      {Key? key, this.adress, required this.isReturn, required this.user})
       : super(key: key);
 
   @override
@@ -27,10 +27,7 @@ class _HomeSearchPageState extends State<HomeSearchPage>
   @override
   bool get wantKeepAlive => true;
 
-  
   TextEditingController textController = TextEditingController();
-
-  
 
   @override
   void dispose() {
@@ -144,7 +141,6 @@ class _HomeSearchPageState extends State<HomeSearchPage>
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
 
-
     return Scaffold(
       appBar: TopBarBackCross(height: 54, title: "Choisir une adresse"),
       body: SafeArea(
@@ -162,7 +158,8 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                   onChanged: (value) async {
                     if (value.isNotEmpty) {
                       try {
-                        List<Location> locations = await locationFromAddress(value);
+                        List<Location> locations =
+                            await locationFromAddress(value);
                         if (locations.isNotEmpty) {
                           final c = db.Adress(
                               isChosed: true,
@@ -173,25 +170,35 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                           setState(() {
                             this.widget.adress = c;
                             if (this.widget.isReturn == false) {
-                              databaseService.user.value.adresses
-                                  .forEach((e) => e.isChosed = false);
-                              databaseService.user.value.adresses.add(c);
+                              final adresses =
+                                  databaseService.user.value.adresses ?? [];
+                              adresses.forEach((e) => e.isChosed = false);
+                              adresses.add(c);
                               textController.text = "";
                               this
                                   .updateUserAdresses(
                                       databaseService.client,
                                       this.widget.user.uid,
-                                      databaseService.user.value.adresses,
+                                      adresses,
                                       databaseService)
                                   .then((value) {
+                                final userAdresses =
+                                    databaseService.user.value.adresses ?? [];
+                                final chosenAddress = userAdresses.firstWhere(
+                                    (element) => element.isChosed == true,
+                                    orElse: () => db.Adress(
+                                        isChosed: false,
+                                        location: models.Location(
+                                            latitude: 0, longitude: 0),
+                                        title: ''));
+                                final distance = databaseService.user.value
+                                        .settings?.distanceFromSeller ??
+                                    0;
                                 databaseService
                                     .loadPublication(
-                                        databaseService.user.value.adresses
-                                            .firstWhere(
-                                                (element) => element.isChosed == true)
-                                            .location,
-                                        databaseService.user.value.settings
-                                            .distanceFromSeller)
+                                        chosenAddress.location
+                                            as models.Location,
+                                        distance)
                                     .then((value) => Navigator.pop(context));
                               });
                             } else {
@@ -223,67 +230,84 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                 ),
               ),
               Divider(),
-              if (this.textController.text.isEmpty) 
+              if (this.textController.text.isEmpty)
                 Expanded(
-                  child: StreamBuilder(
-                      stream: databaseService.user$,
-                      initialData: databaseService.user.value,
-                      builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                        if (snapshot.data == null) return SizedBox();
-                        return ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: snapshot.data?.adresses?.length ?? 0,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                  autofocus: false,
-                                  onTap: () {
-                                    setState(() {
-                                      databaseService.user.value.adresses
-                                          .forEach((e) => e.isChosed = false);
-                                      snapshot.data?.adresses?[index].isChosed =
-                                          true;
-                                      this
-                                          .updateUserAdresses(
-                                              databaseService.client,
-                                              this.widget.user.uid,
-                                              databaseService
-                                                  .user.value.adresses,
-                                              databaseService)
-                                          .then((value) {
-                                        databaseService
-                                            .loadPublication(
-                                                databaseService
-                                                    .user.value.adresses
-                                                    .firstWhere((element) =>
-                                                        element.isChosed == true)
-                                                    .location,
-                                                databaseService
-                                                    .user.value.settings
-                                                    .distanceFromSeller)
-                                            .then((value) =>
-                                                Navigator.pop(context));
-                                      });
-                                    });
-                                  },
-                                  title: Text(
-                                      snapshot.data?.adresses?[index].title ?? ''),
-                                  trailing: Checkbox(
-                                      activeColor: Colors.green,
-                                      value: snapshot
-                                          .data?.adresses?[index].isChosed ?? false,
-                                      onChanged: (bool? x) {
-                                        setState(() {
-                                          snapshot.data?.adresses?[index].isChosed =
-                                              x ?? false;
+                    child: StreamBuilder(
+                        stream: databaseService.user$,
+                        initialData: databaseService.user.value,
+                        builder: (context, AsyncSnapshot<UserDef> snapshot) {
+                          if (snapshot.data == null) return SizedBox();
+                          return ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: snapshot.data?.adresses?.length ?? 0,
+                              itemBuilder: (BuildContext context, int index) {
+                                return ListTile(
+                                    autofocus: false,
+                                    onTap: () {
+                                      setState(() {
+                                        final adresses = databaseService
+                                                .user.value.adresses ??
+                                            [];
+                                        adresses
+                                            .forEach((e) => e.isChosed = false);
+                                        snapshot.data?.adresses?[index]
+                                            .isChosed = true;
+                                        this
+                                            .updateUserAdresses(
+                                                databaseService.client,
+                                                this.widget.user.uid,
+                                                adresses,
+                                                databaseService)
+                                            .then((value) {
+                                          final userAdresses = databaseService
+                                                  .user.value.adresses ??
+                                              [];
+                                          final chosenAddress =
+                                              userAdresses.firstWhere(
+                                                  (element) =>
+                                                      element.isChosed == true,
+                                                  orElse: () => db.Adress(
+                                                      isChosed: false,
+                                                      location: models.Location(
+                                                          latitude: 0,
+                                                          longitude: 0),
+                                                      title: ''));
+                                          final distance = databaseService
+                                                  .user
+                                                  .value
+                                                  .settings
+                                                  ?.distanceFromSeller ??
+                                              0;
+                                          databaseService
+                                              .loadPublication(
+                                                  chosenAddress.location
+                                                      as models.Location,
+                                                  distance)
+                                              .then((value) =>
+                                                  Navigator.pop(context));
                                         });
-                                      })
-                              );
-                            });
-                      })
-                ),
+                                      });
+                                    },
+                                    title: Text(
+                                        snapshot.data?.adresses?[index].title ??
+                                            ''),
+                                    trailing: Checkbox(
+                                        activeColor: Colors.green,
+                                        value: snapshot.data?.adresses?[index]
+                                                .isChosed ??
+                                            false,
+                                        onChanged: (bool? x) {
+                                          setState(() {
+                                            snapshot.data?.adresses?[index]
+                                                .isChosed = x ?? false;
+                                          });
+                                        }));
+                              });
+                        })),
             ],
           ),
         ),
-      );
+      ),
+    );
   }
 }

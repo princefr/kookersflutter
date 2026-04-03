@@ -15,11 +15,12 @@ class Receiver {
   String? photoUrl;
   String? notificationToken;
   Receiver(
-      {required this.firstName, required this.lastName, this.phonenumber, this.photoUrl, this.notificationToken});
+      {required this.firstName,
+      required this.lastName,
+      this.phonenumber,
+      this.photoUrl,
+      this.notificationToken});
 }
-
-
-
 
 class Room {
   String id;
@@ -29,49 +30,52 @@ class Room {
   Receiver receiver;
   String? lastMessage;
   List<Message> messages;
-  
+
   Room(
       {required this.id,
       required this.updatedAt,
       this.createdAt,
       required this.notificationCountUser_1,
       required this.receiver,
-      required this.messages, this.lastMessage});
+      required this.messages,
+      this.lastMessage});
 
+  static Room fromJson(Map<String, dynamic> map, String currentUser) {
+    List<Message> messages =
+        Message.fromJSON(map['messages'] as List<Object>).reversed.toList();
+    String last = messages.length > 0 ? messages.first.message : "";
+    int notificationCount = messages.length > 0
+        ? messages
+            .where((element) => element.userId != currentUser)
+            .where((element) => element.isRead == false)
+            .length
+        : 0;
+    String lastMessageDate =
+        messages.length > 0 ? messages.first.createdAt : map["updatedAt"];
 
-      static Room fromJson(Map<String, dynamic> map, String currentUser){
-        List<Message> messages =  Message.fromJSON(map['messages'] as List<Object>).reversed.toList();
-        String last = messages.length > 0 ? messages.first.message : "";
-        int notificationCount = messages.length > 0 ? messages.where((element) => element.userId != currentUser).where((element) => element.isRead == false).length : 0;
-        String lastMessageDate = messages.length > 0 ? messages.first.createdAt : map["updatedAt"];
-
-        
-
-        final room = Room(
+    final room = Room(
         messages: messages,
         id: map['_id'] as String,
         notificationCountUser_1: notificationCount,
         updatedAt: lastMessageDate,
         lastMessage: last,
-
         receiver: Receiver(
             firstName: map['receiver']["first_name"],
-            lastName: map['receiver']["last_name"], photoUrl: map['receiver']["photoUrl"], notificationToken: map["receiver"]["fcmToken"])
-        );
+            lastName: map['receiver']["last_name"],
+            photoUrl: map['receiver']["photoUrl"],
+            notificationToken: map["receiver"]["fcmToken"]));
 
-        return room;
-      }
-
-
+    return room;
+  }
 
   static List<Room> fromJsonToList(List<Object> map, String currentUser) {
-        List<Room> allpublications = [];
-        map.forEach((element) {
-          final x = Room.fromJson(element as Map<String, dynamic>, currentUser);
-          allpublications.add(x);
-        });
-        return allpublications;
-      }
+    List<Room> allpublications = [];
+    map.forEach((element) {
+      final x = Room.fromJson(element as Map<String, dynamic>, currentUser);
+      allpublications.add(x);
+    });
+    return allpublications;
+  }
 }
 
 class Message {
@@ -89,30 +93,30 @@ class Message {
       {required this.userId,
       required this.message,
       required this.createdAt,
-      this.messagePicture, this.isRead, this.isSent, this.receiverPushToken, this.roomId, this.client});
+      this.messagePicture,
+      this.isRead,
+      this.isSent,
+      this.receiverPushToken,
+      this.roomId,
+      this.client});
 
   static List<Message> fromJSON(List<Object> map) {
-
-    
     List<Message> messages = [];
-    if(map != null){
-      map.forEach((element) async {
-        final dou = element as Map<String, dynamic>;
-        messages.add(Message(
-          createdAt: dou["createdAt"],
-          userId: dou["userId"],
-          message: dou["message"],
-          isRead: dou["is_read"],
-          isSent: dou["is_sent"],
-          messagePicture: dou["message_picture"],
-        ));
-      });
-    }
+    map.forEach((element) {
+      final dou = element as Map<String, dynamic>;
+      messages.add(Message(
+        createdAt: dou["createdAt"],
+        userId: dou["userId"],
+        message: dou["message"],
+        isRead: dou["is_read"],
+        isSent: dou["is_sent"],
+        messagePicture: dou["message_picture"],
+      ));
+    });
     return messages;
   }
 
-
-  Map<String, dynamic> toJSON(){
+  Map<String, dynamic> toJSON() {
     Map<String, dynamic> data = Map<String, dynamic>();
     data["userId"] = this.userId;
     data["message"] = this.message;
@@ -123,19 +127,19 @@ class Message {
     return data;
   }
 
-  Future<void> send() async{
-    return this.sendMessage().then((value){
+  Future<void> send() async {
+    return this.sendMessage().then((value) {
       this.isSent = true;
     }).catchError((onError) {
-      Future.delayed(Duration(seconds: 15), (){
-        this.sendMessage().then((value){
+      Future.delayed(Duration(seconds: 15), () {
+        this.sendMessage().then((value) {
           this.isSent = true;
         });
       });
     });
   }
 
-    Future<void> sendMessage() async {
+  Future<void> sendMessage() async {
     final MutationOptions _options = MutationOptions(document: gql(r"""
       mutation SendMEssage($message: MessageInput){
             sendMessage(message: $message)
@@ -144,13 +148,13 @@ class Message {
       "message": this.toJSON(),
     });
 
-    return await this.client
-        ?.mutate(_options)
-        ?.then((value) => value.data?["sendMessage"]);
+    final client = this.client;
+    if (client == null) return null;
+    return await client
+        .mutate(_options)
+        .then((value) => value.data?["sendMessage"]);
   }
 }
-
-
 
 class RoomItemShimmer extends StatelessWidget {
   const RoomItemShimmer({Key? key}) : super(key: key);
@@ -165,8 +169,8 @@ class RoomItemShimmer extends StatelessWidget {
             autofocus: false,
             title: Container(
               decoration: BoxDecoration(
-                      color: Colors.grey[200],      
-                    ),
+                color: Colors.grey[200],
+              ),
               child: Text(
                 "ONDONDA PRINCE",
                 style: GoogleFonts.montserrat(fontSize: 15),
@@ -174,8 +178,8 @@ class RoomItemShimmer extends StatelessWidget {
             ),
             subtitle: Container(
               decoration: BoxDecoration(
-                                color: Colors.grey[200],      
-                    ),
+                color: Colors.grey[200],
+              ),
               child: Text(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
                 maxLines: 1,
@@ -184,38 +188,37 @@ class RoomItemShimmer extends StatelessWidget {
               ),
             ),
             leading: CircleAvatar(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.white,
-              radius: 30
-            ),
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.white,
+                radius: 30),
             trailing: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
-                                color: Colors.grey[200],      
-                    ),
+                    color: Colors.grey[200],
+                  ),
                   child: Text(
                     "il y'a 5 min",
                     style: TextStyle(fontSize: 12),
                   ),
                 ),
                 Container(
-                        margin: const EdgeInsets.only(top: 5.0),
-                        height: 25,
-                        width: 25,
-                        decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(25.0),
-                            )),
-                        child: Center(
-                            child: Text(
-                          "2",
-                          style: TextStyle(fontSize: 11, color: Colors.white),
-                        )),
-                      )
+                  margin: const EdgeInsets.only(top: 5.0),
+                  height: 25,
+                  width: 25,
+                  decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(25.0),
+                      )),
+                  child: Center(
+                      child: Text(
+                    "2",
+                    style: TextStyle(fontSize: 11, color: Colors.white),
+                  )),
+                )
               ],
             ),
           ),
@@ -224,8 +227,6 @@ class RoomItemShimmer extends StatelessWidget {
     );
   }
 }
-
-
 
 class RoomItem extends StatelessWidget {
   final Room room;
@@ -236,7 +237,7 @@ class RoomItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
-        
+
     return Row(
       children: <Widget>[
         Expanded(
@@ -255,16 +256,23 @@ class RoomItem extends StatelessWidget {
             ),
             leading: CircleAvatar(
               backgroundColor: Colors.white,
-                    foregroundColor: Colors.white,
+              foregroundColor: Colors.white,
               radius: 30,
-              backgroundImage: this.room.receiver.photoUrl != null ? CachedNetworkImageProvider(this.room.receiver.photoUrl!) : null,
+              backgroundImage: this.room.receiver.photoUrl != null
+                  ? CachedNetworkImageProvider(this.room.receiver.photoUrl!)
+                  : null,
             ),
             trailing: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  Jiffy.parse(this.room.updatedAt).yMMMMd == Jiffy.parseFromDateTime(DateTime.now()).yMMMMd ? Jiffy.parse(this.room.updatedAt).format(pattern: "HH:mm") : Jiffy.parse(this.room.updatedAt).format(pattern: "do MMMM"),
+                  Jiffy.parse(this.room.updatedAt).yMMMMd ==
+                          Jiffy.parseFromDateTime(DateTime.now()).yMMMMd
+                      ? Jiffy.parse(this.room.updatedAt)
+                          .format(pattern: "HH:mm")
+                      : Jiffy.parse(this.room.updatedAt)
+                          .format(pattern: "do MMMM"),
                   style: TextStyle(fontSize: 12),
                 ),
                 room.notificationCountUser_1 > 0
@@ -290,7 +298,9 @@ class RoomItem extends StatelessWidget {
               Navigator.push(
                   context,
                   CupertinoPageRoute(
-                      builder: (context) => ChatPage(room: this.room, uid: databaseService.user.value.id)));
+                      builder: (context) => ChatPage(
+                          room: this.room,
+                          uid: databaseService.user.value.id)));
             },
           ),
         ),

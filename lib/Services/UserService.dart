@@ -1,21 +1,20 @@
 import 'dart:async';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Models/User.dart';
-import 'package:kookers/Models/Balance.dart';
 import 'package:rxdart/rxdart.dart';
 
 class UserService {
   final GraphQLClient client;
   
   // ignore: close_sinks
-  BehaviorSubject<UserDef> _user = BehaviorSubject<UserDef>();
-  Stream<UserDef> get user$ => _user.stream.asBroadcastStream();
+  BehaviorSubject<UserDef?> _user = BehaviorSubject<UserDef?>();
+  Stream<UserDef?> get user$ => _user.stream.asBroadcastStream();
   UserDef? get currentUser => _user.value;
 
   UserService({required this.client});
 
   void dispose() {
-    _user.add(null);
+    _user.close();
   }
 
   void setUser(UserDef user) {
@@ -24,56 +23,56 @@ class UserService {
 
   Future<String> updateDefaultSource(String source) async {
     final MutationOptions _options = MutationOptions(
-      documentNode: gql(r"""
+      document: gql(r"""
         mutation UpdateDefaultSource($userId: String!, $source: String!){
           updateDefaultSource(userId: $userId, source: $source)
         }
       """),
-      variables: <String, String>{
+      variables: <String, String?>{
         "userId": currentUser!.id,
         "source": source,
       }
     );
 
-    return await client.mutate(_options).then((result) => result.data["updateDefaultSource"]);
+    return await client.mutate(_options).then((result) => result.data!["updateDefaultSource"]);
   }
 
   Future<String> updateIbanDeposit(String iban) async {
     final MutationOptions _options = MutationOptions(
-      documentNode: gql(r"""
+      document: gql(r"""
         mutation UpdateIbanSource($userId: String!, $iban: String!){
           updateIbanSource(userId: $userId, iban: $iban)
         }
       """),
-      variables: <String, String>{
+      variables: <String, String?>{
         "userId": currentUser!.id,
         "iban": iban,
       }
     );
 
-    return await client.mutate(_options).then((result) => result.data["updateIbanSource"]);
+    return await client.mutate(_options).then((result) => result.data!["updateIbanSource"]);
   }
 
   Future<String> updateFirebasetoken(String token) async {
     final MutationOptions _options = MutationOptions(
-      documentNode: gql(r"""
+      document: gql(r"""
         mutation UpdateFirebasetoken($userId: String!, $token: String!){
           updateFirebasetoken(userId: $userId, token: $token)
         }
       """),
-      variables: <String, String>{
+      variables: <String, String?>{
         "userId": currentUser!.id,
         "token": token,
       }
     );
 
-    return await client.mutate(_options).then((result) => result.data["updateFirebasetoken"]);
+    return await client.mutate(_options).then((result) => result.data!["updateFirebasetoken"]);
   }
 
   Future<UserDef?> loadUserData(String uid) {
     final QueryOptions _options = QueryOptions(
       fetchPolicy: FetchPolicy.cacheAndNetwork,
-      documentNode: gql(r"""
+      document: gql(r"""
         query GetIfUSerExist($uid: String!) {
           usersExist(firebase_uid: $uid){
             _id
@@ -156,12 +155,12 @@ class UserService {
           }
         }
       """), 
-      variables: <String, String>{"uid": uid}
+      variables: <String, String?>{"uid": uid}
     );
 
     return client.query(_options).then((kooker) {
-      if (kooker.data["usersExist"] != null) {
-        final kookersUser = UserDef.fromJson(kooker.data["usersExist"]);
+      if (kooker.data!["usersExist"] != null) {
+        final kookersUser = UserDef.fromJson(kooker.data!["usersExist"]);
         setUser(kookersUser);
         return kookersUser;
       }
@@ -171,7 +170,7 @@ class UserService {
 
   Future<UserDef?> setIsSeller() async {
     final MutationOptions _options = MutationOptions(
-      documentNode: gql(r"""
+      document: gql(r"""
         mutation SetIsSeller($userId: String!){
           setIsSeller(userId: $userId) {
             _id
@@ -253,12 +252,12 @@ class UserService {
           }
         }
       """),
-      variables: <String, String>{"userId": currentUser!.id}
+      variables: <String, String?>{"userId": currentUser!.id}
     );
 
     return client.mutate(_options).then((kooker) {
-      if (kooker.data["setIsSeller"] != null) {
-        final kookersUser = UserDef.fromJson(kooker.data["setIsSeller"]);
+      if (kooker.data!["setIsSeller"] != null) {
+        final kookersUser = UserDef.fromJson(kooker.data!["setIsSeller"]);
         setUser(kookersUser);
         return kookersUser;
       }

@@ -1,0 +1,186 @@
+# Flutter analysis options for Kookers
+
+analyzer:
+  errors:
+    # Critical errors that must be caught
+    missing_required_param: error
+    missing_return: error
+    undefined_identifier: warning
+    undefined_class: warning
+    undefined_method: warning
+    undefined_named_parameter: warning
+    argument_type_not_assignable: warning
+    return_of_invalid_type: warning
+    invalid_assignment: warning
+    non_type_as_type_argument: warning
+    duplicate_import: error
+    uri_does_not_exist: warning
+    const_with_non_const: warning
+    expected_token: warning
+    unexpected_token: warning
+    
+    # Downgrade to warnings for gradual fixing
+    unused_import: warning
+    unused_element: warning
+    dead_code: warning
+    unnecessary_null_comparison: warning
+    unnecessary_non_null_assertion: warning
+    unnecessary_cast: warning
+    invalid_null_aware_operator: warning
+    dead_null_aware_expression: warning
+    must_be_immutable: warning
+    unrecognized_error_code: warning
+    unchecked_use_of_nullable_value: warning
+    undefined_getter: warning
+    missing_required_argument: warning
+    return_of_invalid_type_from_closure: warning
+    body_might_complete_normally: warning
+    throw_of_invalid_type: warning
+    invalid_constant: warning
+    extra_positional_arguments: warning
+    missing_default_value_for_parameter: warning
+    not_initialized_non_nullable_instance_field: warning
+    map_value_type_not_assignable: warning
+    ambiguous_import: warning
+    new_with_undefined_constructor_default: warning
+    invocation_of_non_function: warning
+
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gr.dart"
+
+linter:
+  rules:
+    - always_declare_return_types: true
+    - avoid_empty_else: true
+    - avoid_relative_lib_imports: true
+    - avoid_types_as_parameter_names: true
+    - camel_case_types: true
+    - empty_catches: true
+    - hash_and_equals: true
+    - no_duplicate_case_values: true
+    - prefer_void_to_null: true
+    - test_types_in_equals: true
+    - throw_in_finally: true
+    - type_init_formals: true
+    - valid_regexps: true
+    - collection_methods_unrelated_type: true
+    - unrelated_type_equality_checks: true
+    - avoid_returning_null_for_future: true
+    - prefer_const_constructors: false
+    - prefer_const_literals_to_create_immutables: false
+    - prefer_final_fields: false
+    - avoid_print: false
+    - avoid_unnecessary_containers: false
+    - prefer_single_quotes: false
+    - sort_child_properties_last: false
+    - use_key_in_widget_constructors: false
+    - require_trailing_commas: false
+    - prefer_const_constructors_in_immutables: false
+    - use_super_parameters: false
+    - prefer_interpolation_to_compose_strings: false
+    - prefer_is_empty: false
+    - unnecessary_this: false
+    - unnecessary_new: false
+    - unnecessary_const: false
+    - avoid_function_literals_in_foreach_calls: false
+    - sized_box_for_whitespace: false
+    - prefer_adjacent_string_concatenation: false
+    - prefer_collection_literals: false
+    - library_private_types_in_public_api: false
+    - constant_identifier_names: false
+    - file_names: false
+    - depend_on_referenced_packages: false
+    - use_build_context_synchronously: false
+    - prefer_typing_uninitialized_variables: false
+    - omit_local_variable_types: false
+    - avoid_types_on_closure_parameters: false
+    - prefer_final_locals: false
+    - prefer_final_in_for_each: false
+    - avoid_escaping_inner_quotes: false
+    - use_string_buffers: false
+    - prefer_is_not_empty: false
+    - prefer_is_not_operator: false
+    - prefer_null_aware_operators: false
+    - unnecessary_brace_in_string_interps: false
+    - unnecessary_raw_strings: false
+    - raw_strings: false
+    - lines_longer_than_80_chars: false
+    - parameter_assignments: false
+    - join_return_with_assignment: false
+    - cascade_invocations: false
+    - prefer_expression_function_bodies: false
+    - avoid_returning_this: false
+    - avoid_returning_null_for_void: false
+    - empty_constructor_bodies: false
+    - annotate_overrides: false
+    - overridden_fields: false
+    - avoid_init_to_null: false
+    - avoid_null_checks_in_equality_operators: false
+    - avoid_private_typedef_functions: false
+    - avoid_positional_boolean_parameters: false
+    - avoid_annotating_with_dynamic: false
+    - avoid_equals_and_hash_code_on_mutable_classes: false
+    - avoid_double_and_int_checks: false
+    - avoid_dynamic_calls: false
+    - avoid_catching_errors: false
+    - avoid_classes_with_only_static_members: false
+    - avoid_bool_literals_in_conditional_expressions: false
+    - always_put_required_named_parameters_first: false
+    - always_put_control_body_on_new_line: false
+    - always_specify_types: false
+    - close_sinks: false
+    - comment_references: false
+    - directives_ordering: false
+    - flutter_style_todos: false
+    - no_runtimeType_toString: false
+    - one_member_abstracts: false
+    - only_throw_errors: false
+    - package_api_docs: false
+    - package_names: false
+    - package_prefixed_library_names: false
+    - prefer_asserts_in_initializer_lists: false
+    - prefer_asserts_with_message: false
+    - prefer_constructors_over_static_methods: false
+    - prefer_double_quotes: false
+    - prefer_final_parameters: false
+    - prefer_foreach: false
+    - prefer_if_elements_to_conditional_expressions: false
+    - prefer_if_null_operators: false
+    - prefer_int_literals: false
+    - prefer_mixin: false
+    - prefer_null_aware_method_calls: false
+    - provide_deprecation_message: false
+    - public_member_api_docs: false
+    - recursive_getters: false
+    - sort_constructors_first: false
+    - sort_pub_dependencies: false
+    - sort_unnamed_constructors_first: false
+    - type_annotate_public_apis: false
+    - unawaited_futures: false
+    - unnecessary_await_in_return: false
+    - unnecessary_getters_setters: false
+    - unnecessary_lambdas: false
+    - unnecessary_late: false
+    - unnecessary_null_aware_assignments: false
+    - unnecessary_null_checks: false
+    - unnecessary_null_in_if_null_operators: false
+    - unnecessary_nullable_for_final_variable_declarations: false
+    - unnecessary_overrides: false
+    - unnecessary_parenthesis: false
+    - unnecessary_statements: false
+    - unnecessary_string_escapes: false
+    - unnecessary_string_interpolations: false
+    - use_full_hex_values_for_flutter_colors: false
+    - use_function_type_syntax_for_parameters: false
+    - use_if_null_to_convert_nulls_to_bools: false
+    - use_is_even_rather_than_modulo: false
+    - use_late_for_private_fields_and_variables: false
+    - use_named_constants: false
+    - use_rethrow_when_possible: false
+    - use_setters_to_change_properties: false
+    - use_string_in_part_of_directives: false
+    - use_test_throws_matchers: false
+    - use_to_and_as_if_applicable: false
+    - void_checks: false

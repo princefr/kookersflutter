@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:circular_check_box/circular_check_box.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -168,7 +167,7 @@ class _SignupPageState extends State<SignupPage> {
     });
 
     return client.mutate(_options).then((kooker) {
-      final kookersUser = UserDef.fromJson(kooker.data["createUser"]);
+      final kookersUser = UserDef.fromJson(kooker.data?["createUser"]);
       return kookersUser;
     });
   }
@@ -235,6 +234,7 @@ class _SignupPageState extends State<SignupPage> {
                     child: InkWell(
                       onTap: () {
                         this.getImage().then((file) async {
+                          if (file == null) return;
                           File _file = await FlutterNativeImage.compressImage(
                               file.path,
                               quality: 35);
@@ -270,7 +270,7 @@ class _SignupPageState extends State<SignupPage> {
                   stream: signupBloc.lastName$,
                   builder: (context, snapshot) {
                     return TextField(
-                      key: Key("last_name_textfield"),
+                        key: Key("last_name_textfield"),
                         onChanged: signupBloc.lastName.sink.add,
                         decoration: InputDecoration(
                           errorText: snapshot.error as String?,
@@ -324,7 +324,7 @@ class _SignupPageState extends State<SignupPage> {
                   stream: signupBloc.email$,
                   builder: (context, snapshot) {
                     return TextField(
-                      key: Key("email_textfield"),
+                        key: Key("email_textfield"),
                         onChanged: signupBloc.email.sink.add,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
@@ -362,12 +362,12 @@ class _SignupPageState extends State<SignupPage> {
                               datemode: CupertinoDatePickerMode.date),
                         );
 
-                        signupBloc.dateOfBirth.add(date!);
+                        signupBloc.dateOfBirth.sink.add(date);
                       },
                       leading: Icon(CupertinoIcons.calendar),
                       title: Text("Date de naissance"),
                       trailing: snapshot.data != null
-                          ? Text(f.format(snapshot.data))
+                          ? Text(f.format(snapshot.data!))
                           : Text("Choisir"),
                     );
                   }),
@@ -397,19 +397,20 @@ class _SignupPageState extends State<SignupPage> {
                         this.adress = await showCupertinoModalBottomSheet(
                           expand: false,
                           context: context,
-                          builder: (context) => HomeSearchPage(isReturn: true, user: null),
+                          builder: (context) => HomeSearchPage(
+                              isReturn: true, user: this.widget.user),
                         );
 
                         signupBloc.adress.sink.add(this.adress);
 
                         setState(() {
-                          this.adressString = this.adress.title;
+                          this.adressString = this.adress.title ?? "";
                         });
                       },
                       leading: Icon(CupertinoIcons.home),
                       title: snapshot.data == null
                           ? Text("Votre adresse")
-                          : Text(snapshot.data.title),
+                          : Text(snapshot.data?.title ?? ""),
                       trailing: Icon(CupertinoIcons.chevron_down),
                     );
                   }),
@@ -426,13 +427,14 @@ class _SignupPageState extends State<SignupPage> {
                 leading: StreamBuilder<bool>(
                     stream: signupBloc.acceptedPolicies$,
                     builder: (context, snapshot) {
-                      return CircularCheckBox(
+                      return Checkbox(
                           key: Key("checkboxTerms"),
                           activeColor: Colors.green,
                           value: snapshot.data != null
                               ? snapshot.data
                               : signupBloc.acceptedPolicies.value,
-                          onChanged: signupBloc.acceptedPolicies.add);
+                          onChanged: (value) => signupBloc.acceptedPolicies.sink
+                              .add(value ?? false));
                     }),
                 title: RichText(
                     text: TextSpan(
@@ -496,7 +498,7 @@ class _SignupPageState extends State<SignupPage> {
                   stream: signupBloc.isAllFilled$,
                   builder: (context, AsyncSnapshot<bool> snapshot) {
                     return StreamButton(
-                      key: Key("signup_button"),
+                        key: Key("signup_button"),
                         buttonColor:
                             snapshot.data != null && snapshot.data != false
                                 ? Colors.black
@@ -520,19 +522,22 @@ class _SignupPageState extends State<SignupPage> {
                                     infos.lastName,
                                     infos.email,
                                     this.widget.user.phoneNumber ?? '',
-                                    notifID,
+                                    notifID ?? '',
                                     this.photoUrl,
                                     infos.adress,
                                     phoneAuthBloc.userCurrency.value,
                                     phoneAuthBloc.userCountry.value,
-                                    infos.birthDate)
+                                    infos.birthDate ??
+                                        DateOfBirth(
+                                            year: 2000, month: 1, day: 1))
                                 .then((kooker) async {
                               databaseService.user.add(kooker);
                               await _streamButtonController.isSuccess();
                               Navigator.push(
                                   context,
                                   CupertinoPageRoute(
-                                      builder: (context) => NotificationPage(user: this.widget.user)));
+                                      builder: (context) => NotificationPage(
+                                          user: this.widget.user)));
                             }).catchError((onError) async {
                               await _streamButtonController.isError();
                             });

@@ -7,11 +7,8 @@ class DoubleHolder {
 class StatefulListView extends StatefulWidget {
   final DoubleHolder offset = new DoubleHolder();
 
-  StatefulListView(this._itemCount,
-      this._indexedWidgetBuilder,
-      {
-        Key key
-      })
+  StatefulListView(this._itemCount, this._indexedWidgetBuilder,
+      {Key? key = null})
       : super(key: key);
 
   double getOffsetMethod() {
@@ -31,8 +28,7 @@ class StatefulListView extends StatefulWidget {
 }
 
 class _StatefulListViewState extends State<StatefulListView> {
-
-  ScrollController scrollController;
+  late ScrollController scrollController;
   final int _itemCount;
   final IndexedWidgetBuilder _itemBuilder;
 
@@ -41,9 +37,8 @@ class _StatefulListViewState extends State<StatefulListView> {
   @override
   void initState() {
     super.initState();
-    scrollController = new ScrollController(
-        initialScrollOffset: widget.getOffsetMethod()
-    );
+    scrollController =
+        new ScrollController(initialScrollOffset: widget.getOffsetMethod());
   }
 
   @override
@@ -52,13 +47,13 @@ class _StatefulListViewState extends State<StatefulListView> {
       child: new ListView.builder(
           controller: scrollController,
           itemCount: _itemCount,
-          itemBuilder: _itemBuilder
-      ),
+          itemBuilder: _itemBuilder),
       // ignore: missing_return
       onNotification: (notification) {
         if (notification is ScrollNotification) {
           widget.setOffsetMethod(notification.metrics.pixels);
         }
+        return true;
       },
     );
   }

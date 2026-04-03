@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
@@ -26,20 +25,17 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
     super.initState();
   }
 
-
   PhoneAuthBloc phoneAuthBloc = PhoneAuthBloc();
 
-
-
   @override
-  void dispose() { 
+  void dispose() {
     this.phoneAuthBloc.dispose();
     super.dispose();
   }
 
   bool isValidPhoneNumber(String string) {
     // Null or empty string is invalid phone number
-    if (string == null || string.isEmpty) {
+    if (string.isEmpty) {
       return false;
     }
 
@@ -58,10 +54,8 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     final authentificationService =
         Provider.of<AuthentificationService>(context, listen: false);
-    
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -98,10 +92,27 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                       builder: (context, snapshot) {
                         return CountryCodePicker(
                             onChanged: (CountryCode code) {
-                              this.phoneAuthBloc.inuserCurrency.sink
+                              this
+                                  .phoneAuthBloc
+                                  .inuserCurrency
                                   .add(code.code?.toLowerCase() ?? '');
-                              this.phoneAuthBloc.inuserCountry.add(code.code ?? '');
-                              this.phoneAuthBloc.phoneCode.add(code.dialCode ?? '');
+                              this
+                                  .phoneAuthBloc
+                                  .inuserCountry
+                                  .add(code.code ?? '');
+                              this
+                                  .phoneAuthBloc
+                                  .inuserCurrency
+                                  .add(code.code?.toLowerCase() ?? '');
+                              this
+                                  .phoneAuthBloc
+                                  .inuserCountry
+                                  .add(code.code ?? '');
+                              this
+                                  .phoneAuthBloc
+                                  .phoneCode
+                                  .sink
+                                  .add(code.dialCode ?? '');
                             },
                             initialSelection: '+33',
                             favorite: ['+33', 'GB'],
@@ -140,9 +151,6 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
             Expanded(
               child: SizedBox(),
             ),
-
-
-
             StreamBuilder<String>(
                 stream: this.phoneAuthBloc.phoneAndCode,
                 builder: (ctx, AsyncSnapshot<String> snapshot) {
@@ -159,35 +167,33 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                       onClick: () async {
                         print("ive been tapped");
                         print(snapshot.data);
-                        print(this.phoneAuthBloc.phoneAndCode.listen((event) {print(event);}));
+                        print(this.phoneAuthBloc.phoneAndCode.listen((event) {
+                          print(event);
+                        }));
                         print(this.phoneAuthBloc.phoneNumber.value);
                         if (snapshot.data != null) {
                           _streamButtonController.isLoading();
                           String phone = await this.phoneAuthBloc.validate();
-                                                        authentificationService
-                                  .verifyPhone(
+                          authentificationService
+                              .verifyPhone(
                                   phone: phone,
-                                  codeAutoRetrievalTimeout: (String verificationId) {},
                                   codeTimeOut: (String verificationId) {},
-                                  codeisSent: (String verificationId, int? resendToken) {},
-                                  error: (FirebaseAuthException e) {},
-                                  timeout: const Duration(seconds: 60),
-                                  codeSent: (String verificationId, int? forceResendingToken) {
+                                  codeisSent: (String verificationId) {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 PhoneAuthCodePage(
                                                     verificationId:
-                                                    verificationId)));
+                                                        verificationId)));
                                   },
-                                  verificationCompleted: (PhoneAuthCredential credential) async {
-                                    await _streamButtonController.isSuccess();
-                                  },
-                                  verificationFailed: (FirebaseAuthException e) async {
+                                  error: (dynamic e) async {
                                     await _streamButtonController.isError();
-                                  }
-                              )
+                                  },
+                                  verificationComplted:
+                                      (dynamic credential) async {
+                                    await _streamButtonController.isSuccess();
+                                  })
                               .catchError((err) => err);
                         }
                       });

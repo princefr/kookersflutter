@@ -251,7 +251,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
                 .createRoom(
                     databaseService.client,
                     this.widget.order.sellerId ?? '',
-                    databaseService.user.value?.id ?? '')
+                    databaseService.user.value.id ?? '')
                 .then((result) async {
               await databaseService.loadrooms();
               Navigator.push(
@@ -259,7 +259,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
                   CupertinoPageRoute(
                       builder: (context) => ChatPage(
                           room: result,
-                          uid: databaseService.user.value?.id ?? '')));
+                          uid: databaseService.user.value.id ?? '')));
             });
           },
           leading: CircleAvatar(

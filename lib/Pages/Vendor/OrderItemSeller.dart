@@ -9,7 +9,7 @@ import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Widgets/StatusChip.dart';
 
 class OrderItemSellerShimmer extends StatelessWidget {
-  const OrderItemSellerShimmer({Key key}) : super(key: key);
+  const OrderItemSellerShimmer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,22 +17,24 @@ class OrderItemSellerShimmer extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
           child: ListTile(
-            autofocus: false,
+        autofocus: false,
         leading: Container(
           decoration: BoxDecoration(
-                      color: Colors.grey[200],      
-                    ),
-                    height: 350,
-                    width: 100,
+            color: Colors.grey[200],
+          ),
+          height: 350,
+          width: 100,
         ),
         title: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-          Container(decoration: BoxDecoration(
-                      color: Colors.grey[200],      
-                    ),child: Text("this.vendor.publication.title")),
+          Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+              ),
+              child: Text("this.vendor.publication.title")),
           Container(
             decoration: BoxDecoration(
-                      color: Colors.grey[200],      
-                    ),
+              color: Colors.grey[200],
+            ),
             child: Text("this.vendor.productId",
                 style: GoogleFonts.montserrat(fontSize: 13)),
           ),
@@ -44,38 +46,49 @@ class OrderItemSellerShimmer extends StatelessWidget {
 
 class OrderItemSeller extends StatelessWidget {
   final OrderVendor vendor;
-  const OrderItemSeller({Key key, this.vendor}) : super(key: key);
+  const OrderItemSeller({Key? key, required this.vendor}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
-        color: this.vendor.notificationSeller > 0 ? Colors.red[100]: Colors.white,
+          color: (this.vendor.notificationSeller ?? 0) > 0
+              ? Colors.red[100]!
+              : Colors.white,
           child: ListTile(
             autofocus: false,
-        onTap: () => Navigator.push(
-            context,
-            CupertinoPageRoute(
-                builder: (context) => VendorPageChild(vendor: this.vendor))),
-        leading: Container(
-        height: 350,
-        width: 100,
-        padding: EdgeInsets.all(2),
-        decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                  image: DecorationImage(image: CachedNetworkImageProvider(this.vendor.publication.photoUrls[0]), fit: BoxFit.cover),                
-        ),
-      ),
-        title: Column(mainAxisAlignment:  MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(this.vendor.publication.title),
-                Text(this.vendor.productId,
-              style: GoogleFonts.montserrat(fontSize: 13)),
-
-              StatusChip(state: EnumToString.fromString(OrderState.values, vendor.orderState))
-        ]),
-      )),
+            onTap: () => Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) =>
+                        VendorPageChild(vendor: this.vendor))),
+            leading: Container(
+              height: 350,
+              width: 100,
+              padding: EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                image: DecorationImage(
+                    image: CachedNetworkImageProvider(
+                        (this.vendor.publication?.photoUrls?[0] ?? "")
+                            .toString()),
+                    fit: BoxFit.cover),
+              ),
+            ),
+            title: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(this.vendor.publication?.title ?? ""),
+                  Text(this.vendor.productId,
+                      style: GoogleFonts.montserrat(fontSize: 13)),
+                  StatusChip(
+                      state: EnumToString.fromString(
+                              OrderState.values, vendor.orderState) ??
+                          OrderState.NOT_ACCEPTED)
+                ]),
+          )),
     );
   }
 }

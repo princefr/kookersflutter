@@ -5,11 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:kookers/Models/Location.dart' as models;
 import 'package:kookers/Services/DatabaseProvider.dart';
-import 'package:kookers/Services/DatabaseProvider.dart' as db;
 import 'package:kookers/Widgets/StreamButton.dart';
 import 'package:provider/provider.dart';
-
-
 
 // ignore: must_be_immutable
 class HomeSettings extends StatefulWidget {
@@ -20,8 +17,9 @@ class HomeSettings extends StatefulWidget {
   _HomeSettingsState createState() => _HomeSettingsState();
 }
 
-class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClientMixin<HomeSettings>  {
-    @override
+class _HomeSettingsState extends State<HomeSettings>
+    with AutomaticKeepAliveClientMixin<HomeSettings> {
+  @override
   bool get wantKeepAlive => true;
 
   List<String> tag = [];
@@ -38,18 +36,17 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
     'Cacherout'
   ];
 
-
-    List<String> pricRanges = [
+  List<String> pricRanges = [
     '\$',
     '\$\$',
     '\$\$\$',
     '\$\$\$\$',
   ];
-  
 
   double _currentSliderValue = 20;
 
-    Future<void> updateSettings(GraphQLClient client, String uid, UserSettings settings, DatabaseProviderService database) async {
+  Future<void> updateSettings(GraphQLClient client, String uid,
+      UserSettings settings, DatabaseProviderService database) async {
     final MutationOptions _options = MutationOptions(document: gql(r"""
               mutation UpdateSettings($userID: String!, $settings: UserSettingsInput!) {
                   updateSettings(userID: $userID, settings: $settings){
@@ -138,14 +135,14 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                   }
               }
           """), variables: <String, dynamic>{
-          "userID": uid,
-          "settings": settings.toJson()
-        });
+      "userID": uid,
+      "settings": settings.toJson()
+    });
 
-        return client.mutate(_options).then((kooker) {
-                  final kookersUser = UserDef.fromJson(kooker.data?["updateSettings"]);
-                  database.user.add(kookersUser);
-      });
+    return client.mutate(_options).then((kooker) {
+      final kookersUser = UserDef.fromJson(kooker.data?["updateSettings"]);
+      database.user.add(kookersUser);
+    });
   }
 
   StreamButtonController _streamButtonController = StreamButtonController();
@@ -153,18 +150,18 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final databaseService = Provider.of<DatabaseProviderService>(context, listen: true);
+    final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: true);
 
-      return StreamBuilder(
+    return StreamBuilder(
         stream: databaseService.user$,
         initialData: databaseService.user.value,
         builder: (context, AsyncSnapshot<UserDef> snapshot) {
           return Material(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-
-
+              child:
+                  Column(mainAxisAlignment: MainAxisAlignment.start, children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Container(
@@ -175,12 +172,9 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                       width: 80),
                 ),
                 SizedBox(height: 50),
-
-
-
                 Flexible(
-                     child: ListView(
-                       shrinkWrap: true,
+                  child: ListView(
+                    shrinkWrap: true,
                     children: [
                       Align(
                           alignment: Alignment.centerLeft,
@@ -189,138 +183,155 @@ class _HomeSettingsState extends State<HomeSettings> with AutomaticKeepAliveClie
                                   decoration: TextDecoration.none,
                                   color: Colors.black,
                                   fontSize: 15))),
-
-                                  SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: ChipsChoice<String>.multiple(
-                    spinnerColor: Color(0xFFF95F5F),
-                    wrapped: true,
-                    value: snapshot.data?.settings?.foodPriceRange ?? [],
-                    onChanged: (val) => setState(() => snapshot.data!.settings!.foodPriceRange = val),
-                    choiceItems: C2Choice.listFrom<String, String>(
-                      source: this.pricRanges,
-                      value: (i, v) => v,
-                      label: (i, v) => v,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 30),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("PRÉFÉRENCES ALIMENTAIRES",
-                        style: GoogleFonts.montserrat(
-                            decoration: TextDecoration.none,
-                            color: Colors.black,
-                            fontSize: 15))),
-                SizedBox(height: 10),
-
-                ChipsChoice<String>.multiple(
-                  spinnerColor: Color(0xFFF95F5F),
-                  choiceStyle: C2ChipStyle.outlined(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  value: snapshot.data?.settings?.foodPreference ?? [],
-                  onChanged: (val) => setState(() => snapshot.data!.settings!.foodPreference = val),
-                  choiceItems: C2Choice.listFrom<String, String>(
-                    source: this.foodpreferences,
-                    value: (i, v) => v,
-                    label: (i, v) => v,
-                  ),
-                ),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                        "Vos préférences alimentaires nous sert à vous proposer uniquement des plats à votre goût.",
-                        style: GoogleFonts.montserrat(
-                            decoration: TextDecoration.none,
-                            color: Colors.black,
-                            fontSize: 10))),
-                SizedBox(height: 30),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text("DISTANCE",
-                        style: GoogleFonts.montserrat(
-                            decoration: TextDecoration.none,
-                            color: Colors.black,
-                            fontSize: 15))),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                          child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            activeTrackColor: Color(0xFFF95F5F),
-                            inactiveTrackColor: Colors.red[100],
-                            trackShape: RectangularSliderTrackShape(),
-                            trackHeight: 4.0,
-                            thumbColor: Colors.redAccent,
-                            thumbShape: RoundSliderThumbShape(enabledThumbRadius: 12.0),
-                            overlayColor: Colors.red.withAlpha(32),
-                            overlayShape: RoundSliderOverlayShape(overlayRadius: 28.0),
+                      SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ChipsChoice<String>.multiple(
+                          spinnerColor: Color(0xFFF95F5F),
+                          wrapped: true,
+                          value: snapshot.data?.settings?.foodPriceRange ?? [],
+                          onChanged: (val) => setState(() =>
+                              snapshot.data!.settings!.foodPriceRange = val),
+                          choiceItems: C2Choice.listFrom<String, String>(
+                            source: this.pricRanges,
+                            value: (i, v) => v,
+                            label: (i, v) => v,
                           ),
-                          child: Slider(
-                            value: (snapshot.data?.settings?.distanceFromSeller ?? 0).round().toDouble(),
-                            min: 0,
-                            max: 45,
-                            label: _currentSliderValue.round().toString(),
-                            onChanged: (double value) {
-                              setState(() {
-                                snapshot.data!.settings!.distanceFromSeller = value.round().toInt();
+                        ),
+                      ),
+                      SizedBox(height: 30),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("PRÉFÉRENCES ALIMENTAIRES",
+                              style: GoogleFonts.montserrat(
+                                  decoration: TextDecoration.none,
+                                  color: Colors.black,
+                                  fontSize: 15))),
+                      SizedBox(height: 10),
+                      ChipsChoice<String>.multiple(
+                        spinnerColor: Color(0xFFF95F5F),
+                        choiceStyle: C2ChipStyle.outlined(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        value: snapshot.data?.settings?.foodPreference ?? [],
+                        onChanged: (val) => setState(() =>
+                            snapshot.data!.settings!.foodPreference = val),
+                        choiceItems: C2Choice.listFrom<String, String>(
+                          source: this.foodpreferences,
+                          value: (i, v) => v,
+                          label: (i, v) => v,
+                        ),
+                      ),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                              "Vos préférences alimentaires nous sert à vous proposer uniquement des plats à votre goût.",
+                              style: GoogleFonts.montserrat(
+                                  decoration: TextDecoration.none,
+                                  color: Colors.black,
+                                  fontSize: 10))),
+                      SizedBox(height: 30),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text("DISTANCE",
+                              style: GoogleFonts.montserrat(
+                                  decoration: TextDecoration.none,
+                                  color: Colors.black,
+                                  fontSize: 15))),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: SliderTheme(
+                                data: SliderTheme.of(context).copyWith(
+                                  activeTrackColor: Color(0xFFF95F5F),
+                                  inactiveTrackColor: Colors.red[100],
+                                  trackShape: RectangularSliderTrackShape(),
+                                  trackHeight: 4.0,
+                                  thumbColor: Colors.redAccent,
+                                  thumbShape: RoundSliderThumbShape(
+                                      enabledThumbRadius: 12.0),
+                                  overlayColor: Colors.red.withAlpha(32),
+                                  overlayShape: RoundSliderOverlayShape(
+                                      overlayRadius: 28.0),
+                                ),
+                                child: Slider(
+                                  value: (snapshot.data?.settings
+                                              ?.distanceFromSeller ??
+                                          0)
+                                      .round()
+                                      .toDouble(),
+                                  min: 0,
+                                  max: 45,
+                                  label: _currentSliderValue.round().toString(),
+                                  onChanged: (double value) {
+                                    setState(() {
+                                      snapshot.data!.settings!
+                                              .distanceFromSeller =
+                                          value.round().toInt();
+                                    });
+                                  },
+                                )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Text(
+                              (snapshot.data?.settings?.distanceFromSeller ?? 0)
+                                  .round()
+                                  .toInt()
+                                  .toString(),
+                              style: GoogleFonts.montserrat(fontSize: 20),
+                            ),
+                          )
+                        ],
+                      ),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                              "Distance de recherche vous separant des potentiels chefs amteurs. Plus la distance est rappoché de votre domicile moins il vous faudra attendre pour deguster vos plats ou desserts.",
+                              style: GoogleFonts.montserrat(
+                                  decoration: TextDecoration.none,
+                                  color: Colors.black,
+                                  fontSize: 10))),
+                      SizedBox(height: 100),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: StreamButton(
+                            buttonColor: Colors.black,
+                            buttonText: "Sauvegarder",
+                            errorText:
+                                "Une erreur s'est produite, Veuillez reesayer.",
+                            loadingText: "Sauvegarde en cours",
+                            successText: "Paramètres sauvegardés",
+                            controller: this._streamButtonController,
+                            onClick: () async {
+                              this._streamButtonController.isLoading();
+                              this
+                                  .updateSettings(
+                                      databaseService.client,
+                                      this.widget.user.uid,
+                                      snapshot.data!.settings!,
+                                      databaseService)
+                                  .then((value) async {
+                                models.Location location = databaseService
+                                        .adress.value.location ??
+                                    models.Location(latitude: 0, longitude: 0);
+                                int distance = databaseService.user.value
+                                        .settings?.distanceFromSeller ??
+                                    45;
+                                await databaseService.loadPublication(
+                                    location, distance);
+                                await this._streamButtonController.isSuccess();
+                                Navigator.pop(context);
                               });
-                            },
-                          )),
-                    ),
-
-                        Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Text((snapshot.data?.settings?.distanceFromSeller ?? 0).round().toInt().toString(), style: GoogleFonts.montserrat(fontSize:20),),
-                        )
-                  ],
-                ),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                        "Distance de recherche vous separant des potentiels chefs amteurs. Plus la distance est rappoché de votre domicile moins il vous faudra attendre pour deguster vos plats ou desserts.",
-                        style: GoogleFonts.montserrat(
-                            decoration: TextDecoration.none,
-                            color: Colors.black,
-                            fontSize: 10))),
-
-
-                SizedBox(height: 100),
-
-
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20),
-                  child: StreamButton(buttonColor: Colors.black,
-                      buttonText: "Sauvegarder",
-                      errorText: "Une erreur s'est produite, Veuillez reesayer.",
-                      loadingText: "Sauvegarde en cours",
-                      successText: "Paramètres sauvegardés",
-                      controller: this._streamButtonController, onClick: () async {
-                        this._streamButtonController.isLoading();
-                        this.updateSettings(databaseService.client, this.widget.user.uid, snapshot.data!.settings!, databaseService).then((value) async {
-                          models.Location location = databaseService.adress.value.location;
-                          int distance = databaseService.user.value.settings?.distanceFromSeller ?? 45;
-                        await databaseService.loadPublication(location, distance);
-                        await this._streamButtonController.isSuccess();
-                        Navigator.pop(context);
-                      });
-                      }),
-                ),
+                            }),
+                      ),
                     ],
                   ),
                 ),
-
-
-                   
               ]),
             ),
           );
-        }
-      );
-
+        });
   }
 }

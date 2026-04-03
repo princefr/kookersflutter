@@ -41,7 +41,7 @@ class _ReportPageState extends State<ReportPage> {
         }
         );
 
-    return client.mutate(_options).then((result) => result.data["createReport"]);
+    return client.mutate(_options).then((result) => result.data!["createReport"]);
   }
 
   int _value = 0;
@@ -178,7 +178,7 @@ class _ReportPageState extends State<ReportPage> {
                                      successText: "Post signalé",
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
-                                        ReportInput report  = ReportInput(description: this.comment.value ?? '', userReported: this.widget.seller,  userReporting: databaseService.user.value.id,  type: EnumToString.convertToString(ReportType.values[this._value], camelCase: true));
+                                        ReportInput report  = ReportInput(description: this.comment.value, userReported: this.widget.seller,  userReporting: databaseService.user.value.id,  type: EnumToString.convertToString(ReportType.values[this._value], camelCase: true));
                                         createReport(databaseService.client, report).then((result){
                                           _streamButtonController.isSuccess().then((value){
                                             Navigator.pop(context);

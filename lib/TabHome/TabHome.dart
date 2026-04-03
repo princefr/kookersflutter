@@ -27,7 +27,7 @@ import 'dart:async';
 // ignore: must_be_immutable
 class TabHome extends StatefulWidget {
   User user;
-  TabHome({Key key, this.user}) : super(key: key);
+  TabHome({Key? key, required this.user}) : super(key: key);
 
   @override
   _TabHomeState createState() => _TabHomeState();
@@ -36,10 +36,10 @@ class TabHome extends StatefulWidget {
 class _TabHomeState extends State<TabHome>
     with AutomaticKeepAliveClientMixin<TabHome>, WidgetsBindingObserver {
   BehaviorSubject<int> _selectedIndex = BehaviorSubject<int>.seeded(0);
-  PageController _controller;
+  late PageController _controller;
 
   void _onItemTapped(int index) {
-    if (this.widget.user == null && index != 0) {
+    if (index != 0) {
       showCupertinoModalBottomSheet(
           expand: false,
           context: context,
@@ -61,7 +61,8 @@ class _TabHomeState extends State<TabHome>
     appStoreIdentifier: "1529436130",
   );
 
-  StreamSubscription<RemoteMessage> get onMessage => FirebaseMessaging.onMessage.listen((event) => event);
+  StreamSubscription<RemoteMessage> get onMessage =>
+      FirebaseMessaging.onMessage.listen((event) => event);
 
   @override
   void dispose() {
@@ -72,7 +73,7 @@ class _TabHomeState extends State<TabHome>
   @override
   void initState() {
     new Future.delayed(Duration.zero, () async {
-      await Jiffy.locale("fr");
+      Jiffy.setLocale("fr");
       final databaseService =
           Provider.of<DatabaseProviderService>(context, listen: false);
       final notificationService =
@@ -80,11 +81,9 @@ class _TabHomeState extends State<TabHome>
       notificationService.messaging.subscribeToTopic("new_message");
       notificationService.messaging.subscribeToTopic("new_order");
       notificationService.messaging.subscribeToTopic("order_update");
-      if (this.widget.user != null) {
-        final token = await notificationService.messaging.getToken();
-        databaseService.user.value.fcmToken = token;
-        databaseService.updateFirebasetoken(token);
-      }
+      final token = await notificationService.messaging.getToken();
+      databaseService.user.value.fcmToken = token;
+      databaseService.updateFirebasetoken(token ?? '');
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -94,67 +93,70 @@ class _TabHomeState extends State<TabHome>
       }
     });
 
-
     Future.delayed(Duration.zero, () async {
-      final notifService = Provider.of<NotificationService>(context, listen: false);
+      final notifService =
+          Provider.of<NotificationService>(context, listen: false);
       final permission = await notifService.checkPermissions();
-      if(permission.authorizationStatus == AuthorizationStatus.authorized){
-      if (await FlutterAppBadger.isAppBadgeSupported()) FlutterAppBadger.removeBadge();
-            this.onMessage.onData((event) async {
-      final databaseService =
-          Provider.of<DatabaseProviderService>(context, listen: false);
-      if (event.data["type"] == "new_message") {
-        await databaseService.loadrooms();
-        Room room = databaseService.rooms.value
-            .firstWhere((element) => element.id == event.data["roomId"]);
-        NotificationPanelService().showNewMessagePanel(context, event, room);
-      } else if (event.data["side"] == "order_seller") {
-        if (event.data["type"] == "order_done") databaseService.loadUserData(this.widget.user.uid);
-        await databaseService.loadSellerOrders();
-        OrderVendor order = databaseService.sellerOrders.value
-            .firstWhere((element) => element.id == event.data["orderId"]);
-        NotificationPanelService().showOrderSeller(context, event, order);
-      } else if (event.data["side"] == "order_buyer") {
-        await databaseService.loadbuyerOrders();
-        final Order order = databaseService.buyerOrders.value
-            .firstWhere((element) => element.id == event.data["orderId"]);
-        NotificationPanelService().showOrderBuyer(context, event, order);
+      if (permission.authorizationStatus == AuthorizationStatus.authorized) {
+        if (await FlutterAppBadger.isAppBadgeSupported())
+          FlutterAppBadger.removeBadge();
+        this.onMessage.onData((event) async {
+          final databaseService =
+              Provider.of<DatabaseProviderService>(context, listen: false);
+          if (event.data["type"] == "new_message") {
+            await databaseService.loadrooms();
+            Room room = databaseService.rooms.value
+                .firstWhere((element) => element.id == event.data["roomId"]);
+            NotificationPanelService()
+                .showNewMessagePanel(context, event, room);
+          } else if (event.data["side"] == "order_seller") {
+            if (event.data["type"] == "order_done")
+              databaseService.loadUserData(this.widget.user.uid);
+            await databaseService.loadSellerOrders();
+            OrderVendor order = databaseService.sellerOrders.value
+                .firstWhere((element) => element.id == event.data["orderId"]);
+            NotificationPanelService().showOrderSeller(context, event, order);
+          } else if (event.data["side"] == "order_buyer") {
+            await databaseService.loadbuyerOrders();
+            final Order order = databaseService.buyerOrders.value
+                .firstWhere((element) => element.id == event.data["orderId"]);
+            NotificationPanelService().showOrderBuyer(context, event, order);
+          }
+        });
+
+        FirebaseMessaging.onMessageOpenedApp.listen((event) {
+          Future.delayed(Duration(microseconds: 200), () async {
+            final databaseService =
+                Provider.of<DatabaseProviderService>(context, listen: false);
+            if (event.data["type"] == "new_message") {
+              await databaseService.loadrooms();
+              Room room = databaseService.rooms.value
+                  .firstWhere((element) => element.id == event.data["roomId"]);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ChatPage(room: room)));
+            } else if (event.data["side"] == "order_seller") {
+              await databaseService.loadSellerOrders();
+              OrderVendor order = databaseService.sellerOrders.value
+                  .firstWhere((element) => element.id == event.data["orderId"]);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => VendorPageChild(vendor: order)));
+            } else if (event.data["side"] == "order_buyer") {
+              await databaseService.loadbuyerOrders();
+              final Order order = databaseService.buyerOrders.value
+                  .firstWhere((element) => element.id == event.data["orderId"]);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => OrderPageChild(order: order)));
+            }
+          });
+        });
       }
     });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      Future.delayed(Duration(microseconds: 200), () async {
-        final databaseService =
-            Provider.of<DatabaseProviderService>(context, listen: false);
-        if (event.data["type"] == "new_message") {
-          await databaseService.loadrooms();
-          Room room = databaseService.rooms.value
-              .firstWhere((element) => element.id == event.data["roomId"]);
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ChatPage(room: room)));
-        } else if (event.data["side"] == "order_seller") {
-          await databaseService.loadSellerOrders();
-          OrderVendor order = databaseService.sellerOrders.value
-              .firstWhere((element) => element.id == event.data["orderId"]);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => VendorPageChild(vendor: order)));
-        } else if (event.data["side"] == "order_buyer") {
-          await databaseService.loadbuyerOrders();
-          final Order order = databaseService.buyerOrders.value
-              .firstWhere((element) => element.id == event.data["orderId"]);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => OrderPageChild(order: order)));
-        }
-      });
-    });
-      }
-    });
-
-
 
     this._controller = PageController(initialPage: 0);
     super.initState();
@@ -163,8 +165,8 @@ class _TabHomeState extends State<TabHome>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: false,
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -190,14 +192,14 @@ class _TabHomeState extends State<TabHome>
                 primaryColor: Colors.white,
                 textTheme: Theme.of(context)
                     .textTheme
-                    .copyWith(caption: new TextStyle(color: Colors.white))),
+                    .copyWith(bodySmall: TextStyle(color: Colors.white))),
             child: StreamBuilder<int>(
                 stream: _selectedIndex.stream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting)
                     return SizedBox();
                   return BottomBar(
-                      onTap: _onItemTapped, selectedIndex: snapshot.data);
+                      onTap: _onItemTapped, selectedIndex: snapshot.data ?? 0);
                 })),
       ),
     );

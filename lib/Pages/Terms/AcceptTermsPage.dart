@@ -12,7 +12,7 @@ import 'package:kookers/Widgets/WebView.dart';
 
 
 class AcceptTermsPage extends StatefulWidget {
-  AcceptTermsPage({Key key}) : super(key: key);
+  AcceptTermsPage({Key? key = null}) : super(key: key);
 
   @override
   _AcceptTermsPageState createState() => _AcceptTermsPageState();

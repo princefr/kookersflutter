@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:kookers/Models/Location.dart' as models;
@@ -107,7 +107,7 @@ class _BeforeAdressState extends State<BeforeAdress>
                                                 45);
                                 Navigator.pop(context);
                               } else {
-                                Get.to(TabHome());
+                                Get.offAll(TabHome(user: FirebaseAuth.instance.currentUser!));
                               }
                             }
                           } catch (e) {

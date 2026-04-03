@@ -26,14 +26,14 @@ class FoodItem extends StatefulWidget {
 
 class _FoodItemState extends State<FoodItem>
     with AutomaticKeepAliveClientMixin<FoodItem> {
-  
   Location _getUserLocation(DatabaseProviderService databaseService) {
-    if (databaseService.user.value == null) {
+    if (databaseService.user.value.id != null) {
       return databaseService.adress.value.location ?? Location();
     }
     return databaseService.user.value.adresses
-        .firstWhere((element) => element.isChosed == true)
-        .location ?? Location();
+            ?.firstWhere((element) => element.isChosed == true)
+            .location ??
+        Location();
   }
 
   @override
@@ -72,12 +72,13 @@ class _FoodItemState extends State<FoodItem>
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: DistanceWidget(
-                        startLocation: this.widget.publication.adress?.location ?? Location(),
+                        startLocation:
+                            this.widget.publication.adress?.location ??
+                                Location(),
                         endLocation: _getUserLocation(databaseService),
                       ),
                     ),
                   ),
-                  
                   Container(
                     child: Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -87,23 +88,26 @@ class _FoodItemState extends State<FoodItem>
                             builder: (ctx) {
                               if (this.widget.publication.liked ?? false) {
                                 return InkWell(
-                                  onTap: (){
-                                    if (databaseService.user.value == null) {
-                                        showCupertinoModalBottomSheet(
-                                            expand: false,
-                                            context: context,
-                                            builder: (context) => BeforeSignPage(from: "food_item",));
-                                      }else{
-                                        databaseService.updateLikeInPublication(
-                                            this.widget.publication.id ?? '', false);
-                                        databaseService
-                                            .setDislikePost(this.widget.publication.id ?? '');
-                                        setState(() {
-                                          this.widget.publication.liked = false;
-                                        });
-                                      }
+                                  onTap: () {
+                                    if (databaseService.user.value.id != null) {
+                                      showCupertinoModalBottomSheet(
+                                          expand: false,
+                                          context: context,
+                                          builder: (context) => BeforeSignPage(
+                                                from: "food_item",
+                                              ));
+                                    } else {
+                                      databaseService.updateLikeInPublication(
+                                          this.widget.publication.id ?? '',
+                                          false);
+                                      databaseService.setDislikePost(
+                                          this.widget.publication.id ?? '');
+                                      setState(() {
+                                        this.widget.publication.liked = false;
+                                      });
+                                    }
                                   },
-                                    child: Icon(
+                                  child: Icon(
                                     CupertinoIcons.heart_fill,
                                     size: 35,
                                     color: Colors.red,
@@ -111,23 +115,25 @@ class _FoodItemState extends State<FoodItem>
                                 );
                               } else {
                                 return InkWell(
-                                  onTap: (){
-                                    if (databaseService.user.value == null) {
-                                        showCupertinoModalBottomSheet(
-                                            expand: false,
-                                            context: context,
-                                            builder: (context) => BeforeSignPage(from: "food_item"));
-                                    }else{
-                                        databaseService.updateLikeInPublication(
-                                              this.widget.publication.id ?? '', true);
-                                          databaseService
-                                              .setLikePost(this.widget.publication.id ?? '');
-                                          setState(() {
-                                            this.widget.publication.liked = true;
-                                          });
+                                  onTap: () {
+                                    if (databaseService.user.value.id != null) {
+                                      showCupertinoModalBottomSheet(
+                                          expand: false,
+                                          context: context,
+                                          builder: (context) => BeforeSignPage(
+                                              from: "food_item"));
+                                    } else {
+                                      databaseService.updateLikeInPublication(
+                                          this.widget.publication.id ?? '',
+                                          true);
+                                      databaseService.setLikePost(
+                                          this.widget.publication.id ?? '');
+                                      setState(() {
+                                        this.widget.publication.liked = true;
+                                      });
                                     }
                                   },
-                                                                    child: Icon(
+                                  child: Icon(
                                     CupertinoIcons.heart,
                                     size: 35,
                                     color: Colors.white,
@@ -155,7 +161,8 @@ class _FoodItemState extends State<FoodItem>
                         alignment: Alignment.bottomRight,
                         child: RatingWidget(
                           rating: this.widget.publication.getRating(),
-                          ratingCount: this.widget.publication.rating?.ratingCount ?? 0,
+                          ratingCount:
+                              this.widget.publication.rating?.ratingCount ?? 0,
                         ),
                       ),
                     ),
@@ -175,20 +182,23 @@ class _FoodItemState extends State<FoodItem>
               Container(
                 height: 40,
                 child: Builder(builder: (BuildContext ctx) {
-                  if (this.widget.publication.preferences?.length != null && this.widget.publication.preferences!.length > 0) {
+                  if (this.widget.publication.preferences?.length != null &&
+                      this.widget.publication.preferences!.length > 0) {
                     return ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: this.widget.publication.preferences?.length ?? 0,
+                        itemCount:
+                            this.widget.publication.preferences?.length ?? 0,
                         itemBuilder: (ctx, index) {
                           return Padding(
-                            padding: const EdgeInsets.only(
-                                left: 5, right: 5, top: 3),
-                            child: Chip(
-                                backgroundColor: Colors.green[100],
-                                label: Text(this
-                                    .widget
-                                    .publication
-                                    .preferences?[index] ?? '')));
+                              padding: const EdgeInsets.only(
+                                  left: 5, right: 5, top: 3),
+                              child: Chip(
+                                  backgroundColor: Colors.green[100],
+                                  label: Text(this
+                                          .widget
+                                          .publication
+                                          .preferences?[index] ??
+                                      '')));
                         });
                   } else {
                     return Padding(

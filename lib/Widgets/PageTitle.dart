@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class PageTitle extends StatelessWidget {
   final String title;
-  const PageTitle({Key key, this.title}) : super(key: key);
+  const PageTitle({Key? key, required this.title}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
