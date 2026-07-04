@@ -18,6 +18,10 @@ import 'package:kookers/Services/NotificiationService.dart';
 import 'package:kookers/Services/OrderProvider.dart';
 import 'package:kookers/Services/PublicationProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
+import 'package:kookers/Services/SupabaseAuthService.dart';
+import 'package:kookers/Services/SupabaseDatabaseProvider.dart';
+import 'package:kookers/Services/SupabaseService.dart';
+import 'package:kookers/Services/SupabaseStorageService.dart';
 import 'package:kookers/TabHome/TabHome.dart';
 import 'package:kookers/UI/Theme.dart';
 import 'package:kookers/UI/ThemeController.dart';
@@ -45,6 +49,12 @@ void main({bool testing = false}) async {
   await Firebase.initializeApp();
   // Hook Firebase Analytics into our typed event helpers.
   KookersAnalytics.init(FirebaseAnalytics.instance);
+  // Initialise Supabase — the new primary backend. Firebase Auth /
+  // Firestore / Storage are no longer used by the app code itself;
+  // only FCM is still hooked to Firebase (the *transport* for push
+  // notifications, with the *triggers* now coming from Supabase Edge
+  // Functions).
+  await SupabaseService.initialize();
   // Load persisted theme preference before runApp so the first frame
   // matches what the user picked on their last session.
   await themeController.load();
@@ -78,25 +88,46 @@ class KookersApp extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       child: MultiProvider(
         providers: [
+          // ---- Auth: Supabase-backed ------------------------------------
+          // We keep the legacy AuthentificationService registered for
+          // screens that still reference its Firebase-specific types
+          // (User, PhoneAuthCredential). New code should consume
+          // SupabaseAuthService directly.
           Provider<AuthentificationService>(
             create: (_) =>
                 AuthentificationService(firebaseAuth: FirebaseAuth.instance),
           ),
-          StreamProvider<User?>(
+          Provider<SupabaseAuthService>(
+            create: (_) => SupabaseAuthService(),
+          ),
+          // authStateChanges — emits Supabase user ids. Legacy code
+          // that read `Provider<User?>` still gets the Firebase user;
+          // both stay in sync as long as Supabase Auth's phone flow
+          // is used.
+          StreamProvider<String?>(
             create: (context) =>
-                context.read<AuthentificationService>().authStateChanges,
+                context.read<SupabaseAuthService>().authStateChanges,
             initialData: null,
           ),
+          // ---- Push notifications: still Firebase FCM (transport) -----
           Provider<NotificationService>(
             create: (_) =>
                 NotificationService(messaging: FirebaseMessaging.instance),
           ),
+          // ---- Storage: Supabase Storage -------------------------------
           Provider<StorageService>(
             create: (_) => StorageService(
                 storage: firebase_storage.FirebaseStorage.instance),
           ),
+          Provider<SupabaseStorageService>(
+            create: (_) => SupabaseStorageService(),
+          ),
+          // ---- Database: Supabase Postgres -----------------------------
+          // SupabaseDatabaseProvider EXTENDS DatabaseProviderService so
+          // every screen that consumed the old GraphQL-backed service
+          // keeps working — its method calls now hit Postgres.
           Provider<DatabaseProviderService>(
-              create: (_) => DatabaseProviderService()),
+              create: (_) => SupabaseDatabaseProvider()),
           Provider<PublicationProvider>(
               create: (_) => PublicationProvider()),
           Provider<OrderProvider>(create: (_) => OrderProvider()),

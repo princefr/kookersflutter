@@ -83,6 +83,12 @@ dependencies:
   # Persistence (theme mode, language already covered by easy_localization)
   shared_preferences: ^2.2.3
 
+  # Supabase — new backend (replaces Firebase + custom GraphQL).
+  # We keep firebase_messaging around only because FCM is still the
+  # transport for push notifications; the *triggers* for those pushes
+  # move to Supabase Edge Functions.
+  supabase_flutter: ^2.5.11
+
   # Payment (legacy but needed)
   # stripe_payment: ^1.0.9  # Commented out - consider stripe_ios/android instead
 
