@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:kookers/Services/AnalyticsService.dart';
 import 'package:kookers/UI/Colors.dart';
 import 'package:kookers/UI/Theme.dart';
 
@@ -87,6 +88,7 @@ Future<void> showLanguagePicker(BuildContext context) async {
                     : null,
                 onTap: () {
                   sheetCtx.setLocale(Locale(lang.code));
+                  KookersEvents.languageChanged(locale: lang.code);
                   Navigator.of(sheetCtx).pop();
                 },
               );

@@ -7,10 +7,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:kookers/Models/PaymentModels.dart';
 import 'package:kookers/Pages/PaymentMethods/PaymentMethodPage.dart';
+import 'package:kookers/Services/AnalyticsService.dart';
+import 'package:kookers/UI/Colors.dart';
+import 'package:kookers/UI/Haptics.dart';
 import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StripeServices.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
+import 'package:kookers/Widgets/TipSelector.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 
@@ -27,11 +31,17 @@ class PaymentConfirmation extends StatefulWidget {
 class _PaymentConfirmationState extends State<PaymentConfirmation> {
   final stripeService = StripeServices();
 
+  /// Currently-selected tip amount, in the order's currency.
+  /// Added by the tipping feature (FEATURE_PROPOSALS.md §6.4).
+  num _tip = 0;
+
   @override
   void initState() {
     new Future.delayed(Duration.zero, () {
       stripeService.initiateStripe();
     });
+    KookersEvents.startCheckout(
+        publicationId: widget.order.publication?.id ?? '');
     super.initState();
   }
 
@@ -122,7 +132,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                                "Si vous commandez le jour même , l'application prévoit 3 heures de délai pour pouvoir laisser du temps au chef d'acheter des ingrédients frais et de le cuisiner sans stress.",
+                                'payment.sameDayNotice'.tr(),
                                 style: GoogleFonts.montserrat(
                                     decoration: TextDecoration.none,
                                     color: Colors.black,
@@ -131,7 +141,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                       ListTile(
                         autofocus: false,
                         leading: Text(
-                          "Total",
+                          'payment.total'.tr(),
                           style: GoogleFonts.montserrat(
                               fontSize: 20, fontWeight: FontWeight.bold),
                         ),
@@ -142,6 +152,47 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                     this.widget.order.currency),
                             style: GoogleFonts.montserrat(
                                 fontSize: 20, color: Colors.green)),
+                      ),
+                      // ---- Tip selector (FEATURE_PROPOSALS.md §6.4) ----
+                      TipSelector(
+                        subtotal: num.tryParse(
+                                this.widget.order.totalWithFees ?? '') ??
+                            0,
+                        currencySymbol: CurrencyService.getCurrencySymbol(
+                            this.widget.order.currency ?? ''),
+                        onChanged: (amount) {
+                          setState(() => _tip = amount);
+                          if (amount > 0) {
+                            KookersEvents.tipSelected(amount: amount);
+                          }
+                        },
+                      ),
+                      if (_tip > 0)
+                        ListTile(
+                          autofocus: false,
+                          leading: Text(
+                            'payment.tipTitle'.tr(),
+                            style: GoogleFonts.montserrat(fontSize: 14),
+                          ),
+                          trailing: Text(
+                            '$_tip ${CurrencyService.getCurrencySymbol(this.widget.order.currency ?? '')}',
+                            style: GoogleFonts.montserrat(fontSize: 14),
+                          ),
+                        ),
+                      ListTile(
+                        autofocus: false,
+                        leading: Text(
+                          'payment.grandTotal'.tr(),
+                          style: GoogleFonts.montserrat(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        trailing: Text(
+                          '${(num.tryParse(this.widget.order.totalWithFees ?? '') ?? 0) + _tip} ${CurrencyService.getCurrencySymbol(this.widget.order.currency ?? '')}',
+                          style: GoogleFonts.montserrat(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: KookersColors.primary),
+                        ),
                       ),
                       SizedBox(
                         height: 40,
@@ -218,12 +269,24 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                           successText: 'payment.bought'.tr(),
                           controller: _streamButtonController,
                           onClick: () async {
+                            await Haptics.medium();
                             _streamButtonController.isLoading();
                             databaseService
                                 .createOrder(this.widget.order)
                                 .then((value) async {
                               databaseService.loadbuyerOrders();
                               await _streamButtonController.isSuccess();
+                              await Haptics.success();
+                              await KookersEvents.purchaseSuccess(
+                                transactionId: widget.order.id ?? '',
+                                currency: widget.order.currency ?? 'EUR',
+                                value: (num.tryParse(
+                                            widget.order.totalWithFees ??
+                                                '') ??
+                                        0) +
+                                    _tip,
+                                tip: _tip > 0 ? _tip : null,
+                              );
                               Navigator.pop(context);
                             }).catchError((onError) {
                               _streamButtonController.isError();

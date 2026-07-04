@@ -80,6 +80,9 @@ dependencies:
   # Localization
   easy_localization: ^3.0.7
 
+  # Persistence (theme mode, language already covered by easy_localization)
+  shared_preferences: ^2.2.3
+
   # Payment (legacy but needed)
   # stripe_payment: ^1.0.9  # Commented out - consider stripe_ios/android instead
 

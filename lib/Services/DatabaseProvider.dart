@@ -488,6 +488,14 @@ class PublicationHome {
   Adress? adress;
   SellerDef? seller;
   List<String>? preferences;
+  /// Mandatory EU allergens (gluten, crustaceans, eggs, fish, peanuts,
+  /// soy, milk, nuts, celery, mustard, sesame, sulphites, lupin,
+  /// molluscs). Empty list = none declared.
+  List<String>? allergens;
+  /// Stock counter — decrements as orders come in. When it hits 0 the
+  /// publication is automatically hidden from the home feed. `null`
+  /// means "unlimited" (backwards compatibility with existing sellers).
+  int? portionsAvailable;
   RatingPublication? rating;
   String? currency;
   int? likeCount;
@@ -503,6 +511,8 @@ class PublicationHome {
       this.adress,
       this.seller,
       this.preferences,
+      this.allergens,
+      this.portionsAvailable,
       this.rating,
       this.currency,
       this.likeCount,
@@ -532,6 +542,10 @@ class PublicationHome {
           title: ""),
       seller: SellerDef.fromJson(map["seller"]),
       preferences: List<String>.from(map["food_preferences"]),
+      allergens: map["allergens"] != null
+          ? List<String>.from(map["allergens"])
+          : const <String>[],
+      portionsAvailable: map["portions_available"],
       rating: RatingPublication(
           ratingCount: int.parse(map["rating"]["rating_count"].toString()),
           ratingTotal: double.parse(map["rating"]["rating_total"].toString())),
@@ -1628,6 +1642,8 @@ class DatabaseProviderService {
                   likes
 
                   food_preferences
+                  allergens
+                  portions_available
 
                   adress {
                     location {

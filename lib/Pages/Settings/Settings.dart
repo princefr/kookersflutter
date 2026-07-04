@@ -16,6 +16,7 @@ import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
 import 'package:kookers/UI/LanguagePicker.dart';
+import 'package:kookers/UI/ThemePicker.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -411,6 +412,23 @@ class _SettingsState extends State<Settings>
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
                 child: Text(
                   'settings.languageDesc'.tr(),
+                  style: GoogleFonts.montserrat(
+                      decoration: TextDecoration.none,
+                      color: Colors.black,
+                      fontSize: 10)),
+              )),
+          // ---- Theme picker ----------------------------------------------------
+          SettingsItemWithLeftIcon(
+              icon: Icons.brightness_6_outlined,
+              buttonText: 'settings.theme'.tr(),
+              onTap: () => showThemePicker(context)),
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+                child: Text(
+                  'settings.themeDesc'.tr(),
                   style: GoogleFonts.montserrat(
                       decoration: TextDecoration.none,
                       color: Colors.black,

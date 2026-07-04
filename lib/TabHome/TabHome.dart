@@ -16,6 +16,7 @@ import 'package:kookers/Pages/Vendor/VendorPageChild.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/NotificiationService.dart';
+import 'package:kookers/Services/TabNavigator.dart';
 import 'package:kookers/TabHome/BottomBar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -63,11 +64,24 @@ class _TabHomeState extends State<TabHome>
   @override
   void dispose() {
     this._selectedIndex.close();
+    _tabNavSub?.cancel();
     super.dispose();
   }
 
+  /// Subscription to the [TabNavBus] stream — lets empty-state CTAs
+  /// (e.g. "Browse dishes" on the Orders tab) switch the active tab
+  /// programmatically.
+  StreamSubscription<int>? _tabNavSub;
+
   @override
   void initState() {
+    super.initState();
+    _tabNavSub = TabNavBus.instance.stream.listen((index) {
+      if (mounted && index >= 0 && index < 5) {
+        _selectedIndex.add(index);
+        _controller.jumpToPage(index);
+      }
+    });
     new Future.delayed(Duration.zero, () async {
       Jiffy.setLocale("fr");
       final databaseService =

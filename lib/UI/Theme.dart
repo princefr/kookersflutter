@@ -168,6 +168,183 @@ class KookersTheme {
       ),
     );
   }
+
+  /// Dark variant of the Kookers theme.
+  ///
+  /// Token values follow Material 3 dark scheme baselines but keep the
+  /// brand coral as primary so the brand reads consistently across
+  /// both modes. Used by `ThemeController` when the user picks "Dark"
+  /// or "System" (and the OS is in dark mode).
+  static ThemeData get dark {
+    final base = ThemeData.dark(useMaterial3: true);
+
+    final textTheme = GoogleFonts.montserratTextTheme(base.textTheme).copyWith(
+      headlineMedium: GoogleFonts.montserrat(
+        fontSize: 28,
+        fontWeight: FontWeight.w800,
+        color: KookersColorsDark.textPrimary,
+      ),
+      headlineSmall: GoogleFonts.montserrat(
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        color: KookersColorsDark.textPrimary,
+      ),
+      titleLarge: GoogleFonts.montserrat(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: KookersColorsDark.textPrimary,
+      ),
+      titleMedium: GoogleFonts.montserrat(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: KookersColorsDark.textPrimary,
+      ),
+      bodyLarge: GoogleFonts.montserrat(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        color: KookersColorsDark.textPrimary,
+      ),
+      bodyMedium: GoogleFonts.montserrat(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        color: KookersColorsDark.textPrimary,
+      ),
+      bodySmall: GoogleFonts.montserrat(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        color: KookersColorsDark.textSecondary,
+      ),
+      labelLarge: GoogleFonts.montserrat(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: KookersColorsDark.textPrimary,
+      ),
+    );
+
+    return base.copyWith(
+      useMaterial3: true,
+      primaryColor: KookersColors.primary,
+      scaffoldBackgroundColor: KookersColorsDark.background,
+      canvasColor: KookersColorsDark.background,
+      dividerColor: KookersColorsDark.border,
+      textTheme: textTheme,
+      colorScheme: base.colorScheme.copyWith(
+        primary: KookersColors.primary,
+        secondary: KookersColors.primary,
+        error: KookersColors.danger,
+        surface: KookersColorsDark.surface,
+        background: KookersColorsDark.background,
+        onPrimary: Colors.white,
+        onSurface: KookersColorsDark.textPrimary,
+        onBackground: KookersColorsDark.textPrimary,
+        brightness: Brightness.dark,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: KookersColorsDark.background,
+        foregroundColor: KookersColorsDark.textPrimary,
+        elevation: 0,
+        centerTitle: false,
+        titleTextStyle: GoogleFonts.montserrat(
+          fontSize: 22,
+          fontWeight: FontWeight.w800,
+          color: KookersColorsDark.textPrimary,
+        ),
+      ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: KookersColorsDark.surface,
+        selectedItemColor: KookersColors.primary,
+        unselectedItemColor: KookersColorsDark.textMuted,
+        selectedLabelStyle:
+            TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+        unselectedLabelStyle:
+            TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+        type: BottomNavigationBarType.fixed,
+        showUnselectedLabels: true,
+        elevation: 0,
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: KookersColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 4,
+      ),
+      dividerTheme: const DividerThemeData(
+        color: KookersColorsDark.border,
+        thickness: 1,
+        space: 1,
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: KookersColorsDark.primarySoft,
+        labelStyle: GoogleFonts.montserrat(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: KookersColors.primary,
+        ),
+        side: BorderSide.none,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: KookersColorsDark.surfaceAlt,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide:
+              const BorderSide(color: KookersColorsDark.border, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: KookersColors.primary, width: 1.5),
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: KookersColors.primary,
+          foregroundColor: Colors.white,
+          minimumSize: const Size.fromHeight(52),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          textStyle: GoogleFonts.montserrat(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: KookersColors.primary,
+          textStyle: GoogleFonts.montserrat(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Dark-mode palette. Kept as a separate abstract class (instead of
+/// duplicating KookersColors) so dark-mode token references are
+/// visually distinct in source — you can immediately see "this widget
+/// uses a dark-mode-only token".
+abstract class KookersColorsDark {
+  KookersColorsDark._();
+
+  static const Color textPrimary = Color(0xFFF2F2F4);
+  static const Color textSecondary = Color(0xFFB0B0B6);
+  static const Color textMuted = Color(0xFF7A7A82);
+  static const Color background = Color(0xFF121214);
+  static const Color surface = Color(0xFF1C1C1E);
+  static const Color surfaceAlt = Color(0xFF2A2A2D);
+  static const Color border = Color(0xFF2C2C2E);
+  static const Color primarySoft = Color(0xFF3A1F1F);
 }
 
 /// Layout constants used across screens to keep spacing consistent.

@@ -35,7 +35,9 @@
     "publishTooltip": "Publicar un plato",
     "publishSuccess": "Tu plato ha sido publicado",
     "publishRetry": "Se produjo un error al publicar tu plato, nuevo intento en 10 segundos",
-    "publishError": "Se produjo un error al publicar tu plato, inténtalo más tarde"
+    "publishError": "Se produjo un error al publicar tu plato, inténtalo más tarde",
+    "oneDish": "plato",
+    "manyDishes": "platos"
   },
   "food": {
     "noPreferences": "Sin preferencias",
@@ -49,11 +51,14 @@
     "deliveryPeriod": "Periodo de entrega",
     "deliveryAddress": "Dirección de entrega",
     "noMessages": "No tienes mensajes",
-    "chooseDate": "Elegir una fecha"
+    "chooseDate": "Elegir una fecha",
+    "portionsLeft": "{} porciones restantes",
+    "lastPortion": "¡Última porción!"
   },
   "orders": {
     "title": "Compras",
-    "empty": "No tienes compras"
+    "empty": "No tienes compras",
+    "browseCta": "Explorar platos"
   },
   "vendor": {
     "title": "Ventas",
@@ -79,11 +84,13 @@
     "done": "Hecho",
     "dishCancelledByBuyer": "El plato ha sido cancelado por el comprador",
     "dishReceivedByBuyer": "Plato recibido por el comprador",
-    "dishDeliveredAndRated": "El plato ha sido entregado y calificado"
+    "dishDeliveredAndRated": "El plato ha sido entregado y calificado",
+    "publishCta": "Publica tu primer plato"
   },
   "messages": {
     "title": "Mensajes",
-    "empty": "No tienes mensajes."
+    "empty": "No tienes mensajes.",
+    "startChatCta": "Pide un plato para empezar a chatear"
   },
   "settings": {
     "payments": "Métodos de pago",
@@ -105,7 +112,9 @@
     "language": "Idioma",
     "languageDesc": "Elige el idioma de la aplicación.",
     "photoPermissionTitle": "Acceso a la biblioteca de fotos",
-    "photoPermissionBody": "Has denegado el acceso a las fotos. Actualiza los permisos en los ajustes del teléfono."
+    "photoPermissionBody": "Has denegado el acceso a las fotos. Actualiza los permisos en los ajustes del teléfono.",
+    "theme": "Tema",
+    "themeDesc": "Elige el tema de la aplicación."
   },
   "empty": {
     "homeTitle": "No hay platos cerca",
@@ -223,7 +232,14 @@
     "addMethod": "Añadir un método de pago",
     "payAmount": "Pagar",
     "buying": "Comprando",
-    "bought": "Plato comprado"
+    "bought": "Plato comprado",
+    "total": "Total",
+    "sameDayNotice": "Si pides el mismo día, la aplicación contempla 3 horas de margen para que el chef tenga tiempo de comprar ingredientes frescos y cocinar sin estrés.",
+    "tipTitle": "Propina para el chef",
+    "tipDesc": "El 100% es para el chef.",
+    "tipNone": "Ninguna",
+    "tipCustom": "Personalizada",
+    "grandTotal": "Total a pagar"
   },
   "order": {
     "totalPaid": "Total pagado: ",
@@ -235,7 +251,8 @@
     "cancelled": "Pedido cancelado",
     "cancelledInfo": "El pedido ha sido cancelado",
     "deliveredInfo": "El pedido ha sido entregado",
-    "rateDish": "Calificar el plato"
+    "rateDish": "Calificar el plato",
+    "reorder": "Pedir de nuevo"
   },
   "guidelines": {
     "gloves": "Aceptas usar guantes y redecilla cuando cocines para miembros de la comunidad.",
@@ -285,7 +302,8 @@
     "hostingCertificate": "Certificado de alojamiento"
   },
   "chat": {
-    "messageHint": "Escribe un mensaje…"
+    "messageHint": "Escribe un mensaje…",
+    "quick": "Gracias!"
   },
   "push": {
     "newOrder": {
@@ -312,5 +330,41 @@
       "title": "Pedido cancelado",
       "body": "El chef lamentablemente ha cancelado tu pedido."
     }
+  },
+  "themeMode": {
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Oscuro"
+  },
+  "allergens": {
+    "gluten": "Gluten",
+    "crustaceans": "Crustáceos",
+    "eggs": "Huevos",
+    "fish": "Pescado",
+    "peanuts": "Cacahuetes",
+    "soy": "Soja",
+    "milk": "Leche",
+    "nuts": "Frutos secos",
+    "celery": "Apio",
+    "mustard": "Mostaza",
+    "sesame": "Sésamo",
+    "sulphites": "Sulfitos",
+    "lupin": "Altramuz",
+    "molluscs": "Moluscos",
+    "contains": "Contiene:",
+    "none": "Sin alérgenos",
+    "filterTitle": "Ocultar platos que contengan:"
+  },
+  "upgrade": {
+    "title": "Actualización requerida",
+    "body": "Hay una nueva versión de Kookers disponible. Actualiza la app para continuar.",
+    "action": "Actualizar"
+  },
+  "sort": {
+    "newest": "Más recientes",
+    "trending": "Tendencia",
+    "topRated": "Mejor valorados",
+    "priceAsc": "Precio ↑",
+    "priceDesc": "Precio ↓"
   }
 }
