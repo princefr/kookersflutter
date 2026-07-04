@@ -45,7 +45,11 @@
     "bought": "Dish purchased",
     "error": "An error occurred",
     "loginToOrder": "Please sign in to place an order",
-    "loginToReport": "Please sign in to report this dish"
+    "loginToReport": "Please sign in to report this dish",
+    "deliveryPeriod": "Delivery period",
+    "deliveryAddress": "Delivery address",
+    "noMessages": "You have no messages",
+    "chooseDate": "Choose a date"
   },
   "orders": {
     "title": "Purchases",
@@ -56,7 +60,26 @@
     "tabPublications": "Listings",
     "tabOrders": "Orders",
     "emptyPublications": "You have no published dishes.",
-    "emptyOrders": "You have no orders."
+    "emptyOrders": "You have no orders.",
+    "healthReminder": "The health of our community members matters to us, so we remind you to wear your cooking gear (mask, gloves, hairnet) when cooking for a member.",
+    "toDeliver": "To deliver: ",
+    "youWillReceive": "You will receive: ",
+    "dishAccepted": "The dish has been accepted",
+    "acceptOrder": "Accept the order",
+    "accepting": "Accepting",
+    "orderAccepted": "Order accepted",
+    "refuseOrder": "Refuse the order",
+    "refusing": "Refusing",
+    "orderRefused": "Order refused",
+    "youRefused": "You refused the order.",
+    "closeSale": "Close the sale",
+    "openSale": "Open the sale",
+    "closing": "Closing",
+    "opening": "Opening",
+    "done": "Done",
+    "dishCancelledByBuyer": "The dish has been cancelled by the buyer",
+    "dishReceivedByBuyer": "Dish received by the buyer",
+    "dishDeliveredAndRated": "The dish has been delivered and rated"
   },
   "messages": {
     "title": "Messages",
@@ -97,7 +120,20 @@
     "tr": "Türkçe"
   },
   "common": {
-    "close": "Close"
+    "close": "Close",
+    "error": "An error occurred",
+    "retry": "Please try again",
+    "choose": "Choose",
+    "search": "Search",
+    "continue": "Continue",
+    "save": "Save",
+    "cancel": "Cancel",
+    "pay": "Pay",
+    "validate": "Validate",
+    "maybeLater": "Maybe later",
+    "errorTitle": "Error",
+    "successTitle": "Operation successful",
+    "gotIt": "Got it"
   },
   "publish": {
     "foodPreferences": "FOOD PREFERENCES",
@@ -106,6 +142,175 @@
     "price": "PRICE",
     "address": "ADDRESS",
     "platformFee": "Platform fee",
-    "youReceive": "What you will receive"
+    "youReceive": "What you will receive",
+    "nameHint": "Enter the dish name",
+    "descriptionHint": "Enter the description",
+    "priceHint": "Dish price",
+    "sellButton": "Sell my dish",
+    "publishing": "Publishing",
+    "published": "Dish published",
+    "platformFeeInfo": "This is the amount the Kookers platform will take as an operating fee. It represents 15% of the sold plate / portion price.",
+    "youReceiveInfo": "This is the amount you will receive for each portion or dish you sell via Kookers, after operating fees are deducted."
+  },
+  "errorView": {
+    "generic": "An error occurred, please try again!"
+  },
+  "status": {
+    "accepted": "Accepted",
+    "cancelled": "Cancelled",
+    "pending": "Pending",
+    "done": "Done",
+    "rated": "Rated",
+    "refused": "Refused"
+  },
+  "address": {
+    "choose": "Choose an address",
+    "searchPlaceholder": "Search a place",
+    "enterAddress": "Enter address"
+  },
+  "phone": {
+    "verificationTitle": "Phone verification",
+    "numberHint": "Phone number",
+    "sendSms": "Send SMS",
+    "codeTitle": "Code verification",
+    "codeHint": "Enter your code",
+    "verifyCode": "Verify my code",
+    "verifying": "Verifying",
+    "verified": "Verification complete"
+  },
+  "signup": {
+    "title": "Sign up",
+    "lastName": "Last name",
+    "firstName": "First name",
+    "email": "Email",
+    "birthdate": "Date of birth",
+    "addressTitle": "YOUR ADDRESS",
+    "yourAddress": "Your address",
+    "termsLabel": "Terms of service",
+    "privacyLabel": "Privacy policy",
+    "createAccount": "Create account",
+    "creating": "Creating",
+    "created": "Account created",
+    "createError": "Account creation error",
+    "byContinuingPrefix": "By tapping Create account or sign in, you accept our ",
+    "privacyIntro": ", To learn more about how your data is used, see our "
+  },
+  "terms": {
+    "acceptPrefix": "By continuing, you accept the",
+    "learnMorePrefix": "To learn more about your rights and how your data is used, see our",
+    "privacySuffix": "Privacy policy.",
+    "dataUsage": "Kookers uses your data to provide and improve its services. You have the right to access and rectify the information about you, to delete your account, and to object to the use of your data for commercial purposes. You can exercise these rights at any time by contacting our",
+    "dpoSuffix": "Data Protection Officer at:"
+  },
+  "notifications": {
+    "body": "We'd like to send you notifications to keep you informed about what's happening on Kookers.",
+    "enable": "Enable notifications",
+    "processing": "Processing",
+    "done": "Done"
+  },
+  "homeSettings": {
+    "priceRange": "PRICE RANGE",
+    "foodPrefs": "FOOD PREFERENCES",
+    "distance": "DISTANCE",
+    "saving": "Saving",
+    "saved": "Settings saved"
+  },
+  "payment": {
+    "summary": "Summary",
+    "serviceFee": "Service fee",
+    "appFee": "App fee",
+    "paymentMethods": "Payment methods",
+    "addMethod": "Add a payment method",
+    "payAmount": "Pay",
+    "buying": "Purchasing",
+    "bought": "Dish purchased"
+  },
+  "order": {
+    "totalPaid": "Total paid: ",
+    "validateReception": "Validate reception",
+    "validating": "Validating",
+    "validated": "Order validated",
+    "cancel": "Cancel the order",
+    "cancelling": "Cancelling",
+    "cancelled": "Order cancelled",
+    "cancelledInfo": "The order has been cancelled",
+    "deliveredInfo": "The order has been delivered",
+    "rateDish": "Rate the dish"
+  },
+  "guidelines": {
+    "gloves": "You agree to wear gloves and a hairnet when cooking for community members.",
+    "mask": "You agree to wear a mask when cooking to protect the health of other users.",
+    "hygiene": "You agree to maintain the hygiene of your kitchen, your utensils, and the cold and hot chain when cooking for community members.",
+    "accept": "Accept",
+    "processing": "Processing",
+    "nowSeller": "You are now a seller."
+  },
+  "paymentMethods": {
+    "title": "Payment methods",
+    "empty": "You have no cards.",
+    "cardMask": "****"
+  },
+  "iban": {
+    "title": "IBAN",
+    "hint": "Enter an IBAN",
+    "add": "Add the IBAN",
+    "adding": "Adding",
+    "added": "IBAN added",
+    "empty": "You have no IBAN."
+  },
+  "balance": {
+    "title": "Wallet",
+    "transactions": "Transactions",
+    "empty": "You have no transactions",
+    "withdraw": "Withdraw to my account",
+    "withdrawing": "Withdrawing",
+    "withdrawn": "Withdrawal complete",
+    "pendingAmount": "Pending amount:"
+  },
+  "ratings": {
+    "commentHint": "Add a comment",
+    "rateButton": "Rate the dish",
+    "rating": "Rating",
+    "rated": "Dish rated"
+  },
+  "reports": {
+    "descriptionHint": "Add a description of the report",
+    "reportButton": "Report",
+    "reporting": "Reporting",
+    "reported": "Post reported"
+  },
+  "verification": {
+    "title": "Document verification",
+    "passport": "Passport",
+    "hostingCertificate": "Hosting certificate"
+  },
+  "chat": {
+    "messageHint": "Type your message…"
+  },
+  "push": {
+    "newOrder": {
+      "title": "Order",
+      "body": "You have a new order."
+    },
+    "cancelled": {
+      "title": "Cancellation",
+      "body": "An order has been cancelled."
+    },
+    "completed": {
+      "title": "Order completed",
+      "body": "An order has just been completed."
+    },
+    "newRating": {
+      "title": "Rating",
+      "body": "You received a new rating for one of your orders."
+    },
+    "accepted": {
+      "title": "Order accepted",
+      "body": "Your order has been accepted by the chef."
+    },
+    "chefCancelled": {
+      "title": "Order cancelled",
+      "body": "The chef unfortunately had to cancel your order."
+    }
   }
 }

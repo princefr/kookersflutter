@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jiffy/jiffy.dart';
@@ -176,7 +177,7 @@ class _BalancePageState extends State<BalancePage> {
 
     return Scaffold(
         appBar: TopBarWitBackNav(
-            title: "Portefeuille",
+            title: 'balance.title'.tr(),
             rightIcon: CupertinoIcons.exclamationmark_circle_fill,
             isRightIcon: false,
             height: 54,
@@ -249,7 +250,7 @@ class _BalancePageState extends State<BalancePage> {
                               ),
                               Chip(
                                   label: Text(
-                                      "Somme en attente: " +
+                                      'balance.pendingAmount'.tr() + " " +
                                           " " +
                                           ((snapshot.data?.balance
                                                               ?.pendingBalance ??
@@ -271,7 +272,7 @@ class _BalancePageState extends State<BalancePage> {
                     SizedBox(height: 40),
                     Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Text("Transactions",
+                      child: Text('balance.transactions'.tr(),
                           style: GoogleFonts.montserrat(fontSize: 18)),
                     ),
                     SizedBox(height: 5),
@@ -294,7 +295,7 @@ class _BalancePageState extends State<BalancePage> {
                                     Colors.grey[300] ?? Colors.grey);
                           if (snapshot.data?.transactions?.isEmpty ?? true)
                             return EmptyViewElse(
-                                text: "Vous n'avez pas de transactions");
+                                text: 'balance.empty'.tr());
 
                           return ListView(
                               physics: NeverScrollableScrollPhysics(),
@@ -317,11 +318,11 @@ class _BalancePageState extends State<BalancePage> {
                             (snapshot.data?.balance?.totalBalance ?? 0) > 0
                                 ? Color(0xFFF95F5F)
                                 : Colors.grey,
-                        buttonText: "Retirer sur mon compte",
+                        buttonText: 'balance.withdraw'.tr(),
                         errorText:
                             "Une erreur s'est produite, veuillez reessayer",
-                        loadingText: "Retrait  en cours",
-                        successText: "Retrait effectué",
+                        loadingText: 'balance.withdrawing'.tr(),
+                        successText: 'balance.withdrawn'.tr(),
                         controller: _streamButtonController,
                         onClick: (snapshot.data?.balance?.totalBalance ?? 0) ==
                                 0

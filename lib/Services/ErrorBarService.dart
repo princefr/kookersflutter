@@ -1,5 +1,6 @@
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,17 +23,21 @@ class MessageToDisplay{
 
 
 class NotificationPanelService {
+  /// Returns the **translation keys** (not the localised copy) for the
+  /// title + body of a seller-facing push notification. Callers must
+  /// resolve them via `.tr()` at display time so the notification is
+  /// rendered in the user's current locale.
   MessageToDisplay loadMessageTypeSeller(String type) {
     switch (type) {
       case "new_order":
-          return MessageToDisplay(body: "Vous avez une nouvelle commande.", title: "Commande");
+          return MessageToDisplay(body: 'push.newOrder.body', title: 'push.newOrder.title');
       case "order_cancelled":
-          return MessageToDisplay(body: "Une commande a été annulé.", title: "Annnulation");
+          return MessageToDisplay(body: 'push.cancelled.body', title: 'push.cancelled.title');
       case "order_done":
-          return MessageToDisplay(body: "Une commande vient de se terminer.", title: "Commande Terminée");
+          return MessageToDisplay(body: 'push.completed.body', title: 'push.completed.title');
       case "order_rated":
-          return MessageToDisplay(body: "Vous avez recu une nouvelle note pour une de vos commandes.", title: "Notation");
-      default: return MessageToDisplay(body: "Vous avez une nouvelle commande.", title: "Commande");
+          return MessageToDisplay(body: 'push.newRating.body', title: 'push.newRating.title');
+      default: return MessageToDisplay(body: 'push.newOrder.body', title: 'push.newOrder.title');
     }
   }
 
@@ -41,14 +46,16 @@ class NotificationPanelService {
 
 
 
+    /// Returns the **translation keys** (not the localised copy) for the
+    /// title + body of a buyer-facing push notification.
     MessageToDisplay loadMessageTypeBuyer(String type) {
       switch (type) {
         case "order_accepted":
-            return MessageToDisplay(body: "Votre commande a été accepté par le chef.", title: "Acceptation commande");
+            return MessageToDisplay(body: 'push.accepted.body', title: 'push.accepted.title');
         case "order_refused":
-            return MessageToDisplay(body: "Le chef a malheuresement annulé votre commande.", title: "Annulation commande");
+            return MessageToDisplay(body: 'push.chefCancelled.body', title: 'push.chefCancelled.title');
         default:
-        return MessageToDisplay(body: "Votre commande a été accepté par le chef.", title: "Acceptation commande");
+        return MessageToDisplay(body: 'push.accepted.body', title: 'push.accepted.title');
       }
   }
 
@@ -71,7 +78,7 @@ class NotificationPanelService {
 
   void showOrderSeller(BuildContext context, RemoteMessage event, OrderVendor order){
         MessageToDisplay message =  loadMessageTypeSeller(event.data["type"]);
-        Get.snackbar(message.title, message.body, icon: Icon(
+        Get.snackbar(message.title.tr(), message.body.tr(), icon: Icon(
             CupertinoIcons.exclamationmark_circle,
             color: Colors.black,
           ), onTap: (snack) {
@@ -83,7 +90,7 @@ class NotificationPanelService {
 
   void showOrderBuyer(BuildContext context, RemoteMessage event, Order order){
         MessageToDisplay message = loadMessageTypeBuyer(event.data["type"]);
-                Get.snackbar(message.title, message.body, icon: Icon(
+        Get.snackbar(message.title.tr(), message.body.tr(), icon: Icon(
             CupertinoIcons.exclamationmark_circle,
             color: Colors.black,
           ), onTap: (snack) {
@@ -94,7 +101,7 @@ class NotificationPanelService {
 
 
   static void showError(BuildContext ctx, String message){
-    Get.snackbar("Erreur", message, colorText: Colors.white, icon: Padding(
+    Get.snackbar('common.errorTitle'.tr(), message, colorText: Colors.white, icon: Padding(
       padding: const EdgeInsets.all(6.0),
       child: Icon(
           Icons.info_outline,
@@ -106,7 +113,7 @@ class NotificationPanelService {
 
 
   static void showSuccess(BuildContext ctx, String message){
-    Get.snackbar("Succès de l'opération", message, colorText: Colors.white, icon: Padding(
+    Get.snackbar('common.successTitle'.tr(), message, colorText: Colors.white, icon: Padding(
       padding: const EdgeInsets.all(6.0),
       child: Icon(
           Icons.check,

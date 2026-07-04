@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -110,7 +111,7 @@ class _RatePlateState extends State<RatePlate> {
                             maxLines: 5,
                             onChanged: this.comment.add,
                             decoration: InputDecoration(
-                              hintText: 'Ajouter un commentaire',
+                              hintText: 'ratings.commentHint'.tr(),
                               fillColor: Colors.grey[200],
                               filled: true,
                               border: OutlineInputBorder(
@@ -126,10 +127,10 @@ class _RatePlateState extends State<RatePlate> {
                     SizedBox(height: 100),
                     StreamButton(
                         buttonColor: Colors.black,
-                        buttonText: "Noter le plat",
-                        errorText: "Une erreur s'est produite",
-                        loadingText: "Notation en cours",
-                        successText: "Plat noté",
+                        buttonText: 'ratings.rateButton'.tr(),
+                        errorText: 'common.error'.tr(),
+                        loadingText: 'ratings.rating'.tr(),
+                        successText: 'ratings.rated'.tr(),
                         controller: _streamButtonController,
                         onClick: () async {
                           _streamButtonController.isLoading();

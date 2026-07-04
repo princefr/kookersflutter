@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -60,7 +61,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: TopBarWitBackNav(
-          title: "Vérification Télephone",
+          title: 'phone.verificationTitle'.tr(),
           rightIcon: CupertinoIcons.exclamationmark_circle_fill,
           isRightIcon: false,
           height: 54,
@@ -130,7 +131,7 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                           onChanged: this.phoneAuthBloc.phoneNumber.sink.add,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: 'Numéro de téléphone',
+                              hintText: 'phone.numberHint'.tr(),
                               focusedBorder: InputBorder.none,
                               errorText: snapshot.error as String?,
                               contentPadding: EdgeInsets.only(
@@ -158,11 +159,11 @@ class _PhoneAuthCodeState extends State<PhoneAuthPage> {
                       key: Key("phoneValidationButton"),
                       buttonColor:
                           snapshot.data != null ? Colors.black : Colors.grey,
-                      buttonText: "Envoyer le sms",
+                      buttonText: 'phone.sendSms'.tr(),
                       errorText:
                           "Une erreur s'est produite, veuillez reesayer!",
-                      loadingText: "Envoie en cours",
-                      successText: "Sms envoyé",
+                      loadingText: 'auth.sending'.tr(),
+                      successText: 'auth.smsSent'.tr(),
                       controller: _streamButtonController,
                       onClick: () async {
                         print("ive been tapped");

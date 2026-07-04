@@ -45,7 +45,11 @@
     "bought": "Plato comprado",
     "error": "Se produjo un error",
     "loginToOrder": "Inicia sesión para hacer un pedido",
-    "loginToReport": "Inicia sesión para reportar este plato"
+    "loginToReport": "Inicia sesión para reportar este plato",
+    "deliveryPeriod": "Periodo de entrega",
+    "deliveryAddress": "Dirección de entrega",
+    "noMessages": "No tienes mensajes",
+    "chooseDate": "Elegir una fecha"
   },
   "orders": {
     "title": "Compras",
@@ -56,7 +60,26 @@
     "tabPublications": "Publicaciones",
     "tabOrders": "Pedidos",
     "emptyPublications": "No tienes platos publicados.",
-    "emptyOrders": "No tienes pedidos."
+    "emptyOrders": "No tienes pedidos.",
+    "healthReminder": "La salud de los miembros de nuestra comunidad nos importa, por eso te recordamos que es importante llevar tu equipamiento de cocina (mascarilla, guantes, redecilla) cuando cocinas para un miembro.",
+    "toDeliver": "A entregar: ",
+    "youWillReceive": "Recibirás: ",
+    "dishAccepted": "El plato ha sido aceptado",
+    "acceptOrder": "Aceptar el pedido",
+    "accepting": "Aceptando",
+    "orderAccepted": "Pedido aceptado",
+    "refuseOrder": "Rechazar el pedido",
+    "refusing": "Rechazando",
+    "orderRefused": "Pedido rechazado",
+    "youRefused": "Has rechazado el pedido.",
+    "closeSale": "Cerrar la venta",
+    "openSale": "Abrir la venta",
+    "closing": "Cerrando",
+    "opening": "Abriendo",
+    "done": "Hecho",
+    "dishCancelledByBuyer": "El plato ha sido cancelado por el comprador",
+    "dishReceivedByBuyer": "Plato recibido por el comprador",
+    "dishDeliveredAndRated": "El plato ha sido entregado y calificado"
   },
   "messages": {
     "title": "Mensajes",
@@ -97,7 +120,20 @@
     "tr": "Türkçe"
   },
   "common": {
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "error": "Se produjo un error",
+    "retry": "Inténtalo de nuevo",
+    "choose": "Elegir",
+    "search": "Buscar",
+    "continue": "Continuar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "pay": "Pagar",
+    "validate": "Validar",
+    "maybeLater": "Quizá más tarde",
+    "errorTitle": "Error",
+    "successTitle": "Operación exitosa",
+    "gotIt": "Entendido"
   },
   "publish": {
     "foodPreferences": "PREFERENCIAS ALIMENTARIAS",
@@ -106,6 +142,175 @@
     "price": "PRECIO",
     "address": "DIRECCIÓN",
     "platformFee": "Comisión de la plataforma",
-    "youReceive": "Lo que recibirás"
+    "youReceive": "Lo que recibirás",
+    "nameHint": "Introduce el nombre del plato",
+    "descriptionHint": "Introduce la descripción",
+    "priceHint": "Precio del plato",
+    "sellButton": "Vender mi plato",
+    "publishing": "Publicando",
+    "published": "Plato publicado",
+    "platformFeeInfo": "Esta es la cantidad que la plataforma Kookers retendrá como comisión de funcionamiento. Representa el 15 % del precio del plato / porción vendida.",
+    "youReceiveInfo": "Esta es la cantidad que recibirás por cada porción o plato que vendas a través de Kookers, una vez deducidas las comisiones de funcionamiento."
+  },
+  "errorView": {
+    "generic": "Se produjo un error, ¡inténtalo de nuevo!"
+  },
+  "status": {
+    "accepted": "Aceptado",
+    "cancelled": "Cancelado",
+    "pending": "Pendiente",
+    "done": "Hecho",
+    "rated": "Calificado",
+    "refused": "Rechazado"
+  },
+  "address": {
+    "choose": "Elegir una dirección",
+    "searchPlaceholder": "Buscar un lugar",
+    "enterAddress": "Introduce una dirección"
+  },
+  "phone": {
+    "verificationTitle": "Verificación del teléfono",
+    "numberHint": "Número de teléfono",
+    "sendSms": "Enviar SMS",
+    "codeTitle": "Verificación del código",
+    "codeHint": "Introduce tu código",
+    "verifyCode": "Verificar mi código",
+    "verifying": "Verificando",
+    "verified": "Verificación completada"
+  },
+  "signup": {
+    "title": "Registrarse",
+    "lastName": "Apellido",
+    "firstName": "Nombre",
+    "email": "Correo electrónico",
+    "birthdate": "Fecha de nacimiento",
+    "addressTitle": "TU DIRECCIÓN",
+    "yourAddress": "Tu dirección",
+    "termsLabel": "Términos del servicio",
+    "privacyLabel": "Política de privacidad",
+    "createAccount": "Crear cuenta",
+    "creating": "Creando",
+    "created": "Cuenta creada",
+    "createError": "Error al crear la cuenta",
+    "byContinuingPrefix": "Al pulsar Crear cuenta o iniciar sesión, aceptas nuestros ",
+    "privacyIntro": ", Para saber más sobre el uso de tus datos, consulta nuestra "
+  },
+  "terms": {
+    "acceptPrefix": "Al continuar, aceptas los",
+    "learnMorePrefix": "Para saber más sobre tus derechos y el uso de tus datos consulta la",
+    "privacySuffix": "Política de privacidad.",
+    "dataUsage": "Kookers usa tus datos para proporcionarte y mejorar sus servicios. Tienes derecho de acceso y rectificación de la información que te concierne, a eliminar tu cuenta y a oponerte al uso de tus datos con fines comerciales. Puedes ejercer tus derechos en cualquier momento contactando con nuestro",
+    "dpoSuffix": "Delegado de protección de datos en:"
+  },
+  "notifications": {
+    "body": "Nos gustaría enviarte notificaciones para informarte de lo que ocurre en Kookers.",
+    "enable": "Activar notificaciones",
+    "processing": "Procesando",
+    "done": "Hecho"
+  },
+  "homeSettings": {
+    "priceRange": "RANGO DE PRECIO",
+    "foodPrefs": "PREFERENCIAS ALIMENTARIAS",
+    "distance": "DISTANCIA",
+    "saving": "Guardando",
+    "saved": "Ajustes guardados"
+  },
+  "payment": {
+    "summary": "Resumen",
+    "serviceFee": "Comisión de servicio",
+    "appFee": "Comisión de la app",
+    "paymentMethods": "Métodos de pago",
+    "addMethod": "Añadir un método de pago",
+    "payAmount": "Pagar",
+    "buying": "Comprando",
+    "bought": "Plato comprado"
+  },
+  "order": {
+    "totalPaid": "Total pagado: ",
+    "validateReception": "Validar la recepción",
+    "validating": "Validando",
+    "validated": "Pedido validado",
+    "cancel": "Cancelar el pedido",
+    "cancelling": "Cancelando",
+    "cancelled": "Pedido cancelado",
+    "cancelledInfo": "El pedido ha sido cancelado",
+    "deliveredInfo": "El pedido ha sido entregado",
+    "rateDish": "Calificar el plato"
+  },
+  "guidelines": {
+    "gloves": "Aceptas usar guantes y redecilla cuando cocines para miembros de la comunidad.",
+    "mask": "Aceptas usar mascarilla cuando cocines para proteger la salud de otros usuarios.",
+    "hygiene": "Aceptas cuidar la higiene de tu cocina, de los instrumentos que usas y de la cadena de frío y calor cuando cocinas para miembros de la comunidad.",
+    "accept": "Aceptar",
+    "processing": "Procesando",
+    "nowSeller": "Ahora eres vendedor."
+  },
+  "paymentMethods": {
+    "title": "Métodos de pago",
+    "empty": "No tienes tarjetas.",
+    "cardMask": "****"
+  },
+  "iban": {
+    "title": "IBAN",
+    "hint": "Introduce un IBAN",
+    "add": "Añadir el IBAN",
+    "adding": "Añadiendo",
+    "added": "IBAN añadido",
+    "empty": "No tienes IBAN."
+  },
+  "balance": {
+    "title": "Cartera",
+    "transactions": "Transacciones",
+    "empty": "No tienes transacciones",
+    "withdraw": "Retirar a mi cuenta",
+    "withdrawing": "Retirando",
+    "withdrawn": "Retiro completado",
+    "pendingAmount": "Importe pendiente:"
+  },
+  "ratings": {
+    "commentHint": "Añadir un comentario",
+    "rateButton": "Calificar el plato",
+    "rating": "Calificando",
+    "rated": "Plato calificado"
+  },
+  "reports": {
+    "descriptionHint": "Añade una descripción del reporte",
+    "reportButton": "Reportar",
+    "reporting": "Reportando",
+    "reported": "Publicación reportada"
+  },
+  "verification": {
+    "title": "Verificación de documentos",
+    "passport": "Pasaporte",
+    "hostingCertificate": "Certificado de alojamiento"
+  },
+  "chat": {
+    "messageHint": "Escribe un mensaje…"
+  },
+  "push": {
+    "newOrder": {
+      "title": "Pedido",
+      "body": "Tienes un nuevo pedido."
+    },
+    "cancelled": {
+      "title": "Cancelación",
+      "body": "Un pedido ha sido cancelado."
+    },
+    "completed": {
+      "title": "Pedido completado",
+      "body": "Un pedido acaba de completarse."
+    },
+    "newRating": {
+      "title": "Calificación",
+      "body": "Has recibido una nueva calificación para uno de tus pedidos."
+    },
+    "accepted": {
+      "title": "Pedido aceptado",
+      "body": "Tu pedido ha sido aceptado por el chef."
+    },
+    "chefCancelled": {
+      "title": "Pedido cancelado",
+      "body": "El chef lamentablemente ha cancelado tu pedido."
+    }
   }
 }

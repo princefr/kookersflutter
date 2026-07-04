@@ -1,4 +1,5 @@
 import 'package:chips_choice/chips_choice.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -178,7 +179,7 @@ class _HomeSettingsState extends State<HomeSettings>
                     children: [
                       Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("FOURCHETTE DE PRIX",
+                          child: Text('homeSettings.priceRange'.tr(),
                               style: GoogleFonts.montserrat(
                                   decoration: TextDecoration.none,
                                   color: Colors.black,
@@ -202,7 +203,7 @@ class _HomeSettingsState extends State<HomeSettings>
                       SizedBox(height: 30),
                       Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("PRÉFÉRENCES ALIMENTAIRES",
+                          child: Text('homeSettings.foodPrefs'.tr(),
                               style: GoogleFonts.montserrat(
                                   decoration: TextDecoration.none,
                                   color: Colors.black,
@@ -233,7 +234,7 @@ class _HomeSettingsState extends State<HomeSettings>
                       SizedBox(height: 30),
                       Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("DISTANCE",
+                          child: Text('homeSettings.distance'.tr(),
                               style: GoogleFonts.montserrat(
                                   decoration: TextDecoration.none,
                                   color: Colors.black,
@@ -298,11 +299,11 @@ class _HomeSettingsState extends State<HomeSettings>
                         padding: const EdgeInsets.only(bottom: 20),
                         child: StreamButton(
                             buttonColor: Colors.black,
-                            buttonText: "Sauvegarder",
+                            buttonText: 'common.save'.tr(),
                             errorText:
                                 "Une erreur s'est produite, Veuillez reesayer.",
-                            loadingText: "Sauvegarde en cours",
-                            successText: "Paramètres sauvegardés",
+                            loadingText: 'homeSettings.saving'.tr(),
+                            successText: 'homeSettings.saved'.tr(),
                             controller: this._streamButtonController,
                             onClick: () async {
                               this._streamButtonController.isLoading();

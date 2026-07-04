@@ -212,7 +212,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
               ListTile(
                 autofocus: false,
                 leading: Icon(CupertinoIcons.exclamationmark_circle),
-                title: Text("Frais de service", style: GoogleFonts.montserrat()),
+                title: Text('payment.serviceFee'.tr(), style: GoogleFonts.montserrat()),
                 trailing: Text((this.widget.order.fees ?? '') + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency ?? '') , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
@@ -238,7 +238,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
 
               ListTile(
                 autofocus: false,
-                leading: Text("Total Payé: ", style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold)),
+                leading: Text('order.totalPaid'.tr(), style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold)),
                 trailing: Text((this.widget.order.totalWithFees ?? '') + " " + CurrencyService.getCurrencySymbol(this.widget.order.currency ?? ''), style: GoogleFonts.montserrat(fontSize: 24, color: Colors.green)),
               ),
 
@@ -296,10 +296,10 @@ class _OrderPageChildState extends State<OrderPageChild> {
                         child: Column(children: [
                       StreamButton(
                           buttonColor: Color(0xFFF95F5F),
-                          buttonText: "Valider la reception",
-                          errorText: "Une erreur s'est produite",
-                          loadingText: "Validation en cours",
-                          successText: "Commande validée",
+                          buttonText: 'order.validateReception'.tr(),
+                          errorText: 'common.error'.tr(),
+                          loadingText: 'order.validating'.tr(),
+                          successText: 'order.validated'.tr(),
                           controller: _streamButtonController,
                           onClick: () async {
                             _streamButtonController.isLoading();
@@ -316,10 +316,10 @@ class _OrderPageChildState extends State<OrderPageChild> {
                       SizedBox(height: 30),
                       StreamButton(
                           buttonColor: Colors.red,
-                          buttonText: "Annuler la commande",
-                          errorText: "Une erreur s'est produite",
-                          loadingText: "Annulation en cours",
-                          successText: "Commande annulée",
+                          buttonText: 'order.cancel'.tr(),
+                          errorText: 'common.error'.tr(),
+                          loadingText: 'order.cancelling'.tr(),
+                          successText: 'order.cancelled'.tr(),
                           controller: _streamButtonController2,
                           onClick: () async {
                             _streamButtonController2.isLoading();
@@ -336,7 +336,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
                     ]));
                   case OrderState.CANCELLED:
                     return Center(
-                      child: Text("La commande a été annulé",
+                      child: Text('order.cancelledInfo'.tr(),
                             style: GoogleFonts.montserrat(
                               fontSize: 17
                             )),
@@ -352,7 +352,7 @@ class _OrderPageChildState extends State<OrderPageChild> {
                           );
                         },
                         child: KookersButton(
-                            text: "Noter le plat",
+                            text: 'order.rateDish'.tr(),
                             color: Colors.black,
                             textcolor: Colors.white));
                   case OrderState.NOT_ACCEPTED:
@@ -369,10 +369,10 @@ class _OrderPageChildState extends State<OrderPageChild> {
                         SizedBox(height: 10),
                         StreamButton(
                             buttonColor: Colors.red,
-                            buttonText: "Annuler la commande",
-                            errorText: "Une erreur s'est produite",
-                            loadingText: "Annulation en cours",
-                            successText: "Commande annulée",
+                            buttonText: 'order.cancel'.tr(),
+                            errorText: 'common.error'.tr(),
+                            loadingText: 'order.cancelling'.tr(),
+                            successText: 'order.cancelled'.tr(),
                             controller: _streamButtonController3,
                             onClick: () async {
                               _streamButtonController3.isLoading();
@@ -390,14 +390,14 @@ class _OrderPageChildState extends State<OrderPageChild> {
                     );
                   case OrderState.RATED:
                     return Center(
-                      child: Text("La commande est livrée",
+                      child: Text('order.deliveredInfo'.tr(),
                             style: GoogleFonts.montserrat(
                               fontSize: 17
                             )),
                     );
                   case OrderState.REFUSED:
                     return Center(
-                      child: Text("La commande a été annulé",
+                      child: Text('order.cancelledInfo'.tr(),
                             style: GoogleFonts.montserrat(
                               fontSize: 17
                             )),

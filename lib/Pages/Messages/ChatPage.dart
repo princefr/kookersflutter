@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
@@ -162,7 +163,7 @@ class _ChatPageState extends State<ChatPage> {
                             );
                           if (snapshot.data?.isEmpty ?? true)
                             return EmptyViewElse(
-                                text: "Vous n'avez aucun messages");
+                                text: 'food.noMessages'.tr());
                           return Scrollbar(
                             child: ListView.builder(
                                 reverse: true,
@@ -322,18 +323,18 @@ class _ChatPageState extends State<ChatPage> {
                           context: context,
                           builder: (BuildContext ctx) {
                             return CupertinoAlertDialog(
-                              title: Text("Accès à la biblioteque et photos"),
+                              title: Text('settings.photoPermissionTitle'.tr()),
                               content: Center(
                                 child: Text(
-                                    "Vous avez refusé la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),
+                                    'settings.photoPermissionBody'.tr()),
                               ),
                               actions: [
                                 CupertinoDialogAction(
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: const Text(
-                                    'Continuer',
+                                  child: Text(
+                                    'settings.continue'.tr(),
                                     style: TextStyle(color: Colors.red),
                                   ),
                                 ),
@@ -342,7 +343,7 @@ class _ChatPageState extends State<ChatPage> {
                                     openAppSettings();
                                   },
                                   isDefaultAction: true,
-                                  child: const Text('Paramètres'),
+                                  child: Text('nav.settings'.tr()),
                                 )
                               ],
                             );

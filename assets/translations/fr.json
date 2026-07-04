@@ -45,7 +45,11 @@
     "bought": "Plat acheté",
     "error": "Une erreur s'est produite",
     "loginToOrder": "Veuillez vous connecter pour commander",
-    "loginToReport": "Veuillez vous connecter pour signaler ce plat"
+    "loginToReport": "Veuillez vous connecter pour signaler ce plat",
+    "deliveryPeriod": "Période de livraison",
+    "deliveryAddress": "Adresse de livraison",
+    "noMessages": "Vous n'avez aucun message",
+    "chooseDate": "Choisir une date"
   },
   "orders": {
     "title": "Achats",
@@ -56,7 +60,26 @@
     "tabPublications": "Publications",
     "tabOrders": "Commandes",
     "emptyPublications": "Vous n'avez aucun plat publié.",
-    "emptyOrders": "Vous n'avez aucune commande."
+    "emptyOrders": "Vous n'avez aucune commande.",
+    "healthReminder": "La santé des membres de notre communauté nous est importante, c'est pourquoi nous vous rappelons qu'il est important de porter vos équipements de cuisine (masques, gants, charlottes) quand vous cuisinez pour un membre.",
+    "toDeliver": "À livrer : ",
+    "youWillReceive": "Vous recevrez : ",
+    "dishAccepted": "Le plat a été accepté",
+    "acceptOrder": "Accepter la commande",
+    "accepting": "Acceptation en cours",
+    "orderAccepted": "Commande acceptée",
+    "refuseOrder": "Refuser la commande",
+    "refusing": "Refus en cours",
+    "orderRefused": "Commande refusée",
+    "youRefused": "Vous avez refusé la commande.",
+    "closeSale": "Fermer la vente",
+    "openSale": "Ouvrir la vente",
+    "closing": "Fermeture en cours",
+    "opening": "Ouverture en cours",
+    "done": "Effectuée",
+    "dishCancelledByBuyer": "Le plat a été annulé par l'acheteur",
+    "dishReceivedByBuyer": "Plat reçu par l'acheteur",
+    "dishDeliveredAndRated": "Le plat est livré et noté"
   },
   "messages": {
     "title": "Messages",
@@ -97,7 +120,20 @@
     "tr": "Türkçe"
   },
   "common": {
-    "close": "Fermer"
+    "close": "Fermer",
+    "error": "Une erreur s'est produite",
+    "retry": "Veuillez réessayer",
+    "choose": "Choisir",
+    "search": "Rechercher",
+    "continue": "Continuer",
+    "save": "Sauvegarder",
+    "cancel": "Annuler",
+    "pay": "Payer",
+    "validate": "Valider",
+    "maybeLater": "Plus tard",
+    "errorTitle": "Erreur",
+    "successTitle": "Succès de l'opération",
+    "gotIt": "Compris"
   },
   "publish": {
     "foodPreferences": "PRÉFÉRENCES ALIMENTAIRES",
@@ -106,6 +142,175 @@
     "price": "PRIX",
     "address": "ADRESSE",
     "platformFee": "Frais de la plateforme",
-    "youReceive": "Ce que vous recevrez"
+    "youReceive": "Ce que vous recevrez",
+    "nameHint": "Renseigner le nom du plat",
+    "descriptionHint": "Renseigner la description",
+    "priceHint": "Prix du plat",
+    "sellButton": "Vendre mon plat",
+    "publishing": "Publication en cours",
+    "published": "Plat publié",
+    "platformFeeInfo": "Ce chiffre représente le montant que la plateforme Kookers prendra au titre des frais de fonctionnement. Il représente 15 % du prix de l'assiette / portion vendue.",
+    "youReceiveInfo": "Ce chiffre représente le montant que vous recevrez pour chacune des portions ou plats que vous vendrez via la plateforme Kookers une fois les frais de fonctionnement déduits."
+  },
+  "errorView": {
+    "generic": "Une erreur s'est produite, veuillez réessayer !"
+  },
+  "status": {
+    "accepted": "Accepté",
+    "cancelled": "Annulé",
+    "pending": "En attente",
+    "done": "Fini",
+    "rated": "Noté",
+    "refused": "Refusé"
+  },
+  "address": {
+    "choose": "Choisir une adresse",
+    "searchPlaceholder": "Rechercher un lieu",
+    "enterAddress": "Saisir une adresse"
+  },
+  "phone": {
+    "verificationTitle": "Vérification téléphone",
+    "numberHint": "Numéro de téléphone",
+    "sendSms": "Envoyer le SMS",
+    "codeTitle": "Vérification du code",
+    "codeHint": "Renseignez votre code",
+    "verifyCode": "Vérifier mon code",
+    "verifying": "Vérification en cours",
+    "verified": "Vérification terminée"
+  },
+  "signup": {
+    "title": "S'enregistrer",
+    "lastName": "Nom",
+    "firstName": "Prénom",
+    "email": "Email",
+    "birthdate": "Date de naissance",
+    "addressTitle": "VOTRE ADRESSE",
+    "yourAddress": "Votre adresse",
+    "termsLabel": "Conditions d'utilisation",
+    "privacyLabel": "Politique de confidentialité",
+    "createAccount": "Créer un compte",
+    "creating": "Création en cours",
+    "created": "Compte créé",
+    "createError": "Erreur de création de compte",
+    "byContinuingPrefix": "En appuyant sur Créer un compte ou sur connexion, vous acceptez nos ",
+    "privacyIntro": ", Pour en savoir plus sur l'utilisation de vos données, consultez notre "
+  },
+  "terms": {
+    "acceptPrefix": "En continuant, vous acceptez les",
+    "learnMorePrefix": "Pour en savoir plus sur vos droits et sur l'utilisation de vos données consultez la",
+    "privacySuffix": "Politique de confidentialité.",
+    "dataUsage": "Kookers utilise vos données pour vous fournir ses services et les améliorer. Vous bénéficiez d'un droit d'accès et de rectification aux informations qui vous concernent, du droit de supprimer votre compte et du droit de vous opposer à l'utilisation de vos données à des fins de protection commerciale. Vous pouvez exercer vos droits à tout moment en contactant notre",
+    "dpoSuffix": "Responsable de la protection des données à l'adresse :"
+  },
+  "notifications": {
+    "body": "Nous souhaiterions pouvoir vous envoyer des notifications pour vous prévenir de ce qui se passe sur Kookers.",
+    "enable": "Activer les notifications",
+    "processing": "Traitement en cours",
+    "done": "Terminé"
+  },
+  "homeSettings": {
+    "priceRange": "FOURCHETTE DE PRIX",
+    "foodPrefs": "PRÉFÉRENCES ALIMENTAIRES",
+    "distance": "DISTANCE",
+    "saving": "Sauvegarde en cours",
+    "saved": "Paramètres sauvegardés"
+  },
+  "payment": {
+    "summary": "Récapitulatif",
+    "serviceFee": "Frais de service",
+    "appFee": "Frais d'application",
+    "paymentMethods": "Méthodes de paiements",
+    "addMethod": "Ajouter un moyen de paiement",
+    "payAmount": "Payer",
+    "buying": "Achat en cours",
+    "bought": "Plat acheté"
+  },
+  "order": {
+    "totalPaid": "Total payé : ",
+    "validateReception": "Valider la réception",
+    "validating": "Validation en cours",
+    "validated": "Commande validée",
+    "cancel": "Annuler la commande",
+    "cancelling": "Annulation en cours",
+    "cancelled": "Commande annulée",
+    "cancelledInfo": "La commande a été annulée",
+    "deliveredInfo": "La commande est livrée",
+    "rateDish": "Noter le plat"
+  },
+  "guidelines": {
+    "gloves": "Vous acceptez de porter des gants et une charlotte lorsque vous cuisinez pour les membres de la communauté.",
+    "mask": "Vous acceptez de porter un masque lorsque vous cuisinez pour protéger la santé des autres utilisateurs.",
+    "hygiene": "Vous acceptez de faire attention à l'hygiène de votre cuisine, des instruments que vous utilisez, à la chaîne du froid et du chaud lorsque vous cuisinez pour les membres de la communauté.",
+    "accept": "Accepter",
+    "processing": "Traitement en cours",
+    "nowSeller": "Vous êtes désormais un vendeur."
+  },
+  "paymentMethods": {
+    "title": "Méthodes de paiements",
+    "empty": "Vous n'avez pas de cartes.",
+    "cardMask": "****"
+  },
+  "iban": {
+    "title": "IBAN",
+    "hint": "Renseignez un IBAN",
+    "add": "Ajouter l'IBAN",
+    "adding": "Ajout en cours",
+    "added": "IBAN ajouté",
+    "empty": "Vous n'avez pas d'IBAN."
+  },
+  "balance": {
+    "title": "Portefeuille",
+    "transactions": "Transactions",
+    "empty": "Vous n'avez pas de transactions",
+    "withdraw": "Retirer sur mon compte",
+    "withdrawing": "Retrait en cours",
+    "withdrawn": "Retrait effectué",
+    "pendingAmount": "Somme en attente :"
+  },
+  "ratings": {
+    "commentHint": "Ajouter un commentaire",
+    "rateButton": "Noter le plat",
+    "rating": "Notation en cours",
+    "rated": "Plat noté"
+  },
+  "reports": {
+    "descriptionHint": "Ajouter une description du signalement",
+    "reportButton": "Signaler",
+    "reporting": "Signalement en cours",
+    "reported": "Post signalé"
+  },
+  "verification": {
+    "title": "Vérification de documents",
+    "passport": "Passeport",
+    "hostingCertificate": "Attestation d'hébergement"
+  },
+  "chat": {
+    "messageHint": "Saisir un message…"
+  },
+  "push": {
+    "newOrder": {
+      "title": "Commande",
+      "body": "Vous avez une nouvelle commande."
+    },
+    "cancelled": {
+      "title": "Annulation",
+      "body": "Une commande a été annulée."
+    },
+    "completed": {
+      "title": "Commande terminée",
+      "body": "Une commande vient de se terminer."
+    },
+    "newRating": {
+      "title": "Notation",
+      "body": "Vous avez reçu une nouvelle note pour une de vos commandes."
+    },
+    "accepted": {
+      "title": "Commande acceptée",
+      "body": "Votre commande a été acceptée par le chef."
+    },
+    "chefCancelled": {
+      "title": "Commande annulée",
+      "body": "Le chef a malheureusement annulé votre commande."
+    }
   }
 }

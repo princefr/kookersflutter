@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,7 +44,7 @@ class _BeforeAdressState extends State<BeforeAdress>
 
 
     return Scaffold(
-        appBar: TopBarBackCross(height: 54, title:"Choisir une adresse"),
+        appBar: TopBarBackCross(height: 54, title: 'address.choose'.tr()),
         body: SafeArea(
             child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -58,7 +59,7 @@ class _BeforeAdressState extends State<BeforeAdress>
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(
                           left: 15, bottom: 11, top: 11, right: 15),
-                      hintText: "Rechercher un lieu",
+                      hintText: 'address.searchPlaceholder'.tr(),
                       prefixIcon: Icon(CupertinoIcons.search),
                       fillColor: Colors.grey[300],
                       filled: true,
@@ -81,7 +82,7 @@ class _BeforeAdressState extends State<BeforeAdress>
                     TextField(
                       controller: textController,
                       decoration: InputDecoration(
-                        hintText: "Enter address",
+                        hintText: 'address.enterAddress'.tr(),
                       ),
                     ),
                     ElevatedButton(
@@ -115,7 +116,7 @@ class _BeforeAdressState extends State<BeforeAdress>
                           }
                         }
                       },
-                      child: Text("Search"),
+                      child: Text('common.search'.tr()),
                     ),
                   ],
                 ),

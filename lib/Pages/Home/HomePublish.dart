@@ -327,7 +327,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                   key: Key("plate_name"),
                                   onChanged: pubprovider.name.add,
                                   decoration: InputDecoration(
-                                    hintText: "Renseigner le nom du plat",
+                                    hintText: 'publish.nameHint'.tr(),
                                     fillColor: Colors.grey[200],
                                     filled: true,
                                     errorText: snapshot.error as String?,
@@ -360,7 +360,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                   key: Key("plate_description"),
                                   onChanged: pubprovider.description.add,
                                     decoration: InputDecoration(
-                                  hintText: "Renseigner la description",
+                                  hintText: 'publish.descriptionHint'.tr(),
                                   fillColor: Colors.grey[200],
                                   filled: true,
                                   errorText: snapshot.error?.toString(),
@@ -400,7 +400,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                          keyboardType: TextInputType.number,
                                          onChanged: pubprovider.priceall.add,
                                          decoration: InputDecoration(
-                                         hintText: "Prix du plat",
+                                         hintText: 'publish.priceHint'.tr(),
                                          fillColor: Colors.grey[200],
                                          filled: true,
                                          errorText: snapshot.error?.toString(),
@@ -470,7 +470,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                         GestureDetector(
                                           onTap: (){
                                             showDialog(context: context,
-                                             builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que la plateforme, kookers prendra dans le cadre des frais de fonctionnement. Il représente 15% du prix de l'assiette/portion vendue."));
+                                             builder: (context) => InfoDialog(infoText: 'publish.platformFeeInfo'.tr()));
                                           },
                                           child: Icon(CupertinoIcons.info_circle)),
                                         Text('publish.platformFee'.tr(), style: GoogleFonts.montserrat(),),
@@ -497,7 +497,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                     GestureDetector(
                                       onTap: (){
                                         showDialog(context: context,
-                                          builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que vous recevrez pour chacun(e) des portions ou plats que vous vendriez à l'aide la plateforme kookers une fois les frais de fonctionnement déduits."));
+                                          builder: (context) => InfoDialog(infoText: 'publish.youReceiveInfo'.tr()));
                                       },
                                       child: Icon(CupertinoIcons.info_circle)),
                                     Text('publish.youReceive'.tr(), style: GoogleFonts.montserrat(),),
@@ -528,10 +528,10 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                               stream: pubprovider.isFormValidOne$,
                               builder: (ctx, AsyncSnapshot<bool> snapshot) {
                                 return StreamButton(buttonColor: snapshot.data != null ? Color(0xFFF95F5F) : Colors.grey,
-                                 buttonText: "Vendre mon plat",
-                                 errorText: "Une erreur s'est produite",
-                                 loadingText: "Publication en cours",
-                                 successText: "Plat publié",
+                                 buttonText: 'publish.sellButton'.tr(),
+                                 errorText: 'common.error'.tr(),
+                                 loadingText: 'publish.publishing'.tr(),
+                                 successText: 'publish.published'.tr(),
                                   controller: _streamButtonController, onClick: () async {
                                     if(snapshot.data != null) {
                                       _streamButtonController.isLoading();

@@ -46,16 +46,16 @@ class _NotificationPageState extends State<NotificationPage> {
 
             Center(child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text("Nous souhaiterions pouvoir vous envoyer des notifications pour vous prévénir de ce qui se passe sur kookers.", style: GoogleFonts.montserrat()),
+              child: Text('notifications.body'.tr(), style: GoogleFonts.montserrat()),
             )),
 
             Expanded(child: SizedBox()),
 
             StreamButton(buttonColor: Colors.black,
-                            buttonText: "Activer les notifications",
-                            errorText: "Une erreur s'est produite, Veuillez reesayer",
-                            loadingText: "Traitement en cours",
-                            successText: "Terminé",
+                            buttonText: 'notifications.enable'.tr(),
+                            errorText: 'common.retry'.tr(),
+                            loadingText: 'notifications.processing'.tr(),
+                            successText: 'notifications.done'.tr(),
                             controller: _streamButtonController, onClick: () async {
                               notifService.askPermission().then((settings) {
                                 Get.to(TabHome(user:  this.widget.user));   
@@ -70,7 +70,7 @@ class _NotificationPageState extends State<NotificationPage> {
                                     Get.to(TabHome(user:  this.widget.user));
                             },child: Center(
                               key:  Key("delay_accept_notification"),
-                              child: Text("Plus tard", style: GoogleFonts.montserrat(fontSize: 18, color: Colors.grey),))),
+                              child: Text('common.maybeLater'.tr(), style: GoogleFonts.montserrat(fontSize: 18, color: Colors.grey),))),
                             SizedBox(height:10),
          ],),
       ),

@@ -63,7 +63,7 @@ class ChooseDatePage extends StatelessWidget {
                   Navigator.pop(context, this.date);
                 },
                 child: KookersButton(
-                    text: "Choisir",
+                    text: 'common.choose'.tr(),
                     color: Colors.black,
                     textcolor: Colors.white)),
             SizedBox(height: 20),
@@ -322,7 +322,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
               } else {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Align(alignment: Alignment.centerLeft, child: Chip(label: Text("Sans préférences"), backgroundColor: Colors.green[100])),
+                  child: Align(alignment: Alignment.centerLeft, child: Chip(label: Text('food.noPreferences'.tr()), backgroundColor: Colors.green[100])),
                 );
               }
             }),
@@ -333,7 +333,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 17),
-            child: Text("Periode de livraison", style: GoogleFonts.montserrat(decoration: TextDecoration.none,
+            child: Text('food.deliveryPeriod'.tr(), style: GoogleFonts.montserrat(decoration: TextDecoration.none,
                         color: Colors.black,
                         fontSize: 15))
           ),
@@ -354,7 +354,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
                     orderProvider.deliveryDate.add(date);
                   },
                   leading: Icon(CupertinoIcons.calendar),
-                  title: Text(snapshot.data != null ? Jiffy.parseFromDateTime(snapshot.data!).format(pattern: "do MMMM yyyy [ À ] HH:mm") : 'Choisir une date', style: GoogleFonts.montserrat()),
+                  title: Text(snapshot.data != null ? Jiffy.parseFromDateTime(snapshot.data!).format(pattern: "do MMMM yyyy [ À ] HH:mm") : 'food.chooseDate'.tr(), style: GoogleFonts.montserrat()),
                 );
               }),
 
@@ -375,7 +375,7 @@ class _FoodItemChildState extends State<FoodItemChild> {
           ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 17),
-                          child: Text("Adresse de livraison", style: GoogleFonts.montserrat(decoration: TextDecoration.none,
+                          child: Text('food.deliveryAddress'.tr(), style: GoogleFonts.montserrat(decoration: TextDecoration.none,
                                       color: Colors.black,
                                       fontSize: 15))
                         ),

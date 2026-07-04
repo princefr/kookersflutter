@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -39,12 +40,12 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
                     child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
-                      text: "En continuant, vous acceptez les",
+                      text: 'terms.acceptPrefix'.tr(),
                       style: GoogleFonts.montserrat(fontSize: 18, decoration: TextDecoration.none,
                       color: Colors.black),
                       children: [
                                   TextSpan(
-                                  text: "  Conditions d'utilisation ",
+                                  text: "  ${'signup.termsLabel'.tr()} ",
                                   style: GoogleFonts.montserrat(
                                       color: Colors.green,
                                       fontSize: 18,
@@ -54,7 +55,7 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
                                     ..onTap = () {
                                       Get.to(WebViewPage(
                                                     url: "https://getkookers.com/terms",
-                                                    title: "Conditions d'utilisation",
+                                                    title: 'signup.termsLabel'.tr(),
                                                   ));
                                     }),
                       ]
@@ -72,12 +73,12 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
                     child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
-                      text: "Pour en savoir plus sur vos droits et sur l'utilisation de vos données consultez la   ",
+                      text: 'terms.learnMorePrefix'.tr() + '   ',
                       style: GoogleFonts.montserrat(fontSize: 18, decoration: TextDecoration.none,
                                     color: Colors.black),
                       children: [
                                   TextSpan(
-                                  text: "Politique de confidentialité.            ",
+                                  text: 'terms.privacySuffix'.tr() + '            ',
                                   style: GoogleFonts.montserrat(
                                       color: Colors.green,
                                       fontSize: 18,
@@ -87,7 +88,7 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
                                     ..onTap = () {
                                       Get.to(WebViewPage(
                                                     url: "https://getkookers.com/privacy",
-                                                    title: "Politique de confidentialité",
+                                                    title: 'signup.privacyLabel'.tr(),
                                                   ));
                                     }),
                       ]
@@ -101,12 +102,12 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
                     child: RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
-                      text: "Kookers utilise vos données pour vous fournir ses services et les ameliorer. Vous bénéficiez d'un droit d'accès et de rectification aux informations qui vous concernent, du droit de supprimer votre compte et du droit de vous opposer à l'utilisation de vos données à des fins de protection commerciale. Vous pouvez exercer vos droits à tout moment en contactant notre   ",
+                      text: 'terms.dataUsage'.tr() + '   ',
                       style: GoogleFonts.montserrat(fontSize: 18, decoration: TextDecoration.none,
                                     color: Colors.black),
                       children: [
                                   TextSpan(
-                                  text: "Responsable de la protection des données à l'adresse : prince.ondonda@getkookers.com",
+                                  text: '${'terms.dpoSuffix'.tr()} prince.ondonda@getkookers.com',
                                   style: GoogleFonts.montserrat(
                                       color: Colors.green,
                                       fontSize: 18,
@@ -124,10 +125,10 @@ class _AcceptTermsPageState extends State<AcceptTermsPage> {
                 StreamButton(
                       buttonColor: Colors.black,
                       key: Key("phoneValidationButton"),
-                      buttonText: "Continuer",
-                      errorText: "Une erreur s'est produite, veuillez reesayer!",
-                      loadingText: "Envoie en cours",
-                      successText: "Sms envoyé",
+                      buttonText: 'common.continue'.tr(),
+                      errorText: 'auth.error'.tr(),
+                      loadingText: 'auth.sending'.tr(),
+                      successText: 'auth.smsSent'.tr(),
                       controller: _streamButtonController,
                       onClick: () async {
                         Get.to(BeforeAdress(isReturn: false,));

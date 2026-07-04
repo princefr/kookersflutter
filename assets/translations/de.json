@@ -45,7 +45,11 @@
     "bought": "Gericht gekauft",
     "error": "Ein Fehler ist aufgetreten",
     "loginToOrder": "Bitte melde dich an, um zu bestellen",
-    "loginToReport": "Bitte melde dich an, um dieses Gericht zu melden"
+    "loginToReport": "Bitte melde dich an, um dieses Gericht zu melden",
+    "deliveryPeriod": "Lieferzeitraum",
+    "deliveryAddress": "Lieferadresse",
+    "noMessages": "Du hast keine Nachrichten",
+    "chooseDate": "Datum wählen"
   },
   "orders": {
     "title": "Einkäufe",
@@ -56,7 +60,26 @@
     "tabPublications": "Anzeigen",
     "tabOrders": "Bestellungen",
     "emptyPublications": "Du hast keine Gerichte veröffentlicht.",
-    "emptyOrders": "Du hast keine Bestellungen."
+    "emptyOrders": "Du hast keine Bestellungen.",
+    "healthReminder": "Die Gesundheit unserer Community-Mitglieder ist uns wichtig, deshalb erinnern wir dich daran, beim Kochen für ein Mitglied deine Schutzausrüstung (Maske, Handschuhe, Haarnetz) zu tragen.",
+    "toDeliver": "Zu liefern: ",
+    "youWillReceive": "Du erhältst: ",
+    "dishAccepted": "Das Gericht wurde angenommen",
+    "acceptOrder": "Bestellung annehmen",
+    "accepting": "Wird angenommen",
+    "orderAccepted": "Bestellung angenommen",
+    "refuseOrder": "Bestellung ablehnen",
+    "refusing": "Wird abgelehnt",
+    "orderRefused": "Bestellung abgelehnt",
+    "youRefused": "Du hast die Bestellung abgelehnt.",
+    "closeSale": "Verkauf schließen",
+    "openSale": "Verkauf öffnen",
+    "closing": "Wird geschlossen",
+    "opening": "Wird geöffnet",
+    "done": "Erledigt",
+    "dishCancelledByBuyer": "Das Gericht wurde vom Käufer abgebrochen",
+    "dishReceivedByBuyer": "Gericht vom Käufer erhalten",
+    "dishDeliveredAndRated": "Das Gericht wurde geliefert und bewertet"
   },
   "messages": {
     "title": "Nachrichten",
@@ -97,7 +120,20 @@
     "tr": "Türkçe"
   },
   "common": {
-    "close": "Schließen"
+    "close": "Schließen",
+    "error": "Ein Fehler ist aufgetreten",
+    "retry": "Bitte versuche es erneut",
+    "choose": "Wählen",
+    "search": "Suchen",
+    "continue": "Weiter",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "pay": "Bezahlen",
+    "validate": "Bestätigen",
+    "maybeLater": "Vielleicht später",
+    "errorTitle": "Fehler",
+    "successTitle": "Vorgang erfolgreich",
+    "gotIt": "Verstanden"
   },
   "publish": {
     "foodPreferences": "ERNÄHRUNGSVORLIEBEN",
@@ -106,6 +142,175 @@
     "price": "PREIS",
     "address": "ADRESSE",
     "platformFee": "Plattformgebühr",
-    "youReceive": "Was du erhältst"
+    "youReceive": "Was du erhältst",
+    "nameHint": "Gib den Gerichtnamen ein",
+    "descriptionHint": "Gib die Beschreibung ein",
+    "priceHint": "Gerichtpreis",
+    "sellButton": "Mein Gericht verkaufen",
+    "publishing": "Wird veröffentlicht",
+    "published": "Gericht veröffentlicht",
+    "platformFeeInfo": "Dies ist der Betrag, den die Plattform Kookers als Betriebsgebühr einbehält. Er entspricht 15 % des Preises des verkauften Tellers / der Portion.",
+    "youReceiveInfo": "Dies ist der Betrag, den du für jedes über Kookers verkaufte Portion oder Gericht erhältst, abzüglich der Betriebsgebühren."
+  },
+  "errorView": {
+    "generic": "Ein Fehler ist aufgetreten, bitte versuche es erneut!"
+  },
+  "status": {
+    "accepted": "Angenommen",
+    "cancelled": "Abgebrochen",
+    "pending": "Ausstehend",
+    "done": "Fertig",
+    "rated": "Bewertet",
+    "refused": "Abgelehnt"
+  },
+  "address": {
+    "choose": "Adresse wählen",
+    "searchPlaceholder": "Ort suchen",
+    "enterAddress": "Adresse eingeben"
+  },
+  "phone": {
+    "verificationTitle": "Telefonverifizierung",
+    "numberHint": "Telefonnummer",
+    "sendSms": "SMS senden",
+    "codeTitle": "Code-Verifizierung",
+    "codeHint": "Gib deinen Code ein",
+    "verifyCode": "Code bestätigen",
+    "verifying": "Wird verifiziert",
+    "verified": "Verifizierung abgeschlossen"
+  },
+  "signup": {
+    "title": "Registrieren",
+    "lastName": "Nachname",
+    "firstName": "Vorname",
+    "email": "E-Mail",
+    "birthdate": "Geburtsdatum",
+    "addressTitle": "DEINE ADRESSE",
+    "yourAddress": "Deine Adresse",
+    "termsLabel": "Nutzungsbedingungen",
+    "privacyLabel": "Datenschutzrichtlinie",
+    "createAccount": "Konto erstellen",
+    "creating": "Wird erstellt",
+    "created": "Konto erstellt",
+    "createError": "Fehler beim Kontoerstellen",
+    "byContinuingPrefix": "Durch Tippen auf Konto erstellen oder Anmelden akzeptierst du unsere ",
+    "privacyIntro": ", Mehr zur Nutzung deiner Daten findest du in unserer "
+  },
+  "terms": {
+    "acceptPrefix": "Mit dem Fortfahren akzeptierst du die",
+    "learnMorePrefix": "Mehr zu deinen Rechten und der Nutzung deiner Daten findest du in der",
+    "privacySuffix": "Datenschutzrichtlinie.",
+    "dataUsage": "Kookers nutzt deine Daten, um dir seine Dienste bereitzustellen und zu verbessern. Du hast das Recht auf Auskunft und Berichtigung der dich betreffenden Informationen, auf Löschung deines Kontos und das Recht, der Nutzung deiner Daten für kommerzielle Zwecke zu widersprechen. Du kannst diese Rechte jederzeit ausüben, indem du unseren",
+    "dpoSuffix": "Datenschutzbeauftragten unter:"
+  },
+  "notifications": {
+    "body": "Wir möchten dir Benachrichtigungen schicken, um dich über Geschehnisse bei Kookers auf dem Laufenden zu halten.",
+    "enable": "Benachrichtigungen aktivieren",
+    "processing": "Wird verarbeitet",
+    "done": "Fertig"
+  },
+  "homeSettings": {
+    "priceRange": "PREISSPANNE",
+    "foodPrefs": "ERNÄHRUNGSVORLIEBEN",
+    "distance": "ENTFERNUNG",
+    "saving": "Wird gespeichert",
+    "saved": "Einstellungen gespeichert"
+  },
+  "payment": {
+    "summary": "Zusammenfassung",
+    "serviceFee": "Servicegebühr",
+    "appFee": "App-Gebühr",
+    "paymentMethods": "Zahlungsmethoden",
+    "addMethod": "Zahlungsmethode hinzufügen",
+    "payAmount": "Bezahlen",
+    "buying": "Kauf läuft",
+    "bought": "Gericht gekauft"
+  },
+  "order": {
+    "totalPaid": "Gesamt bezahlt: ",
+    "validateReception": "Empfang bestätigen",
+    "validating": "Wird bestätigt",
+    "validated": "Bestellung bestätigt",
+    "cancel": "Bestellung abbrechen",
+    "cancelling": "Wird abgebrochen",
+    "cancelled": "Bestellung abgebrochen",
+    "cancelledInfo": "Die Bestellung wurde abgebrochen",
+    "deliveredInfo": "Die Bestellung wurde geliefert",
+    "rateDish": "Gericht bewerten"
+  },
+  "guidelines": {
+    "gloves": "Du verpflichtest dich, beim Kochen für Community-Mitglieder Handschuhe und eine Haarnetz zu tragen.",
+    "mask": "Du verpflichtest dich, beim Kochen eine Maske zu tragen, um die Gesundheit anderer Nutzer zu schützen.",
+    "hygiene": "Du verpflichtest du, beim Kochen für Community-Mitglieder auf die Hygiene deiner Küche, deiner Geräte sowie die Kühl- und Warmkette zu achten.",
+    "accept": "Akzeptieren",
+    "processing": "Wird verarbeitet",
+    "nowSeller": "Du bist jetzt ein Verkäufer."
+  },
+  "paymentMethods": {
+    "title": "Zahlungsmethoden",
+    "empty": "Du hast keine Karten.",
+    "cardMask": "****"
+  },
+  "iban": {
+    "title": "IBAN",
+    "hint": "Gib eine IBAN ein",
+    "add": "IBAN hinzufügen",
+    "adding": "Wird hinzugefügt",
+    "added": "IBAN hinzugefügt",
+    "empty": "Du hast keine IBAN."
+  },
+  "balance": {
+    "title": "Geldbörse",
+    "transactions": "Transaktionen",
+    "empty": "Du hast keine Transaktionen",
+    "withdraw": "Auf mein Konto abheben",
+    "withdrawing": "Wird abgehoben",
+    "withdrawn": "Abhebung abgeschlossen",
+    "pendingAmount": "Ausstehender Betrag:"
+  },
+  "ratings": {
+    "commentHint": "Kommentar hinzufügen",
+    "rateButton": "Gericht bewerten",
+    "rating": "Wird bewertet",
+    "rated": "Gericht bewertet"
+  },
+  "reports": {
+    "descriptionHint": "Füge eine Beschreibung der Meldung hinzu",
+    "reportButton": "Melden",
+    "reporting": "Wird gemeldet",
+    "reported": "Beitrag gemeldet"
+  },
+  "verification": {
+    "title": "Dokumentenverifizierung",
+    "passport": "Reisepass",
+    "hostingCertificate": "Beherbergungsbescheinigung"
+  },
+  "chat": {
+    "messageHint": "Nachricht eingeben…"
+  },
+  "push": {
+    "newOrder": {
+      "title": "Bestellung",
+      "body": "Du hast eine neue Bestellung."
+    },
+    "cancelled": {
+      "title": "Abbruch",
+      "body": "Eine Bestellung wurde abgebrochen."
+    },
+    "completed": {
+      "title": "Bestellung abgeschlossen",
+      "body": "Eine Bestellung wurde gerade abgeschlossen."
+    },
+    "newRating": {
+      "title": "Bewertung",
+      "body": "Du hast eine neue Bewertung für eine deiner Bestellungen erhalten."
+    },
+    "accepted": {
+      "title": "Bestellung angenommen",
+      "body": "Deine Bestellung wurde vom Koch angenommen."
+    },
+    "chefCancelled": {
+      "title": "Bestellung abgebrochen",
+      "body": "Der Koch musste deine Bestellung leider abbrechen."
+    }
   }
 }

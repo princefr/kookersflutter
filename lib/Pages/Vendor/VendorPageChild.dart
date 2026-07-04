@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -191,7 +192,7 @@ final MutationOptions _options  = MutationOptions(
               ListTile(
                 autofocus: false,
                 leading: Lottie.asset('assets/lottie/lf30_KvGsoi.json', height: 140, repeat: true),
-                title: Text("La santé des membres de notre communauté nous est importante , c’est pourquoi nous vous rappelons qu’il est important de porter vos équipements de cuisine (masques, gants, charlottes ) quand vous cuisinez pour un membre.", style: GoogleFonts.montserrat(fontSize:13)),
+                title: Text('vendor.healthReminder'.tr(), style: GoogleFonts.montserrat(fontSize:13)),
               ),
 
 
@@ -199,7 +200,7 @@ final MutationOptions _options  = MutationOptions(
 
              ListTile(
                autofocus: false,
-               leading: Text("À livrer: ", style: GoogleFonts.montserrat(fontSize: 18))
+               leading: Text('vendor.toDeliver'.tr(), style: GoogleFonts.montserrat(fontSize: 18))
              ),
 
               ListTile(
@@ -219,7 +220,7 @@ final MutationOptions _options  = MutationOptions(
               ListTile(
                 autofocus: false,
                 leading: Icon(CupertinoIcons.exclamationmark_circle),
-                title: Text("Frais d'applicaton", style: GoogleFonts.montserrat()),
+                title: Text('payment.appFee'.tr(), style: GoogleFonts.montserrat()),
                 trailing: Text(this.fees.toString() + " " + CurrencyService.getCurrencySymbol(this.widget.vendor.currency) , style: GoogleFonts.montserrat(fontSize: 20)),
               ),
 
@@ -245,7 +246,7 @@ final MutationOptions _options  = MutationOptions(
 
               ListTile(
                 autofocus: false,
-                leading: Text("Vous recevrez: ", style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold)),
+                leading: Text('vendor.youWillReceive'.tr(), style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold)),
                 trailing: Text(this.total.toString() + " " + CurrencyService.getCurrencySymbol(this.widget.vendor.currency), style: GoogleFonts.montserrat(fontSize: 24, color: Colors.green)),
               ),
 
@@ -304,19 +305,19 @@ final MutationOptions _options  = MutationOptions(
 
                     switch (snapshot.data?.orderState) {
                       case "ACCEPTED":
-                          return Center(child: Text("Le plat a été accepté", style: GoogleFonts.montserrat(fontSize: 17),));
+                          return Center(child: Text('vendor.dishAccepted'.tr(), style: GoogleFonts.montserrat(fontSize: 17),));
                       case "CANCELLED":
-                          return Center(child: Text("le plat a été annulé par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));
+                          return Center(child: Text('vendor.dishCancelledByBuyer'.tr(), style: GoogleFonts.montserrat(fontSize: 17)));
                       case "DONE":
-                        return Center(child: Text("plat recu par l'acheteur", style: GoogleFonts.montserrat(fontSize: 17)));
+                        return Center(child: Text('vendor.dishReceivedByBuyer'.tr(), style: GoogleFonts.montserrat(fontSize: 17)));
 
                       case "NOT_ACCEPTED":
                         return Container(child: Column(children: [
                           StreamButton(buttonColor: Colors.green,
-                                     buttonText: "Accepter la commande",
-                                     errorText: "Une erreur s'est produite",
-                                     loadingText: "Acceptation en cours",
-                                     successText: "Commande acceptée",
+                                     buttonText: 'vendor.acceptOrder'.tr(),
+                                     errorText: 'common.error'.tr(),
+                                     loadingText: 'vendor.accepting'.tr(),
+                                     successText: 'vendor.orderAccepted'.tr(),
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
                                         this.acceptOrder(databaseService.client, this.widget.vendor).then((result) {
@@ -335,10 +336,10 @@ final MutationOptions _options  = MutationOptions(
 
 
                           StreamButton(buttonColor: Colors.red,
-                                     buttonText: "Refuser la commande",
-                                     errorText: "Une erreur s'est produite",
-                                     loadingText: "Refus en cours",
-                                     successText: "Commande refusée",
+                                     buttonText: 'vendor.refuseOrder'.tr(),
+                                     errorText: 'common.error'.tr(),
+                                     loadingText: 'vendor.refusing'.tr(),
+                                     successText: 'vendor.orderRefused'.tr(),
                                       controller: _streamButtonController2, onClick: () async {
                                         _streamButtonController2.isLoading();
                                         this.refuseOrder(databaseService.client, this.widget.vendor).then((result) {
@@ -352,10 +353,10 @@ final MutationOptions _options  = MutationOptions(
 
                         ]));
                       case "RATED":
-                        return Center(child: Text("le plat est livré et noté", style: GoogleFonts.montserrat(fontSize: 17)));
+                        return Center(child: Text('vendor.dishDeliveredAndRated'.tr(), style: GoogleFonts.montserrat(fontSize: 17)));
 
                       case "REFUSED":
-                        return Center(child: Text("Vous avez refusé la commande.", style: GoogleFonts.montserrat(fontSize: 17)));
+                        return Center(child: Text('vendor.youRefused'.tr(), style: GoogleFonts.montserrat(fontSize: 17)));
 
                         
                         

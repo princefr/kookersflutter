@@ -1,4 +1,5 @@
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -143,7 +144,7 @@ class _ReportPageState extends State<ReportPage> {
                               maxLines: 5,
                               onChanged: this.comment.add,
                               decoration: InputDecoration(
-                              hintText: 'Ajouter une description du signalement',
+                              hintText: 'reports.descriptionHint'.tr(),
                               fillColor: Colors.grey[200],
                               filled: true,
                               border: OutlineInputBorder(
@@ -172,10 +173,10 @@ class _ReportPageState extends State<ReportPage> {
                     Expanded(child: SizedBox()),
                     
                                 StreamButton(buttonColor: Colors.red,
-                                     buttonText: "Signaler",
-                                     errorText: "Une erreur s'est produite",
-                                     loadingText: "Signalement en cours",
-                                     successText: "Post signalé",
+                                     buttonText: 'reports.reportButton'.tr(),
+                                     errorText: 'common.error'.tr(),
+                                     loadingText: 'reports.reporting'.tr(),
+                                     successText: 'reports.reported'.tr(),
                                       controller: _streamButtonController, onClick: () async {
                                         _streamButtonController.isLoading();
                                         ReportInput report  = ReportInput(description: this.comment.value, userReported: this.widget.seller,  userReporting: databaseService.user.value.id,  type: EnumToString.convertToString(ReportType.values[this._value], camelCase: true));

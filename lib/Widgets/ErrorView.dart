@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,7 @@ class ErrorView extends StatelessWidget {
         children: [
           Icon(CupertinoIcons.exclamationmark_circle, color: Colors.red,),
           SizedBox(height: 5),
-          Text("Une erreur s'est produite, veuillez reessayer!")
+          Text('errorView.generic'.tr())
         ]
       )
     );

@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -142,7 +143,7 @@ class _HomeSearchPageState extends State<HomeSearchPage>
         Provider.of<DatabaseProviderService>(context, listen: false);
 
     return Scaffold(
-      appBar: TopBarBackCross(height: 54, title: "Choisir une adresse"),
+      appBar: TopBarBackCross(height: 54, title: 'address.choose'.tr()),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -215,7 +216,7 @@ class _HomeSearchPageState extends State<HomeSearchPage>
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(
                         left: 15, bottom: 11, top: 11, right: 15),
-                    hintText: "Rechercher un lieu",
+                    hintText: 'address.searchPlaceholder'.tr(),
                     prefixIcon: Icon(CupertinoIcons.search),
                     fillColor: Colors.grey[300],
                     filled: true,
