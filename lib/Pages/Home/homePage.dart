@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Models/Location.dart';
 import 'package:kookers/Pages/BeforeSign/BeforeSignAdress.dart';
 import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
+import 'package:kookers/Pages/Home/FoodIemChild.dart' show FoodItemChild;
+import 'package:kookers/Pages/Home/FoodItem.dart';
 import 'package:kookers/Pages/Home/Guidelines.dart';
 import 'package:kookers/Pages/Home/HomePublish.dart';
 import 'package:kookers/Pages/Home/HomeSearchPage.dart';
@@ -13,163 +15,227 @@ import 'package:kookers/Pages/Home/HomeSettings.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/PublicationProvider.dart';
+import 'package:kookers/UI/Colors.dart';
+import 'package:kookers/UI/Theme.dart';
+import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:shimmer/shimmer.dart';
 
-// ignore: must_be_immutable
-class HomeTopBar extends PreferredSize {
-  final double? height;
+/// Top app bar of the home feed.
+///
+/// Shows the Kookers wordmark, the user's current delivery address
+/// (tappable to open the address picker), and a settings/filter button.
+class HomeTopBar extends StatelessWidget {
+  final double height;
   final BehaviorSubject<int> percentage;
   final User user;
-  HomeTopBar(
-      {Key? key, this.height, required this.percentage, required this.user})
-      : super(
-            key: key,
-            child: const SizedBox(),
-            preferredSize: const Size.fromHeight(121));
+
+  const HomeTopBar({
+    super.key,
+    required this.percentage,
+    required this.user,
+    this.height = 121,
+  });
 
   @override
-  Size get preferredSize => Size.fromHeight(height ?? 121);
-
   Widget build(BuildContext context) {
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: true);
+    final theme = Theme.of(context);
 
     return Container(
+      decoration: const BoxDecoration(
+        color: KookersColors.surface,
+        border: Border(
+          bottom: BorderSide(color: KookersColors.border, width: 0.5),
+        ),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+        padding: const EdgeInsets.symmetric(
+            horizontal: KookersSpacing.screenH, vertical: KookersSpacing.sm),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
+            // Upload progress bar — only visible while a publication is being
+            // pushed to the server.
             StreamBuilder<int>(
-                stream: this.percentage,
-                builder: (context, snapshot) {
-                  if (snapshot.data == null) return SizedBox();
-                  if (snapshot.data == 0) return SizedBox();
-                  if (snapshot.connectionState == ConnectionState.waiting)
-                    return SizedBox();
-                  return LinearProgressIndicator(
-                      backgroundColor: Colors.black,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white));
-                }),
+              stream: percentage,
+              builder: (context, snapshot) {
+                final value = snapshot.data ?? 0;
+                if (value == 0) return const SizedBox(height: 0);
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: value == 100 ? 1 : null,
+                      backgroundColor: KookersColors.surfaceAlt,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          KookersColors.primary),
+                      minHeight: 3,
+                    ),
+                  ),
+                );
+              },
+            ),
             Row(
               children: [
-                Container(
-                  height: 30,
-                  width: 30,
-                  child: SvgPicture.asset(
-                    'assets/logo/logo_white.svg',
-                    height: 30,
-                    width: 30,
-                    colorFilter:
-                        ColorFilter.mode(Colors.black, BlendMode.srcIn),
-                  ),
+                SvgPicture.asset(
+                  'assets/logo/logo_white.svg',
+                  height: 28,
+                  width: 28,
+                  colorFilter: const ColorFilter.mode(
+                      KookersColors.primary, BlendMode.srcIn),
                 ),
-                SizedBox(width: 10),
-                Text("Kookers",
+                const SizedBox(width: 10),
+                Text('Kookers',
                     style: GoogleFonts.montserrat(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 30,
-                        color: Colors.black)),
+                      fontWeight: FontWeight.w900,
+                      fontSize: 26,
+                      color: KookersColors.textPrimary,
+                    )),
+                const Spacer(),
+                _SettingsButton(user: user, databaseService: databaseService),
               ],
             ),
-            Row(
-              children: [
-                InkWell(
-                    onTap: () {
-                      if (databaseService.user.value.id == null) {
-                        showCupertinoModalBottomSheet(
-                            expand: true,
-                            context: context,
-                            builder: (context) => BeforeSignPage(from: "home"));
-                      } else {
-                        showCupertinoModalBottomSheet(
-                          expand: false,
-                          context: context,
-                          builder: (context) => HomeSettings(
-                            user: this.user,
-                          ),
-                        );
-                      }
-                    },
-                    child: Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: new BoxDecoration(
-                          color: Colors.grey[400],
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(CupertinoIcons.slider_horizontal_3,
-                            size: 23.0, color: Colors.black))),
-                Flexible(
-                  child: ListTile(
-                    autofocus: false,
-                    onTap: () {
-                      if (databaseService.user.value.id == null) {
-                        showCupertinoModalBottomSheet(
-                          expand: true,
-                          context: context,
-                          builder: (context) => BeforeAdress(isReturn: true),
-                        );
-                      } else {
-                        showCupertinoModalBottomSheet(
-                          expand: true,
-                          context: context,
-                          builder: (context) => HomeSearchPage(
-                            isReturn: false,
-                            user: this.user,
-                          ),
-                        );
-                      }
-                    },
-                    title: StreamBuilder<UserDef>(
-                        initialData: null,
-                        stream: databaseService.user$,
-                        builder: (context, AsyncSnapshot<UserDef> snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting)
-                            return SizedBox(
-                                height: 25,
-                                width: 400,
-                                child: Shimmer.fromColors(
-                                    enabled: true,
-                                    child: Container(color: Colors.white),
-                                    baseColor: Colors.grey[200]!,
-                                    highlightColor: Colors.grey[300]!));
-                          if (snapshot.data == null) {
-                            return StreamBuilder<Adress>(
-                                stream: databaseService.adress,
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting)
-                                    return SizedBox();
-                                  if (snapshot.data == null) return SizedBox();
-                                  return Text(snapshot.data?.title ?? "",
-                                      style:
-                                          GoogleFonts.montserrat(fontSize: 17),
-                                      overflow: TextOverflow.ellipsis);
-                                });
-                          }
-                          return Text(
-                              snapshot.data!.adresses!
-                                      .where(
-                                          (element) => element.isChosed == true)
-                                      .first
-                                      .title ??
-                                  "",
-                              style: GoogleFonts.montserrat(fontSize: 17),
-                              overflow: TextOverflow.ellipsis);
-                        }),
-                    trailing: Icon(CupertinoIcons.chevron_down,
-                        size: 24.0, color: Colors.grey),
-                  ),
-                )
-              ],
-            ),
-            Divider()
+            const SizedBox(height: KookersSpacing.sm),
+            _AddressButton(user: user, databaseService: databaseService),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SettingsButton extends StatelessWidget {
+  const _SettingsButton({required this.user, required this.databaseService});
+
+  final User user;
+  final DatabaseProviderService databaseService;
+
+  @override
+  Widget build(BuildContext context) {
+    final isLoggedIn = databaseService.user.value.id != null;
+    return Material(
+      color: KookersColors.surfaceAlt,
+      shape: const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          if (!isLoggedIn) {
+            showCupertinoModalBottomSheet(
+              expand: true,
+              context: context,
+              builder: (context) => BeforeSignPage(from: 'home'),
+            );
+            return;
+          }
+          showCupertinoModalBottomSheet(
+            expand: false,
+            context: context,
+            builder: (context) => HomeSettings(user: user),
+          );
+        },
+        child: const Padding(
+          padding: EdgeInsets.all(8),
+          child: Icon(CupertinoIcons.slider_horizontal_3,
+              size: 20, color: KookersColors.textPrimary),
+        ),
+      ),
+    );
+  }
+}
+
+class _AddressButton extends StatelessWidget {
+  const _AddressButton({required this.user, required this.databaseService});
+
+  final User user;
+  final DatabaseProviderService databaseService;
+
+  @override
+  Widget build(BuildContext context) {
+    final isLoggedIn = databaseService.user.value.id != null;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          if (!isLoggedIn) {
+            showCupertinoModalBottomSheet(
+              expand: true,
+              context: context,
+              builder: (context) => const BeforeAdress(isReturn: true),
+            );
+            return;
+          }
+          showCupertinoModalBottomSheet(
+            expand: true,
+            context: context,
+            builder: (context) =>
+                HomeSearchPage(isReturn: false, user: user),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: KookersSpacing.sm, vertical: KookersSpacing.xs),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(CupertinoIcons.location_solid,
+                  size: 18, color: KookersColors.primary),
+              const SizedBox(width: 6),
+              Flexible(
+                child: StreamBuilder<UserDef>(
+                  stream: databaseService.user$,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SizedBox(
+                        height: 22,
+                        width: 160,
+                        child: Shimmer.fromColors(
+                          baseColor: KookersColors.surfaceAlt,
+                          highlightColor: KookersColors.border,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: KookersColors.surface,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    final userDef = snapshot.data;
+                    String? title;
+                    if (userDef == null) {
+                      title = databaseService.adress.value.title;
+                    } else if (userDef.adresses?.isNotEmpty ?? false) {
+                      title = userDef.adresses!
+                          .firstWhere(
+                            (element) => element.isChosed == true,
+                            orElse: () => userDef.adresses!.first,
+                          )
+                          .title;
+                    }
+                    return Text(
+                      title ?? 'Choisir une adresse',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: KookersColors.textPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Icon(CupertinoIcons.chevron_down,
+                  size: 16, color: KookersColors.textMuted),
+            ],
+          ),
         ),
       ),
     );
@@ -178,114 +244,248 @@ class HomeTopBar extends PreferredSize {
 
 class HomePage extends StatefulWidget {
   final User user;
-  HomePage({Key? key, required this.user}) : super(key: key);
+
+  const HomePage({super.key, required this.user});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage>
     with AutomaticKeepAliveClientMixin<HomePage> {
-  // ignore: unused_field
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-
-  BehaviorSubject<int> percentage = BehaviorSubject<int>.seeded(0);
+  final BehaviorSubject<int> _uploadPercentage =
+      BehaviorSubject<int>.seeded(0);
 
   @override
   void initState() {
-    Future.delayed(Duration.zero, () {
-      final databaseService =
-          Provider.of<DatabaseProviderService>(context, listen: false);
-      Location? location = databaseService.user.value.id != null
-          ? databaseService.adress.value.location
-          : databaseService.user.value.adresses
-              ?.firstWhere((element) => element.isChosed == true)
-              .location;
-      int distance =
-          databaseService.user.value.settings?.distanceFromSeller ?? 45;
-      if (location != null) {
-        databaseService.loadPublication(location, distance);
-      }
-    });
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadPublications());
+  }
+
+  void _loadPublications() {
+    final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: false);
+    final userDef = databaseService.user.value;
+    final Location? location = userDef.id != null
+        ? databaseService.adress.value.location
+        : userDef.adresses
+            ?.firstWhere((element) => element.isChosed == true,
+                orElse: () => Adress())
+            .location;
+    final distance = userDef.settings?.distanceFromSeller ?? 45;
+    if (location != null) {
+      databaseService.loadPublication(location, distance);
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    _loadPublications();
+    await Future.delayed(const Duration(milliseconds: 600));
+    _refreshController.refreshCompleted();
   }
 
   @override
   void dispose() {
-    this.percentage.close();
+    _uploadPercentage.close();
+    _refreshController.dispose();
     super.dispose();
+  }
+
+  Future<void> _openPublishFlow() async {
+    final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: false);
+
+    // Auth check — was previously inverted (`id != null` → signup),
+    // which made the FAB unusable for signed-in users.
+    if (databaseService.user.value.id == null) {
+      showCupertinoModalBottomSheet(
+        expand: false,
+        context: context,
+        builder: (context) => BeforeSignPage(from: 'home'),
+      );
+      return;
+    }
+
+    if (databaseService.user.value.isSeller != true) {
+      showCupertinoModalBottomSheet(
+        expand: true,
+        context: context,
+        builder: (context) => GuidelinesToSell(),
+      );
+      return;
+    }
+
+    final publication = await showCupertinoModalBottomSheet<Publication>(
+      expand: true,
+      context: context,
+      builder: (context) => HomePublish(user: widget.user),
+    );
+    if (publication == null || !mounted) return;
+
+    _tryUpload(publication, isRetry: false);
+  }
+
+  void _tryUpload(Publication publication, {required bool isRetry}) {
+    final databaseService =
+        Provider.of<DatabaseProviderService>(context, listen: false);
+    publication.uploadToServer(_uploadPercentage).then((_) async {
+      _uploadPercentage.add(100);
+      NotificationPanelService.showSuccess(context, 'Votre plat a été publié');
+      _uploadPercentage.add(0);
+    }).catchError((_) {
+      NotificationPanelService.showError(
+        context,
+        isRetry
+            ? "Une erreur s'est produite lors de la publication de votre plat, veuillez réessayer plus tard"
+            : "Une erreur s'est produite, nouvel essai dans 10 secondes",
+      );
+      _uploadPercentage.add(0);
+      if (!isRetry) {
+        Future.delayed(const Duration(seconds: 10), () {
+          if (!mounted) return;
+          _tryUpload(publication, isRetry: true);
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final databaseService =
-        Provider.of<DatabaseProviderService>(context, listen: false);
+        Provider.of<DatabaseProviderService>(context, listen: true);
 
     return Scaffold(
-      appBar: HomeTopBar(
-        user: this.widget.user,
-        percentage: this.percentage,
-        height: 121,
+      backgroundColor: KookersColors.background,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(121),
+        child: HomeTopBar(
+          user: widget.user,
+          percentage: _uploadPercentage,
+        ),
+      ),
+      body: SafeArea(
+        top: false,
+        child: StreamBuilder<List<PublicationHome>>(
+          stream: databaseService.publications$,
+          initialData: databaseService.publications.value,
+          builder: (context, snapshot) {
+            final items = snapshot.data ?? const [];
+            final isLoading = snapshot.connectionState ==
+                    ConnectionState.waiting &&
+                items.isEmpty;
+
+            if (isLoading) return const _HomeFeedShimmer();
+
+            if (items.isEmpty) {
+              return SmartRefresher(
+                controller: _refreshController,
+                enablePullDown: true,
+                onRefresh: _onRefresh,
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: const [
+                    SizedBox(height: KookersSpacing.xxl),
+                    EmptyView(),
+                  ],
+                ),
+              );
+            }
+
+            return SmartRefresher(
+              controller: _refreshController,
+              enablePullDown: true,
+              onRefresh: _onRefresh,
+              child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(
+                    bottom: KookersSpacing.xxl, top: KookersSpacing.sm),
+                itemCount: items.length,
+                separatorBuilder: (_, __) =>
+                    const SizedBox(height: KookersSpacing.sm),
+                itemBuilder: (context, index) {
+                  final publication = items[index];
+                  return FoodItem(
+                    publication: publication,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => FoodItemChild(
+                            publication: publication,
+                            user: widget.user,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        key: Key("publish_button"),
-        backgroundColor: Color(0xFFF95F5F),
-        onPressed: () async {
-          if (databaseService.user.value.id != null) {
-            showCupertinoModalBottomSheet(
-                expand: false,
-                context: context,
-                builder: (context) => BeforeSignPage(from: "home"));
-          } else {
-            if (databaseService.user.value.isSeller == false) {
-              showCupertinoModalBottomSheet(
-                expand: true,
-                context: context,
-                builder: (context) => GuidelinesToSell(),
-              );
-            } else {
-              Publication publication = await showCupertinoModalBottomSheet(
-                expand: true,
-                context: context,
-                builder: (context) => HomePublish(user: this.widget.user),
-              );
-
-              if (true) {
-                publication.uploadToServer(this.percentage).then((value) async {
-                  this.percentage.add(100);
-                  NotificationPanelService.showSuccess(
-                      context, "Votre plat a été publié");
-                  this.percentage.add(0);
-                }).catchError((onError) {
-                  NotificationPanelService.showError(context,
-                      "Une erreur s'est produite lors de la publication de votre plat, nouvel essai dans 10 secondes");
-                  this.percentage.add(0);
-                  Future.delayed(Duration(seconds: 10), () {
-                    publication
-                        .uploadToServer(this.percentage)
-                        .then((value) async {
-                      this.percentage.add(100);
-                      NotificationPanelService.showSuccess(
-                          context, "Votre plat a été publié");
-                      this.percentage.add(0);
-                    }).catchError((onError) {
-                      NotificationPanelService.showError(context,
-                          "Une erreur s'est produite lors de la publication de votre plat, Veuillez reesayer plus tard");
-                      this.percentage.add(0);
-                    });
-                  });
-                });
-              }
-            }
-          }
-        },
-        child: Icon(Icons.add),
+        key: const Key('publish_button'),
+        onPressed: _openPublishFlow,
+        tooltip: 'Publier un plat',
+        child: const Icon(Icons.add),
       ),
     );
   }
 
   @override
   bool get wantKeepAlive => true;
+}
+
+class _HomeFeedShimmer extends StatelessWidget {
+  const _HomeFeedShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: KookersColors.surfaceAlt,
+      highlightColor: KookersColors.border,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(KookersSpacing.lg),
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 3,
+        itemBuilder: (_, __) => Padding(
+          padding: const EdgeInsets.only(bottom: KookersSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 180,
+                decoration: BoxDecoration(
+                  color: KookersColors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              const SizedBox(height: KookersSpacing.md),
+              Container(
+                height: 16,
+                width: 180,
+                decoration: BoxDecoration(
+                  color: KookersColors.surface,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+              const SizedBox(height: KookersSpacing.sm),
+              Container(
+                height: 12,
+                width: 120,
+                decoration: BoxDecoration(
+                  color: KookersColors.surface,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

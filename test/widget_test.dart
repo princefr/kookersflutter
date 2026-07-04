@@ -1,33 +1,38 @@
-// This is a basic Flutter widget test.
+// Basic smoke tests for the Kookers theme + UI tokens.
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// (The previous test referenced a `MyApp` class and a "counter" widget
+// that no longer exist, so it failed to compile. These tests do not
+// require a Firebase project — they exercise pure UI code only.)
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:kookers/main.dart';
+import 'package:kookers/UI/Colors.dart';
+import 'package:kookers/UI/Theme.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+  group('KookersTheme', () {
+    test('light theme exposes the brand coral as primaryColor', () {
+      final theme = KookersTheme.light;
+      expect(theme.primaryColor, KookersColors.primary);
+    });
 
-    
+    test('light theme uses Material 3', () {
+      expect(KookersTheme.light.useMaterial3, isTrue);
+    });
 
+    test('bottom nav theme flags unselected labels as visible', () {
+      final bnbt = KookersTheme.light.bottomNavigationBarTheme;
+      expect(bnbt.showUnselectedLabels, isTrue);
+      expect(bnbt.type, BottomNavigationBarType.fixed);
+    });
+  });
 
-
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  group('KookersColors', () {
+    test('tokens are stable (do not regress by accident)', () {
+      expect(KookersColors.primary.value, 0xFFF95F5F);
+      expect(KookersColors.primaryDark.value, 0xFFE04C4C);
+      expect(KookersColors.textPrimary.value, 0xFF1A1A1A);
+      expect(KookersColors.background.value, 0xFFFFFFFF);
+    });
   });
 }

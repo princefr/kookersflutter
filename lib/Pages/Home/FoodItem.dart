@@ -5,35 +5,64 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
 import 'package:kookers/Models/Location.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/UI/Colors.dart';
 import 'package:kookers/Widgets/Shared/DistanceWidget.dart';
 import 'package:kookers/Widgets/Shared/PriceDisplay.dart';
 import 'package:kookers/Widgets/Shared/RatingWidget.dart';
-
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
-// Using the shared FoodItemShimmer from ShimmerCard.dart
-
+/// Card used in the home feed.
+///
+/// Fixes the inverted auth-gate on the like button: signed-in users can
+/// now actually like / unlike. Also re-styles the card so the photo,
+/// distance chip, and like button read as a single coherent surface
+/// instead of three loosely stacked widgets.
 class FoodItem extends StatefulWidget {
   final Function? onTap;
   final PublicationHome publication;
-  const FoodItem({Key? key, this.onTap, required this.publication})
-      : super(key: key);
+
+  const FoodItem({super.key, this.onTap, required this.publication});
 
   @override
-  _FoodItemState createState() => _FoodItemState();
+  State<FoodItem> createState() => _FoodItemState();
 }
 
 class _FoodItemState extends State<FoodItem>
     with AutomaticKeepAliveClientMixin<FoodItem> {
   Location _getUserLocation(DatabaseProviderService databaseService) {
+    // If the user is logged in we prefer the explicitly-chosen delivery
+    // address; otherwise fall back to whatever the guest picker stored.
     if (databaseService.user.value.id != null) {
       return databaseService.adress.value.location ?? Location();
     }
     return databaseService.user.value.adresses
-            ?.firstWhere((element) => element.isChosed == true)
+            ?.firstWhere((element) => element.isChosed == true,
+                orElse: () => Adress())
             .location ??
         Location();
+  }
+
+  void _toggleLike(DatabaseProviderService databaseService) {
+    // Auth gate — was previously inverted (`id != null` → signup),
+    // which meant signed-in users could never like a post.
+    if (databaseService.user.value.id == null) {
+      showCupertinoModalBottomSheet(
+        expand: false,
+        context: context,
+        builder: (context) => BeforeSignPage(from: 'food_item'),
+      );
+      return;
+    }
+    final wasLiked = widget.publication.liked ?? false;
+    setState(() => widget.publication.liked = !wasLiked);
+    databaseService.updateLikeInPublication(
+        widget.publication.id ?? '', !wasLiked);
+    if (wasLiked) {
+      databaseService.setDislikePost(widget.publication.id ?? '');
+    } else {
+      databaseService.setLikePost(widget.publication.id ?? '');
+    }
   }
 
   @override
@@ -42,179 +71,154 @@ class _FoodItemState extends State<FoodItem>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     final databaseService =
         Provider.of<DatabaseProviderService>(context, listen: false);
+    final publication = widget.publication;
 
     return InkWell(
-      onTap: this.widget.onTap as GestureTapCallback?,
+      onTap: widget.onTap as GestureTapCallback?,
+      borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(
+            horizontal: KookersSpacing.lg, vertical: KookersSpacing.sm),
         child: Container(
-          height: 260,
-          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: KookersColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: KookersColors.border, width: 0.5),
+          ),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                children: [
-                  Hero(
-                    tag: this.widget.publication.photoUrls?[0] ?? '',
-                    child: Image(
-                      height: 135,
-                      width: MediaQuery.of(context).size.width,
-                      fit: BoxFit.cover,
-                      image: CachedNetworkImageProvider(
-                          this.widget.publication.photoUrls?[0] ?? ''),
+              // Photo + distance chip + like button
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(15.5)),
+                child: Stack(
+                  children: [
+                    Hero(
+                      tag: publication.photoUrls?[0] ?? '',
+                      child: Image(
+                        height: 180,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        image: CachedNetworkImageProvider(
+                            publication.photoUrls?[0] ?? ''),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Align(
-                      alignment: Alignment.topLeft,
+                    Positioned(
+                      top: 10,
+                      left: 10,
                       child: DistanceWidget(
                         startLocation:
-                            this.widget.publication.adress?.location ??
-                                Location(),
+                            publication.adress?.location ?? Location(),
                         endLocation: _getUserLocation(databaseService),
                       ),
                     ),
-                  ),
-                  Container(
-                    child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: Builder(
-                            builder: (ctx) {
-                              if (this.widget.publication.liked ?? false) {
-                                return InkWell(
-                                  onTap: () {
-                                    if (databaseService.user.value.id != null) {
-                                      showCupertinoModalBottomSheet(
-                                          expand: false,
-                                          context: context,
-                                          builder: (context) => BeforeSignPage(
-                                                from: "food_item",
-                                              ));
-                                    } else {
-                                      databaseService.updateLikeInPublication(
-                                          this.widget.publication.id ?? '',
-                                          false);
-                                      databaseService.setDislikePost(
-                                          this.widget.publication.id ?? '');
-                                      setState(() {
-                                        this.widget.publication.liked = false;
-                                      });
-                                    }
-                                  },
-                                  child: Icon(
-                                    CupertinoIcons.heart_fill,
-                                    size: 35,
-                                    color: Colors.red,
-                                  ),
-                                );
-                              } else {
-                                return InkWell(
-                                  onTap: () {
-                                    if (databaseService.user.value.id != null) {
-                                      showCupertinoModalBottomSheet(
-                                          expand: false,
-                                          context: context,
-                                          builder: (context) => BeforeSignPage(
-                                              from: "food_item"));
-                                    } else {
-                                      databaseService.updateLikeInPublication(
-                                          this.widget.publication.id ?? '',
-                                          true);
-                                      databaseService.setLikePost(
-                                          this.widget.publication.id ?? '');
-                                      setState(() {
-                                        this.widget.publication.liked = true;
-                                      });
-                                    }
-                                  },
-                                  child: Icon(
-                                    CupertinoIcons.heart,
-                                    size: 35,
-                                    color: Colors.white,
-                                  ),
-                                );
-                              }
-                            },
+                    Positioned(
+                      top: 4,
+                      right: 4,
+                      child: Material(
+                        color: Colors.black.withOpacity(0.35),
+                        shape: const CircleBorder(),
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () => _toggleLike(databaseService),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Icon(
+                              (publication.liked ?? false)
+                                  ? CupertinoIcons.heart_fill
+                                  : CupertinoIcons.heart,
+                              size: 22,
+                              color: (publication.liked ?? false)
+                                  ? KookersColors.badge
+                                  : Colors.white,
+                            ),
                           ),
-                        )),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(
-                  this.widget.publication.title ?? '',
-                  style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w600, fontSize: 16),
-                ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: RatingWidget(
-                          rating: this.widget.publication.getRating(),
-                          ratingCount:
-                              this.widget.publication.rating?.ratingCount ?? 0,
                         ),
                       ),
                     ),
                   ],
-                )
-              ]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  PriceDisplay(
-                    price: this.widget.publication.pricePerAll ?? '',
-                    currency: this.widget.publication.currency ?? 'EUR',
-                  ),
-                ],
+                ),
               ),
-              SizedBox(height: 10),
-              Container(
-                height: 40,
-                child: Builder(builder: (BuildContext ctx) {
-                  if (this.widget.publication.preferences?.length != null &&
-                      this.widget.publication.preferences!.length > 0) {
-                    return ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount:
-                            this.widget.publication.preferences?.length ?? 0,
-                        itemBuilder: (ctx, index) {
-                          return Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 5, right: 5, top: 3),
-                              child: Chip(
-                                  backgroundColor: Colors.green[100],
-                                  label: Text(this
-                                          .widget
-                                          .publication
-                                          .preferences?[index] ??
-                                      '')));
-                        });
-                  } else {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Chip(
-                              label: Text("Sans préférences"),
-                              backgroundColor: Colors.green[100])),
-                    );
-                  }
-                }),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            publication.title ?? '',
+                            style: GoogleFonts.montserrat(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: KookersColors.textPrimary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: KookersSpacing.sm),
+                        RatingWidget(
+                          rating: publication.getRating(),
+                          ratingCount: publication.rating?.ratingCount ?? 0,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: KookersSpacing.xs),
+                    PriceDisplay(
+                      price: publication.pricePerAll ?? '',
+                      currency: publication.currency ?? 'EUR',
+                    ),
+                    const SizedBox(height: KookersSpacing.md),
+                    SizedBox(
+                      height: 28,
+                      child: _PreferencesRow(
+                          preferences: publication.preferences),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _PreferencesRow extends StatelessWidget {
+  final List<String>? preferences;
+  const _PreferencesRow({this.preferences});
+
+  @override
+  Widget build(BuildContext context) {
+    final items = preferences ?? const <String>[];
+    if (items.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(
+          'Sans préférences',
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
+            color: KookersColors.textMuted,
+          ),
+        ),
+      );
+    }
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: items.length,
+      separatorBuilder: (_, __) => const SizedBox(width: KookersSpacing.xs),
+      itemBuilder: (context, index) => Chip(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+        label: Text(items[index]),
       ),
     );
   }

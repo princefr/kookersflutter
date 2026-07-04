@@ -30,10 +30,14 @@
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+.flutter-plugins*
 .packages
+.packages*
 .pub-cache/
 .pub/
 /build/
+.gradle/
+.flutter-plugins-dependencies*
 
 # Web related
 
