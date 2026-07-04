@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Blocs/PhoneCodeBloc.dart';
@@ -47,7 +48,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
 
       return Scaffold(
         appBar: TopBarWitBackNav(
-            title: "Vérification code",
+            title: 'phone.codeTitle'.tr(),
             rightIcon: CupertinoIcons.exclamationmark_circle_fill,
             isRightIcon: false,
             height: 54,
@@ -81,7 +82,7 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                         key:  Key("PhoneCodeTestField"),
                           onChanged: bloc.code.sink.add,
                           decoration: InputDecoration(
-                            hintText: 'Renseignez votre code',
+                            hintText: 'phone.codeHint'.tr(),
                             fillColor: Colors.grey[200],
                             filled: true,
                             border: OutlineInputBorder(
@@ -107,10 +108,10 @@ class _PhoneAuthCodePageState extends State<PhoneAuthCodePage> {
                       builder: (ctx, snapshot) {
                         return StreamButton(buttonColor: snapshot.data != null ? Colors.black : Colors.grey,
                           key: Key("phoneCodeButton"),
-                          buttonText: "Vérifier mon code",
-                          errorText: "Une erreur s'est produite, Veuillez reesayer",
-                          loadingText: "Vérification en cours",
-                          successText: "Vérification terminée",
+                          buttonText: 'phone.verifyCode'.tr(),
+                          errorText: 'common.retry'.tr(),
+                          loadingText: 'phone.verifying'.tr(),
+                          successText: 'phone.verified'.tr(),
                           controller: _streamButtonController, onClick: () async {
                             if(snapshot.data != null) {
                               _streamButtonController.isLoading();

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -207,7 +208,7 @@ class _VendorPubPageState extends State<VendorPubPage> {
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: Chip(
-                          label: Text("Sans préférences"),
+                          label: Text('food.noPreferences'.tr()),
                           backgroundColor: Colors.green[100])),
                 );
               }
@@ -231,7 +232,7 @@ class _VendorPubPageState extends State<VendorPubPage> {
           ListTile(
             autofocus: false,
             leading: Icon(CupertinoIcons.info_circle),
-            title: Text("Frais d'application", style: GoogleFonts.montserrat()),
+            title: Text('payment.appFee'.tr(), style: GoogleFonts.montserrat()),
             trailing: Text(
                 this
                         .percentage(15,
@@ -276,13 +277,13 @@ class _VendorPubPageState extends State<VendorPubPage> {
                     buttonColor:
                         snapshot.data!.isOpen! ? Colors.red : Colors.green,
                     buttonText: snapshot.data!.isOpen!
-                        ? "Fermer la vente"
-                        : "Ouvrir la vente",
-                    errorText: "Une erreur s'est produite, reesayer",
+                        ? 'vendor.closeSale'.tr()
+                        : 'vendor.openSale'.tr(),
+                    errorText: 'common.retry'.tr(),
                     loadingText: snapshot.data!.isOpen!
-                        ? "Fermeture en cours"
-                        : "Ouverture en cours",
-                    successText: "effectuée",
+                        ? 'vendor.closing'.tr()
+                        : 'vendor.opening'.tr(),
+                    successText: 'vendor.done'.tr(),
                     controller: _streamButtonController,
                     onClick: () async {
                       _streamButtonController.isLoading();

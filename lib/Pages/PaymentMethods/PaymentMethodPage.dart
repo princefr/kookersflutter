@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
       },
       child: Scaffold(
           appBar: TopBarWitBackNav(
-              title: "Methodes de paiements",
+              title: 'paymentMethods.title'.tr(),
               height: 54,
               rightIcon: CupertinoIcons.plus,
               isRightIcon: true,
@@ -91,7 +92,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
                             AlwaysStoppedAnimation<Color>(Colors.white));
                   if (snapshot.hasError) return Text("i've a bad felling");
                   if (snapshot.data?.allCards?.isEmpty ?? true)
-                    return EmptyViewElse(text: "Vous n'avez pas de cartes.");
+                    return EmptyViewElse(text: 'paymentMethods.empty'.tr());
                   return ListView(
                     shrinkWrap: true,
                     children: (snapshot.data?.allCards ?? [])

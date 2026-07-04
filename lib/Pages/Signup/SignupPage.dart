@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -201,7 +202,7 @@ class _SignupPageState extends State<SignupPage> {
 
     return Scaffold(
       appBar: TopBarWitBackNav(
-          title: "S'enregistrer",
+          title: 'signup.title'.tr(),
           rightIcon: CupertinoIcons.exclamationmark_circle_fill,
           isRightIcon: false,
           height: 54,
@@ -280,7 +281,7 @@ class _SignupPageState extends State<SignupPage> {
                             CupertinoIcons.person,
                             size: 20,
                           ),
-                          hintText: "Nom",
+                          hintText: 'signup.lastName'.tr(),
                           fillColor: Colors.grey[200],
                           filled: true,
                           border: OutlineInputBorder(
@@ -307,7 +308,7 @@ class _SignupPageState extends State<SignupPage> {
                             CupertinoIcons.person,
                             size: 20,
                           ),
-                          hintText: "Prénom",
+                          hintText: 'signup.firstName'.tr(),
                           fillColor: Colors.grey[200],
                           filled: true,
                           border: OutlineInputBorder(
@@ -335,7 +336,7 @@ class _SignupPageState extends State<SignupPage> {
                             CupertinoIcons.mail,
                             size: 20,
                           ),
-                          hintText: "Email",
+                          hintText: 'signup.email'.tr(),
                           fillColor: Colors.grey[200],
                           filled: true,
                           border: OutlineInputBorder(
@@ -365,10 +366,10 @@ class _SignupPageState extends State<SignupPage> {
                         signupBloc.dateOfBirth.sink.add(date);
                       },
                       leading: Icon(CupertinoIcons.calendar),
-                      title: Text("Date de naissance"),
+                      title: Text('signup.birthdate'.tr()),
                       trailing: snapshot.data != null
                           ? Text(f.format(snapshot.data!))
-                          : Text("Choisir"),
+                          : Text('common.choose'.tr()),
                     );
                   }),
               Center(
@@ -381,7 +382,7 @@ class _SignupPageState extends State<SignupPage> {
               SizedBox(height: 15),
               Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("VOTRE ADRESSE",
+                  child: Text('signup.addressTitle'.tr(),
                       style: GoogleFonts.montserrat(
                           decoration: TextDecoration.none,
                           color: Colors.black,
@@ -409,7 +410,7 @@ class _SignupPageState extends State<SignupPage> {
                       },
                       leading: Icon(CupertinoIcons.home),
                       title: snapshot.data == null
-                          ? Text("Votre adresse")
+                          ? Text('signup.yourAddress'.tr())
                           : Text(snapshot.data?.title ?? ""),
                       trailing: Icon(CupertinoIcons.chevron_down),
                     );
@@ -439,14 +440,14 @@ class _SignupPageState extends State<SignupPage> {
                 title: RichText(
                     text: TextSpan(
                         text:
-                            'En appuyant sur Créer un compte ou sur connexion, vous acceptez nos ',
+                            'signup.byContinuingPrefix'.tr(),
                         style: GoogleFonts.montserrat(
                             decoration: TextDecoration.none,
                             color: Colors.black,
                             fontSize: 12),
                         children: <TextSpan>[
                       TextSpan(
-                          text: "Conditions d'utilisation ",
+                          text: 'signup.termsLabel'.tr() + ' ',
                           style: GoogleFonts.montserrat(
                               color: Colors.red,
                               fontSize: 12,
@@ -459,19 +460,19 @@ class _SignupPageState extends State<SignupPage> {
                                   CupertinoPageRoute(
                                       builder: (context) => WebViewPage(
                                             url: "https://getkookers.com/terms",
-                                            title: "Conditions d'utilisation",
+                                            title: 'signup.termsLabel'.tr(),
                                           )));
                             }),
                       TextSpan(
                         text:
-                            ", Pour en savoir plus sur l'utilisation de vos données, consultez notre ",
+                            'signup.privacyIntro'.tr(),
                         style: GoogleFonts.montserrat(
                             decoration: TextDecoration.none,
                             color: Colors.black,
                             fontSize: 12),
                       ),
                       TextSpan(
-                          text: "Politique de confidentialité",
+                          text: 'signup.privacyLabel'.tr(),
                           style: GoogleFonts.montserrat(
                               color: Colors.red,
                               fontSize: 12,
@@ -486,7 +487,7 @@ class _SignupPageState extends State<SignupPage> {
                                             url:
                                                 "https://getkookers.com/privacy",
                                             title:
-                                                "Politique de confidentialité",
+                                                'signup.privacyLabel'.tr(),
                                           )));
 
                               // open desired screen
@@ -503,10 +504,10 @@ class _SignupPageState extends State<SignupPage> {
                             snapshot.data != null && snapshot.data != false
                                 ? Colors.black
                                 : Colors.grey,
-                        buttonText: "Créer un compte",
-                        errorText: "Erreur de création de compte",
-                        loadingText: "Création en cours",
-                        successText: "Compte créé",
+                        buttonText: 'signup.createAccount'.tr(),
+                        errorText: 'signup.createError'.tr(),
+                        loadingText: 'signup.creating'.tr(),
+                        successText: 'signup.created'.tr(),
                         controller: _streamButtonController,
                         onClick: () async {
                           if (snapshot.data != null && snapshot.data != false) {

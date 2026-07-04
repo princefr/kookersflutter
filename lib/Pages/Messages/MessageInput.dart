@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/subjects.dart';
@@ -146,7 +147,7 @@ class _MessageInputState extends State<MessageInput> {
                                       style: BorderStyle.none,
                                     ),
                                   ),
-                                  hintText: 'Type your message...', contentPadding: EdgeInsets.symmetric(horizontal: 10), hintStyle: TextStyle(color: Colors.grey))
+                                  hintText: 'chat.messageHint'.tr(), contentPadding: EdgeInsets.symmetric(horizontal: 10), hintStyle: TextStyle(color: Colors.grey))
                 );
               }
             ),

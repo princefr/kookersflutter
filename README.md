@@ -1,34 +1,104 @@
-# kookers_flutter
+# Kookers Flutter
 
-#### Flutter App Screenshots
+Kookers is a cross-platform mobile marketplace that connects amateur
+home chefs with nearby food lovers. Buyers browse geolocated meal
+listings, place orders, pay by card or IBAN, and chat with the cook in
+real time. Sellers publish dishes, manage incoming orders, and cash out
+to their bank account.
 
-<table>
-  <tr>
-    <td>Screenshot 1</td>
-     <td>Screenshot 2</td>
-     <td>Screenshot 3</td>
-  </tr>
-  <tr>
-    <td><img src="flutter_01.png" width=270 height=480></td>
-    <td><img src="flutter_02.png" width=270 height=480></td>
-    <td><img src="flutter_03.png" width=270 height=480></td>
-  </tr>
- </table>
+## Features
 
-[![Codemagic build status](https://api.codemagic.io/apps/6010e3a5cb2f38e8e8145a72/6010e3a5cb2f38e8e8145a71/status_badge.svg)](https://codemagic.io/apps/6010e3a5cb2f38e8e8145a72/6010e3a5cb2f38e8e8145a71/latest_build)
+- **Phone authentication** via Firebase Auth (SMS verification)
+- **Geolocated feed** of publications (plates & desserts) with photo,
+  price, rating, distance, and food-preference chips
+- **Publishing flow** for sellers: multi-photo upload, price, dietary
+  tags, geohash-based discoverability
+- **Orders**: buyer-side ("Achats") and seller-side ("Ventes") tabs,
+  with Stripe payment + IBAN payout support
+- **Real-time chat** between buyer and seller per order
+- **Push notifications** for new messages, new orders, and order status
+  changes (FCM)
+- **Ratings & reviews** after each completed order
+- **Balance / transactions** ledger with withdrawal to a saved IBAN
 
-A new Flutter project.
+## Internationalisation
 
-## Getting Started
+The app is localised in **six languages**: French (default), English,
+Italian, German, Spanish, and Turkish. Translations live in
+`assets/translations/<locale>.json` and are wired in via
+[`easy_localization`](https://pub.dev/packages/easy_localization).
 
-This project is a starting point for a Flutter application.
+- Add or edit a string → add a key to **all six** JSON files, then call
+  `'section.key'.tr()` from the widget tree.
+- Switch language at runtime → Settings → Language, or
+  `EasyLocalization.of(context).setLocale(Locale('de'))`.
+- Add a new locale → drop a new `<code>.json` file in
+  `assets/translations/`, append `Locale('<code>')` to
+  `kSupportedLocales` in `lib/main.dart`, and add an entry to
+  `_kLanguages` in `lib/UI/LanguagePicker.dart`.
 
-A few resources to get you started if this is your first Flutter project:
+The previously empty `assets/translations/*.json` files (en, fr, en-US,
+fr-FR) have been replaced with full translations; `en-US.json` and
+`fr-FR.json` were removed because easy_localization keys off the bare
+language code.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Tech stack
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# kookers_flutter
+| Layer | Choice |
+| --- | --- |
+| Framework | Flutter (Dart, null-safe) |
+| State | `provider` for DI + `rxdart` `BehaviorSubject` for streams |
+| Navigation | `get` (`GetMaterialApp`) + `modal_bottom_sheet` |
+| Backend | Firebase (Auth, Firestore, Storage, FCM, Crashlytics) |
+| API | GraphQL (`graphql_flutter`) for the Kookers backend |
+| Payments | Stripe (custom integration) + IBAN |
+| Maps | `google_maps_flutter`, `geocoding`, `geolocator` |
+
+## Project layout
+
+```
+lib/
+├── main.dart              App entry, providers, theme, root router
+├── UI/                    Brand colours, spacing tokens, ThemeData
+│   ├── Colors.dart
+│   └── Theme.dart
+├── TabHome/               Bottom-nav shell (5 tabs)
+├── Pages/                 Feature screens (Home, Orders, Vendor, ...)
+├── Widgets/               Reusable UI (EmptyView, StreamButton, ...)
+├── Services/              Auth, DB, Storage, Notifications, Stripe, ...
+├── Blocs/                 Phone-auth / signup form blocs
+├── Models/                Data models (User, Address, Payment, ...)
+└── GraphQlHelpers/        GraphQL client wiring
+```
+
+## Getting started
+
+### Prerequisites
+
+- Flutter 3.x SDK
+- Android Studio or Xcode
+- A Firebase project with:
+  - `android/app/google-services.json`
+  - `ios/Runner/GoogleService-Info.plist`
+- For release builds: `android/key.properties` + `key.jks`
+
+### Run locally
+
+```bash
+flutter pub get
+flutter run
+```
+
+### Build release
+
+```bash
+# Android
+flutter build apk --release
+
+# iOS
+flutter build ios --release
+```
+
+## License
+
+Proprietary. All rights reserved by the Kookers authors.

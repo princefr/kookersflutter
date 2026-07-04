@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Blocs/IbanBloc.dart';
@@ -73,7 +74,7 @@ class _AddIbanPageState extends State<AddIbanPage> {
                       child: TextField(
                           onChanged: this.bloc.inBan.add,
                           decoration: InputDecoration(
-                            hintText: 'Renseignez un iban',
+                            hintText: 'iban.hint'.tr(),
                             fillColor: Colors.grey[200],
                             filled: true,
                             border: OutlineInputBorder(
@@ -105,10 +106,10 @@ class _AddIbanPageState extends State<AddIbanPage> {
                       buttonColor: snapshot.data != null
                           ? Color(0xFFF95F5F)
                           : Colors.grey,
-                      buttonText: "Ajouter l'iban",
-                      errorText: "Une erreur s'est produite, reessayer",
-                      loadingText: "Ajout en cours",
-                      successText: "Iban ajouté",
+                      buttonText: 'iban.add'.tr(),
+                      errorText: 'common.retry'.tr(),
+                      loadingText: 'iban.adding'.tr(),
+                      successText: 'iban.added'.tr(),
                       controller: _streamButtonController,
                       onClick: snapshot.data == null
                           ? () {}
@@ -153,7 +154,7 @@ class _IbanPageState extends State<IbanPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: TopBarWitBackNav(
-          title: "Iban",
+          title: 'iban.title'.tr(),
           rightIcon: CupertinoIcons.plus,
           isRightIcon: true,
           height: 54,
@@ -182,7 +183,7 @@ class _IbanPageState extends State<IbanPage> {
                     controller: this._refreshController,
                     enablePullDown: true,
                     enablePullUp: false,
-                    child: EmptyViewElse(text: "Vous n'avez pas d'iban."));
+                    child: EmptyViewElse(text: 'iban.empty'.tr()));
               return SmartRefresher(
                 onRefresh: () async {
                   await databaseService.loadUserData(this.widget.user.uid);

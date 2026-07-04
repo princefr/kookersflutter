@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
@@ -49,7 +50,7 @@ class _OrdersPageState extends State<OrdersPage>
       color: Colors.white,
       child: Column(
         children: [
-          PageTitle(title: "Achats"),
+          PageTitle(title: 'orders.title'.tr()),
           Divider(),
           Expanded(
             child: StreamBuilder<List<Order>>(
@@ -76,7 +77,7 @@ class _OrdersPageState extends State<OrdersPage>
                             });
                           });
                         },
-                        child: EmptyView());
+                        child: EmptyViewElse(text: 'orders.empty'.tr()));
                   return SmartRefresher(
                     enablePullDown: true,
                     controller: this._refreshController,

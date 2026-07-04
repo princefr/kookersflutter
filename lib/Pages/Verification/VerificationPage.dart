@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -38,7 +39,7 @@ class _VerificationPageState extends State<VerificationPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: TopBarWitBackNav(
-          title: "Vérification de documents",
+          title: 'verification.title'.tr(),
           rightIcon: CupertinoIcons.plus,
           isRightIcon: false,
           height: 54,
@@ -81,7 +82,7 @@ class _VerificationPageState extends State<VerificationPage> {
                           color: Colors.black, size: 24.0),
                       status: requirements.idStatus ??
                           ButtonVerificationState.Missing,
-                      text: "Passeport",
+                      text: 'verification.passport'.tr(),
                       onTap: () {
                         getImage().then((file) {
                           if (file == null) return;
@@ -131,7 +132,7 @@ class _VerificationPageState extends State<VerificationPage> {
                           color: Colors.black, size: 24.0),
                       status: requirements.residenceProof ??
                           ButtonVerificationState.Missing,
-                      text: "Attestation d'hébergement",
+                      text: 'verification.hostingCertificate'.tr(),
                       onTap: () {
                         getImage().then((file) {
                           if (file == null) return;
@@ -181,7 +182,7 @@ class _VerificationPageState extends State<VerificationPage> {
                           color: Colors.black, size: 24.0),
                       status: requirements.residenceProof ??
                           ButtonVerificationState.Missing,
-                      text: "Attestation d'hébergement",
+                      text: 'verification.hostingCertificate'.tr(),
                       onTap: () {
                         getImage().then((file) {
                           if (file == null) return;

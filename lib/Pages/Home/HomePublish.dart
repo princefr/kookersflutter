@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:chips_choice/chips_choice.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -57,14 +58,14 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
                               if(status.isDenied){
                                 showDialog(context: context, builder: (BuildContext ctx){
                                      return CupertinoAlertDialog(
-                                        title: Text("Accès à la biblioteque et photos"),
-                                        content: Center(child: Text("Vous avez refusez la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),),
+                                        title: Text('settings.photoPermissionTitle'.tr()),
+                                        content: Center(child: Text('settings.photoPermissionBody'.tr()),),
                                         actions: [
                                           CupertinoDialogAction(
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
-                                            child: const Text('Fermer', style: TextStyle(color:Colors.red),),
+                                            child: Text('common.close'.tr(), style: TextStyle(color:Colors.red),),
                                           ),
 
                                           CupertinoDialogAction(
@@ -72,7 +73,7 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
                                               openAppSettings();
                                             },
                                             isDefaultAction: true,
-                                            child: const Text('Paramètres'),
+                                            child: Text('nav.settings'.tr()),
                                           )
                                         ],
                                       );
@@ -118,14 +119,14 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
                               if(status.isDenied){
                                 showDialog(context: context, builder: (BuildContext ctx){
                                      return CupertinoAlertDialog(
-                                        title: Text("Accès à la biblioteque et photos"),
-                                        content: Center(child: Text("Vous avez refusez la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),),
+                                        title: Text('settings.photoPermissionTitle'.tr()),
+                                        content: Center(child: Text('settings.photoPermissionBody'.tr()),),
                                         actions: [
                                           CupertinoDialogAction(
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
-                                            child: const Text('Fermer', style: TextStyle(color:Colors.red),),
+                                            child: Text('common.close'.tr(), style: TextStyle(color:Colors.red),),
                                           ),
 
                                           CupertinoDialogAction(
@@ -133,7 +134,7 @@ class _PhotoState extends State<Photo> with AutomaticKeepAliveClientMixin<Photo>
                                               openAppSettings();
                                             },
                                             isDefaultAction: true,
-                                            child: const Text('Paramètres'),
+                                            child: Text('nav.settings'.tr()),
                                           )
                                         ],
                                       );
@@ -270,7 +271,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                             SizedBox(height: 30),
                             Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text("PRÉFÉRENCES ALIMENTAIRES",
+                                child: Text('publish.foodPreferences'.tr(),
                                     style: GoogleFonts.montserrat(
                                         decoration: TextDecoration.none,
                                         color: Colors.black,
@@ -312,7 +313,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                             SizedBox(height: 30),
                             Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text("NOM DU PLAT",
+                                child: Text('publish.dishName'.tr(),
                                     style: GoogleFonts.montserrat(
                                         decoration: TextDecoration.none,
                                         color: Colors.black,
@@ -326,7 +327,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                   key: Key("plate_name"),
                                   onChanged: pubprovider.name.add,
                                   decoration: InputDecoration(
-                                    hintText: "Renseigner le nom du plat",
+                                    hintText: 'publish.nameHint'.tr(),
                                     fillColor: Colors.grey[200],
                                     filled: true,
                                     errorText: snapshot.error as String?,
@@ -345,7 +346,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                             SizedBox(height: 20),
                             Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text("DESCRIPTION",
+                                child: Text('publish.description'.tr(),
                                     style: GoogleFonts.montserrat(
                                         decoration: TextDecoration.none,
                                         color: Colors.black,
@@ -359,7 +360,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                   key: Key("plate_description"),
                                   onChanged: pubprovider.description.add,
                                     decoration: InputDecoration(
-                                  hintText: "Renseigner la description",
+                                  hintText: 'publish.descriptionHint'.tr(),
                                   fillColor: Colors.grey[200],
                                   filled: true,
                                   errorText: snapshot.error?.toString(),
@@ -379,7 +380,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                      children: [
                                 Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text("PRIX",
+                                child: Text('publish.price'.tr(),
                                     style: GoogleFonts.montserrat(
                                     decoration: TextDecoration.none,
                                     color: Colors.black,
@@ -399,7 +400,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                          keyboardType: TextInputType.number,
                                          onChanged: pubprovider.priceall.add,
                                          decoration: InputDecoration(
-                                         hintText: "Prix du plat",
+                                         hintText: 'publish.priceHint'.tr(),
                                          fillColor: Colors.grey[200],
                                          filled: true,
                                          errorText: snapshot.error?.toString(),
@@ -421,7 +422,7 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                             SizedBox(height: 20),
                             Align(
                                 alignment: Alignment.centerLeft,
-                                child: Text("ADRESSE",
+                                child: Text('publish.address'.tr(),
                                     style: GoogleFonts.montserrat(
                                         decoration: TextDecoration.none,
                                         color: Colors.black,
@@ -469,10 +470,10 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                         GestureDetector(
                                           onTap: (){
                                             showDialog(context: context,
-                                             builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que la plateforme, kookers prendra dans le cadre des frais de fonctionnement. Il représente 15% du prix de l'assiette/portion vendue."));
+                                             builder: (context) => InfoDialog(infoText: 'publish.platformFeeInfo'.tr()));
                                           },
                                           child: Icon(CupertinoIcons.info_circle)),
-                                        Text("Frais de la platforme", style: GoogleFonts.montserrat(),),
+                                        Text('publish.platformFee'.tr(), style: GoogleFonts.montserrat(),),
                                         StreamBuilder<double>(
                                         initialData: 0.0,
                                         stream: this.feePaid,
@@ -496,10 +497,10 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                                     GestureDetector(
                                       onTap: (){
                                         showDialog(context: context,
-                                          builder: (context) => InfoDialog(infoText: "Ce chiffre représente le montant que vous recevrez pour chacun(e) des portions ou plats que vous vendriez à l'aide la plateforme kookers une fois les frais de fonctionnement déduits."));
+                                          builder: (context) => InfoDialog(infoText: 'publish.youReceiveInfo'.tr()));
                                       },
                                       child: Icon(CupertinoIcons.info_circle)),
-                                    Text("Ce que vous recevrez", style: GoogleFonts.montserrat(),),
+                                    Text('publish.youReceive'.tr(), style: GoogleFonts.montserrat(),),
                                     StreamBuilder<double>(
                                     stream: this.moneyReceived,
                                     initialData: 0.0,
@@ -527,10 +528,10 @@ class _HomePublishState extends State<HomePublish> with AutomaticKeepAliveClient
                               stream: pubprovider.isFormValidOne$,
                               builder: (ctx, AsyncSnapshot<bool> snapshot) {
                                 return StreamButton(buttonColor: snapshot.data != null ? Color(0xFFF95F5F) : Colors.grey,
-                                 buttonText: "Vendre mon plat",
-                                 errorText: "Une erreur s'est produite",
-                                 loadingText: "Publication en cours",
-                                 successText: "Plat publié",
+                                 buttonText: 'publish.sellButton'.tr(),
+                                 errorText: 'common.error'.tr(),
+                                 loadingText: 'publish.publishing'.tr(),
+                                 successText: 'publish.published'.tr(),
                                   controller: _streamButtonController, onClick: () async {
                                     if(snapshot.data != null) {
                                       _streamButtonController.isLoading();

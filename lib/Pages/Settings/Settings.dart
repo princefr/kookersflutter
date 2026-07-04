@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:kookers/Pages/Verification/VerificationPage.dart';
 import 'package:kookers/Services/AuthentificationService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/StorageService.dart';
+import 'package:kookers/UI/LanguagePicker.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -216,7 +218,7 @@ class _SettingsState extends State<Settings>
       backgroundColor: Colors.white,
       body: Container(
         child: ListView(children: [
-          PageTitle(title: "Paramètres"),
+          PageTitle(title: 'nav.settings'.tr()),
           SizedBox(height: 20),
           Container(
             height: 130,
@@ -249,18 +251,18 @@ class _SettingsState extends State<Settings>
                           context: context,
                           builder: (BuildContext ctx) {
                             return CupertinoAlertDialog(
-                              title: Text("Accès à la biblioteque et photos"),
+                              title: Text('settings.photoPermissionTitle'.tr()),
                               content: Center(
                                 child: Text(
-                                    "Vous avez refusé la permission de prendre les photos, veuillez changer les permissions dans les paramètres de votre téléphone."),
+                                    'settings.photoPermissionBody'.tr()),
                               ),
                               actions: [
                                 CupertinoDialogAction(
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  child: const Text(
-                                    'Continuer',
+                                  child: Text(
+                                    'settings.continue'.tr(),
                                     style: TextStyle(color: Colors.red),
                                   ),
                                 ),
@@ -269,7 +271,7 @@ class _SettingsState extends State<Settings>
                                     openAppSettings();
                                   },
                                   isDefaultAction: true,
-                                  child: const Text('Paramètres'),
+                                  child: Text('nav.settings'.tr()),
                                 )
                               ],
                             );
@@ -331,7 +333,7 @@ class _SettingsState extends State<Settings>
           Divider(),
           SettingsItemWithLeftIcon(
               icon: Icons.credit_card_sharp,
-              buttonText: "Méthodes de paiements",
+              buttonText: 'settings.payments'.tr(),
               onTap: () => Navigator.push(
                   context,
                   CupertinoPageRoute(
@@ -343,15 +345,15 @@ class _SettingsState extends State<Settings>
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
                 child: Text(
-                    "Regroupe toutes les cartes de crédit ajoutées et utilisées pour payer dans l’application kookers.",
-                    style: GoogleFonts.montserrat(
-                        decoration: TextDecoration.none,
-                        color: Colors.black,
-                        fontSize: 10)),
+                  'settings.paymentsDesc'.tr(),
+                  style: GoogleFonts.montserrat(
+                      decoration: TextDecoration.none,
+                      color: Colors.black,
+                      fontSize: 10)),
               )),
           SettingsItemWithLeftIcon(
               icon: Icons.account_balance_wallet_sharp,
-              buttonText: "Portefeuille",
+              buttonText: 'settings.wallet'.tr(),
               onTap: () => Navigator.push(
                   context,
                   CupertinoPageRoute(
@@ -363,15 +365,15 @@ class _SettingsState extends State<Settings>
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
                 child: Text(
-                    "Regroupe le montant de votre portefeuille et les transactions qui y sont associées. Quand vous vendez sur kookers l’argent arrive d’abord dans votre portefeuille avant de pouvoir être retirer sur un compte en banque.",
-                    style: GoogleFonts.montserrat(
-                        decoration: TextDecoration.none,
-                        color: Colors.black,
-                        fontSize: 10)),
+                  'settings.walletDesc'.tr(),
+                  style: GoogleFonts.montserrat(
+                      decoration: TextDecoration.none,
+                      color: Colors.black,
+                      fontSize: 10)),
               )),
           SettingsItemWithLeftIcon(
               icon: Icons.account_balance,
-              buttonText: "Comptes bancaires",
+              buttonText: 'settings.bankAccounts'.tr(),
               onTap: () => Navigator.push(
                   context,
                   CupertinoPageRoute(
@@ -382,11 +384,11 @@ class _SettingsState extends State<Settings>
                 padding:
                     const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
                 child: Text(
-                    "Regroupe tous les comptes bancaires utilisés pour retirer l’argent de votre portefeuille. Vos ibans sont uniquement utilisés à cet effet, retirer l’argent de votre portefeuille.",
-                    style: GoogleFonts.montserrat(
-                        decoration: TextDecoration.none,
-                        color: Colors.black,
-                        fontSize: 10)),
+                  'settings.bankAccountsDesc'.tr(),
+                  style: GoogleFonts.montserrat(
+                      decoration: TextDecoration.none,
+                      color: Colors.black,
+                      fontSize: 10)),
               )),
           SettingsItem(
               onTap: () {
@@ -396,37 +398,53 @@ class _SettingsState extends State<Settings>
                         builder: (context) =>
                             VerificationPage(user: this.widget.user)));
               },
-              buttonText: "Vérification d'identité"),
+              buttonText: 'settings.identityVerification'.tr()),
+          // ---- Language picker -------------------------------------------------
+          SettingsItemWithLeftIcon(
+              icon: Icons.language,
+              buttonText: 'settings.language'.tr(),
+              onTap: () => showLanguagePicker(context)),
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 4),
+                child: Text(
+                  'settings.languageDesc'.tr(),
+                  style: GoogleFonts.montserrat(
+                      decoration: TextDecoration.none,
+                      color: Colors.black,
+                      fontSize: 10)),
+              )),
           SettingsItem(
               onTap: () {
                 launchUrl(Uri.parse("https://getkookers.com/terms"));
               },
-              buttonText: "Conditions générale d'utilisation"),
+              buttonText: 'settings.terms'.tr()),
           SettingsItem(
               onTap: () {
                 launchUrl(Uri.parse("http://getkookers.com/privacy"));
               },
-              buttonText: "Politique de confidentialité"),
+              buttonText: 'settings.privacy'.tr()),
           SettingsItem(
               onTap: () {
                 launchUrl(Uri.parse("http://getkookers.com/privacy"));
               },
-              buttonText: "Gestion des cookies"),
+              buttonText: 'settings.cookies'.tr()),
           SettingsItem(
               onTap: () {
                 launchUrl(Uri.parse("https://getkookers.com/guidelines"));
               },
-              buttonText: "Règles de la communauté"),
+              buttonText: 'settings.communityRules'.tr()),
           SettingsItem(
               onTap: () async {
                 showDialog(
                     context: context,
                     builder: (BuildContext ctx) {
                       return CupertinoAlertDialog(
-                        title: Text("Se deconnecter"),
+                        title: Text('settings.signOut'.tr()),
                         content: Center(
-                          child: Text(
-                              "Souhaitez vous vraiment vous deconnecter de kookers ? "),
+                          child: Text('settings.signOutConfirm'.tr()),
                         ),
                         actions: [
                           CupertinoDialogAction(
@@ -434,7 +452,7 @@ class _SettingsState extends State<Settings>
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: const Text('Continuer'),
+                            child: Text('settings.continue'.tr()),
                           ),
                           CupertinoDialogAction(
                             onPressed: () async {
@@ -443,14 +461,14 @@ class _SettingsState extends State<Settings>
                               databaseService.adress.add(Adress());
                               Get.offAll(OnBoardingPager());
                             },
-                            child: const Text('Deconnexion',
+                            child: Text('settings.signOutAction'.tr(),
                                 style: TextStyle(color: Colors.red)),
                           )
                         ],
                       );
                     });
               },
-              buttonText: "Se deconnecter"),
+              buttonText: 'settings.signOut'.tr()),
           SizedBox(
             height: 30,
           ),
@@ -462,7 +480,7 @@ class _SettingsState extends State<Settings>
                 if (snapshot.data == null) return SizedBox();
                 return Center(
                     child: Text(
-                        "Version:" + " " + (snapshot.data?.version ?? ""),
+                        '${'settings.version'.tr()} ${snapshot.data?.version ?? ""}',
                         style: GoogleFonts.montserrat()));
               }),
           SizedBox(

@@ -3,7 +3,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
 import 'package:kookers/Pages/Home/homePage.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
@@ -39,15 +38,12 @@ class _TabHomeState extends State<TabHome>
   late PageController _controller;
 
   void _onItemTapped(int index) {
-    if (index != 0) {
-      showCupertinoModalBottomSheet(
-          expand: false,
-          context: context,
-          builder: (context) => BeforeSignPage(from: "tabhome"));
-    } else {
-      this._selectedIndex.add(index);
-      this._controller.jumpToPage(_selectedIndex.value);
-    }
+    // Allow every tab to be selected. The previous implementation
+    // bailed out to the sign-up sheet for any tab other than "Accueil",
+    // which meant a logged-in user could never reach Orders / Ventes /
+    // Messages / Settings from the bottom bar.
+    _selectedIndex.add(index);
+    _controller.jumpToPage(index);
   }
 
   RateMyApp rateMyApp = RateMyApp(

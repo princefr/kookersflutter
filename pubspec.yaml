@@ -77,6 +77,9 @@ dependencies:
   # Validation and forms
   iban: ^1.0.1
 
+  # Localization
+  easy_localization: ^3.0.7
+
   # Payment (legacy but needed)
   # stripe_payment: ^1.0.9  # Commented out - consider stripe_ios/android instead
 

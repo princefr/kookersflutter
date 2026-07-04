@@ -1,4 +1,5 @@
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Blocs/GuidelinesBloc.dart';
@@ -72,7 +73,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                         onChanged: (value) => bloc.acceptMask.sink.add(value ?? false)
                           );
                   }),// jhjhj
-                    title: Text("Vous acceptez de devoir porter des gants et une charlotte lorsque vous cuisinez par les membres de la communauté.", style: GoogleFonts.montserrat(fontSize: 13),),
+                    title: Text('guidelines.gloves'.tr(), style: GoogleFonts.montserrat(fontSize: 13),),
               ),
 
               SizedBox(height: 30),
@@ -91,7 +92,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                           
                           );
                   }),
-                    title: Text("Vous acceptez de porter un masque lorsque vous cuisinez pour protéger la santé des autres utilisateurs. ", style: GoogleFonts.montserrat(fontSize: 13),),
+                    title: Text('guidelines.mask'.tr(), style: GoogleFonts.montserrat(fontSize: 13),),
               ),
 
 
@@ -112,7 +113,7 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                           
                           );
                   }),
-                    title: Text("Vous acceptez de faire attention à l'hygiène de votre  cuisine , des instruments que vous utilisez , à la chaîne du froid et du chaud lorsque vous cuisinez pour les membres de la communauté.", style: GoogleFonts.montserrat(fontSize: 13),),
+                    title: Text('guidelines.hygiene'.tr(), style: GoogleFonts.montserrat(fontSize: 13),),
               ),
 
 
@@ -124,10 +125,10 @@ class _GuidelinesToSellState extends State<GuidelinesToSell> with AutomaticKeepA
                   return StreamButton(
                     key: Key("SellingAcceptButton"),
                     buttonColor: (snapshot.data != null && snapshot.data != false) ? Colors.black : Colors.grey,
-                                     buttonText: "Accepter",
-                                     errorText: "Erreur, Veuiller ressayer",
-                                     loadingText: "Traitement en cours",
-                                     successText: "Vous etes désormais un vendeur.",
+                                     buttonText: 'guidelines.accept'.tr(),
+                                     errorText: 'common.retry'.tr(),
+                                     loadingText: 'guidelines.processing'.tr(),
+                                     successText: 'guidelines.nowSeller'.tr(),
                                       controller: _streamButtonController, onClick: () async {
                                         if(snapshot.data != null && snapshot.data != false ) {
                                           _streamButtonController.isLoading();

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +66,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                     children: [
                       Container(
                         child: Center(
-                            child: Text("Récapitulatif",
+                            child: Text('payment.summary'.tr(),
                                 style: GoogleFonts.montserrat(fontSize: 22))),
                       ),
                       SizedBox(height: 30),
@@ -107,7 +108,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                       ListTile(
                         autofocus: false,
                         leading: Icon(CupertinoIcons.exclamationmark_circle),
-                        title: Text("Frais de service",
+                        title: Text('payment.serviceFee'.tr(),
                             style: GoogleFonts.montserrat()),
                         trailing: Text(
                             (this.widget.order.fees ?? '') +
@@ -149,7 +150,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                         padding: const EdgeInsets.symmetric(horizontal: 17),
                         child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Text("Méthodes de paiements",
+                            child: Text('payment.paymentMethods'.tr(),
                                 style: GoogleFonts.montserrat(
                                     decoration: TextDecoration.none,
                                     color: Colors.black,
@@ -171,7 +172,7 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                                   autofocus: false,
                                   leading: Icon(CupertinoIcons.creditcard),
                                   trailing: Icon(CupertinoIcons.plus),
-                                  title: Text("Ajouter un moyen de paiement"),
+                                  title: Text('payment.addMethod'.tr()),
                                   onTap: () {
                                     Get.to(PaymentMethodPage(
                                       user: this.widget.user,
@@ -208,13 +209,13 @@ class _PaymentConfirmationState extends State<PaymentConfirmation> {
                       SizedBox(height: 45),
                       StreamButton(
                           buttonColor: Colors.black,
-                          buttonText: "Payer" +
+                          buttonText: 'payment.payAmount'.tr() +
                               " " +
                               (this.widget.order.totalWithFees ?? '') +
                               "€",
-                          errorText: "Une erreur s'est produite",
-                          loadingText: "Achat en cours",
-                          successText: "Plat acheté",
+                          errorText: 'common.error'.tr(),
+                          loadingText: 'payment.buying'.tr(),
+                          successText: 'payment.bought'.tr(),
                           controller: _streamButtonController,
                           onClick: () async {
                             _streamButtonController.isLoading();

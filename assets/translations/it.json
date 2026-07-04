@@ -1,0 +1,316 @@
+{
+  "app": {
+    "name": "Kookers"
+  },
+  "nav": {
+    "home": "Home",
+    "orders": "Acquisti",
+    "vendor": "Vendite",
+    "messages": "Messaggi",
+    "settings": "Impostazioni"
+  },
+  "onboarding": {
+    "skip": "Salta",
+    "next": "Avanti",
+    "start": "Inizia",
+    "step1_title": "Concept",
+    "step1_desc": "Kookers collega chef amatoriali e buongustai che vogliono scoprire nuove cucine.",
+    "step2_title": "Ordina",
+    "step2_desc": "Ordina piatti o dessert in base alle tue preferenze culinarie e alla tua posizione.",
+    "step3_title": "Fatti consegnare",
+    "step3_desc": "Il tuo chef o i nostri partner di consegna portano il tuo ordine direttamente alla tua porta.",
+    "step4_title": "Gusta",
+    "step4_desc": "Goditi il tuo piatto o dessert in tutta tranquillità."
+  },
+  "auth": {
+    "signInSignUp": "Accedi / Registrati",
+    "sending": "Invio in corso",
+    "smsSent": "SMS inviato",
+    "error": "Si è verificato un errore, riprova!",
+    "tagline": "Kookers collega chef amatoriali e buongustai nelle vicinanze. Unisciti a noi!",
+    "ignore": "Ignora"
+  },
+  "home": {
+    "chooseAddress": "Scegli un indirizzo",
+    "publishTooltip": "Pubblica un piatto",
+    "publishSuccess": "Il tuo piatto è stato pubblicato",
+    "publishRetry": "Si è verificato un errore durante la pubblicazione, nuovo tentativo tra 10 secondi",
+    "publishError": "Si è verificato un errore durante la pubblicazione, riprova più tardi"
+  },
+  "food": {
+    "noPreferences": "Senza preferenze",
+    "report": "Segnala",
+    "continue": "Continua",
+    "buying": "Acquisto in corso",
+    "bought": "Piatto acquistato",
+    "error": "Si è verificato un errore",
+    "loginToOrder": "Accedi per effettuare un ordine",
+    "loginToReport": "Accedi per segnalare questo piatto",
+    "deliveryPeriod": "Periodo di consegna",
+    "deliveryAddress": "Indirizzo di consegna",
+    "noMessages": "Non hai messaggi",
+    "chooseDate": "Scegli una data"
+  },
+  "orders": {
+    "title": "Acquisti",
+    "empty": "Non hai alcun acquisto"
+  },
+  "vendor": {
+    "title": "Vendite",
+    "tabPublications": "Pubblicazioni",
+    "tabOrders": "Ordini",
+    "emptyPublications": "Non hai alcun piatto pubblicato.",
+    "emptyOrders": "Non hai alcun ordine.",
+    "healthReminder": "La salute dei membri della nostra community ci sta a cuore, per questo ti ricordiamo di indossare le dotazioni da cucina (maschera, guanti, retina) quando cucini per un membro.",
+    "toDeliver": "Da consegnare: ",
+    "youWillReceive": "Riceverai: ",
+    "dishAccepted": "Il piatto è stato accettato",
+    "acceptOrder": "Accetta l'ordine",
+    "accepting": "Accettazione in corso",
+    "orderAccepted": "Ordine accettato",
+    "refuseOrder": "Rifiuta l'ordine",
+    "refusing": "Rifiuto in corso",
+    "orderRefused": "Ordine rifiutato",
+    "youRefused": "Hai rifiutato l'ordine.",
+    "closeSale": "Chiudi la vendita",
+    "openSale": "Apri la vendita",
+    "closing": "Chiusura in corso",
+    "opening": "Apertura in corso",
+    "done": "Completato",
+    "dishCancelledByBuyer": "Il piatto è stato annullato dall'acquirente",
+    "dishReceivedByBuyer": "Piatto ricevuto dall'acquirente",
+    "dishDeliveredAndRated": "Il piatto è stato consegnato e valutato"
+  },
+  "messages": {
+    "title": "Messaggi",
+    "empty": "Non hai messaggi."
+  },
+  "settings": {
+    "payments": "Metodi di pagamento",
+    "paymentsDesc": "Tutte le carte di credito aggiunte e utilizzate per pagare in Kookers.",
+    "wallet": "Portafoglio",
+    "walletDesc": "Il saldo del tuo portafoglio e le relative transazioni. Quando vendi su Kookers, il denaro arriva prima nel tuo portafoglio prima di poter essere prelevato su un conto bancario.",
+    "bankAccounts": "Conti bancari",
+    "bankAccountsDesc": "Tutti i conti bancari utilizzati per prelevare denaro dal tuo portafoglio. I tuoi IBAN sono utilizzati solo per questo scopo.",
+    "identityVerification": "Verifica dell'identità",
+    "terms": "Termini di servizio",
+    "privacy": "Informativa sulla privacy",
+    "cookies": "Gestione dei cookie",
+    "communityRules": "Regole della community",
+    "signOut": "Esci",
+    "signOutConfirm": "Vuoi davvero uscire da Kookers?",
+    "continue": "Continua",
+    "signOutAction": "Esci",
+    "version": "Versione",
+    "language": "Lingua",
+    "languageDesc": "Scegli la lingua dell'applicazione.",
+    "photoPermissionTitle": "Accesso alla libreria foto",
+    "photoPermissionBody": "Hai negato l'accesso alle foto. Aggiorna le autorizzazioni nelle impostazioni del telefono."
+  },
+  "empty": {
+    "homeTitle": "Nessun piatto nelle vicinanze",
+    "homeSubtitle": "Non ci sono ancora pubblicazioni vicino a te. Prova ad ampliare la tua area di ricerca."
+  },
+  "languages": {
+    "fr": "Français",
+    "en": "English",
+    "it": "Italiano",
+    "de": "Deutsch",
+    "es": "Español",
+    "tr": "Türkçe"
+  },
+  "common": {
+    "close": "Chiudi",
+    "error": "Si è verificato un errore",
+    "retry": "Riprova",
+    "choose": "Scegli",
+    "search": "Cerca",
+    "continue": "Continua",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "pay": "Paga",
+    "validate": "Convalida",
+    "maybeLater": "Forse più tardi",
+    "errorTitle": "Errore",
+    "successTitle": "Operazione riuscita",
+    "gotIt": "Capito"
+  },
+  "publish": {
+    "foodPreferences": "PREFERENZE ALIMENTARI",
+    "dishName": "NOME DEL PIATTO",
+    "description": "DESCRIZIONE",
+    "price": "PREZZO",
+    "address": "INDIRIZZO",
+    "platformFee": "Commissione della piattaforma",
+    "youReceive": "Cosa riceverai",
+    "nameHint": "Inserisci il nome del piatto",
+    "descriptionHint": "Inserisci la descrizione",
+    "priceHint": "Prezzo del piatto",
+    "sellButton": "Vendi il mio piatto",
+    "publishing": "Pubblicazione in corso",
+    "published": "Piatto pubblicato",
+    "platformFeeInfo": "Questo è l'importo che la piattaforma Kookers tratterrà come commissione di gestione. Rappresenta il 15% del prezzo del piatto / porzione venduta.",
+    "youReceiveInfo": "Questo è l'importo che riceverai per ogni porzione o piatto venduto tramite Kookers, al netto delle commissioni di gestione."
+  },
+  "errorView": {
+    "generic": "Si è verificato un errore, riprova!"
+  },
+  "status": {
+    "accepted": "Accettato",
+    "cancelled": "Annullato",
+    "pending": "In attesa",
+    "done": "Completato",
+    "rated": "Valutato",
+    "refused": "Rifiutato"
+  },
+  "address": {
+    "choose": "Scegli un indirizzo",
+    "searchPlaceholder": "Cerca un luogo",
+    "enterAddress": "Inserisci un indirizzo"
+  },
+  "phone": {
+    "verificationTitle": "Verifica telefono",
+    "numberHint": "Numero di telefono",
+    "sendSms": "Invia SMS",
+    "codeTitle": "Verifica del codice",
+    "codeHint": "Inserisci il tuo codice",
+    "verifyCode": "Verifica il mio codice",
+    "verifying": "Verifica in corso",
+    "verified": "Verifica completata"
+  },
+  "signup": {
+    "title": "Registrati",
+    "lastName": "Cognome",
+    "firstName": "Nome",
+    "email": "Email",
+    "birthdate": "Data di nascita",
+    "addressTitle": "IL TUO INDIRIZZO",
+    "yourAddress": "Il tuo indirizzo",
+    "termsLabel": "Termini di servizio",
+    "privacyLabel": "Informativa sulla privacy",
+    "createAccount": "Crea account",
+    "creating": "Creazione in corso",
+    "created": "Account creato",
+    "createError": "Errore nella creazione dell'account",
+    "byContinuingPrefix": "Toccando Crea account o accedi, accetti i nostri ",
+    "privacyIntro": ", Per saperne di più sull'uso dei tuoi dati, consulta la nostra "
+  },
+  "terms": {
+    "acceptPrefix": "Continuando accetti i",
+    "learnMorePrefix": "Per saperne di più sui tuoi diritti e sull'uso dei tuoi dati consulta la",
+    "privacySuffix": "Informativa sulla privacy.",
+    "dataUsage": "Kookers utilizza i tuoi dati per fornirti i suoi servizi e migliorarli. Hai diritto di accesso e rettifica delle informazioni che ti riguardano, di eliminare il tuo account e di opporti all'uso dei tuoi dati per fini commerciali. Puoi esercitare questi diritti in qualsiasi momento contattando il nostro",
+    "dpoSuffix": "Responsabile della protezione dei dati all'indirizzo:"
+  },
+  "notifications": {
+    "body": "Vorremmo inviarti notifiche per informarti su ciò che accade su Kookers.",
+    "enable": "Attiva le notifiche",
+    "processing": "Elaborazione in corso",
+    "done": "Completato"
+  },
+  "homeSettings": {
+    "priceRange": "FASCIA DI PREZZO",
+    "foodPrefs": "PREFERENZE ALIMENTARI",
+    "distance": "DISTANZA",
+    "saving": "Salvataggio in corso",
+    "saved": "Impostazioni salvate"
+  },
+  "payment": {
+    "summary": "Riepilogo",
+    "serviceFee": "Commissione di servizio",
+    "appFee": "Commissione dell'app",
+    "paymentMethods": "Metodi di pagamento",
+    "addMethod": "Aggiungi un metodo di pagamento",
+    "payAmount": "Paga",
+    "buying": "Acquisto in corso",
+    "bought": "Piatto acquistato"
+  },
+  "order": {
+    "totalPaid": "Totale pagato: ",
+    "validateReception": "Convalida la ricezione",
+    "validating": "Validazione in corso",
+    "validated": "Ordine convalidato",
+    "cancel": "Annulla l'ordine",
+    "cancelling": "Annullamento in corso",
+    "cancelled": "Ordine annullato",
+    "cancelledInfo": "L'ordine è stato annullato",
+    "deliveredInfo": "L'ordine è stato consegnato",
+    "rateDish": "Valuta il piatto"
+  },
+  "guidelines": {
+    "gloves": "Accetti di indossare guanti e retina quando cucini per i membri della community.",
+    "mask": "Accetti di indossare una maschera quando cucini per proteggere la salute degli altri utenti.",
+    "hygiene": "Accetti di prestare attenzione all'igiene della tua cucina, degli strumenti che usi e alla catena del freddo e del caldo quando cucini per i membri della community.",
+    "accept": "Accetta",
+    "processing": "Elaborazione in corso",
+    "nowSeller": "Ora sei un venditore."
+  },
+  "paymentMethods": {
+    "title": "Metodi di pagamento",
+    "empty": "Non hai carte.",
+    "cardMask": "****"
+  },
+  "iban": {
+    "title": "IBAN",
+    "hint": "Inserisci un IBAN",
+    "add": "Aggiungi l'IBAN",
+    "adding": "Aggiunta in corso",
+    "added": "IBAN aggiunto",
+    "empty": "Non hai IBAN."
+  },
+  "balance": {
+    "title": "Portafoglio",
+    "transactions": "Transazioni",
+    "empty": "Non hai transazioni",
+    "withdraw": "Preleva sul mio conto",
+    "withdrawing": "Prelievo in corso",
+    "withdrawn": "Prelievo completato",
+    "pendingAmount": "Importo in sospeso:"
+  },
+  "ratings": {
+    "commentHint": "Aggiungi un commento",
+    "rateButton": "Valuta il piatto",
+    "rating": "Valutazione in corso",
+    "rated": "Piatto valutato"
+  },
+  "reports": {
+    "descriptionHint": "Aggiungi una descrizione della segnalazione",
+    "reportButton": "Segnala",
+    "reporting": "Segnalazione in corso",
+    "reported": "Post segnalato"
+  },
+  "verification": {
+    "title": "Verifica dei documenti",
+    "passport": "Passaporto",
+    "hostingCertificate": "Attestazione di ospitalità"
+  },
+  "chat": {
+    "messageHint": "Scrivi un messaggio…"
+  },
+  "push": {
+    "newOrder": {
+      "title": "Ordine",
+      "body": "Hai un nuovo ordine."
+    },
+    "cancelled": {
+      "title": "Annullamento",
+      "body": "Un ordine è stato annullato."
+    },
+    "completed": {
+      "title": "Ordine completato",
+      "body": "Un ordine è appena stato completato."
+    },
+    "newRating": {
+      "title": "Valutazione",
+      "body": "Hai ricevuto una nuova valutazione per uno dei tuoi ordini."
+    },
+    "accepted": {
+      "title": "Ordine accettato",
+      "body": "Il tuo ordine è stato accettato dallo chef."
+    },
+    "chefCancelled": {
+      "title": "Ordine annullato",
+      "body": "Lo chef ha dovuto annullare il tuo ordine."
+    }
+  }
+}

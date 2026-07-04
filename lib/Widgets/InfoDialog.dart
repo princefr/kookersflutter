@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -36,7 +37,7 @@ class InfoDialog extends StatelessWidget {
             SizedBox(height: 40),
             Divider(),
 
-            GestureDetector(onTap: (){Navigator.pop(context);}, child: Text("Compris", style: GoogleFonts.openSans(fontSize: 17, decoration: TextDecoration.none, color: Colors.black),))
+            GestureDetector(onTap: (){Navigator.pop(context);}, child: Text('common.gotIt'.tr(), style: GoogleFonts.openSans(fontSize: 17, decoration: TextDecoration.none, color: Colors.black),))
           ],
         ),
       )),

@@ -1,0 +1,316 @@
+{
+  "app": {
+    "name": "Kookers"
+  },
+  "nav": {
+    "home": "Ana sayfa",
+    "orders": "Satın alımlar",
+    "vendor": "Satışlar",
+    "messages": "Mesajlar",
+    "settings": "Ayarlar"
+  },
+  "onboarding": {
+    "skip": "Atla",
+    "next": "İleri",
+    "start": "Başla",
+    "step1_title": "Konsept",
+    "step1_desc": "Kookers, yeni lezzetler keşfetmek isteyen amatör şefleri ve gourmetleri birbirine bağlar.",
+    "step2_title": "Sipariş ver",
+    "step2_desc": "Mutfak tercihlerine ve konumuna göre yemek veya tatlı sipariş et.",
+    "step3_title": "Teslim alın",
+    "step3_desc": "Şefin veya teslimat ortaklarımız siparişini doğrudan kapına getirir.",
+    "step4_title": "Tadını çıkar",
+    "step4_desc": "Yemeğini veya tatlıını keyifle tüket."
+  },
+  "auth": {
+    "signInSignUp": "Giriş yap / Kaydol",
+    "sending": "Gönderiliyor",
+    "smsSent": "SMS gönderildi",
+    "error": "Bir hata oluştu, lütfen tekrar dene!",
+    "tagline": "Kookers yakınlarındaki amatör şefleri ve gourmetleri buluşturur. Bize katıl!",
+    "ignore": "Yoksay"
+  },
+  "home": {
+    "chooseAddress": "Adres seç",
+    "publishTooltip": "Yemek yayınla",
+    "publishSuccess": "Yemeğin yayınlandı",
+    "publishRetry": "Yayınlanırken bir hata oluştu, 10 saniye sonra tekrar denenecek",
+    "publishError": "Yayınlanırken bir hata oluştu, lütfen daha sonra tekrar dene"
+  },
+  "food": {
+    "noPreferences": "Tercih yok",
+    "report": "Bildir",
+    "continue": "Devam et",
+    "buying": "Satın alınıyor",
+    "bought": "Yemek satın alındı",
+    "error": "Bir hata oluştu",
+    "loginToOrder": "Sipariş vermek için giriş yap",
+    "loginToReport": "Bu yemeği bildirmek için giriş yap",
+    "deliveryPeriod": "Teslimat dönemi",
+    "deliveryAddress": "Teslimat adresi",
+    "noMessages": "Hiç mesajın yok",
+    "chooseDate": "Tarih seç"
+  },
+  "orders": {
+    "title": "Satın alımlar",
+    "empty": "Hiç satın alımın yok"
+  },
+  "vendor": {
+    "title": "Satışlar",
+    "tabPublications": "Yayınlar",
+    "tabOrders": "Siparişler",
+    "emptyPublications": "Yayınlanmış yemeğin yok.",
+    "emptyOrders": "Hiç siparişin yok.",
+    "healthReminder": "Topluluk üyelerinin sağlığı bizim için önemli, bu yüzden bir üye için yemek yaparken mutfak ekipmanlarını (maske, eldiven, bone) takmanı hatırlatıyoruz.",
+    "toDeliver": "Teslim edilecek: ",
+    "youWillReceive": "Alacağın: ",
+    "dishAccepted": "Yemek kabul edildi",
+    "acceptOrder": "Siparişi kabul et",
+    "accepting": "Kabul ediliyor",
+    "orderAccepted": "Sipariş kabul edildi",
+    "refuseOrder": "Siparişi reddet",
+    "refusing": "Reddediliyor",
+    "orderRefused": "Sipariş reddedildi",
+    "youRefused": "Siparişi reddettin.",
+    "closeSale": "Satışı kapat",
+    "openSale": "Satışı aç",
+    "closing": "Kapatılıyor",
+    "opening": "Açılıyor",
+    "done": "Tamamlandı",
+    "dishCancelledByBuyer": "Yemek alıcı tarafından iptal edildi",
+    "dishReceivedByBuyer": "Yemek alıcı tarafından alındı",
+    "dishDeliveredAndRated": "Yemek teslim edildi ve puanlandı"
+  },
+  "messages": {
+    "title": "Mesajlar",
+    "empty": "Mesajın yok."
+  },
+  "settings": {
+    "payments": "Ödeme yöntemleri",
+    "paymentsDesc": "Kookers'ta ödeme yapmak için eklediğin ve kullandığın tüm kredi kartları.",
+    "wallet": "Cüzdan",
+    "walletDesc": "Cüzdan bakiyen ve ilişkili işlemler. Kookers'ta sattığında para önce cüzdanına gelir, sonra bir banka hesabına çekebilirsin.",
+    "bankAccounts": "Banka hesapları",
+    "bankAccountsDesc": "Cüzdanından para çekmek için kullanılan tüm banka hesapları. IBAN'lerin yalnızca bu amaçla kullanılır.",
+    "identityVerification": "Kimlik doğrulama",
+    "terms": "Kullanım şartları",
+    "privacy": "Gizlilik politikası",
+    "cookies": "Çerez yönetimi",
+    "communityRules": "Topluluk kuralları",
+    "signOut": "Çıkış yap",
+    "signOutConfirm": "Kookers'tan çıkış yapmak istediğine emin misin?",
+    "continue": "Devam et",
+    "signOutAction": "Çıkış yap",
+    "version": "Sürüm",
+    "language": "Dil",
+    "languageDesc": "Uygulamanın dilini seç.",
+    "photoPermissionTitle": "Fotoğraf kitaplığına erişim",
+    "photoPermissionBody": "Fotoğraf erişimini reddettin. Telefon ayarlarından izinleri güncelle."
+  },
+  "empty": {
+    "homeTitle": "Yakında yemek yok",
+    "homeSubtitle": "Etrafında henüz yayın yok. Arama alanını genişletmeyi dene."
+  },
+  "languages": {
+    "fr": "Français",
+    "en": "English",
+    "it": "Italiano",
+    "de": "Deutsch",
+    "es": "Español",
+    "tr": "Türkçe"
+  },
+  "common": {
+    "close": "Kapat",
+    "error": "Bir hata oluştu",
+    "retry": "Lütfen tekrar dene",
+    "choose": "Seç",
+    "search": "Ara",
+    "continue": "Devam et",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "pay": "Öde",
+    "validate": "Doğrula",
+    "maybeLater": "Belki daha sonra",
+    "errorTitle": "Hata",
+    "successTitle": "İşlem başarılı",
+    "gotIt": "Anladım"
+  },
+  "publish": {
+    "foodPreferences": "BESLENME TERCİHLERİ",
+    "dishName": "YEMEK ADI",
+    "description": "AÇIKLAMA",
+    "price": "FİYAT",
+    "address": "ADRES",
+    "platformFee": "Platform ücreti",
+    "youReceive": "Alacağın tutar",
+    "nameHint": "Yemek adını gir",
+    "descriptionHint": "Açıklamayı gir",
+    "priceHint": "Yemek fiyatı",
+    "sellButton": "Yemeğimi sat",
+    "publishing": "Yayınlanıyor",
+    "published": "Yemek yayınlandı",
+    "platformFeeInfo": "Bu tutar, Kookers platformunun işlem ücreti olarak alacağı miktardır. Satılan tabak / porsiyon fiyatının %15'ine karşılık gelir.",
+    "youReceiveInfo": "Bu tutar, Kookers üzerinden sattığın her porsiyon veya yemek için işlem ücretleri düşüldükten sonra alacağın miktardır."
+  },
+  "errorView": {
+    "generic": "Bir hata oluştu, lütfen tekrar dene!"
+  },
+  "status": {
+    "accepted": "Kabul edildi",
+    "cancelled": "İptal edildi",
+    "pending": "Bekliyor",
+    "done": "Tamamlandı",
+    "rated": "Puanlandı",
+    "refused": "Reddedildi"
+  },
+  "address": {
+    "choose": "Adres seç",
+    "searchPlaceholder": "Yer ara",
+    "enterAddress": "Adres gir"
+  },
+  "phone": {
+    "verificationTitle": "Telefon doğrulama",
+    "numberHint": "Telefon numarası",
+    "sendSms": "SMS gönder",
+    "codeTitle": "Kod doğrulama",
+    "codeHint": "Kodunu gir",
+    "verifyCode": "Kodumu doğrula",
+    "verifying": "Doğrulanıyor",
+    "verified": "Doğrulama tamamlandı"
+  },
+  "signup": {
+    "title": "Kaydol",
+    "lastName": "Soyadı",
+    "firstName": "Ad",
+    "email": "E-posta",
+    "birthdate": "Doğum tarihi",
+    "addressTitle": "ADRESİN",
+    "yourAddress": "Adresin",
+    "termsLabel": "Kullanım şartları",
+    "privacyLabel": "Gizlilik politikası",
+    "createAccount": "Hesap oluştur",
+    "creating": "Oluşturuluyor",
+    "created": "Hesap oluşturuldu",
+    "createError": "Hesap oluşturma hatası",
+    "byContinuingPrefix": "Hesap oluştur veya giriş yap'a doklayarak, ",
+    "privacyIntro": ", Verilerinin kullanımı hakkında daha fazla bilgi için "
+  },
+  "terms": {
+    "acceptPrefix": "Devam ederek",
+    "learnMorePrefix": "Hakların ve verilerinin kullanımı hakkında daha fazla bilgi için",
+    "privacySuffix": "Gizlilik politikasına bak.",
+    "dataUsage": "Kookers, hizmetlerini sunmak ve geliştirmek için verilerini kullanır. Seni ilgilendiren bilgilere erişme ve düzeltme, hesabını silme ve verilerinin ticari amaçlarla kullanılmasına itiraz etme hakkına sahipsin. Haklarını istediğin zaman bizimle iletişime geçerek kullanabilirsin:",
+    "dpoSuffix": "Veri koruma sorumlusuna şu adresten ulaş:"
+  },
+  "notifications": {
+    "body": "Kookers'ta olup bitenlerden haberdar etmek için sana bildirimler göndermek istiyoruz.",
+    "enable": "Bildirimleri aç",
+    "processing": "İşleniyor",
+    "done": "Tamamlandı"
+  },
+  "homeSettings": {
+    "priceRange": "FİYAT ARALIĞI",
+    "foodPrefs": "BESLENME TERCİHLERİ",
+    "distance": "MESAFE",
+    "saving": "Kaydediliyor",
+    "saved": "Ayarlar kaydedildi"
+  },
+  "payment": {
+    "summary": "Özet",
+    "serviceFee": "Hizmet ücreti",
+    "appFee": "Uygulama ücreti",
+    "paymentMethods": "Ödeme yöntemleri",
+    "addMethod": "Ödeme yöntemi ekle",
+    "payAmount": "Öde",
+    "buying": "Satın alınıyor",
+    "bought": "Yemek satın alındı"
+  },
+  "order": {
+    "totalPaid": "Toplam ödenen: ",
+    "validateReception": "Teslimatı doğrula",
+    "validating": "Doğrulanıyor",
+    "validated": "Sipariş doğrulandı",
+    "cancel": "Siparişi iptal et",
+    "cancelling": "İptal ediliyor",
+    "cancelled": "Sipariş iptal edildi",
+    "cancelledInfo": "Sipariş iptal edildi",
+    "deliveredInfo": "Sipariş teslim edildi",
+    "rateDish": "Yemeği puanla"
+  },
+  "guidelines": {
+    "gloves": "Topluluk üyeleri için yemek yaparken eldiven ve bone takmayı kabul edersin.",
+    "mask": "Diğer kullanıcıların sağlığını korumak için yemek yaparken maske takmayı kabul edersin.",
+    "hygiene": "Topluluk üyeleri için yemek yaparken mutfağının, kullandığın araçların ve soğuk/sıcak zincirin hijyenine dikkat etmeyi kabul edersin.",
+    "accept": "Kabul et",
+    "processing": "İşleniyor",
+    "nowSeller": "Artık satıcısın."
+  },
+  "paymentMethods": {
+    "title": "Ödeme yöntemleri",
+    "empty": "Kartın yok.",
+    "cardMask": "****"
+  },
+  "iban": {
+    "title": "IBAN",
+    "hint": "IBAN gir",
+    "add": "IBAN ekle",
+    "adding": "Ekleniyor",
+    "added": "IBAN eklendi",
+    "empty": "IBAN'ın yok."
+  },
+  "balance": {
+    "title": "Cüzdan",
+    "transactions": "İşlemler",
+    "empty": "İşlemin yok",
+    "withdraw": "Hesabıma çek",
+    "withdrawing": "Çekiliyor",
+    "withdrawn": "Çekim tamamlandı",
+    "pendingAmount": "Bekleyen tutar:"
+  },
+  "ratings": {
+    "commentHint": "Yorum ekle",
+    "rateButton": "Yemeği puanla",
+    "rating": "Puanlanıyor",
+    "rated": "Yemek puanlandı"
+  },
+  "reports": {
+    "descriptionHint": "Bildirim açıklaması ekle",
+    "reportButton": "Bildir",
+    "reporting": "Bildiriliyor",
+    "reported": "Gönderi bildirildi"
+  },
+  "verification": {
+    "title": "Belge doğrulama",
+    "passport": "Pasaport",
+    "hostingCertificate": "Konaklama belgesi"
+  },
+  "chat": {
+    "messageHint": "Mesajını yaz…"
+  },
+  "push": {
+    "newOrder": {
+      "title": "Sipariş",
+      "body": "Yeni siparişin var."
+    },
+    "cancelled": {
+      "title": "İptal",
+      "body": "Bir sipariş iptal edildi."
+    },
+    "completed": {
+      "title": "Sipariş tamamlandı",
+      "body": "Bir sipariş az önce tamamlandı."
+    },
+    "newRating": {
+      "title": "Puanlama",
+      "body": "Siparişlerinden biri için yeni bir puan aldın."
+    },
+    "accepted": {
+      "title": "Sipariş kabul edildi",
+      "body": "Siparişin şef tarafından kabul edildi."
+    },
+    "chefCancelled": {
+      "title": "Sipariş iptal edildi",
+      "body": "Şef maalesef siparişini iptal etmek zorunda kaldı."
+    }
+  }
+}
