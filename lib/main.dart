@@ -1,9 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:kookers/Blocs/PhoneAuthBloc.dart';
 import 'package:kookers/Blocs/SignupBloc.dart';
@@ -21,14 +21,37 @@ import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+/// Locales the app supports.
+///
+/// French stays the default (the app shipped as French-only before
+/// localisation was added). The other locales are sorted by the order
+/// the user requested them: en, it, de, es, tr.
+const kSupportedLocales = <Locale>[
+  Locale('fr'),
+  Locale('en'),
+  Locale('it'),
+  Locale('de'),
+  Locale('es'),
+  Locale('tr'),
+];
+
 void main({bool testing = false}) async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp();
   if (testing) await FirebaseAuth.instance.signOut();
   if (!testing) {
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
   }
-  runApp(const KookersApp());
+  runApp(
+    EasyLocalization(
+      supportedLocales: kSupportedLocales,
+      path: 'assets/translations',
+      fallbackLocale: const Locale('en'),
+      startLocale: const Locale('fr'),
+      child: const KookersApp(),
+    ),
+  );
 }
 
 class KookersApp extends StatelessWidget {
@@ -73,20 +96,14 @@ class KookersApp extends StatelessWidget {
           title: 'Kookers',
           theme: KookersTheme.light,
           debugShowCheckedModeBanner: false,
-          localizationsDelegates: const [
+          localizationsDelegates: [
+            // pull_to_refresh delegate is not bundled by easy_localization,
+            // so we add it alongside the standard delegates it provides.
             RefreshLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
+            ...context.localizationDelegates,
           ],
-          supportedLocales: const [
-            Locale('en'),
-            Locale('zh'),
-            Locale('fr'),
-          ],
-          localeResolutionCallback: (Locale? locale, Iterable<Locale> supported) {
-            return locale ?? const Locale('en');
-          },
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
           home: const AuthenticationWrapper(),
         ),
       ),

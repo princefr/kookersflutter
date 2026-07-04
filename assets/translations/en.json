@@ -1,3 +1,111 @@
 {
-    
+  "app": {
+    "name": "Kookers"
+  },
+  "nav": {
+    "home": "Home",
+    "orders": "Purchases",
+    "vendor": "Sales",
+    "messages": "Messages",
+    "settings": "Settings"
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "start": "Get started",
+    "step1_title": "Concept",
+    "step1_desc": "Kookers connects amateur chefs with foodies who want to discover new flavors.",
+    "step2_title": "Order",
+    "step2_desc": "Order dishes or desserts based on your culinary preferences and location.",
+    "step3_title": "Get it delivered",
+    "step3_desc": "Your chef or our delivery partners bring your order straight to your door.",
+    "step4_title": "Enjoy",
+    "step4_desc": "Savor your dish or dessert in peace."
+  },
+  "auth": {
+    "signInSignUp": "Sign in / Sign up",
+    "sending": "Sending",
+    "smsSent": "SMS sent",
+    "error": "An error occurred, please try again!",
+    "tagline": "Kookers connects amateur chefs and foodies nearby. Join us!",
+    "ignore": "Ignore"
+  },
+  "home": {
+    "chooseAddress": "Choose an address",
+    "publishTooltip": "Publish a dish",
+    "publishSuccess": "Your dish has been published",
+    "publishRetry": "An error occurred while publishing your dish, retrying in 10 seconds",
+    "publishError": "An error occurred while publishing your dish, please try again later"
+  },
+  "food": {
+    "noPreferences": "No preferences",
+    "report": "Report",
+    "continue": "Continue",
+    "buying": "Purchasing",
+    "bought": "Dish purchased",
+    "error": "An error occurred",
+    "loginToOrder": "Please sign in to place an order",
+    "loginToReport": "Please sign in to report this dish"
+  },
+  "orders": {
+    "title": "Purchases",
+    "empty": "You have no purchases"
+  },
+  "vendor": {
+    "title": "Sales",
+    "tabPublications": "Listings",
+    "tabOrders": "Orders",
+    "emptyPublications": "You have no published dishes.",
+    "emptyOrders": "You have no orders."
+  },
+  "messages": {
+    "title": "Messages",
+    "empty": "You have no messages."
+  },
+  "settings": {
+    "payments": "Payment methods",
+    "paymentsDesc": "All the credit cards you've added and used to pay within Kookers.",
+    "wallet": "Wallet",
+    "walletDesc": "Your wallet balance and its transactions. When you sell on Kookers, the money first lands in your wallet before you can withdraw it to a bank account.",
+    "bankAccounts": "Bank accounts",
+    "bankAccountsDesc": "All the bank accounts used to withdraw money from your wallet. Your IBANs are only used for this purpose.",
+    "identityVerification": "Identity verification",
+    "terms": "Terms of service",
+    "privacy": "Privacy policy",
+    "cookies": "Cookie management",
+    "communityRules": "Community guidelines",
+    "signOut": "Sign out",
+    "signOutConfirm": "Are you sure you want to sign out of Kookers?",
+    "continue": "Continue",
+    "signOutAction": "Sign out",
+    "version": "Version",
+    "language": "Language",
+    "languageDesc": "Choose the application language.",
+    "photoPermissionTitle": "Photo library access",
+    "photoPermissionBody": "You denied photo access. Please update the permissions in your phone settings."
+  },
+  "empty": {
+    "homeTitle": "No dishes nearby",
+    "homeSubtitle": "There are no listings around you yet. Try widening your search area."
+  },
+  "languages": {
+    "fr": "Français",
+    "en": "English",
+    "it": "Italiano",
+    "de": "Deutsch",
+    "es": "Español",
+    "tr": "Türkçe"
+  },
+  "common": {
+    "close": "Close"
+  },
+  "publish": {
+    "foodPreferences": "FOOD PREFERENCES",
+    "dishName": "DISH NAME",
+    "description": "DESCRIPTION",
+    "price": "PRICE",
+    "address": "ADDRESS",
+    "platformFee": "Platform fee",
+    "youReceive": "What you will receive"
+  }
 }

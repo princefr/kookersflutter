@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -202,7 +203,7 @@ class _PreferencesRow extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.only(top: 4),
         child: Text(
-          'Sans préférences',
+          'food.noPreferences'.tr(),
           style: GoogleFonts.montserrat(
             fontSize: 12,
             color: KookersColors.textMuted,

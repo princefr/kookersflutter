@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
@@ -37,7 +38,7 @@ class _RoomsPageState extends State<RoomsPage>
     return Container(
         child: Column(
       children: [
-        PageTitle(title: "Messages"),
+        PageTitle(title: 'messages.title'.tr()),
         Divider(),
         Expanded(
           child: StreamBuilder<List<Room>>(
@@ -68,7 +69,7 @@ class _RoomsPageState extends State<RoomsPage>
                         });
                       },
                       child:
-                          EmptyViewElse(text: "Vous n'avez pas de messages."));
+                          EmptyViewElse(text: 'messages.empty'.tr()));
                 return SmartRefresher(
                   enablePullDown: true,
                   enablePullUp: false,

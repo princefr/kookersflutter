@@ -1,0 +1,111 @@
+{
+  "app": {
+    "name": "Kookers"
+  },
+  "nav": {
+    "home": "Inicio",
+    "orders": "Compras",
+    "vendor": "Ventas",
+    "messages": "Mensajes",
+    "settings": "Ajustes"
+  },
+  "onboarding": {
+    "skip": "Omitir",
+    "next": "Siguiente",
+    "start": "Empezar",
+    "step1_title": "Concepto",
+    "step1_desc": "Kookers conecta chefs aficionados y sibaritas que quieren descubrir nuevas cocinas.",
+    "step2_title": "Pide",
+    "step2_desc": "Pide platos o postres según tus preferencias culinarias y tu ubicación.",
+    "step3_title": "Te lo entregamos",
+    "step3_desc": "Tu chef o nuestros socios de reparto llevan tu pedido directamente a tu puerta.",
+    "step4_title": "Disfruta",
+    "step4_desc": "Disfruta tu plato o postre tranquilamente."
+  },
+  "auth": {
+    "signInSignUp": "Iniciar sesión / Registrarse",
+    "sending": "Enviando",
+    "smsSent": "SMS enviado",
+    "error": "Se produjo un error, ¡inténtalo de nuevo!",
+    "tagline": "Kookers conecta chefs aficionados y sibaritas cercanos. ¡Únete!",
+    "ignore": "Ignorar"
+  },
+  "home": {
+    "chooseAddress": "Elegir una dirección",
+    "publishTooltip": "Publicar un plato",
+    "publishSuccess": "Tu plato ha sido publicado",
+    "publishRetry": "Se produjo un error al publicar tu plato, nuevo intento en 10 segundos",
+    "publishError": "Se produjo un error al publicar tu plato, inténtalo más tarde"
+  },
+  "food": {
+    "noPreferences": "Sin preferencias",
+    "report": "Reportar",
+    "continue": "Continuar",
+    "buying": "Comprando",
+    "bought": "Plato comprado",
+    "error": "Se produjo un error",
+    "loginToOrder": "Inicia sesión para hacer un pedido",
+    "loginToReport": "Inicia sesión para reportar este plato"
+  },
+  "orders": {
+    "title": "Compras",
+    "empty": "No tienes compras"
+  },
+  "vendor": {
+    "title": "Ventas",
+    "tabPublications": "Publicaciones",
+    "tabOrders": "Pedidos",
+    "emptyPublications": "No tienes platos publicados.",
+    "emptyOrders": "No tienes pedidos."
+  },
+  "messages": {
+    "title": "Mensajes",
+    "empty": "No tienes mensajes."
+  },
+  "settings": {
+    "payments": "Métodos de pago",
+    "paymentsDesc": "Todas las tarjetas de crédito que has añadido y usado para pagar en Kookers.",
+    "wallet": "Cartera",
+    "walletDesc": "El saldo de tu cartera y sus transacciones. Cuando vendes en Kookers, el dinero llega primero a tu cartera antes de poder retirarlo a una cuenta bancaria.",
+    "bankAccounts": "Cuentas bancarias",
+    "bankAccountsDesc": "Todas las cuentas bancarias utilizadas para retirar dinero de tu cartera. Tus IBAN solo se usan para este fin.",
+    "identityVerification": "Verificación de identidad",
+    "terms": "Términos del servicio",
+    "privacy": "Política de privacidad",
+    "cookies": "Gestión de cookies",
+    "communityRules": "Normas de la comunidad",
+    "signOut": "Cerrar sesión",
+    "signOutConfirm": "¿Seguro que quieres cerrar sesión en Kookers?",
+    "continue": "Continuar",
+    "signOutAction": "Cerrar sesión",
+    "version": "Versión",
+    "language": "Idioma",
+    "languageDesc": "Elige el idioma de la aplicación.",
+    "photoPermissionTitle": "Acceso a la biblioteca de fotos",
+    "photoPermissionBody": "Has denegado el acceso a las fotos. Actualiza los permisos en los ajustes del teléfono."
+  },
+  "empty": {
+    "homeTitle": "No hay platos cerca",
+    "homeSubtitle": "Aún no hay publicaciones cerca de ti. Prueba a ampliar tu zona de búsqueda."
+  },
+  "languages": {
+    "fr": "Français",
+    "en": "English",
+    "it": "Italiano",
+    "de": "Deutsch",
+    "es": "Español",
+    "tr": "Türkçe"
+  },
+  "common": {
+    "close": "Cerrar"
+  },
+  "publish": {
+    "foodPreferences": "PREFERENCIAS ALIMENTARIAS",
+    "dishName": "NOMBRE DEL PLATO",
+    "description": "DESCRIPCIÓN",
+    "price": "PRECIO",
+    "address": "DIRECCIÓN",
+    "platformFee": "Comisión de la plataforma",
+    "youReceive": "Lo que recibirás"
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
@@ -427,14 +428,14 @@ class _FoodItemChildState extends State<FoodItemChild> {
               builder: (context, AsyncSnapshot<int> snapshot) {
                 return StreamButton(
                     buttonColor: snapshot.data == null ? Colors.grey : snapshot.data! > 0 ? Colors.black : Colors.grey,
-                    buttonText: "Continuer",
-                    errorText: "Une erreur s'est produite",
-                    loadingText: "Achat en cours",
-                    successText: "Plat acheté",
+                    buttonText: 'food.continue'.tr(),
+                    errorText: 'food.error'.tr(),
+                    loadingText: 'food.buying'.tr(),
+                    successText: 'food.bought'.tr(),
                     controller: _streamButtonController,
                     onClick: () async {
                       if(databaseService.user.value.id == null){
-                        NotificationPanelService.showError(context, "Veuillez vous connecter pour commander");
+                        NotificationPanelService.showError(context, 'food.loginToOrder'.tr());
                       }else{
                         if(snapshot.data != null){
                             final order = await orderProvider.validate(databaseService, this.widget.publication);
@@ -452,9 +453,9 @@ class _FoodItemChildState extends State<FoodItemChild> {
               SizedBox(height: 20,),
 
 
-              InkWell(child:Center(child: Text("Signaler", style: GoogleFonts.montserrat(color: Colors.red, fontSize: 18))), onTap: (){
+              InkWell(child:Center(child: Text('food.report'.tr(), style: GoogleFonts.montserrat(color: Colors.red, fontSize: 18))), onTap: (){
                 if(databaseService.user.value.id == null){
-                  NotificationPanelService.showError(context, "Veuillez vous connecter pour signaler ce plat");
+                  NotificationPanelService.showError(context, 'food.loginToReport'.tr());
                 }else{
                             showCupertinoModalBottomSheet(
                   expand: false,

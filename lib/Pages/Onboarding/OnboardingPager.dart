@@ -1,9 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
-import 'package:kookers/Pages/Onboarding/OnboardingModel.dart';
-import 'package:kookers/Pages/Onboarding/OnboardingPage.dart';
 import 'package:kookers/UI/Colors.dart';
 import 'package:kookers/UI/Theme.dart';
 import 'package:get/get.dart';
@@ -34,28 +33,24 @@ class _OnBoardingPagerState extends State<OnBoardingPager> {
 
   static const List<OnboardingModel> _pages = [
     OnboardingModel(
-      description:
-          "Kookers connecte chefs amateurs et gourmands souhaitant faire des découvertes culinaires.",
-      placeHolder: "assets/onboarding/Sush_cook-pana.png",
-      title: "Concept",
+      description: 'onboarding.step1_desc',
+      placeHolder: 'assets/onboarding/Sush_cook-pana.png',
+      title: 'onboarding.step1_title',
     ),
     OnboardingModel(
-      description:
-          "Commandez les plats ou desserts en fonction de vos préférences culinaires et de votre géolocalisation.",
-      placeHolder: "assets/onboarding/Messaging_fun-pana.png",
-      title: "Commandez",
+      description: 'onboarding.step2_desc',
+      placeHolder: 'assets/onboarding/Messaging_fun-pana.png',
+      title: 'onboarding.step2_title',
     ),
     OnboardingModel(
-      description:
-          "Votre chef ou nos partenaires acheminent votre commande directement devant votre porte.",
-      placeHolder: "assets/onboarding/Take_Away-pana.png",
-      title: "Faites vous livrer",
+      description: 'onboarding.step3_desc',
+      placeHolder: 'assets/onboarding/Take_Away-pana.png',
+      title: 'onboarding.step3_title',
     ),
     OnboardingModel(
-      description:
-          "Dégustez votre plat ou votre dessert en toute tranquillité.",
-      placeHolder: "assets/onboarding/Eating_healthy_food-pana.png",
-      title: "Dégustez",
+      description: 'onboarding.step4_desc',
+      placeHolder: 'assets/onboarding/Eating_healthy_food-pana.png',
+      title: 'onboarding.step4_title',
     ),
   ];
 
@@ -102,7 +97,7 @@ class _OnBoardingPagerState extends State<OnBoardingPager> {
               child: TextButton(
                 onPressed: _goToSignIn,
                 child: Text(
-                  'Passer',
+                  'onboarding.skip'.tr(),
                   style: GoogleFonts.montserrat(
                     color: KookersColors.textSecondary,
                     fontWeight: FontWeight.w600,
@@ -177,7 +172,7 @@ class _PrimaryCta extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                isLast ? 'Commencer' : 'Suivant',
+                isLast ? 'onboarding.start'.tr() : 'onboarding.next'.tr(),
                 style: GoogleFonts.montserrat(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,

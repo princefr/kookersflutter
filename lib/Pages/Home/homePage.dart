@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -220,7 +221,7 @@ class _AddressButton extends StatelessWidget {
                           .title;
                     }
                     return Text(
-                      title ?? 'Choisir une adresse',
+                      title ?? 'home.chooseAddress'.tr(),
                       style: GoogleFonts.montserrat(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -332,14 +333,14 @@ class _HomePageState extends State<HomePage>
         Provider.of<DatabaseProviderService>(context, listen: false);
     publication.uploadToServer(_uploadPercentage).then((_) async {
       _uploadPercentage.add(100);
-      NotificationPanelService.showSuccess(context, 'Votre plat a été publié');
+      NotificationPanelService.showSuccess(context, 'home.publishSuccess'.tr());
       _uploadPercentage.add(0);
     }).catchError((_) {
       NotificationPanelService.showError(
         context,
         isRetry
-            ? "Une erreur s'est produite lors de la publication de votre plat, veuillez réessayer plus tard"
-            : "Une erreur s'est produite, nouvel essai dans 10 secondes",
+            ? 'home.publishError'.tr()
+            : 'home.publishRetry'.tr(),
       );
       _uploadPercentage.add(0);
       if (!isRetry) {
@@ -430,7 +431,7 @@ class _HomePageState extends State<HomePage>
       floatingActionButton: FloatingActionButton(
         key: const Key('publish_button'),
         onPressed: _openPublishFlow,
-        tooltip: 'Publier un plat',
+        tooltip: 'home.publishTooltip'.tr(),
         child: const Icon(Icons.add),
       ),
     );

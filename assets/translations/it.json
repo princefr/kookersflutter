@@ -1,0 +1,111 @@
+{
+  "app": {
+    "name": "Kookers"
+  },
+  "nav": {
+    "home": "Home",
+    "orders": "Acquisti",
+    "vendor": "Vendite",
+    "messages": "Messaggi",
+    "settings": "Impostazioni"
+  },
+  "onboarding": {
+    "skip": "Salta",
+    "next": "Avanti",
+    "start": "Inizia",
+    "step1_title": "Concept",
+    "step1_desc": "Kookers collega chef amatoriali e buongustai che vogliono scoprire nuove cucine.",
+    "step2_title": "Ordina",
+    "step2_desc": "Ordina piatti o dessert in base alle tue preferenze culinarie e alla tua posizione.",
+    "step3_title": "Fatti consegnare",
+    "step3_desc": "Il tuo chef o i nostri partner di consegna portano il tuo ordine direttamente alla tua porta.",
+    "step4_title": "Gusta",
+    "step4_desc": "Goditi il tuo piatto o dessert in tutta tranquillità."
+  },
+  "auth": {
+    "signInSignUp": "Accedi / Registrati",
+    "sending": "Invio in corso",
+    "smsSent": "SMS inviato",
+    "error": "Si è verificato un errore, riprova!",
+    "tagline": "Kookers collega chef amatoriali e buongustai nelle vicinanze. Unisciti a noi!",
+    "ignore": "Ignora"
+  },
+  "home": {
+    "chooseAddress": "Scegli un indirizzo",
+    "publishTooltip": "Pubblica un piatto",
+    "publishSuccess": "Il tuo piatto è stato pubblicato",
+    "publishRetry": "Si è verificato un errore durante la pubblicazione, nuovo tentativo tra 10 secondi",
+    "publishError": "Si è verificato un errore durante la pubblicazione, riprova più tardi"
+  },
+  "food": {
+    "noPreferences": "Senza preferenze",
+    "report": "Segnala",
+    "continue": "Continua",
+    "buying": "Acquisto in corso",
+    "bought": "Piatto acquistato",
+    "error": "Si è verificato un errore",
+    "loginToOrder": "Accedi per effettuare un ordine",
+    "loginToReport": "Accedi per segnalare questo piatto"
+  },
+  "orders": {
+    "title": "Acquisti",
+    "empty": "Non hai alcun acquisto"
+  },
+  "vendor": {
+    "title": "Vendite",
+    "tabPublications": "Pubblicazioni",
+    "tabOrders": "Ordini",
+    "emptyPublications": "Non hai alcun piatto pubblicato.",
+    "emptyOrders": "Non hai alcun ordine."
+  },
+  "messages": {
+    "title": "Messaggi",
+    "empty": "Non hai messaggi."
+  },
+  "settings": {
+    "payments": "Metodi di pagamento",
+    "paymentsDesc": "Tutte le carte di credito aggiunte e utilizzate per pagare in Kookers.",
+    "wallet": "Portafoglio",
+    "walletDesc": "Il saldo del tuo portafoglio e le relative transazioni. Quando vendi su Kookers, il denaro arriva prima nel tuo portafoglio prima di poter essere prelevato su un conto bancario.",
+    "bankAccounts": "Conti bancari",
+    "bankAccountsDesc": "Tutti i conti bancari utilizzati per prelevare denaro dal tuo portafoglio. I tuoi IBAN sono utilizzati solo per questo scopo.",
+    "identityVerification": "Verifica dell'identità",
+    "terms": "Termini di servizio",
+    "privacy": "Informativa sulla privacy",
+    "cookies": "Gestione dei cookie",
+    "communityRules": "Regole della community",
+    "signOut": "Esci",
+    "signOutConfirm": "Vuoi davvero uscire da Kookers?",
+    "continue": "Continua",
+    "signOutAction": "Esci",
+    "version": "Versione",
+    "language": "Lingua",
+    "languageDesc": "Scegli la lingua dell'applicazione.",
+    "photoPermissionTitle": "Accesso alla libreria foto",
+    "photoPermissionBody": "Hai negato l'accesso alle foto. Aggiorna le autorizzazioni nelle impostazioni del telefono."
+  },
+  "empty": {
+    "homeTitle": "Nessun piatto nelle vicinanze",
+    "homeSubtitle": "Non ci sono ancora pubblicazioni vicino a te. Prova ad ampliare la tua area di ricerca."
+  },
+  "languages": {
+    "fr": "Français",
+    "en": "English",
+    "it": "Italiano",
+    "de": "Deutsch",
+    "es": "Español",
+    "tr": "Türkçe"
+  },
+  "common": {
+    "close": "Chiudi"
+  },
+  "publish": {
+    "foodPreferences": "PREFERENZE ALIMENTARI",
+    "dishName": "NOME DEL PIATTO",
+    "description": "DESCRIZIONE",
+    "price": "PREZZO",
+    "address": "INDIRIZZO",
+    "platformFee": "Commissione della piattaforma",
+    "youReceive": "Cosa riceverai"
+  }
+}

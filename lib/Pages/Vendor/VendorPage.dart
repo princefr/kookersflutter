@@ -1,6 +1,7 @@
 import 'dart:async';
 
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Vendor/OrderItemSeller.dart';
 import 'package:kookers/Pages/Vendor/PublicationItemVendor.dart';
@@ -60,7 +61,7 @@ class _VendorPubViewState extends State<VendorPubView>
                         });
                       },
                       child: EmptyViewElse(
-                          text: "Vous n'avez aucun plat publié."));
+                          text: 'vendor.emptyPublications'.tr()));
                 return SmartRefresher(
                     enablePullDown: true,
                     controller: this._refreshController,
@@ -130,7 +131,7 @@ class _VendorSellViewState extends State<VendorSellView>
                       });
                     });
                   },
-                  child: EmptyViewElse(text: "Vous n'avez aucune commande."));
+                  child: EmptyViewElse(text: 'vendor.emptyOrders'.tr()));
             return SmartRefresher(
               enablePullDown: true,
               onRefresh: () {
@@ -190,7 +191,7 @@ class _VendorPageState extends State<VendorPage>
     super.build(context);
     return Container(
         child: Column(children: [
-      PageTitle(title: "Ventes"),
+      PageTitle(title: 'vendor.title'.tr()),
       Divider(),
       SizedBox(height: 20),
       StreamBuilder<int>(
@@ -208,7 +209,7 @@ class _VendorPageState extends State<VendorPage>
               activeBgColor: Color(0xFFF95F5F),
               initialLabelIndex: this.initialLabel.value,
               minWidth: 400,
-              labels: ['Publications', 'Commandes'],
+              labels: ['vendor.tabPublications'.tr(), 'vendor.tabOrders'.tr()],
               onToggle: (index) {
                 this.initialLabel.add(index);
                 this._controller.jumpToPage(index);

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -92,14 +93,14 @@ class BottomBar extends StatelessWidget {
         currentIndex: selectedIndex,
         onTap: onTap,
         items: [
-          _icon(CupertinoIcons.house_alt, 'Accueil'),
-          _iconWithBadge(
-              Icons.shopping_bag, 'Achats', databaseService.buyingNotification),
-          _iconWithBadge(Icons.store, 'Ventes',
+          _icon(CupertinoIcons.house_alt, 'nav.home'.tr()),
+          _iconWithBadge(Icons.shopping_bag, 'nav.orders'.tr(),
+              databaseService.buyingNotification),
+          _iconWithBadge(Icons.store, 'nav.vendor'.tr(),
               databaseService.sellingNotificationCount),
-          _iconWithBadge(CupertinoIcons.chat_bubble, 'Messages',
+          _iconWithBadge(CupertinoIcons.chat_bubble, 'nav.messages'.tr(),
               databaseService.messageNotificationCount),
-          _icon(CupertinoIcons.gear_alt, 'Réglages'),
+          _icon(CupertinoIcons.gear_alt, 'nav.settings'.tr()),
         ],
       ),
     );

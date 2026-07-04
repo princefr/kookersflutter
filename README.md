@@ -21,6 +21,27 @@ to their bank account.
 - **Ratings & reviews** after each completed order
 - **Balance / transactions** ledger with withdrawal to a saved IBAN
 
+## Internationalisation
+
+The app is localised in **six languages**: French (default), English,
+Italian, German, Spanish, and Turkish. Translations live in
+`assets/translations/<locale>.json` and are wired in via
+[`easy_localization`](https://pub.dev/packages/easy_localization).
+
+- Add or edit a string → add a key to **all six** JSON files, then call
+  `'section.key'.tr()` from the widget tree.
+- Switch language at runtime → Settings → Language, or
+  `EasyLocalization.of(context).setLocale(Locale('de'))`.
+- Add a new locale → drop a new `<code>.json` file in
+  `assets/translations/`, append `Locale('<code>')` to
+  `kSupportedLocales` in `lib/main.dart`, and add an entry to
+  `_kLanguages` in `lib/UI/LanguagePicker.dart`.
+
+The previously empty `assets/translations/*.json` files (en, fr, en-US,
+fr-FR) have been replaced with full translations; `en-US.json` and
+`fr-FR.json` were removed because easy_localization keys off the bare
+language code.
+
 ## Tech stack
 
 | Layer | Choice |

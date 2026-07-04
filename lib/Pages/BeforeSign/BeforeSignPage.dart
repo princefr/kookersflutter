@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,7 +27,7 @@ class _BeforeSignPageState extends State<BeforeSignPage> {
   Widget build(BuildContext context) {
     return Container(
       child: Scaffold(
-        appBar: TopBarWitRightTitle(title: "", height: 54, rightText: this.widget.from == "onboarding" ? "Ignorer" : "", onTapRight: (){
+        appBar: TopBarWitRightTitle(title: "", height: 54, rightText: this.widget.from == "onboarding" ? 'auth.ignore'.tr() : "", onTapRight: (){
           if(this.widget.from == "onboarding"){
             Get.to(AcceptTermsPage());
           }
@@ -84,7 +85,7 @@ class _BeforeSignPageState extends State<BeforeSignPage> {
 
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Center(child: Text("Kookers connecte chefs amateur et gourmands aux alentours. Rejoignez nous!!", style: GoogleFonts.montserrat(fontSize: 20), textAlign: TextAlign.center,)),
+                    child: Center(child: Text('auth.tagline'.tr(), style: GoogleFonts.montserrat(fontSize: 20), textAlign: TextAlign.center,)),
                   ),
                     ]
                   ),
@@ -93,10 +94,10 @@ class _BeforeSignPageState extends State<BeforeSignPage> {
                 StreamButton(
                         buttonColor: Colors.black,
                         key: Key("beforeSignButton"),
-                        buttonText: "Se connecter / S'inscrire",
-                        errorText: "Une erreur s'est produite, veuillez reesayer!",
-                        loadingText: "Envoie en cours",
-                        successText: "Sms envoyé",
+                        buttonText: 'auth.signInSignUp'.tr(),
+                        errorText: 'auth.error'.tr(),
+                        loadingText: 'auth.sending'.tr(),
+                        successText: 'auth.smsSent'.tr(),
                         controller: _streamButtonController,
                         onClick: () async {
                           Get.to(PhoneAuthPage());

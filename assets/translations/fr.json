@@ -1,3 +1,111 @@
 {
-    
+  "app": {
+    "name": "Kookers"
+  },
+  "nav": {
+    "home": "Accueil",
+    "orders": "Achats",
+    "vendor": "Ventes",
+    "messages": "Messages",
+    "settings": "Réglages"
+  },
+  "onboarding": {
+    "skip": "Passer",
+    "next": "Suivant",
+    "start": "Commencer",
+    "step1_title": "Concept",
+    "step1_desc": "Kookers connecte chefs amateurs et gourmands souhaitant faire des découvertes culinaires.",
+    "step2_title": "Commandez",
+    "step2_desc": "Commandez les plats ou dessert en fonction de vos préférences culinaires et de votre géolocalisation.",
+    "step3_title": "Faites vous livrer",
+    "step3_desc": "Votre chef ou nos partenaires acheminent votre commande directement devant votre porte.",
+    "step4_title": "Dégustez",
+    "step4_desc": "Dégustez votre plat ou votre dessert en toute tranquillité."
+  },
+  "auth": {
+    "signInSignUp": "Se connecter / S'inscrire",
+    "sending": "Envoie en cours",
+    "smsSent": "Sms envoyé",
+    "error": "Une erreur s'est produite, veuillez reesayer !",
+    "tagline": "Kookers connecte chefs amateur et gourmands aux alentours. Rejoignez-nous !",
+    "ignore": "Ignorer"
+  },
+  "home": {
+    "chooseAddress": "Choisir une adresse",
+    "publishTooltip": "Publier un plat",
+    "publishSuccess": "Votre plat a été publié",
+    "publishRetry": "Une erreur s'est produite lors de la publication de votre plat, nouvel essai dans 10 secondes",
+    "publishError": "Une erreur s'est produite lors de la publication de votre plat, veuillez réessayer plus tard"
+  },
+  "food": {
+    "noPreferences": "Sans préférences",
+    "report": "Signaler",
+    "continue": "Continuer",
+    "buying": "Achat en cours",
+    "bought": "Plat acheté",
+    "error": "Une erreur s'est produite",
+    "loginToOrder": "Veuillez vous connecter pour commander",
+    "loginToReport": "Veuillez vous connecter pour signaler ce plat"
+  },
+  "orders": {
+    "title": "Achats",
+    "empty": "Vous n'avez aucun achat"
+  },
+  "vendor": {
+    "title": "Ventes",
+    "tabPublications": "Publications",
+    "tabOrders": "Commandes",
+    "emptyPublications": "Vous n'avez aucun plat publié.",
+    "emptyOrders": "Vous n'avez aucune commande."
+  },
+  "messages": {
+    "title": "Messages",
+    "empty": "Vous n'avez pas de messages."
+  },
+  "settings": {
+    "payments": "Méthodes de paiements",
+    "paymentsDesc": "Regroupe toutes les cartes de crédit ajoutées et utilisées pour payer dans l'application Kookers.",
+    "wallet": "Portefeuille",
+    "walletDesc": "Regroupe le montant de votre portefeuille et les transactions qui y sont associées. Quand vous vendez sur Kookers, l'argent arrive d'abord dans votre portefeuille avant de pouvoir être retiré sur un compte en banque.",
+    "bankAccounts": "Comptes bancaires",
+    "bankAccountsDesc": "Regroupe tous les comptes bancaires utilisés pour retirer l'argent de votre portefeuille. Vos IBAN sont uniquement utilisés à cet effet, retirer l'argent de votre portefeuille.",
+    "identityVerification": "Vérification d'identité",
+    "terms": "Conditions générale d'utilisation",
+    "privacy": "Politique de confidentialité",
+    "cookies": "Gestion des cookies",
+    "communityRules": "Règles de la communauté",
+    "signOut": "Se déconnecter",
+    "signOutConfirm": "Souhaitez-vous vraiment vous déconnecter de Kookers ?",
+    "continue": "Continuer",
+    "signOutAction": "Déconnexion",
+    "version": "Version",
+    "language": "Langue",
+    "languageDesc": "Choisissez la langue de l'application.",
+    "photoPermissionTitle": "Accès à la bibliothèque photos",
+    "photoPermissionBody": "Vous avez refusé l'accès aux photos. Veuillez modifier les permissions dans les réglages de votre téléphone."
+  },
+  "empty": {
+    "homeTitle": "Aucun plat à proximité",
+    "homeSubtitle": "Il n'y a pas encore de publication autour de vous. Essayez d'élargir votre zone de recherche."
+  },
+  "languages": {
+    "fr": "Français",
+    "en": "English",
+    "it": "Italiano",
+    "de": "Deutsch",
+    "es": "Español",
+    "tr": "Türkçe"
+  },
+  "common": {
+    "close": "Fermer"
+  },
+  "publish": {
+    "foodPreferences": "PRÉFÉRENCES ALIMENTAIRES",
+    "dishName": "NOM DU PLAT",
+    "description": "DESCRIPTION",
+    "price": "PRIX",
+    "address": "ADRESSE",
+    "platformFee": "Frais de la plateforme",
+    "youReceive": "Ce que vous recevrez"
+  }
 }

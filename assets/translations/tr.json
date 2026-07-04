@@ -1,0 +1,111 @@
+{
+  "app": {
+    "name": "Kookers"
+  },
+  "nav": {
+    "home": "Ana sayfa",
+    "orders": "Satın alımlar",
+    "vendor": "Satışlar",
+    "messages": "Mesajlar",
+    "settings": "Ayarlar"
+  },
+  "onboarding": {
+    "skip": "Atla",
+    "next": "İleri",
+    "start": "Başla",
+    "step1_title": "Konsept",
+    "step1_desc": "Kookers, yeni lezzetler keşfetmek isteyen amatör şefleri ve gourmetleri birbirine bağlar.",
+    "step2_title": "Sipariş ver",
+    "step2_desc": "Mutfak tercihlerine ve konumuna göre yemek veya tatlı sipariş et.",
+    "step3_title": "Teslim alın",
+    "step3_desc": "Şefin veya teslimat ortaklarımız siparişini doğrudan kapına getirir.",
+    "step4_title": "Tadını çıkar",
+    "step4_desc": "Yemeğini veya tatlıını keyifle tüket."
+  },
+  "auth": {
+    "signInSignUp": "Giriş yap / Kaydol",
+    "sending": "Gönderiliyor",
+    "smsSent": "SMS gönderildi",
+    "error": "Bir hata oluştu, lütfen tekrar dene!",
+    "tagline": "Kookers yakınlarındaki amatör şefleri ve gourmetleri buluşturur. Bize katıl!",
+    "ignore": "Yoksay"
+  },
+  "home": {
+    "chooseAddress": "Adres seç",
+    "publishTooltip": "Yemek yayınla",
+    "publishSuccess": "Yemeğin yayınlandı",
+    "publishRetry": "Yayınlanırken bir hata oluştu, 10 saniye sonra tekrar denenecek",
+    "publishError": "Yayınlanırken bir hata oluştu, lütfen daha sonra tekrar dene"
+  },
+  "food": {
+    "noPreferences": "Tercih yok",
+    "report": "Bildir",
+    "continue": "Devam et",
+    "buying": "Satın alınıyor",
+    "bought": "Yemek satın alındı",
+    "error": "Bir hata oluştu",
+    "loginToOrder": "Sipariş vermek için giriş yap",
+    "loginToReport": "Bu yemeği bildirmek için giriş yap"
+  },
+  "orders": {
+    "title": "Satın alımlar",
+    "empty": "Hiç satın alımın yok"
+  },
+  "vendor": {
+    "title": "Satışlar",
+    "tabPublications": "Yayınlar",
+    "tabOrders": "Siparişler",
+    "emptyPublications": "Yayınlanmış yemeğin yok.",
+    "emptyOrders": "Hiç siparişin yok."
+  },
+  "messages": {
+    "title": "Mesajlar",
+    "empty": "Mesajın yok."
+  },
+  "settings": {
+    "payments": "Ödeme yöntemleri",
+    "paymentsDesc": "Kookers'ta ödeme yapmak için eklediğin ve kullandığın tüm kredi kartları.",
+    "wallet": "Cüzdan",
+    "walletDesc": "Cüzdan bakiyen ve ilişkili işlemler. Kookers'ta sattığında para önce cüzdanına gelir, sonra bir banka hesabına çekebilirsin.",
+    "bankAccounts": "Banka hesapları",
+    "bankAccountsDesc": "Cüzdanından para çekmek için kullanılan tüm banka hesapları. IBAN'lerin yalnızca bu amaçla kullanılır.",
+    "identityVerification": "Kimlik doğrulama",
+    "terms": "Kullanım şartları",
+    "privacy": "Gizlilik politikası",
+    "cookies": "Çerez yönetimi",
+    "communityRules": "Topluluk kuralları",
+    "signOut": "Çıkış yap",
+    "signOutConfirm": "Kookers'tan çıkış yapmak istediğine emin misin?",
+    "continue": "Devam et",
+    "signOutAction": "Çıkış yap",
+    "version": "Sürüm",
+    "language": "Dil",
+    "languageDesc": "Uygulamanın dilini seç.",
+    "photoPermissionTitle": "Fotoğraf kitaplığına erişim",
+    "photoPermissionBody": "Fotoğraf erişimini reddettin. Telefon ayarlarından izinleri güncelle."
+  },
+  "empty": {
+    "homeTitle": "Yakında yemek yok",
+    "homeSubtitle": "Etrafında henüz yayın yok. Arama alanını genişletmeyi dene."
+  },
+  "languages": {
+    "fr": "Français",
+    "en": "English",
+    "it": "Italiano",
+    "de": "Deutsch",
+    "es": "Español",
+    "tr": "Türkçe"
+  },
+  "common": {
+    "close": "Kapat"
+  },
+  "publish": {
+    "foodPreferences": "BESLENME TERCİHLERİ",
+    "dishName": "YEMEK ADI",
+    "description": "AÇIKLAMA",
+    "price": "FİYAT",
+    "address": "ADRES",
+    "platformFee": "Platform ücreti",
+    "youReceive": "Alacağın tutar"
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "app": {
+    "name": "Kookers"
+  },
+  "nav": {
+    "home": "Start",
+    "orders": "Einkäufe",
+    "vendor": "Verkäufe",
+    "messages": "Nachrichten",
+    "settings": "Einstellungen"
+  },
+  "onboarding": {
+    "skip": "Überspringen",
+    "next": "Weiter",
+    "start": "Loslegen",
+    "step1_title": "Konzept",
+    "step1_desc": "Kookers verbindet Hobbyköche mit Feinschmeckern, die neue Geschmäcker entdecken möchten.",
+    "step2_title": "Bestellen",
+    "step2_desc": "Bestelle Gerichte oder Desserts nach deinen kulinarischen Vorlieben und deinem Standort.",
+    "step3_title": "Liefern lassen",
+    "step3_desc": "Dein Koch oder unsere Lieferpartner bringen deine Bestellung direkt vor deine Tür.",
+    "step4_title": "Genießen",
+    "step4_desc": "Genieße dein Gericht oder Dessert in aller Ruhe."
+  },
+  "auth": {
+    "signInSignUp": "Anmelden / Registrieren",
+    "sending": "Wird gesendet",
+    "smsSent": "SMS gesendet",
+    "error": "Ein Fehler ist aufgetreten, bitte versuche es erneut!",
+    "tagline": "Kookers verbindet Hobbyköche und Feinschmecker in der Nähe. Mach mit!",
+    "ignore": "Ignorieren"
+  },
+  "home": {
+    "chooseAddress": "Adresse wählen",
+    "publishTooltip": "Gericht veröffentlichen",
+    "publishSuccess": "Dein Gericht wurde veröffentlicht",
+    "publishRetry": "Beim Veröffentlichen ist ein Fehler aufgetreten, neuer Versuch in 10 Sekunden",
+    "publishError": "Beim Veröffentlichen ist ein Fehler aufgetreten, bitte versuche es später erneut"
+  },
+  "food": {
+    "noPreferences": "Keine Vorlieben",
+    "report": "Melden",
+    "continue": "Weiter",
+    "buying": "Kauf läuft",
+    "bought": "Gericht gekauft",
+    "error": "Ein Fehler ist aufgetreten",
+    "loginToOrder": "Bitte melde dich an, um zu bestellen",
+    "loginToReport": "Bitte melde dich an, um dieses Gericht zu melden"
+  },
+  "orders": {
+    "title": "Einkäufe",
+    "empty": "Du hast keine Einkäufe"
+  },
+  "vendor": {
+    "title": "Verkäufe",
+    "tabPublications": "Anzeigen",
+    "tabOrders": "Bestellungen",
+    "emptyPublications": "Du hast keine Gerichte veröffentlicht.",
+    "emptyOrders": "Du hast keine Bestellungen."
+  },
+  "messages": {
+    "title": "Nachrichten",
+    "empty": "Du hast keine Nachrichten."
+  },
+  "settings": {
+    "payments": "Zahlungsmethoden",
+    "paymentsDesc": "Alle Kreditkarten, die du hinzugefügt und zum Bezahlen in Kookers verwendet hast.",
+    "wallet": "Geldbörse",
+    "walletDesc": "Dein Geldbörsenstand und die zugehörigen Transaktionen. Wenn du auf Kookers verkaufst, landet das Geld zuerst in deiner Geldbörse, bevor du es auf ein Bankkonto abheben kannst.",
+    "bankAccounts": "Bankkonten",
+    "bankAccountsDesc": "Alle Bankkonten, die zum Abheben von Geld aus deiner Geldbörse verwendet werden. Deine IBANs werden nur für diesen Zweck verwendet.",
+    "identityVerification": "Identitätsprüfung",
+    "terms": "Nutzungsbedingungen",
+    "privacy": "Datenschutzrichtlinie",
+    "cookies": "Cookie-Verwaltung",
+    "communityRules": "Community-Richtlinien",
+    "signOut": "Abmelden",
+    "signOutConfirm": "Möchtest du dich wirklich von Kookers abmelden?",
+    "continue": "Weiter",
+    "signOutAction": "Abmelden",
+    "version": "Version",
+    "language": "Sprache",
+    "languageDesc": "Wähle die Sprache der App.",
+    "photoPermissionTitle": "Zugriff auf die Fotobibliothek",
+    "photoPermissionBody": "Du hast den Fotozugriff abgelehnt. Bitte aktualisiere die Berechtigungen in den Telefon-Einstellungen."
+  },
+  "empty": {
+    "homeTitle": "Keine Gerichte in der Nähe",
+    "homeSubtitle": "Es gibt noch keine Anzeigen in deiner Nähe. Versuche, deinen Suchbereich zu erweitern."
+  },
+  "languages": {
+    "fr": "Français",
+    "en": "English",
+    "it": "Italiano",
+    "de": "Deutsch",
+    "es": "Español",
+    "tr": "Türkçe"
+  },
+  "common": {
+    "close": "Schließen"
+  },
+  "publish": {
+    "foodPreferences": "ERNÄHRUNGSVORLIEBEN",
+    "dishName": "GERICHTNAME",
+    "description": "BESCHREIBUNG",
+    "price": "PREIS",
+    "address": "ADRESSE",
+    "platformFee": "Plattformgebühr",
+    "youReceive": "Was du erhältst"
+  }
+}

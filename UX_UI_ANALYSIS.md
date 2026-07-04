@@ -314,11 +314,12 @@ default Flutter boilerplate ("A new Flutter project.").
 To keep the PR reviewable, the following are intentionally out of
 scope and would be good follow-ups:
 
-1. **Internationalisation.** French strings are still hard-coded
+1. ~~**Internationalisation.** French strings are still hard-coded
    everywhere. The empty `assets/translations/*.json` files should be
    filled in and the localization delegate should actually load them.
    Once that's done, the bottom-nav labels and onboarding copy should
-   move behind `AppLocalizations.of(context).t(...)`.
+   move behind `AppLocalizations.of(context).t(...)`.~~
+   **Done** — see §7 below.
 2. **State management refactor.** The mix of `provider` +
    `BehaviorSubject` + `get` works but is hard to test. A migration to
    `riverpod` or a stricter BLoC pattern would help — but that's a
@@ -338,6 +339,32 @@ scope and would be good follow-ups:
 7. **Splash screen** still uses `assets/logo/logo_flutter.png` which is
    the Flutter logo, not the Kookers logo. Branding should be updated.
 
+## 7. Localization (follow-up landed)
+
+The first version of this PR listed i18n as out-of-scope; it has since
+been added in the same branch. Summary of the i18n work:
+
+- **6 locales**: `fr` (default), `en`, `it`, `de`, `es`, `tr`.
+- All visible UI strings in the main flows (nav, onboarding, home,
+  orders, vendor, messages, settings, empty states, permission
+  dialogs, publish form labels) now go through `'section.key'.tr()`.
+- Translations live in `assets/translations/<locale>.json` — 81 keys
+  per locale, validated to have identical structure across all six
+  files.
+- New `lib/UI/LanguagePicker.dart` ships a modal bottom sheet with
+  flag emojis + checkmark; the user's choice is persisted across
+  restarts by `easy_localization`.
+- Empty `en-US.json` and `fr-FR.json` files removed (easy_localization
+  keys off the bare language code).
+- `pubspec.yaml` gains `easy_localization: ^3.0.7`.
+- Settings screen has a new "Language" entry between "Identity
+  verification" and "Terms of service".
+
+Files that still contain hard-coded French copy (chat message bubbles,
+balance/IBAN/payment-method sub-screens, food detail bottom sheet) are
+left as-is in this PR — they can be migrated incrementally without
+breaking the existing keys.
+
 ---
 
 ## 6. Files touched
@@ -346,14 +373,26 @@ scope and would be good follow-ups:
 | --- | --- |
 | `lib/UI/Colors.dart` | NEW — brand colour tokens |
 | `lib/UI/Theme.dart` | NEW — ThemeData + spacing tokens |
-| `lib/main.dart` | Apply theme, cut splash delay, rename to `KookersApp`, fix `AuthenticationWrapper` |
+| `lib/UI/LanguagePicker.dart` | NEW — modal sheet for switching the app locale |
+| `lib/main.dart` | Apply theme, cut splash delay, rename to `KookersApp`, fix `AuthenticationWrapper`, wire `EasyLocalization` |
 | `lib/TabHome/TabHome.dart` | Fix `_onItemTapped` to actually switch tabs |
-| `lib/TabHome/BottomBar.dart` | Theme tokens, top border, consistent label sizing |
-| `lib/Pages/Home/homePage.dart` | Implement missing feed body, fix inverted FAB auth check, remove `if (true)`, extract `_HomeFeedShimmer` |
-| `lib/Pages/Home/FoodItem.dart` | Fix inverted like auth check, redesign card with border + themed chips + visible like button |
-| `lib/Pages/Onboarding/OnboardingPager.dart` | Add Skip button, animated dot indicator, labelled CTA |
-| `lib/Widgets/EmptyView.dart` | Make empty states configurable + actionable |
+| `lib/TabHome/BottomBar.dart` | Theme tokens, top border, consistent label sizing, `.tr()` labels |
+| `lib/Pages/Home/homePage.dart` | Implement missing feed body, fix inverted FAB auth check, remove `if (true)`, extract `_HomeFeedShimmer`, `.tr()` strings |
+| `lib/Pages/Home/FoodItem.dart` | Fix inverted like auth check, redesign card with border + themed chips + visible like button, `.tr()` |
+| `lib/Pages/Home/FoodIemChild.dart` | `.tr()` on order / report / login-to-* strings |
+| `lib/Pages/Home/HomePublish.dart` | `.tr()` on form labels and photo-permission dialog |
+| `lib/Pages/Onboarding/OnboardingPager.dart` | Add Skip button, animated dot indicator, labelled CTA, drive text via translation keys |
+| `lib/Pages/Onboarding/OnboardingPage.dart` | Resolve title / description via `.tr()` |
+| `lib/Pages/BeforeSign/BeforeSignPage.dart` | `.tr()` on tagline + StreamButton labels |
+| `lib/Pages/Orders/OrdersPage.dart` | `.tr()` page title + empty state |
+| `lib/Pages/Vendor/VendorPage.dart` | `.tr()` page title, tab labels, empty states |
+| `lib/Pages/Messages/RoomsPage.dart` | `.tr()` page title + empty state |
+| `lib/Pages/Settings/Settings.dart` | `.tr()` every item, add Language entry + photo-permission dialog localised |
+| `lib/Widgets/EmptyView.dart` | Make empty states configurable + actionable, defaults resolve via `.tr()` |
+| `assets/translations/{fr,en,it,de,es,tr}.json` | 6 new full translation files (81 keys each) |
+| `pubspec.yaml` | Add `easy_localization: ^3.0.7` |
 | `test/widget_test.dart` | Replace broken counter test with theme smoke tests |
-| `README.md` | Real project description, stack, layout, run instructions |
+| `README.md` | Real project description, stack, layout, run instructions, i18n section |
+| `UX_UI_ANALYSIS.md` | This document |
 | `.gitignore` | Ignore `.gradle/` and duplicate config suffixes |
-| repo root | Removed 25 duplicate config files + `pubspec_backup.yaml` + `pubspec_minimal.yaml` + `pe-results.md` |
+| repo root | Removed 25 duplicate config files + `pubspec_backup.yaml` + `pubspec_minimal.yaml` + `pe-results.md` + empty `en-US.json`/`fr-FR.json` |

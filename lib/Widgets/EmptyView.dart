@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,23 +8,32 @@ import 'package:lottie/lottie.dart';
 
 /// Empty state for the home feed.
 ///
-/// The previous version just showed a Lottie animation and the static
+/// The previous version showed a Lottie animation and the static
 /// text "Vous n'avez aucun achat" — which made no sense on the home tab
 /// (the home tab lists *publications*, not purchases). The widget is now
 /// generic, with a configurable title / subtitle / optional CTA so each
 /// screen can phrase the empty state in a way that actually helps the
 /// user do the next thing.
+///
+/// [title] and [subtitle] accept **translation keys** (e.g.
+/// 'empty.homeTitle') OR raw strings. If a key resolves to itself via
+/// `.tr()`, that's fine — easy_localization returns the input verbatim
+/// when no translation is found.
 class EmptyView extends StatelessWidget {
+  /// Translation key (or literal) for the headline.
   final String title;
+
+  /// Translation key (or literal) for the supporting copy.
   final String subtitle;
+
+  /// Optional CTA label (also a translation key or literal).
   final String? ctaLabel;
   final VoidCallback? onCtaTap;
 
   const EmptyView({
     super.key,
-    this.title = 'Aucun plat à proximité',
-    this.subtitle =
-        "Il n'y a pas encore de publication autour de vous. Essayez d'élargir votre zone de recherche.",
+    this.title = 'empty.homeTitle',
+    this.subtitle = 'empty.homeSubtitle',
     this.ctaLabel,
     this.onCtaTap,
   });
@@ -45,7 +55,7 @@ class EmptyView extends StatelessWidget {
             ),
             const SizedBox(height: KookersSpacing.lg),
             Text(
-              title,
+              title.tr(),
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
                 fontSize: 17,
@@ -55,7 +65,7 @@ class EmptyView extends StatelessWidget {
             ),
             const SizedBox(height: KookersSpacing.sm),
             Text(
-              subtitle,
+              subtitle.tr(),
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
                 fontSize: 13,
@@ -67,7 +77,7 @@ class EmptyView extends StatelessWidget {
               const SizedBox(height: KookersSpacing.xl),
               ElevatedButton(
                 onPressed: onCtaTap,
-                child: Text(ctaLabel!),
+                child: Text(ctaLabel!.tr()),
               ),
             ],
           ],
@@ -79,6 +89,7 @@ class EmptyView extends StatelessWidget {
 
 /// Variant used by list-style empty states (messages, orders, ...).
 class EmptyViewElse extends StatelessWidget {
+  /// Translation key (or literal) for the message.
   final String text;
   final String? ctaLabel;
   final VoidCallback? onCtaTap;
@@ -100,7 +111,7 @@ class EmptyViewElse extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              text,
+              text.tr(),
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
                 fontSize: 15,
@@ -111,7 +122,7 @@ class EmptyViewElse extends StatelessWidget {
               const SizedBox(height: KookersSpacing.lg),
               ElevatedButton(
                 onPressed: onCtaTap,
-                child: Text(ctaLabel!),
+                child: Text(ctaLabel!.tr()),
               ),
             ],
           ],
