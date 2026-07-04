@@ -6,7 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kookers/Pages/BeforeSign/BeforeSignPage.dart';
 import 'package:kookers/Models/Location.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Models/Allergen.dart';
+import 'package:kookers/Services/AnalyticsService.dart';
 import 'package:kookers/UI/Colors.dart';
+import 'package:kookers/UI/Haptics.dart';
+import 'package:kookers/Widgets/AllergenChips.dart';
 import 'package:kookers/Widgets/Shared/DistanceWidget.dart';
 import 'package:kookers/Widgets/Shared/PriceDisplay.dart';
 import 'package:kookers/Widgets/Shared/RatingWidget.dart';
@@ -45,6 +49,7 @@ class _FoodItemState extends State<FoodItem>
   }
 
   void _toggleLike(DatabaseProviderService databaseService) {
+    Haptics.light();
     // Auth gate — was previously inverted (`id != null` → signup),
     // which meant signed-in users could never like a post.
     if (databaseService.user.value.id == null) {
@@ -64,6 +69,10 @@ class _FoodItemState extends State<FoodItem>
     } else {
       databaseService.setLikePost(widget.publication.id ?? '');
     }
+    KookersEvents.likeDish(
+      publicationId: widget.publication.id ?? '',
+      liked: !wasLiked,
+    );
   }
 
   @override
@@ -171,15 +180,29 @@ class _FoodItemState extends State<FoodItem>
                       ],
                     ),
                     const SizedBox(height: KookersSpacing.xs),
-                    PriceDisplay(
-                      price: publication.pricePerAll ?? '',
-                      currency: publication.currency ?? 'EUR',
+                    Row(
+                      children: [
+                        PriceDisplay(
+                          price: publication.pricePerAll ?? '',
+                          currency: publication.currency ?? 'EUR',
+                        ),
+                        const Spacer(),
+                        if (publication.portionsAvailable != null &&
+                            publication.portionsAvailable! <= 3)
+                          _PortionsLeftBadge(
+                              portions: publication.portionsAvailable!),
+                      ],
                     ),
                     const SizedBox(height: KookersSpacing.md),
                     SizedBox(
                       height: 28,
                       child: _PreferencesRow(
                           preferences: publication.preferences),
+                    ),
+                    const SizedBox(height: KookersSpacing.sm),
+                    AllergenChips(
+                      allergens: Allergen.parseList(
+                          publication.allergens?.cast<dynamic>()),
                     ),
                   ],
                 ),
@@ -220,6 +243,40 @@ class _PreferencesRow extends StatelessWidget {
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
         label: Text(items[index]),
+      ),
+    );
+  }
+}
+
+/// "3 portions left" / "Last portion!" badge shown on the food card
+/// when stock is running low (≤ 3). Above 3, no badge is shown to
+/// avoid clutter. When `portionsAvailable == 0`, the publication is
+/// already filtered out by the backend so we never reach this widget.
+class _PortionsLeftBadge extends StatelessWidget {
+  final int portions;
+  const _PortionsLeftBadge({required this.portions});
+
+  @override
+  Widget build(BuildContext context) {
+    final isLast = portions == 1;
+    final color =
+        isLast ? KookersColors.danger : KookersColors.primaryDark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withOpacity(0.4), width: 0.5),
+      ),
+      child: Text(
+        isLast
+            ? 'food.lastPortion'.tr()
+            : 'food.portionsLeft'.tr(args: [portions.toString()]),
+        style: GoogleFonts.montserrat(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: color,
+        ),
       ),
     );
   }

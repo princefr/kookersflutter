@@ -1,17 +1,22 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:kookers/Pages/Home/FoodIemChild.dart';
 import 'package:kookers/Pages/Messages/ChatPage.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Pages/Ratings/RatePlate.dart';
+import 'package:kookers/Services/AnalyticsService.dart';
 import 'package:kookers/Services/CurrencyService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/UI/Haptics.dart';
 import 'package:kookers/Widgets/KookersButton.dart';
 import 'package:kookers/Widgets/StatusChip.dart';
 import 'package:kookers/Widgets/StreamButton.dart';
@@ -410,6 +415,57 @@ class _OrderPageChildState extends State<OrderPageChild> {
           })
           ]),
       ),
+      floatingActionButton: _ReorderFab(order: this.widget.order),
+    );
+  }
+}
+
+/// "Commander à nouveau" floating button on the order detail screen.
+///
+/// Tapping it jumps to the dish detail page (`FoodItemChild`) for the
+/// same publication, where the buyer can confirm a fresh order with
+/// the same seller. We deliberately don't skip the dish-detail step —
+/// the buyer should see the current price / portion availability
+/// before committing, since those may have changed since the original
+/// order.
+class _ReorderFab extends StatelessWidget {
+  final Order order;
+  const _ReorderFab({required this.order});
+
+  @override
+  Widget build(BuildContext context) {
+    final publication = order.publication;
+    // If the publication is null (e.g. deleted by the seller), don't
+    // show the FAB — there's nothing to reorder.
+    if (publication == null) return const SizedBox.shrink();
+
+    return FloatingActionButton.extended(
+      onPressed: () async {
+        await Haptics.light();
+        KookersEvents.reorderTapped(originalOrderId: order.id ?? '');
+        // Reuse the existing FoodItemChild flow by constructing a
+        // PublicationHome from the order's snapshot of the dish.
+        final homePublication = PublicationHome(
+          id: publication.id,
+          title: publication.title,
+          description: publication.description,
+          photoUrls: publication.imagesUrls?.cast<String>(),
+          pricePerAll: order.totalPrice,
+          currency: order.currency,
+        );
+        if (!context.mounted) return;
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => FoodItemChild(
+              publication: homePublication,
+              user: FirebaseAuth.instance.currentUser!,
+            ),
+          ),
+        );
+      },
+      icon: const Icon(CupertinoIcons.refresh_bold),
+      label: Text('order.reorder'.tr()),
     );
   }
 }

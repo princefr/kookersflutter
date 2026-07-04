@@ -35,7 +35,9 @@
     "publishTooltip": "Publier un plat",
     "publishSuccess": "Votre plat a été publié",
     "publishRetry": "Une erreur s'est produite lors de la publication de votre plat, nouvel essai dans 10 secondes",
-    "publishError": "Une erreur s'est produite lors de la publication de votre plat, veuillez réessayer plus tard"
+    "publishError": "Une erreur s'est produite lors de la publication de votre plat, veuillez réessayer plus tard",
+    "oneDish": "plat",
+    "manyDishes": "plats"
   },
   "food": {
     "noPreferences": "Sans préférences",
@@ -49,11 +51,14 @@
     "deliveryPeriod": "Période de livraison",
     "deliveryAddress": "Adresse de livraison",
     "noMessages": "Vous n'avez aucun message",
-    "chooseDate": "Choisir une date"
+    "chooseDate": "Choisir une date",
+    "portionsLeft": "{} portions restantes",
+    "lastPortion": "Dernière portion !"
   },
   "orders": {
     "title": "Achats",
-    "empty": "Vous n'avez aucun achat"
+    "empty": "Vous n'avez aucun achat",
+    "browseCta": "Parcourir les plats"
   },
   "vendor": {
     "title": "Ventes",
@@ -79,11 +84,13 @@
     "done": "Effectuée",
     "dishCancelledByBuyer": "Le plat a été annulé par l'acheteur",
     "dishReceivedByBuyer": "Plat reçu par l'acheteur",
-    "dishDeliveredAndRated": "Le plat est livré et noté"
+    "dishDeliveredAndRated": "Le plat est livré et noté",
+    "publishCta": "Publier votre premier plat"
   },
   "messages": {
     "title": "Messages",
-    "empty": "Vous n'avez pas de messages."
+    "empty": "Vous n'avez pas de messages.",
+    "startChatCta": "Commander un plat pour discuter"
   },
   "settings": {
     "payments": "Méthodes de paiements",
@@ -105,7 +112,9 @@
     "language": "Langue",
     "languageDesc": "Choisissez la langue de l'application.",
     "photoPermissionTitle": "Accès à la bibliothèque photos",
-    "photoPermissionBody": "Vous avez refusé l'accès aux photos. Veuillez modifier les permissions dans les réglages de votre téléphone."
+    "photoPermissionBody": "Vous avez refusé l'accès aux photos. Veuillez modifier les permissions dans les réglages de votre téléphone.",
+    "theme": "Thème",
+    "themeDesc": "Choisissez le thème de l'application."
   },
   "empty": {
     "homeTitle": "Aucun plat à proximité",
@@ -223,7 +232,14 @@
     "addMethod": "Ajouter un moyen de paiement",
     "payAmount": "Payer",
     "buying": "Achat en cours",
-    "bought": "Plat acheté"
+    "bought": "Plat acheté",
+    "total": "Total",
+    "sameDayNotice": "Si vous commandez le jour même, l'application prévoit 3 heures de délai pour laisser au chef le temps d'acheter des ingrédients frais et de cuisiner sans stress.",
+    "tipTitle": "Pourboire pour le chef",
+    "tipDesc": "100% revient au chef.",
+    "tipNone": "Aucun",
+    "tipCustom": "Personnalisé",
+    "grandTotal": "Total à payer"
   },
   "order": {
     "totalPaid": "Total payé : ",
@@ -235,7 +251,8 @@
     "cancelled": "Commande annulée",
     "cancelledInfo": "La commande a été annulée",
     "deliveredInfo": "La commande est livrée",
-    "rateDish": "Noter le plat"
+    "rateDish": "Noter le plat",
+    "reorder": "Commander à nouveau"
   },
   "guidelines": {
     "gloves": "Vous acceptez de porter des gants et une charlotte lorsque vous cuisinez pour les membres de la communauté.",
@@ -285,7 +302,8 @@
     "hostingCertificate": "Attestation d'hébergement"
   },
   "chat": {
-    "messageHint": "Saisir un message…"
+    "messageHint": "Saisir un message…",
+    "quick": "Merci !"
   },
   "push": {
     "newOrder": {
@@ -312,5 +330,41 @@
       "title": "Commande annulée",
       "body": "Le chef a malheureusement annulé votre commande."
     }
+  },
+  "themeMode": {
+    "system": "Système",
+    "light": "Clair",
+    "dark": "Sombre"
+  },
+  "allergens": {
+    "gluten": "Gluten",
+    "crustaceans": "Crustacés",
+    "eggs": "Œufs",
+    "fish": "Poisson",
+    "peanuts": "Arachides",
+    "soy": "Soja",
+    "milk": "Lait",
+    "nuts": "Fruits à coque",
+    "celery": "Céleri",
+    "mustard": "Moutarde",
+    "sesame": "Sésame",
+    "sulphites": "Sulfites",
+    "lupin": "Lupin",
+    "molluscs": "Mollusques",
+    "contains": "Contient:",
+    "none": "Aucun allergène",
+    "filterTitle": "Masquer les plats contenant :"
+  },
+  "upgrade": {
+    "title": "Mise à jour requise",
+    "body": "Une nouvelle version de Kookers est disponible. Veuillez mettre à jour l'application pour continuer.",
+    "action": "Mettre à jour"
+  },
+  "sort": {
+    "newest": "Plus récents",
+    "trending": "Tendance",
+    "topRated": "Mieux notés",
+    "priceAsc": "Prix croissant",
+    "priceDesc": "Prix décroissant"
   }
 }

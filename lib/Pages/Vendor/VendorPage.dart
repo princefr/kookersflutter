@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Vendor/OrderItemSeller.dart';
 import 'package:kookers/Pages/Vendor/PublicationItemVendor.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/TabNavigator.dart';
 import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 import 'package:kookers/Widgets/Toogle.dart';
@@ -61,7 +62,9 @@ class _VendorPubViewState extends State<VendorPubView>
                         });
                       },
                       child: EmptyViewElse(
-                          text: 'vendor.emptyPublications'.tr()));
+                          text: 'vendor.emptyPublications'.tr(),
+                          ctaLabel: 'vendor.publishCta'.tr(),
+                          onCtaTap: () => TabNavigator.goTab(context, 0)));
                 return SmartRefresher(
                     enablePullDown: true,
                     controller: this._refreshController,

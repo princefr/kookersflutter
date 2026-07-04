@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kookers/Pages/Messages/QuickReplies.dart';
 import 'package:rxdart/subjects.dart';
 
 
@@ -63,7 +64,31 @@ class _MessageInputState extends State<MessageInput> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-
+        // Quick-reply chips above the input — collapses to zero height
+        // when the input is empty so it doesn't clutter the chat.
+        StreamBuilder<String>(
+          stream: this.widget.message?.stream,
+          builder: (context, snapshot) {
+            final hasText = (snapshot.data ?? '').isNotEmpty;
+            return AnimatedCrossFade(
+              duration: const Duration(milliseconds: 200),
+              crossFadeState: hasText
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+              firstChild: QuickReplies(
+                onPick: (text) {
+                  this.widget.message?.add(text);
+                  this.widget.textEditingController?.text = text;
+                  this.widget.textEditingController?.selection =
+                    TextSelection.fromPosition(
+                      TextPosition(offset: text.length),
+                    );
+                },
+              ),
+              secondChild: const SizedBox(height: 0, width: double.infinity),
+            );
+          },
+        ),
         AnimatedContainer(
           curve: Curves.easeIn,
           duration: Duration(milliseconds: 600),

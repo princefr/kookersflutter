@@ -35,7 +35,9 @@
     "publishTooltip": "Pubblica un piatto",
     "publishSuccess": "Il tuo piatto è stato pubblicato",
     "publishRetry": "Si è verificato un errore durante la pubblicazione, nuovo tentativo tra 10 secondi",
-    "publishError": "Si è verificato un errore durante la pubblicazione, riprova più tardi"
+    "publishError": "Si è verificato un errore durante la pubblicazione, riprova più tardi",
+    "oneDish": "piatto",
+    "manyDishes": "piatti"
   },
   "food": {
     "noPreferences": "Senza preferenze",
@@ -49,11 +51,14 @@
     "deliveryPeriod": "Periodo di consegna",
     "deliveryAddress": "Indirizzo di consegna",
     "noMessages": "Non hai messaggi",
-    "chooseDate": "Scegli una data"
+    "chooseDate": "Scegli una data",
+    "portionsLeft": "{} porzioni rimaste",
+    "lastPortion": "Ultima porzione!"
   },
   "orders": {
     "title": "Acquisti",
-    "empty": "Non hai alcun acquisto"
+    "empty": "Non hai alcun acquisto",
+    "browseCta": "Sfoglia i piatti"
   },
   "vendor": {
     "title": "Vendite",
@@ -79,11 +84,13 @@
     "done": "Completato",
     "dishCancelledByBuyer": "Il piatto è stato annullato dall'acquirente",
     "dishReceivedByBuyer": "Piatto ricevuto dall'acquirente",
-    "dishDeliveredAndRated": "Il piatto è stato consegnato e valutato"
+    "dishDeliveredAndRated": "Il piatto è stato consegnato e valutato",
+    "publishCta": "Pubblica il tuo primo piatto"
   },
   "messages": {
     "title": "Messaggi",
-    "empty": "Non hai messaggi."
+    "empty": "Non hai messaggi.",
+    "startChatCta": "Ordina un piatto per iniziare a chattare"
   },
   "settings": {
     "payments": "Metodi di pagamento",
@@ -105,7 +112,9 @@
     "language": "Lingua",
     "languageDesc": "Scegli la lingua dell'applicazione.",
     "photoPermissionTitle": "Accesso alla libreria foto",
-    "photoPermissionBody": "Hai negato l'accesso alle foto. Aggiorna le autorizzazioni nelle impostazioni del telefono."
+    "photoPermissionBody": "Hai negato l'accesso alle foto. Aggiorna le autorizzazioni nelle impostazioni del telefono.",
+    "theme": "Tema",
+    "themeDesc": "Scegli il tema dell'applicazione."
   },
   "empty": {
     "homeTitle": "Nessun piatto nelle vicinanze",
@@ -223,7 +232,14 @@
     "addMethod": "Aggiungi un metodo di pagamento",
     "payAmount": "Paga",
     "buying": "Acquisto in corso",
-    "bought": "Piatto acquistato"
+    "bought": "Piatto acquistato",
+    "total": "Totale",
+    "sameDayNotice": "Se ordini lo stesso giorno, l'app prevede 3 ore di margine per dare allo chef il tempo di comprare ingredienti freschi e cucinare senza stress.",
+    "tipTitle": "Mancia per lo chef",
+    "tipDesc": "Il 100% va allo chef.",
+    "tipNone": "Nessuna",
+    "tipCustom": "Personalizzata",
+    "grandTotal": "Totale da pagare"
   },
   "order": {
     "totalPaid": "Totale pagato: ",
@@ -235,7 +251,8 @@
     "cancelled": "Ordine annullato",
     "cancelledInfo": "L'ordine è stato annullato",
     "deliveredInfo": "L'ordine è stato consegnato",
-    "rateDish": "Valuta il piatto"
+    "rateDish": "Valuta il piatto",
+    "reorder": "Ordina di nuovo"
   },
   "guidelines": {
     "gloves": "Accetti di indossare guanti e retina quando cucini per i membri della community.",
@@ -285,7 +302,8 @@
     "hostingCertificate": "Attestazione di ospitalità"
   },
   "chat": {
-    "messageHint": "Scrivi un messaggio…"
+    "messageHint": "Scrivi un messaggio…",
+    "quick": "Grazie!"
   },
   "push": {
     "newOrder": {
@@ -312,5 +330,41 @@
       "title": "Ordine annullato",
       "body": "Lo chef ha dovuto annullare il tuo ordine."
     }
+  },
+  "themeMode": {
+    "system": "Sistema",
+    "light": "Chiaro",
+    "dark": "Scuro"
+  },
+  "allergens": {
+    "gluten": "Glutine",
+    "crustaceans": "Crostacei",
+    "eggs": "Uova",
+    "fish": "Pesce",
+    "peanuts": "Arachidi",
+    "soy": "Soia",
+    "milk": "Latte",
+    "nuts": "Frutta a guscio",
+    "celery": "Sedano",
+    "mustard": "Senape",
+    "sesame": "Sesamo",
+    "sulphites": "Solfiti",
+    "lupin": "Lupino",
+    "molluscs": "Molluschi",
+    "contains": "Contiene:",
+    "none": "Nessun allergene",
+    "filterTitle": "Nascondi i piatti contenenti:"
+  },
+  "upgrade": {
+    "title": "Aggiornamento richiesto",
+    "body": "È disponibile una nuova versione di Kookers. Aggiorna l'app per continuare.",
+    "action": "Aggiorna"
+  },
+  "sort": {
+    "newest": "Più recenti",
+    "trending": "Di tendenza",
+    "topRated": "Più votati",
+    "priceAsc": "Prezzo ↑",
+    "priceDesc": "Prezzo ↓"
   }
 }

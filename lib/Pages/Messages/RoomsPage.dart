@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Messages/RoomItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/TabNavigator.dart';
 import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 import 'package:provider/provider.dart';
@@ -69,7 +70,10 @@ class _RoomsPageState extends State<RoomsPage>
                         });
                       },
                       child:
-                          EmptyViewElse(text: 'messages.empty'.tr()));
+                          EmptyViewElse(
+                              text: 'messages.empty'.tr(),
+                              ctaLabel: 'messages.startChatCta'.tr(),
+                              onCtaTap: () => TabNavigator.goTab(context, 0)));
                 return SmartRefresher(
                   enablePullDown: true,
                   enablePullUp: false,

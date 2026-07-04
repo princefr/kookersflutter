@@ -143,26 +143,26 @@ class OrderItemShimmer extends StatelessWidget {
                 children: [
                   Container(decoration: BoxDecoration(
                         color: Colors.grey[200],      
-                      ),child: Text("this.order.publication.this", style: GoogleFonts.montserrat(),)),
+                      ),child: SizedBox(height: 16, width: 120,)),
 
                       SizedBox(height: 5),
                   Container(
                     decoration: BoxDecoration(
                         color: Colors.grey[200],      
-                      ),child: Text("this.order.productId bitch i'm", style: GoogleFonts.montserrat(fontSize: 13))),
+                      ),child: SizedBox(height: 12, width: 90)),
 
                       SizedBox(height: 5),
                   Container(
                     decoration: BoxDecoration(
                         color: Colors.grey[200],      
-                      ),child: Text("this.order.orderState",  style: GoogleFonts.montserrat(fontSize: 13))),
+                      ),child: SizedBox(height: 12, width: 70,)),
                   
                 ]
               ),
             ),
             trailing: Container(decoration: BoxDecoration(
                         color: Colors.grey[200],      
-                      ),child: Text("15€")),
+                      ),child: SizedBox(height: 14, width: 40)),
           ),
         ),
       )

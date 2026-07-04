@@ -39,15 +39,13 @@ class TransationItemShimmer extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.grey[200] ?? Colors.grey,
                 ),
-                child: Text("transaction.type",
-                    style: GoogleFonts.montserrat(fontSize: 15))),
+                child: SizedBox(height: 16, width: 90)),
             SizedBox(height: 10),
             Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200] ?? Colors.grey,
                 ),
-                child: Text("transaction.id",
-                    style: GoogleFonts.montserrat(fontSize: 12))),
+                child: SizedBox(height: 12, width: 110)),
           ]),
       trailing: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -58,14 +56,13 @@ class TransationItemShimmer extends StatelessWidget {
                   color: Colors.grey[200] ?? Colors.grey,
                 ),
                 child:
-                    Text("17 €", style: GoogleFonts.montserrat(fontSize: 17))),
+                    SizedBox(height: 18, width: 50)),
             SizedBox(height: 10),
             Container(
                 decoration: BoxDecoration(
                   color: Colors.grey[200] ?? Colors.grey,
                 ),
-                child: Text("11/06/2021",
-                    style: GoogleFonts.montserrat(fontSize: 12)))
+                child: SizedBox(height: 12, width: 80))
           ]),
     );
   }
@@ -218,7 +215,7 @@ class _BalancePageState extends State<BalancePage> {
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 40),
                                       child: Text(
-                                        "100 €",
+                                        "",
                                         style: GoogleFonts.montserrat(
                                             fontSize: 40,
                                             fontWeight: FontWeight.w500),

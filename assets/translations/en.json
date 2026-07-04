@@ -35,7 +35,9 @@
     "publishTooltip": "Publish a dish",
     "publishSuccess": "Your dish has been published",
     "publishRetry": "An error occurred while publishing your dish, retrying in 10 seconds",
-    "publishError": "An error occurred while publishing your dish, please try again later"
+    "publishError": "An error occurred while publishing your dish, please try again later",
+    "oneDish": "dish",
+    "manyDishes": "dishes"
   },
   "food": {
     "noPreferences": "No preferences",
@@ -49,11 +51,14 @@
     "deliveryPeriod": "Delivery period",
     "deliveryAddress": "Delivery address",
     "noMessages": "You have no messages",
-    "chooseDate": "Choose a date"
+    "chooseDate": "Choose a date",
+    "portionsLeft": "{} portions left",
+    "lastPortion": "Last portion!"
   },
   "orders": {
     "title": "Purchases",
-    "empty": "You have no purchases"
+    "empty": "You have no purchases",
+    "browseCta": "Browse dishes"
   },
   "vendor": {
     "title": "Sales",
@@ -79,11 +84,13 @@
     "done": "Done",
     "dishCancelledByBuyer": "The dish has been cancelled by the buyer",
     "dishReceivedByBuyer": "Dish received by the buyer",
-    "dishDeliveredAndRated": "The dish has been delivered and rated"
+    "dishDeliveredAndRated": "The dish has been delivered and rated",
+    "publishCta": "Publish your first dish"
   },
   "messages": {
     "title": "Messages",
-    "empty": "You have no messages."
+    "empty": "You have no messages.",
+    "startChatCta": "Order a dish to start chatting"
   },
   "settings": {
     "payments": "Payment methods",
@@ -105,7 +112,9 @@
     "language": "Language",
     "languageDesc": "Choose the application language.",
     "photoPermissionTitle": "Photo library access",
-    "photoPermissionBody": "You denied photo access. Please update the permissions in your phone settings."
+    "photoPermissionBody": "You denied photo access. Please update the permissions in your phone settings.",
+    "theme": "Theme",
+    "themeDesc": "Choose the application theme."
   },
   "empty": {
     "homeTitle": "No dishes nearby",
@@ -223,7 +232,14 @@
     "addMethod": "Add a payment method",
     "payAmount": "Pay",
     "buying": "Purchasing",
-    "bought": "Dish purchased"
+    "bought": "Dish purchased",
+    "total": "Total",
+    "sameDayNotice": "If you order on the same day, the app allows a 3-hour lead time so the chef has time to buy fresh ingredients and cook without stress.",
+    "tipTitle": "Tip the chef",
+    "tipDesc": "100% goes to the chef.",
+    "tipNone": "None",
+    "tipCustom": "Custom",
+    "grandTotal": "Total to pay"
   },
   "order": {
     "totalPaid": "Total paid: ",
@@ -235,7 +251,8 @@
     "cancelled": "Order cancelled",
     "cancelledInfo": "The order has been cancelled",
     "deliveredInfo": "The order has been delivered",
-    "rateDish": "Rate the dish"
+    "rateDish": "Rate the dish",
+    "reorder": "Order again"
   },
   "guidelines": {
     "gloves": "You agree to wear gloves and a hairnet when cooking for community members.",
@@ -285,7 +302,8 @@
     "hostingCertificate": "Hosting certificate"
   },
   "chat": {
-    "messageHint": "Type your message…"
+    "messageHint": "Type your message…",
+    "quick": "Thank you!"
   },
   "push": {
     "newOrder": {
@@ -312,5 +330,41 @@
       "title": "Order cancelled",
       "body": "The chef unfortunately had to cancel your order."
     }
+  },
+  "themeMode": {
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "allergens": {
+    "gluten": "Gluten",
+    "crustaceans": "Crustaceans",
+    "eggs": "Eggs",
+    "fish": "Fish",
+    "peanuts": "Peanuts",
+    "soy": "Soy",
+    "milk": "Milk",
+    "nuts": "Nuts",
+    "celery": "Celery",
+    "mustard": "Mustard",
+    "sesame": "Sesame",
+    "sulphites": "Sulphites",
+    "lupin": "Lupin",
+    "molluscs": "Molluscs",
+    "contains": "Contains:",
+    "none": "No allergens",
+    "filterTitle": "Hide dishes containing:"
+  },
+  "upgrade": {
+    "title": "Update required",
+    "body": "A new version of Kookers is available. Please update the app to continue.",
+    "action": "Update"
+  },
+  "sort": {
+    "newest": "Newest",
+    "trending": "Trending",
+    "topRated": "Top rated",
+    "priceAsc": "Price ↑",
+    "priceDesc": "Price ↓"
   }
 }

@@ -107,7 +107,7 @@ class FoodItemShimmer extends StatelessWidget {
                             color: Colors.yellow[900],
                           ),
                           SizedBox(width: 5),
-                          Text("4.7"),
+                          SizedBox(height: 12, width: 24),
                         ],
                       ),
                     ),
@@ -191,7 +191,7 @@ class OrderItemShimmer extends StatelessWidget {
             trailing: ShimmerCard(
               height: 20,
               width: 50,
-              child: Text("15€"),
+              child: SizedBox.shrink(),
             ),
           ),
         ),

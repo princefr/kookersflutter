@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:kookers/Pages/Orders/OrderItem.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
+import 'package:kookers/Services/TabNavigator.dart';
 import 'package:kookers/Widgets/EmptyView.dart';
 import 'package:kookers/Widgets/PageTitle.dart';
 import 'package:provider/provider.dart';
@@ -77,7 +78,10 @@ class _OrdersPageState extends State<OrdersPage>
                             });
                           });
                         },
-                        child: EmptyViewElse(text: 'orders.empty'.tr()));
+                        child: EmptyViewElse(
+                            text: 'orders.empty'.tr(),
+                            ctaLabel: 'orders.browseCta'.tr(),
+                            onCtaTap: () => TabNavigator.goTab(context, 0)));
                   return SmartRefresher(
                     enablePullDown: true,
                     controller: this._refreshController,

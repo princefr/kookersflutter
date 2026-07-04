@@ -35,7 +35,9 @@
     "publishTooltip": "Gericht veröffentlichen",
     "publishSuccess": "Dein Gericht wurde veröffentlicht",
     "publishRetry": "Beim Veröffentlichen ist ein Fehler aufgetreten, neuer Versuch in 10 Sekunden",
-    "publishError": "Beim Veröffentlichen ist ein Fehler aufgetreten, bitte versuche es später erneut"
+    "publishError": "Beim Veröffentlichen ist ein Fehler aufgetreten, bitte versuche es später erneut",
+    "oneDish": "Gericht",
+    "manyDishes": "Gerichte"
   },
   "food": {
     "noPreferences": "Keine Vorlieben",
@@ -49,11 +51,14 @@
     "deliveryPeriod": "Lieferzeitraum",
     "deliveryAddress": "Lieferadresse",
     "noMessages": "Du hast keine Nachrichten",
-    "chooseDate": "Datum wählen"
+    "chooseDate": "Datum wählen",
+    "portionsLeft": "{} Portionen übrig",
+    "lastPortion": "Letzte Portion!"
   },
   "orders": {
     "title": "Einkäufe",
-    "empty": "Du hast keine Einkäufe"
+    "empty": "Du hast keine Einkäufe",
+    "browseCta": "Gerichte durchsuchen"
   },
   "vendor": {
     "title": "Verkäufe",
@@ -79,11 +84,13 @@
     "done": "Erledigt",
     "dishCancelledByBuyer": "Das Gericht wurde vom Käufer abgebrochen",
     "dishReceivedByBuyer": "Gericht vom Käufer erhalten",
-    "dishDeliveredAndRated": "Das Gericht wurde geliefert und bewertet"
+    "dishDeliveredAndRated": "Das Gericht wurde geliefert und bewertet",
+    "publishCta": "Veröffentliche dein erstes Gericht"
   },
   "messages": {
     "title": "Nachrichten",
-    "empty": "Du hast keine Nachrichten."
+    "empty": "Du hast keine Nachrichten.",
+    "startChatCta": "Bestelle ein Gericht, um zu chatten"
   },
   "settings": {
     "payments": "Zahlungsmethoden",
@@ -105,7 +112,9 @@
     "language": "Sprache",
     "languageDesc": "Wähle die Sprache der App.",
     "photoPermissionTitle": "Zugriff auf die Fotobibliothek",
-    "photoPermissionBody": "Du hast den Fotozugriff abgelehnt. Bitte aktualisiere die Berechtigungen in den Telefon-Einstellungen."
+    "photoPermissionBody": "Du hast den Fotozugriff abgelehnt. Bitte aktualisiere die Berechtigungen in den Telefon-Einstellungen.",
+    "theme": "Design",
+    "themeDesc": "Wähle das Design der App."
   },
   "empty": {
     "homeTitle": "Keine Gerichte in der Nähe",
@@ -223,7 +232,14 @@
     "addMethod": "Zahlungsmethode hinzufügen",
     "payAmount": "Bezahlen",
     "buying": "Kauf läuft",
-    "bought": "Gericht gekauft"
+    "bought": "Gericht gekauft",
+    "total": "Gesamt",
+    "sameDayNotice": "Wenn du am selben Tag bestellst, sieht die App 3 Stunden Vorlaufzeit vor, damit der Koch Zeit hat, frische Zutaten zu kaufen und stressfrei zu kochen.",
+    "tipTitle": "Trinkgeld für den Koch",
+    "tipDesc": "100% gehen an den Koch.",
+    "tipNone": "Keine",
+    "tipCustom": "Eigen",
+    "grandTotal": "Zu bezahlen"
   },
   "order": {
     "totalPaid": "Gesamt bezahlt: ",
@@ -235,7 +251,8 @@
     "cancelled": "Bestellung abgebrochen",
     "cancelledInfo": "Die Bestellung wurde abgebrochen",
     "deliveredInfo": "Die Bestellung wurde geliefert",
-    "rateDish": "Gericht bewerten"
+    "rateDish": "Gericht bewerten",
+    "reorder": "Erneut bestellen"
   },
   "guidelines": {
     "gloves": "Du verpflichtest dich, beim Kochen für Community-Mitglieder Handschuhe und eine Haarnetz zu tragen.",
@@ -285,7 +302,8 @@
     "hostingCertificate": "Beherbergungsbescheinigung"
   },
   "chat": {
-    "messageHint": "Nachricht eingeben…"
+    "messageHint": "Nachricht eingeben…",
+    "quick": "Danke!"
   },
   "push": {
     "newOrder": {
@@ -312,5 +330,41 @@
       "title": "Bestellung abgebrochen",
       "body": "Der Koch musste deine Bestellung leider abbrechen."
     }
+  },
+  "themeMode": {
+    "system": "System",
+    "light": "Hell",
+    "dark": "Dunkel"
+  },
+  "allergens": {
+    "gluten": "Gluten",
+    "crustaceans": "Krebstiere",
+    "eggs": "Eier",
+    "fish": "Fisch",
+    "peanuts": "Erdnüsse",
+    "soy": "Soja",
+    "milk": "Milch",
+    "nuts": "Schalenfrüchte",
+    "celery": "Sellerie",
+    "mustard": "Senf",
+    "sesame": "Sesam",
+    "sulphites": "Sulfite",
+    "lupin": "Lupine",
+    "molluscs": "Weichtiere",
+    "contains": "Enthält:",
+    "none": "Keine Allergene",
+    "filterTitle": "Gerichte ausblenden, die enthalten:"
+  },
+  "upgrade": {
+    "title": "Aktualisierung erforderlich",
+    "body": "Eine neue Version von Kookers ist verfügbar. Bitte aktualisiere die App, um fortzufahren.",
+    "action": "Aktualisieren"
+  },
+  "sort": {
+    "newest": "Neueste",
+    "trending": "Trend",
+    "topRated": "Top bewertet",
+    "priceAsc": "Preis ↑",
+    "priceDesc": "Preis ↓"
   }
 }

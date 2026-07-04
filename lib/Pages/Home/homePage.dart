@@ -13,12 +13,14 @@ import 'package:kookers/Pages/Home/Guidelines.dart';
 import 'package:kookers/Pages/Home/HomePublish.dart';
 import 'package:kookers/Pages/Home/HomeSearchPage.dart';
 import 'package:kookers/Pages/Home/HomeSettings.dart';
+import 'package:kookers/Services/AnalyticsService.dart';
 import 'package:kookers/Services/DatabaseProvider.dart';
 import 'package:kookers/Services/ErrorBarService.dart';
 import 'package:kookers/Services/PublicationProvider.dart';
 import 'package:kookers/UI/Colors.dart';
 import 'package:kookers/UI/Theme.dart';
 import 'package:kookers/Widgets/EmptyView.dart';
+import 'package:kookers/Widgets/SortDropdown.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -259,6 +261,41 @@ class _HomePageState extends State<HomePage>
   final BehaviorSubject<int> _uploadPercentage =
       BehaviorSubject<int>.seeded(0);
 
+  /// Current sort selection (defaults to newest). Persisted only
+  /// in-memory — could be wired to SharedPreferences later.
+  PublicationSort _sort = PublicationSort.newest;
+
+  /// Returns the publications list sorted by the user's current
+  /// [_sort] selection. All comparisons are null-safe.
+  List<PublicationHome> _sorted(List<PublicationHome> items) {
+    final copy = List<PublicationHome>.from(items);
+    switch (_sort) {
+      case PublicationSort.newest:
+        return copy; // backend already returns newest first
+      case PublicationSort.trending:
+        copy.sort((a, b) =>
+            (b.likeCount ?? 0).compareTo(a.likeCount ?? 0));
+        return copy;
+      case PublicationSort.topRated:
+        copy.sort((a, b) => b.getRating().compareTo(a.getRating()));
+        return copy;
+      case PublicationSort.priceAsc:
+        copy.sort((a, b) {
+          final pa = num.tryParse(a.pricePerAll ?? '') ?? 0;
+          final pb = num.tryParse(b.pricePerAll ?? '') ?? 0;
+          return pa.compareTo(pb);
+        });
+        return copy;
+      case PublicationSort.priceDesc:
+        copy.sort((a, b) {
+          final pa = num.tryParse(a.pricePerAll ?? '') ?? 0;
+          final pb = num.tryParse(b.pricePerAll ?? '') ?? 0;
+          return pb.compareTo(pa);
+        });
+        return copy;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -334,6 +371,7 @@ class _HomePageState extends State<HomePage>
     publication.uploadToServer(_uploadPercentage).then((_) async {
       _uploadPercentage.add(100);
       NotificationPanelService.showSuccess(context, 'home.publishSuccess'.tr());
+      KookersEvents.publishSuccess(publicationId: publication.id ?? '');
       _uploadPercentage.add(0);
     }).catchError((_) {
       NotificationPanelService.showError(
@@ -373,7 +411,7 @@ class _HomePageState extends State<HomePage>
           stream: databaseService.publications$,
           initialData: databaseService.publications.value,
           builder: (context, snapshot) {
-            final items = snapshot.data ?? const [];
+            final items = _sorted(snapshot.data ?? const []);
             final isLoading = snapshot.connectionState ==
                     ConnectionState.waiting &&
                 items.isEmpty;
@@ -403,11 +441,39 @@ class _HomePageState extends State<HomePage>
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(
                     bottom: KookersSpacing.xxl, top: KookersSpacing.sm),
-                itemCount: items.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(height: KookersSpacing.sm),
+                itemCount: items.length + 1,
+                separatorBuilder: (context, index) {
+                  if (index == 0) return const SizedBox.shrink();
+                  return const SizedBox(height: KookersSpacing.sm);
+                },
                 itemBuilder: (context, index) {
-                  final publication = items[index];
+                  if (index == 0) {
+                    // Sort dropdown row — sticky at the top of the feed.
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: KookersSpacing.lg,
+                          vertical: KookersSpacing.xs),
+                      child: Row(
+                        children: [
+                          Text(
+                            '${items.length} ${items.length == 1 ? 'home.oneDish' : 'home.manyDishes'.tr()}',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              color: KookersColors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          SortDropdown(
+                            current: _sort,
+                            onChanged: (sort) =>
+                                setState(() => _sort = sort),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  final publication = items[index - 1];
                   return FoodItem(
                     publication: publication,
                     onTap: () {

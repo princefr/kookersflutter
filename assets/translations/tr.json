@@ -35,7 +35,9 @@
     "publishTooltip": "Yemek yayınla",
     "publishSuccess": "Yemeğin yayınlandı",
     "publishRetry": "Yayınlanırken bir hata oluştu, 10 saniye sonra tekrar denenecek",
-    "publishError": "Yayınlanırken bir hata oluştu, lütfen daha sonra tekrar dene"
+    "publishError": "Yayınlanırken bir hata oluştu, lütfen daha sonra tekrar dene",
+    "oneDish": "yemek",
+    "manyDishes": "yemek"
   },
   "food": {
     "noPreferences": "Tercih yok",
@@ -49,11 +51,14 @@
     "deliveryPeriod": "Teslimat dönemi",
     "deliveryAddress": "Teslimat adresi",
     "noMessages": "Hiç mesajın yok",
-    "chooseDate": "Tarih seç"
+    "chooseDate": "Tarih seç",
+    "portionsLeft": "{} porsiyon kaldı",
+    "lastPortion": "Son porsiyon!"
   },
   "orders": {
     "title": "Satın alımlar",
-    "empty": "Hiç satın alımın yok"
+    "empty": "Hiç satın alımın yok",
+    "browseCta": "Yemekleri keşfet"
   },
   "vendor": {
     "title": "Satışlar",
@@ -79,11 +84,13 @@
     "done": "Tamamlandı",
     "dishCancelledByBuyer": "Yemek alıcı tarafından iptal edildi",
     "dishReceivedByBuyer": "Yemek alıcı tarafından alındı",
-    "dishDeliveredAndRated": "Yemek teslim edildi ve puanlandı"
+    "dishDeliveredAndRated": "Yemek teslim edildi ve puanlandı",
+    "publishCta": "İlk yemeğini yayınla"
   },
   "messages": {
     "title": "Mesajlar",
-    "empty": "Mesajın yok."
+    "empty": "Mesajın yok.",
+    "startChatCta": "Sohbet etmek için bir yemek sipariş et"
   },
   "settings": {
     "payments": "Ödeme yöntemleri",
@@ -105,7 +112,9 @@
     "language": "Dil",
     "languageDesc": "Uygulamanın dilini seç.",
     "photoPermissionTitle": "Fotoğraf kitaplığına erişim",
-    "photoPermissionBody": "Fotoğraf erişimini reddettin. Telefon ayarlarından izinleri güncelle."
+    "photoPermissionBody": "Fotoğraf erişimini reddettin. Telefon ayarlarından izinleri güncelle.",
+    "theme": "Tema",
+    "themeDesc": "Uygulama temasını seç."
   },
   "empty": {
     "homeTitle": "Yakında yemek yok",
@@ -223,7 +232,14 @@
     "addMethod": "Ödeme yöntemi ekle",
     "payAmount": "Öde",
     "buying": "Satın alınıyor",
-    "bought": "Yemek satın alındı"
+    "bought": "Yemek satın alındı",
+    "total": "Toplam",
+    "sameDayNotice": "Aynı gün sipariş verirsen, uygulama şefin taze malzeme alıp stressiz bir şekilde yemek pişirmesi için 3 saatlik bir süre öngörür.",
+    "tipTitle": "Şefe bahşiş",
+    "tipDesc": "\\%100ü şefe gider.",
+    "tipNone": "Yok",
+    "tipCustom": "Özel",
+    "grandTotal": "Ödenecek tutar"
   },
   "order": {
     "totalPaid": "Toplam ödenen: ",
@@ -235,7 +251,8 @@
     "cancelled": "Sipariş iptal edildi",
     "cancelledInfo": "Sipariş iptal edildi",
     "deliveredInfo": "Sipariş teslim edildi",
-    "rateDish": "Yemeği puanla"
+    "rateDish": "Yemeği puanla",
+    "reorder": "Tekrar sipariş et"
   },
   "guidelines": {
     "gloves": "Topluluk üyeleri için yemek yaparken eldiven ve bone takmayı kabul edersin.",
@@ -285,7 +302,8 @@
     "hostingCertificate": "Konaklama belgesi"
   },
   "chat": {
-    "messageHint": "Mesajını yaz…"
+    "messageHint": "Mesajını yaz…",
+    "quick": "Tesekkurler!"
   },
   "push": {
     "newOrder": {
@@ -312,5 +330,41 @@
       "title": "Sipariş iptal edildi",
       "body": "Şef maalesef siparişini iptal etmek zorunda kaldı."
     }
+  },
+  "themeMode": {
+    "system": "Sistem",
+    "light": "Açık",
+    "dark": "Koyu"
+  },
+  "allergens": {
+    "gluten": "Glüten",
+    "crustaceans": "Kabuklular",
+    "eggs": "Yumurta",
+    "fish": "Balık",
+    "peanuts": "Yer fıstığı",
+    "soy": "Soya",
+    "milk": "Süt",
+    "nuts": "Kuruyemiş",
+    "celery": "Kereviz",
+    "mustard": "Hardal",
+    "sesame": "Susam",
+    "sulphites": "Sülfür dioksit",
+    "lupin": "Lupin",
+    "molluscs": "Yumuşakçalar",
+    "contains": "İçerir:",
+    "none": "Alerjen yok",
+    "filterTitle": "İçeren yemekleri gizle:"
+  },
+  "upgrade": {
+    "title": "Güncelleme gerekli",
+    "body": "Kookers'ın yeni bir sürümü mevcut. Devam etmek için uygulamayı güncelle.",
+    "action": "Güncelle"
+  },
+  "sort": {
+    "newest": "En yeni",
+    "trending": "Popüler",
+    "topRated": "En çok puanlanan",
+    "priceAsc": "Fiyat ↑",
+    "priceDesc": "Fiyat ↓"
   }
 }
